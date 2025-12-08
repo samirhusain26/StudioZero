@@ -1,4 +1,7 @@
-black
-isort
-pyright
-python-dotenv
+groq>=0.37.1          # for LLM inference
+edge-tts>=7.2.3      # for Azure neural voice
+tenacity>=9.1.2      # for retry logic
+ffmpeg-python>=0.2.0 # for video rendering
+python-dotenv>=1.2.1 # for API key management
+aiohttp>=3.13.2      # for async image downloading
+requests>=2.32.5     # for synchronous API calls like TMDB
