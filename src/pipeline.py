@@ -13,7 +13,7 @@ import json
 import logging
 import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator, List, Optional, Tuple, Dict, Any
 
@@ -30,6 +30,38 @@ from src.renderer import VideoRenderer
 logger = logging.getLogger(__name__)
 
 CACHE_FILENAME = "pipeline_cache.json"
+
+
+def _create_silent_audio(output_path: str, duration_seconds: float = 3.0,
+                         sample_rate: int = 24000, channels: int = 1,
+                         sample_width: int = 2) -> str:
+    """
+    Create a silent WAV audio file.
+
+    Args:
+        output_path: Path to save the silent audio file.
+        duration_seconds: Duration of silence in seconds (default 3.0).
+        sample_rate: Audio sample rate in Hz (default 24000 to match Gemini TTS).
+        channels: Number of audio channels (default 1 for mono).
+        sample_width: Bytes per sample (default 2 for 16-bit).
+
+    Returns:
+        The output path where the file was saved.
+    """
+    import wave
+
+    num_frames = int(sample_rate * duration_seconds)
+    # Create silent PCM data (all zeros)
+    silent_data = bytes(num_frames * channels * sample_width)
+
+    with wave.open(output_path, 'wb') as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(sample_width)
+        wf.setframerate(sample_rate)
+        wf.writeframes(silent_data)
+
+    logger.info(f"Created silent audio: {output_path} ({duration_seconds:.2f}s)")
+    return output_path
 
 # Creative ending templates for the movie reveal
 # {title} = movie title, {year} = release year
@@ -504,46 +536,63 @@ class VideoGenerationPipeline:
 
                 # Generate TTS for the ending
                 ending_audio_path = str(output_dir / "ending_audio.wav")
+                ending_audio_duration = 3.0  # Default fallback duration
+                tts_failed = False
+
                 try:
-                    ending_audio_path, ending_audio_duration = generate_audio(
+                    tts_result = generate_audio(
                         text=ending_text,
                         output_path=ending_audio_path,
                         voice=script.selected_voice_id,
                         speed=1.2,  # Slightly slower for the reveal (but still 25% faster overall)
                         mood=getattr(script, 'overall_mood', 'neutral'),
                     )
-                    yield PipelineStatus(step=2, message=f"Ending TTS generated: {ending_audio_duration:.2f}s")
 
-                    # Create the ending scene asset
-                    ending_scene_index = len(scene_assets_list)
-                    ending_scene_asset = SceneAssets(
-                        index=ending_scene_index,
-                        narration=ending_text,
-                        visual_queries=["movie poster"],
-                        audio_path=ending_audio_path,
-                        audio_duration=ending_audio_duration,
-                        video_path="",  # No video, we use poster
-                        video_metadata={"type": "poster", "source": "tmdb"},
-                        poster_path=poster_local_path,
-                        is_ending_scene=True,
-                    )
-                    scene_assets_list.append(ending_scene_asset)
+                    if tts_result is not None:
+                        ending_audio_path, ending_audio_duration = tts_result
+                        yield PipelineStatus(step=2, message=f"Ending TTS generated: {ending_audio_duration:.2f}s")
+                    else:
+                        tts_failed = True
+                        logger.warning("Ending TTS returned None, using silent audio fallback")
+                        yield PipelineStatus(step=2, message="TTS blocked/failed, using silent audio fallback (3s)")
 
-                    # Cache the ending scene
-                    cache_data['scene_assets']['ending_scene'] = {
-                        'audio_path': ending_audio_path,
-                        'audio_duration': ending_audio_duration,
-                        'poster_path': poster_local_path,
-                        'narration': ending_text,
-                    }
-
-                    yield PipelineStatus(step=2, message="Ending scene created with movie poster")
                 except Exception as e:
-                    yield PipelineStatus(
-                        step=2,
-                        message=f"Failed to create ending scene: {e}",
-                        is_error=True
-                    )
+                    tts_failed = True
+                    logger.warning(f"Ending TTS failed with exception: {e}, using silent audio fallback")
+                    yield PipelineStatus(step=2, message=f"TTS failed ({e}), using silent audio fallback (3s)")
+
+                # Create silent audio fallback if TTS failed
+                if tts_failed:
+                    ending_audio_path = str(output_dir / "ending_audio_silent.wav")
+                    ending_audio_duration = 3.0
+                    _create_silent_audio(ending_audio_path, duration_seconds=ending_audio_duration)
+                    yield PipelineStatus(step=2, message="Silent audio track created for ending scene")
+
+                # Create the ending scene asset (always, even with silent audio)
+                ending_scene_index = len(scene_assets_list)
+                ending_scene_asset = SceneAssets(
+                    index=ending_scene_index,
+                    narration=ending_text if not tts_failed else "",
+                    visual_queries=["movie poster"],
+                    audio_path=ending_audio_path,
+                    audio_duration=ending_audio_duration,
+                    video_path="",  # No video, we use poster
+                    video_metadata={"type": "poster", "source": "tmdb", "silent_fallback": tts_failed},
+                    poster_path=poster_local_path,
+                    is_ending_scene=True,
+                )
+                scene_assets_list.append(ending_scene_asset)
+
+                # Cache the ending scene
+                cache_data['scene_assets']['ending_scene'] = {
+                    'audio_path': ending_audio_path,
+                    'audio_duration': ending_audio_duration,
+                    'poster_path': poster_local_path,
+                    'narration': ending_text if not tts_failed else "",
+                    'silent_fallback': tts_failed,
+                }
+
+                yield PipelineStatus(step=2, message="Ending scene created with movie poster")
             else:
                 yield PipelineStatus(step=2, message="Skipping ending scene (no poster available)")
 

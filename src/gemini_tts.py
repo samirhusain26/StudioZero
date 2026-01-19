@@ -14,6 +14,7 @@ Model: gemini-2.5-flash-preview-tts
 
 import logging
 import os
+import re
 import wave
 from pathlib import Path
 from typing import Tuple, Optional, Dict
@@ -190,6 +191,77 @@ def _write_wave_file(filename: str, pcm_data: bytes, channels: int = 1,
         wf.writeframes(pcm_data)
 
 
+def _sanitize_text_for_retry(text: str) -> str:
+    """
+    Sanitize text for retry attempt by removing potential safety triggers.
+
+    Removes movie titles (text in quotes), proper nouns patterns, and
+    other potentially flagged content while preserving the narrative.
+
+    Args:
+        text: The original text that may have triggered safety filters.
+
+    Returns:
+        Sanitized text with potentially problematic content removed.
+    """
+    # Remove text in quotes (often movie titles)
+    sanitized = re.sub(r'["\u201c\u201d][^"\u201c\u201d]+["\u201c\u201d]', 'this film', text)
+    # Remove years in parentheses like (2024)
+    sanitized = re.sub(r'\(\d{4}\)', '', sanitized)
+    # Remove standalone years
+    sanitized = re.sub(r'\b(19|20)\d{2}\b', '', sanitized)
+    # Clean up extra whitespace
+    sanitized = re.sub(r'\s+', ' ', sanitized).strip()
+    return sanitized
+
+
+def _extract_audio_from_response(response) -> Optional[bytes]:
+    """
+    Safely extract audio data from Gemini TTS response.
+
+    Args:
+        response: The Gemini API response object.
+
+    Returns:
+        Audio data bytes if extraction successful, None otherwise.
+    """
+    if response is None:
+        logger.warning("Gemini TTS returned None response")
+        return None
+
+    if not hasattr(response, 'candidates') or not response.candidates:
+        logger.warning("Gemini TTS response has no candidates")
+        return None
+
+    candidate = response.candidates[0]
+
+    # Check for blocked response
+    if hasattr(candidate, 'finish_reason'):
+        finish_reason = str(candidate.finish_reason).upper()
+        if 'SAFETY' in finish_reason or 'BLOCKED' in finish_reason:
+            logger.warning(f"Gemini TTS response blocked: {candidate.finish_reason}")
+            return None
+
+    if not hasattr(candidate, 'content') or candidate.content is None:
+        logger.warning("Gemini TTS candidate has no content")
+        return None
+
+    if not hasattr(candidate.content, 'parts') or not candidate.content.parts:
+        logger.warning("Gemini TTS content has no parts")
+        return None
+
+    part = candidate.content.parts[0]
+    if not hasattr(part, 'inline_data') or part.inline_data is None:
+        logger.warning("Gemini TTS part has no inline_data")
+        return None
+
+    if not hasattr(part.inline_data, 'data') or not part.inline_data.data:
+        logger.warning("Gemini TTS inline_data has no data")
+        return None
+
+    return part.inline_data.data
+
+
 def generate_audio(
     text: str,
     output_path: str,
@@ -197,7 +269,7 @@ def generate_audio(
     speed: float = 1.0,
     lang_code: Optional[str] = None,
     mood: Optional[str] = None,
-) -> Tuple[str, float]:
+) -> Optional[Tuple[str, float]]:
     """
     Generates speech audio from text using Gemini TTS API.
 
@@ -210,11 +282,11 @@ def generate_audio(
         mood: Optional mood for style prompt (e.g., 'dramatic', 'exciting', 'calm').
 
     Returns:
-        Tuple of (output_path, duration_seconds).
+        Tuple of (output_path, duration_seconds), or None if generation fails
+        after all retry attempts.
 
     Raises:
         ValueError: If the text is empty.
-        RuntimeError: If audio generation fails.
     """
     if not text or not text.strip():
         raise ValueError("Text cannot be empty")
@@ -240,47 +312,64 @@ def generate_audio(
     elif speed > 1.1:
         style_instruction += " Speak at a slightly faster pace."
 
-    # Create the prompt with style instruction
-    prompt = f"{style_instruction}\n\n{text}"
-
     logger.info(f"Generating TTS with Gemini voice '{gemini_voice}' (mood={mood})")
     logger.debug(f"Text: {text[:100]}...")
     logger.debug(f"Style: {style_instruction}")
 
-    try:
-        client = _get_client()
+    client = _get_client()
 
-        # Generate audio using Gemini TTS
-        response = client.models.generate_content(
-            model="gemini-2.5-flash-preview-tts",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_modalities=["AUDIO"],
-                speech_config=types.SpeechConfig(
-                    voice_config=types.VoiceConfig(
-                        prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                            voice_name=gemini_voice,
+    # Attempt with original text first, then retry with sanitized text
+    attempts = [
+        ("original", text),
+        ("sanitized", _sanitize_text_for_retry(text)),
+    ]
+
+    for attempt_name, attempt_text in attempts:
+        # Create the prompt with style instruction
+        prompt = f"{style_instruction}\n\n{attempt_text}"
+
+        try:
+            logger.info(f"TTS attempt ({attempt_name}): generating audio...")
+
+            # Generate audio using Gemini TTS
+            response = client.models.generate_content(
+                model="gemini-2.5-flash-preview-tts",
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_modalities=["AUDIO"],
+                    speech_config=types.SpeechConfig(
+                        voice_config=types.VoiceConfig(
+                            prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                voice_name=gemini_voice,
+                            )
                         )
-                    )
-                ),
+                    ),
+                )
             )
-        )
 
-        # Extract audio data from response
-        audio_data = response.candidates[0].content.parts[0].inline_data.data
+            # Safely extract audio data from response
+            audio_data = _extract_audio_from_response(response)
 
-        # Write to WAV file
-        _write_wave_file(output_path, audio_data)
+            if audio_data is None:
+                logger.warning(f"TTS attempt ({attempt_name}) returned empty/blocked response, will retry...")
+                continue
 
-        # Calculate duration (24kHz, 16-bit mono)
-        duration_seconds = len(audio_data) / (24000 * 2 * 1)
+            # Write to WAV file
+            _write_wave_file(output_path, audio_data)
 
-        logger.info(f"TTS complete: {output_path} ({duration_seconds:.2f}s)")
-        return output_path, max(0.1, duration_seconds)
+            # Calculate duration (24kHz, 16-bit mono)
+            duration_seconds = len(audio_data) / (24000 * 2 * 1)
 
-    except Exception as e:
-        logger.error(f"Failed to generate audio: {e}")
-        raise RuntimeError(f"Failed to generate audio: {e}") from e
+            logger.info(f"TTS complete ({attempt_name}): {output_path} ({duration_seconds:.2f}s)")
+            return output_path, max(0.1, duration_seconds)
+
+        except Exception as e:
+            logger.warning(f"TTS attempt ({attempt_name}) failed with exception: {e}")
+            continue
+
+    # All attempts failed
+    logger.error(f"Failed to generate audio after all attempts for text: {text[:50]}...")
+    return None
 
 
 def generate_audio_with_metadata(
@@ -289,7 +378,7 @@ def generate_audio_with_metadata(
     voice: str = "af_bella",
     speed: float = 1.0,
     mood: Optional[str] = None,
-) -> Dict:
+) -> Optional[Dict]:
     """
     Generate audio with full metadata returned.
 
@@ -302,16 +391,22 @@ def generate_audio_with_metadata(
 
     Returns:
         Dict with keys: output_path, duration, voice, gemini_voice, mood, speed, text_length.
+        Returns None if audio generation fails.
     """
     gemini_voice = _map_voice(voice)
 
-    final_path, duration = generate_audio(
+    result = generate_audio(
         text=text,
         output_path=output_path,
         voice=voice,
         speed=speed,
         mood=mood,
     )
+
+    if result is None:
+        return None
+
+    final_path, duration = result
 
     return {
         'output_path': final_path,

@@ -15,9 +15,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Background music path
-BACKGROUND_MUSIC_PATH = Config.ASSETS_DIR / "audio" / "background_track.mp3"
-
 # Output resolution for vertical 9:16 video
 OUTPUT_WIDTH = 1080
 OUTPUT_HEIGHT = 1920
@@ -453,10 +450,6 @@ class VideoRenderer:
         if not scene_assets:
             raise ValueError("No scene assets provided for rendering")
 
-        # Use default background music if not specified
-        if background_music_path is None:
-            background_music_path = str(BACKGROUND_MUSIC_PATH)
-
         has_background_music = (
             background_music_path and Path(background_music_path).exists()
         )
@@ -480,13 +473,13 @@ class VideoRenderer:
                     for i, scene in enumerate(scene_assets):
                         # Check if this scene uses a poster instead of video
                         if hasattr(scene, 'poster_path') and scene.poster_path and Path(scene.poster_path).exists():
-                            # Create a video from the poster image
+                            # Create a video from the poster image (static, no Ken Burns)
                             poster_video_path = str(temp_path / f"poster_video_{i}.mp4")
                             self._create_video_from_image(
                                 image_path=scene.poster_path,
                                 output_path=poster_video_path,
                                 duration=scene.audio_duration,
-                                add_ken_burns=True,
+                                add_ken_burns=False,
                             )
                             video_escaped = poster_video_path.replace("'", "'\\''")
                             logger.info(f"Scene {i}: Using poster as video ({scene.audio_duration:.2f}s)")
@@ -596,13 +589,23 @@ class VideoRenderer:
         - Pixel format (yuv420p)
         - Codec (H.264)
 
+        If target_duration is specified and the video is shorter, the video
+        will be looped using -stream_loop to match the target duration.
+
         Args:
             input_path: Path to input video.
             output_path: Path for normalized output.
-            target_duration: If specified, trim/loop video to this duration in seconds.
+            target_duration: If specified, loop/trim video to this exact duration in seconds.
         """
-        cmd = [
-            'ffmpeg', '-y',
+        cmd = ['ffmpeg', '-y']
+
+        # If target_duration is specified, use -stream_loop -1 to loop the video
+        # infinitely. This ensures short videos are repeated to match longer audio.
+        # The -t flag will then trim the output to the exact target duration.
+        if target_duration is not None:
+            cmd.extend(['-stream_loop', '-1'])
+
+        cmd.extend([
             '-i', input_path,
             '-vf', f'scale={OUTPUT_WIDTH}:{OUTPUT_HEIGHT}:force_original_aspect_ratio=increase,crop={OUTPUT_WIDTH}:{OUTPUT_HEIGHT},setsar=1,fps={FPS}',
             '-c:v', 'libx264',
@@ -611,15 +614,15 @@ class VideoRenderer:
             '-pix_fmt', 'yuv420p',
             '-an',  # Strip audio - we handle audio separately
             '-r', str(FPS),
-        ]
+        ])
 
-        # Trim video to target duration if specified
+        # Trim looped video to exact target duration
         if target_duration is not None:
             cmd.extend(['-t', str(target_duration)])
 
         cmd.append(output_path)
 
-        logger.debug(f"Normalizing video: {input_path}" + (f" (trimming to {target_duration:.2f}s)" if target_duration else ""))
+        logger.debug(f"Normalizing video: {input_path}" + (f" (loop+trim to {target_duration:.2f}s)" if target_duration else ""))
         result = subprocess.run(cmd, capture_output=True, text=True)
 
         if result.returncode != 0:

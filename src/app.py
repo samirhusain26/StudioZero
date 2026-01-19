@@ -11,40 +11,10 @@ Usage:
 """
 
 import argparse
-import logging
-import sys
 from datetime import datetime
 
+from src.logging_utils import setup_logging
 from src.pipeline import VideoGenerationPipeline, PipelineStatus
-
-
-def setup_logging(verbose: bool = False) -> logging.Logger:
-    """Configure detailed logging with timestamps."""
-    log_level = logging.DEBUG if verbose else logging.INFO
-
-    # Create formatter with detailed output
-    formatter = logging.Formatter(
-        fmt='%(asctime)s | %(levelname)-8s | %(name)-20s | %(message)s',
-        datefmt='%H:%M:%S'
-    )
-
-    # Console handler
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(formatter)
-    console_handler.setLevel(log_level)
-
-    # Configure root logger
-    root_logger = logging.getLogger()
-    root_logger.setLevel(log_level)
-    root_logger.addHandler(console_handler)
-
-    # Also configure specific module loggers for detailed output
-    for module in ['src.pipeline', 'src.narrative', 'src.moviedbapi',
-                   'src.gemini_tts', 'src.stock_media', 'src.renderer', 'src.config']:
-        module_logger = logging.getLogger(module)
-        module_logger.setLevel(log_level)
-
-    return logging.getLogger('src.app')
 
 
 def print_banner():
@@ -182,7 +152,7 @@ Examples:
     args = parser.parse_args()
 
     # Setup logging
-    logger = setup_logging(verbose=args.verbose)
+    logger = setup_logging(verbose=args.verbose, logger_name='src.app')
 
     print_banner()
 

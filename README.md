@@ -7,7 +7,7 @@ StudioZero is an AI-powered video generation pipeline that creates short, styliz
 ## How It Works
 
 ```
-Movie Name → Wikipedia/TMDB → Groq LLM → Gemini TTS + Pexels + Whisper → FFmpeg → Video
+Movie Name → Wikipedia/TMDB → Gemini LLM → Gemini TTS + Pexels + Whisper → FFmpeg → Video
 ```
 
 ### The 5-Step Pipeline
@@ -17,7 +17,7 @@ The pipeline is implemented as a **generator-based orchestration engine** that y
 #### Step 1: Movie Data Retrieval & Script Generation
 - Searches Wikipedia for movie data (with TMDB fallback)
 - Extracts plot, year, tagline, and poster path
-- Passes data to Groq LLM with a comprehensive system prompt
+- Passes data to Gemini LLM (with Groq fallback) with a comprehensive system prompt
 - LLM generates a `VideoScript` with:
   - Genre classification and voice selection (from 30 available voices)
   - 6-scene narrative arc with detailed annotations
@@ -51,7 +51,7 @@ The pipeline is implemented as a **generator-based orchestration engine** that y
 | Component | Technology | Details |
 |-----------|------------|---------|
 | **Language** | Python 3.10+ | Modern async/threading support |
-| **LLM** | Groq API | Llama 3.3-70b-versatile model |
+| **LLM** | Google Gemini (primary) + Groq (fallback) | Gemini 2.0 Flash with Groq Llama fallback |
 | **Text-to-Speech** | Google Gemini 2.5 Flash TTS | 30 voices, mood-based style prompts |
 | **Transcription** | OpenAI Whisper | Base model with word-level timestamps |
 | **Stock Video** | Pexels API | Portrait filtering, 3-query fallback |
@@ -72,7 +72,7 @@ StudioZero/
 ├── src/                          # Main application code
 │   ├── app.py                    # CLI entry point with argument parsing
 │   ├── pipeline.py               # 5-step orchestration engine (generator-based)
-│   ├── narrative.py              # Groq LLM script generation with Pydantic models
+│   ├── narrative.py              # Gemini/Groq LLM script generation with Pydantic models
 │   ├── moviedbapi.py             # Wikipedia/TMDB client for movie data
 │   ├── gemini_tts.py             # Google Gemini TTS voice synthesis
 │   ├── stock_media.py            # Pexels API video download with fallback
@@ -104,7 +104,7 @@ StudioZero/
 |--------|---------------|
 | **app.py** | CLI interface, argument parsing, logging setup, pipeline orchestration |
 | **pipeline.py** | Generator-based 5-step orchestration, caching, parallel scene processing |
-| **narrative.py** | Groq LLM integration, system prompts, Pydantic models for scripts |
+| **narrative.py** | Gemini/Groq LLM integration, system prompts, Pydantic models for scripts |
 | **moviedbapi.py** | Wikipedia/TMDB API client, plot extraction, poster download |
 | **gemini_tts.py** | Gemini TTS API, 30 voices, mood-based style prompts, WAV generation |
 | **stock_media.py** | Pexels API, portrait filtering, 3-query fallback, local video fallback |
@@ -153,7 +153,7 @@ SceneAssets:
 │  Step 1: Movie Data Retrieval & Script Generation               │
 │  ├─ Wikipedia/TMDB Search                                       │
 │  ├─ Extract Plot, Year, Tagline                                 │
-│  └─ Groq LLM → VideoScript (6 scenes, voice, music, moods)      │
+│  └─ Gemini LLM → VideoScript (6 scenes, voice, music, moods)    │
 └─────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -230,15 +230,15 @@ cp .env.template .env
 **Required API Keys (for video generation):**
 
 ```bash
-GROQ_API_KEY=your_groq_key
-GEMINI_API_KEY=your_gemini_key
-PEXELS_API_KEY=your_pexels_key
-TMDB_API_KEY=your_tmdb_key  # Optional but recommended
+GEMINI_API_KEY=your_gemini_key    # Primary LLM + TTS
+GROQ_API_KEY=your_groq_key        # Fallback LLM + caption generation
+PEXELS_API_KEY=your_pexels_key    # Stock video
+TMDB_API_KEY=your_tmdb_key        # Optional but recommended for movie data
 ```
 
 **Get API Keys:**
-- **Groq**: [console.groq.com/keys](https://console.groq.com/keys)
-- **Gemini**: [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+- **Gemini**: [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (primary)
+- **Groq**: [console.groq.com/keys](https://console.groq.com/keys) (fallback + captions)
 - **Pexels**: [pexels.com/api](https://www.pexels.com/api/)
 - **TMDB**: [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)
 
@@ -336,6 +336,12 @@ python -m src.batch_runner
 # Override sheet URL
 python -m src.batch_runner --sheet-url "https://docs.google.com/spreadsheets/d/..."
 
+# Limit number of movies to process
+python -m src.batch_runner --limit 5
+
+# Process only one movie
+python -m src.batch_runner --limit 1
+
 # Verbose logging
 python -m src.batch_runner --verbose
 ```
@@ -352,6 +358,38 @@ For each pending job, the batch runner:
 7. Updates row with `Completed` status and all links
 
 Failed jobs are marked with error details in the `notes` column.
+
+### Shell Script Shortcut (macOS Automation)
+
+For quick video generation via macOS Shortcuts or cron jobs, use this shell script:
+
+```bash
+#!/bin/bash
+
+PROJECT_DIR="/Users/samirhusain/Personal/code_projects/StudioZero"
+PYTHON_BIN="/Users/samirhusain/Personal/code_projects/StudioZero/.venv/bin/python"
+
+LOG_FILE="$PROJECT_DIR/output/shortcut_log.txt"
+
+{
+    echo "=== Run started: $(date) ==="
+    cd "$PROJECT_DIR" || { echo "ERROR: Could not cd to $PROJECT_DIR"; exit 1; }
+    "$PYTHON_BIN" -m src.batch_runner --limit 1
+    echo "=== Run finished: $(date) ==="
+    echo ""
+} >> "$LOG_FILE" 2>&1
+```
+
+**Usage:**
+1. Save as `generate_video.sh` in the project root
+2. Make executable: `chmod +x generate_video.sh`
+3. Run directly: `./generate_video.sh`
+4. Or set up as a macOS Shortcut to trigger video generation with one click
+
+The script:
+- Processes exactly one pending movie from the Google Sheet queue (`--limit 1`)
+- Logs all output to `output/shortcut_log.txt` for debugging
+- Can be triggered by macOS Shortcuts, cron, or other automation tools
 
 ## Advanced Features
 

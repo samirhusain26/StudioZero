@@ -1,7 +1,13 @@
+# =============================================================================
+# StudioZero .gitignore
+# =============================================================================
+
 # macOS
 .DS_Store
 
+# -----------------------------------------------------------------------------
 # Python
+# -----------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
@@ -9,7 +15,7 @@ __pycache__/
 dist/
 build/
 
-# Environments
+# Virtual Environments
 .env
 .venv
 env/
@@ -18,19 +24,36 @@ ENV/
 env.bak/
 venv.bak/
 
+# -----------------------------------------------------------------------------
 # IDEs
+# -----------------------------------------------------------------------------
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# Project specific
-assets/
+# -----------------------------------------------------------------------------
+# Project - Generated Content
+# -----------------------------------------------------------------------------
+# Pipeline outputs (temp files, final videos)
 output/
+
+# Downloaded/generated assets (stock videos, TTS audio)
+# Note: assets/music/ and assets/basevideos/ are tracked separately
+assets/
+
+# Log files
 logs/
+*.log
+
+# Whisper models (downloaded on first run)
 models/
+
+# -----------------------------------------------------------------------------
+# Project - Sensitive Files
+# -----------------------------------------------------------------------------
+# Google Cloud service account credentials
 creds/
 
-# Generated files
-*.log
+# Pipeline cache files
 pipeline_cache.json

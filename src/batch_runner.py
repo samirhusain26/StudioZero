@@ -20,22 +20,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+from src.logging_utils import setup_logging
 from src.pipeline import run_pipeline
 from src.cloud_services import get_pending_jobs, update_row
 from src.marketing import generate_social_caption
 from src.config import Config
 
 logger = logging.getLogger(__name__)
-
-
-def setup_logging(verbose: bool = False) -> None:
-    """Configure logging for batch runner."""
-    level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
 
 
 def copy_to_icloud(mp4_path: str) -> str:
