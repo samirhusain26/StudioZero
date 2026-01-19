@@ -142,6 +142,10 @@ def process_movie(
             "notes": "",  # Blank on success
             "api_cost": "",  # Placeholder for future use
             "caption": social_caption,
+            # Social media posting workflow columns
+            "ytshorts_status": "Ready for Upload",
+            "ig_status": "Ready for Upload",
+            "tiktok_status": "Ready for Upload",
         })
 
         logger.info(f"✓ Completed '{movie_name}' in {duration_str}")
