@@ -1,7 +1,13 @@
+# macOS
+.DS_Store
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info/
+dist/
+build/
 
 # Environments
 .env
@@ -12,7 +18,18 @@ ENV/
 env.bak/
 venv.bak/
 
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
 # Project specific
 assets/
 output/
 logs/
+models/
+
+# Generated files
+*.log
+pipeline_cache.json

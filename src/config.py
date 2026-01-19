@@ -17,10 +17,15 @@ class Config:
     # Define directories using pathlib for cross-platform compatibility
     ASSETS_DIR = PROJECT_ROOT / "assets"
     OUTPUT_DIR = PROJECT_ROOT / "output"
+    TEMP_DIR = OUTPUT_DIR / "temp"
+    FINAL_DIR = OUTPUT_DIR / "final"
+    LOGS_DIR = OUTPUT_DIR / "pipeline_logs"
     
     # Load API keys
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+    PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     
     @classmethod
     def validate(cls):
@@ -33,7 +38,11 @@ class Config:
             missing_keys.append("GROQ_API_KEY")
         if not cls.TMDB_API_KEY:
             missing_keys.append("TMDB_API_KEY")
-            
+        if not cls.PEXELS_API_KEY:
+            missing_keys.append("PEXELS_API_KEY")
+        # Note: GEMINI_API_KEY is not required - Cloud TTS uses service account credentials
+        # Set GOOGLE_APPLICATION_CREDENTIALS env var or use gcloud auth application-default login
+
         if missing_keys:
             error_message = (
                 f"Missing required environment variables: {', '.join(missing_keys)}.\n\n"
@@ -42,10 +51,16 @@ class Config:
                 "1. Create a file named '.env' in the project root directory.\n"
                 "2. Copy the contents of '.env.template' (if available) or add the following:\n\n"
                 "GROQ_API_KEY=your_groq_api_key_here\n"
-                "TMDB_API_KEY=your_tmdb_api_key_here\n\n"
+                "TMDB_API_KEY=your_tmdb_api_key_here\n"
+                "PEXELS_API_KEY=your_pexels_api_key_here\n\n"
                 "Where to get keys:\n"
                 "- GROQ_API_KEY: https://console.groq.com/keys\n"
                 "- TMDB_API_KEY: https://www.themoviedb.org/settings/api\n"
+                "- PEXELS_API_KEY: https://www.pexels.com/api/\n\n"
+                "For Gemini TTS (Google Cloud Text-to-Speech):\n"
+                "- Enable Cloud Text-to-Speech API in GCP Console\n"
+                "- Set GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json\n"
+                "- Or run: gcloud auth application-default login\n"
                 "-------------------------------------------------------------------\n"
             )
             raise ValueError(error_message)
@@ -57,6 +72,9 @@ class Config:
         """
         cls.ASSETS_DIR.mkdir(parents=True, exist_ok=True)
         cls.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        cls.TEMP_DIR.mkdir(parents=True, exist_ok=True)
+        cls.FINAL_DIR.mkdir(parents=True, exist_ok=True)
+        cls.LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Run validation on import to ensure fail-fast behavior if preferred,
 # or let the main application call Config.validate()

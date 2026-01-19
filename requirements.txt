@@ -1,7 +1,10 @@
 groq>=0.37.1          # for LLM inference
-edge-tts>=7.2.3      # for Azure neural voice
-tenacity>=9.1.2      # for retry logic
-ffmpeg-python>=0.2.0 # for video rendering
-python-dotenv>=1.2.1 # for API key management
-aiohttp>=3.13.2      # for async image downloading
-requests>=2.32.5     # for synchronous API calls like TMDB
+google-genai>=1.0.0       # for Gemini TTS (AI Studio API)
+tenacity>=9.1.2       # for retry logic
+ffmpeg-python>=0.2.0  # for video rendering
+python-dotenv>=1.2.1  # for API key management
+requests>=2.32.5      # for synchronous API calls (TMDB, Pexels)
+openai-whisper>=20231117 # for audio transcription
+pydantic>=2.0.0       # for data validation in narrative models
+pysubs2>=1.7.0        # for ASS subtitle generation
+Wikipedia-API>=0.6.0  # for fetching movie plots
