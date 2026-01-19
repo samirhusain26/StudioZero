@@ -29,6 +29,7 @@ assets/
 output/
 logs/
 models/
+creds/
 
 # Generated files
 *.log
