@@ -26,6 +26,22 @@ class Config:
     TMDB_API_KEY = os.getenv("TMDB_API_KEY")
     PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+    # Google service account credentials for Drive and Sheets
+    DRIVE_APPLICATION_CREDENTIALS = os.getenv("DRIVE_APPLICATION_CREDENTIALS")
+
+    # Google Drive folder IDs for batch runner uploads
+    DRIVE_VIDEO_FOLDER_ID = os.getenv("DRIVE_VIDEO_FOLDER_ID")
+    DRIVE_LOGS_FOLDER_ID = os.getenv("DRIVE_LOGS_FOLDER_ID")
+
+    # Google Sheet URL for batch processing queue
+    BATCH_SHEET_URL = os.getenv("BATCH_SHEET_URL")
+
+    # iCloud export path (optional, defaults to ~/Library/Mobile Documents/com~apple~CloudDocs/StudioZero/Videos)
+    ICLOUD_EXPORT_PATH = os.getenv(
+        "ICLOUD_EXPORT_PATH",
+        str(Path.home() / "Library" / "Mobile Documents" / "com~apple~CloudDocs" / "StudioZero" / "Videos")
+    )
     
     @classmethod
     def validate(cls):

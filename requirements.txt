@@ -8,3 +8,6 @@ openai-whisper>=20231117 # for audio transcription
 pydantic>=2.0.0       # for data validation in narrative models
 pysubs2>=1.7.0        # for ASS subtitle generation
 Wikipedia-API>=0.6.0  # for fetching movie plots
+gspread>=6.0.0        # for Google Sheets integration
+google-api-python-client>=2.100.0  # for Google Drive uploads
+google-auth>=2.23.0   # for service account authentication

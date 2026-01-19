@@ -113,10 +113,10 @@ class StoryGenerator:
         Initialize the Groq client.
 
         Args:
-            log_dir: Directory to save results. If None, uses assets/pipeline_logs/
+            log_dir: Directory to save results. If None, uses output/pipeline_logs/
         """
         self.client = groq.Groq(api_key=Config.GROQ_API_KEY)
-        self.log_dir = log_dir or Config.ASSETS_DIR / "pipeline_logs"
+        self.log_dir = log_dir or Config.LOGS_DIR
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
     @retry(
