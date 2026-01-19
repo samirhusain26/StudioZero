@@ -27,6 +27,9 @@ class Config:
     PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+    # Gemini model for script generation (with Groq fallback)
+    GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-flash-latest")
+
     # Google service account credentials for Drive and Sheets
     DRIVE_APPLICATION_CREDENTIALS = os.getenv("DRIVE_APPLICATION_CREDENTIALS")
 

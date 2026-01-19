@@ -74,15 +74,30 @@ class MovieDBClient:
     def get_movie_details(self, search_result: dict) -> dict | None:
         """
         Fetch full movie details based on the search result source.
+        If Wikipedia returns an empty plot, automatically falls back to TMDB.
         """
         if not search_result:
             return None
-            
+
         source = search_result.get("source")
         data = search_result.get("data")
-        
+
         if source == "wiki":
-            return self._get_wiki_details(data)
+            details = self._get_wiki_details(data)
+            # Check if Wikipedia plot is empty and fallback to TMDB
+            if not details.get("plot") or not details["plot"].strip():
+                if self.tmdb_session:
+                    logger.info("Wikipedia plot missing, switching to TMDB...")
+                    tmdb_result = self._search_tmdb(details.get("title", ""))
+                    if tmdb_result:
+                        tmdb_details = self._get_tmdb_details(tmdb_result)
+                        if tmdb_details and tmdb_details.get("plot"):
+                            details["plot"] = tmdb_details["plot"]
+                            details["source"] = "Wikipedia + TMDB (plot)"
+                            logger.info("Successfully retrieved plot from TMDB fallback")
+                else:
+                    logger.warning("Wikipedia plot missing and TMDB API key not configured")
+            return details
         elif source == "tmdb":
             return self._get_tmdb_details(data)
         else:
@@ -104,19 +119,26 @@ class MovieDBClient:
             
         return None
 
+    # Section headers to search for plot content (in priority order)
+    PLOT_SECTION_HEADERS = ["Plot", "Synopsis", "Plot summary", "Premise"]
+
     def _get_wiki_details(self, data: dict) -> dict:
         page = data["page_obj"]
-        
+
         plot_text = ""
-        # Try finding Plot or Synopsis
-        plot_section = page.section_by_title("Plot")
-        if not plot_section:
-            plot_section = page.section_by_title("Synopsis")
-            
+        # Try finding plot section using multiple possible headers
+        plot_section = None
+        for header in self.PLOT_SECTION_HEADERS:
+            plot_section = page.section_by_title(header)
+            if plot_section and plot_section.text.strip():
+                break
+            plot_section = None
+
         if plot_section:
             plot_text = plot_section.text
         else:
-            plot_text = page.summary
+            # Fall back to summary if no plot section found
+            plot_text = page.summary if page.summary else ""
 
         # Extract categories as a proxy for genre
         categories = []

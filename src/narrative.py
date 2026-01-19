@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import List, Callable, Optional
 from datetime import datetime
 import groq
+from google import genai
+from google.genai import types
 from pydantic import BaseModel, Field, ValidationError
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from src.config import Config
@@ -110,23 +112,66 @@ class StoryGenerator:
 
     def __init__(self, log_dir: Optional[Path] = None):
         """
-        Initialize the Groq client.
+        Initialize Gemini (primary) and Groq (fallback) clients.
 
         Args:
             log_dir: Directory to save results. If None, uses output/pipeline_logs/
         """
-        self.client = groq.Groq(api_key=Config.GROQ_API_KEY)
+        # Primary: Gemini client
+        self.gemini_client = genai.Client(api_key=Config.GEMINI_API_KEY)
+        self.gemini_model = Config.GEMINI_MODEL_NAME
+
+        # Fallback: Groq client
+        self.groq_client = groq.Groq(api_key=Config.GROQ_API_KEY)
+
         self.log_dir = log_dir or Config.LOGS_DIR
         self.log_dir.mkdir(parents=True, exist_ok=True)
+
+    def _generate_with_gemini(self, system_prompt: str, user_prompt: str) -> str:
+        """
+        Generate script using Google Gemini with structured JSON output.
+
+        Args:
+            system_prompt: The system instruction prompt
+            user_prompt: The user's request prompt
+
+        Returns:
+            Raw JSON string response from Gemini
+
+        Raises:
+            Exception: On API errors (rate limit, server errors, etc.)
+        """
+        # Build the combined prompt (Gemini uses a single prompt, not system/user split)
+        combined_prompt = f"{system_prompt}\n\n---\n\n{user_prompt}"
+
+        # Get the JSON schema from the Pydantic model
+        schema = VideoScript.model_json_schema()
+
+        response = self.gemini_client.models.generate_content(
+            model=self.gemini_model,
+            contents=combined_prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=schema,
+            ),
+        )
+
+        return response.text
 
     @retry(
         retry=retry_if_exception_type((groq.RateLimitError, groq.BadRequestError)),
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=4, max=10)
     )
-    def _generate_with_retry(self, **kwargs):
-        """Wraps the Groq API call with retry logic for rate limits and JSON failures."""
-        return self.client.chat.completions.create(**kwargs)
+    def _generate_with_groq(self, **kwargs) -> str:
+        """
+        Generate script using Groq as fallback with retry logic.
+
+        Returns:
+            Raw JSON string response from Groq
+        """
+        response = self.groq_client.chat.completions.create(**kwargs)
+        return response.choices[0].message.content
 
     def _log_result(self, movie_title: str, data: dict) -> Path:
         """
@@ -357,17 +402,40 @@ Output ONLY valid JSON."""
             callback('data', "System Prompt", system_prompt)
             callback('data', "User Prompt", user_prompt)
 
-        try:
-            response = self._generate_with_retry(
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                model="llama-3.3-70b-versatile",
-                response_format={"type": "json_object"}
-            )
+        content = None
+        provider_used = "gemini"
 
-            content = response.choices[0].message.content
+        # Try Gemini first (primary)
+        try:
+            if callback:
+                callback('log', f"Attempting script generation with Gemini ({self.gemini_model})...")
+            content = self._generate_with_gemini(system_prompt, user_prompt)
+            logger.info(f"Script generated successfully with Gemini")
+        except Exception as e:
+            # Gemini failed - log warning and fall back to Groq
+            logger.warning(f"[WARN] Gemini failed: {e}. Switching to Groq fallback...")
+            if callback:
+                callback('log', f"[WARN] Gemini failed: {e}. Switching to Groq fallback...")
+            provider_used = "groq"
+
+        # Fallback to Groq if Gemini failed
+        if content is None:
+            try:
+                if callback:
+                    callback('log', "Attempting script generation with Groq fallback...")
+                content = self._generate_with_groq(
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    model="llama-3.3-70b-versatile",
+                    response_format={"type": "json_object"}
+                )
+                logger.info(f"Script generated successfully with Groq fallback")
+            except Exception as e:
+                raise RuntimeError(f"Both Gemini and Groq failed. Last error: {e}")
+
+        try:
             raw_json = json.loads(content)
             result = VideoScript.model_validate(raw_json)
 
@@ -383,12 +451,13 @@ Output ONLY valid JSON."""
             self._log_result(movie_title, {
                 "input": {"title": movie_title, "plot_length": len(plot)},
                 "output": result.model_dump(),
-                "raw_response": content
+                "raw_response": content,
+                "provider": provider_used
             })
 
             if callback:
                 callback('data', "Video Script Result", result.model_dump())
-                callback('log', f"Script complete: {len(result.scenes)} scenes, genre={result.genre}, voice={result.selected_voice_id}, lang={result.lang_code}, music={result.selected_music_file}")
+                callback('log', f"Script complete ({provider_used}): {len(result.scenes)} scenes, genre={result.genre}, voice={result.selected_voice_id}, lang={result.lang_code}, music={result.selected_music_file}")
 
             return result
 
