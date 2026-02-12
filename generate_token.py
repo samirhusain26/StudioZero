@@ -4,7 +4,7 @@ import os
 
 # Permissions to ask for
 SCOPES = [
-    'https://www.googleapis.com/auth/drive.file',
+    'https://www.googleapis.com/auth/drive',        # <--- Changed from 'drive.file' to 'drive' (Full Access)
     'https://www.googleapis.com/auth/spreadsheets'
 ]
 
