@@ -16,6 +16,7 @@ import logging
 import shutil
 import time
 import traceback
+import platform
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -29,18 +30,22 @@ from src.config import Config
 logger = logging.getLogger(__name__)
 
 
-def copy_to_icloud(mp4_path: str) -> str:
+def copy_to_icloud(mp4_path: str) -> Optional[str]:
     """
-    Copy the final MP4 to iCloud Documents folder.
-
-    Args:
-        mp4_path: Path to the source MP4 file.
-
-    Returns:
-        Absolute path to the copied file in iCloud.
+    Copy final MP4 to iCloud (macOS only). Returns None if on Linux/Cloud.
     """
+    # 1. Check if we are on a Mac. If not, skip this entirely.
+    if platform.system() != "Darwin":
+        logger.info("Skipping iCloud export (Not running on macOS)")
+        return None
+
     icloud_dir = Path(Config.ICLOUD_EXPORT_PATH)
-    icloud_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        icloud_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        # Fallback if the Config path is totally invalid on this OS
+        logger.warning(f"Could not create iCloud directory: {icloud_dir}")
+        return None
 
     source = Path(mp4_path)
     destination = icloud_dir / source.name
@@ -124,7 +129,7 @@ def process_movie(
         social_caption = generate_social_caption(script)
         logger.info("Caption generated successfully")
 
-        # Step 4: Copy to iCloud
+        # Step 4: Copy to iCloud (Will return None if on Colab)
         logger.info(f"Copying to iCloud...")
         icloud_path = copy_to_icloud(mp4_path)
 
@@ -138,11 +143,11 @@ def process_movie(
             "Status": "Completed",
             "start_time": start_timestamp,
             "end_time": end_timestamp,
-            "icloud_link": icloud_path,
-            "notes": "",  # Blank on success
-            "api_cost": "",  # Placeholder for future use
+            # Use a safe default if icloud_path is None
+            "icloud_link": icloud_path if icloud_path else "Saved to Drive (Cloud)", 
+            "notes": "",
+            "api_cost": "",
             "caption": social_caption,
-            # Social media posting workflow columns
             "ytshorts_status": "Ready for Upload",
             "ig_status": "Ready for Upload",
             "tiktok_status": "Ready for Upload",
