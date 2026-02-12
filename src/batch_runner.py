@@ -23,7 +23,7 @@ from typing import Optional
 
 from src.logging_utils import setup_logging
 from src.pipeline import run_pipeline
-from src.cloud_services import get_pending_jobs, update_row
+from src.cloud_services import get_pending_jobs, update_row, upload_to_drive
 from src.marketing import generate_social_caption
 from src.config import Config
 
@@ -157,18 +157,27 @@ def process_movie(
         logger.info(f"Copying to iCloud...")
         icloud_path = copy_to_icloud(mp4_path)
 
+        # Step 5: Upload to Google Drive
+        drive_link = ""
+        if Config.DRIVE_VIDEO_FOLDER_ID:
+            logger.info("Uploading video to Google Drive...")
+            drive_link = upload_to_drive(mp4_path, Config.DRIVE_VIDEO_FOLDER_ID)
+            logger.info(f"Uploaded to Drive: {drive_link}")
+        else:
+            logger.warning("DRIVE_VIDEO_FOLDER_ID not set, skipping Drive upload")
+
         # Record end time
         end_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         elapsed = time.time() - start_time
         duration_str = format_duration(elapsed)
 
-        # Step 5: Final Update - Mark as Completed
+        # Step 6: Final Update - Mark as Completed
         update_row(sheet_url, row_index, {
             "Status": "Completed",
             "start_time": start_timestamp,
             "end_time": end_timestamp,
-            # Use a safe default if icloud_path is None
-            "icloud_link": icloud_path if icloud_path else "Saved to Drive (Cloud)", 
+            "video_link": drive_link,
+            "icloud_link": icloud_path if icloud_path else "",
             "notes": "",
             "api_cost": "",
             "caption": social_caption,
