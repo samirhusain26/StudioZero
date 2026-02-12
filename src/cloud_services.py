@@ -1,16 +1,18 @@
 """
 Google Sheets and Google Drive integration for StudioZero pipeline.
-Uses service account authentication via drive_credentials.json or
-GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable (for Cloud Run).
+Supports OAuth user credentials (preferred for Drive uploads) and
+service account fallback. Handles Base64-encoded secrets for cloud deployment.
 """
 
+import base64
 import json
 import os
 from pathlib import Path
 from typing import Optional
 
 import gspread
-from google.oauth2.service_account import Credentials
+from google.oauth2.credentials import Credentials
+from google.oauth2.service_account import Credentials as ServiceAccountCredentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
@@ -23,37 +25,58 @@ SCOPES = [
 ]
 
 
-def _get_credentials() -> Credentials:
+def _decode_secret(secret_value):
     """
-    Load service account credentials.
-
-    Priority:
-      1. GOOGLE_APPLICATION_CREDENTIALS_JSON env var (inline JSON string, for Cloud Run)
-      2. DRIVE_APPLICATION_CREDENTIALS env var (file path, for local development)
+    Helper: Decodes a secret whether it's raw JSON or Base64 encoded.
     """
-    # 1. Try inline JSON from environment (Cloud Run / containers)
-    creds_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
-    if creds_json:
-        info = json.loads(creds_json)
-        return Credentials.from_service_account_info(info, scopes=SCOPES)
+    if not secret_value:
+        return None
 
-    # 2. Fall back to file path (local development)
-    creds_path_str = Config.DRIVE_APPLICATION_CREDENTIALS
-    if not creds_path_str:
-        raise ValueError(
-            "No Google credentials found. Set either:\n"
-            "  - GOOGLE_APPLICATION_CREDENTIALS_JSON (inline JSON for Cloud Run), or\n"
-            "  - DRIVE_APPLICATION_CREDENTIALS (file path for local dev)"
-        )
-    creds_path = Path(creds_path_str)
-    if not creds_path.is_absolute():
-        creds_path = Config.PROJECT_ROOT / creds_path
-    if not creds_path.exists():
-        raise FileNotFoundError(
-            f"Service account credentials not found at {creds_path}. "
-            "Download from Google Cloud Console and set DRIVE_APPLICATION_CREDENTIALS in .env."
-        )
-    return Credentials.from_service_account_file(str(creds_path), scopes=SCOPES)
+    # Try decoding Base64 first
+    try:
+        decoded = base64.b64decode(secret_value).decode('utf-8')
+        # Check if it looks like JSON
+        if decoded.startswith('{'):
+            return json.loads(decoded)
+    except Exception:
+        pass  # It wasn't base64, so treat it as raw string
+
+    # Try parsing as raw JSON
+    try:
+        return json.loads(secret_value)
+    except Exception:
+        return None
+
+
+def _get_credentials(scopes):
+    """
+    Retrieves credentials, handling Base64 encoding for Cloud deployment safety.
+    """
+    # 1. [CLOUD] Try User Token (OAuth) - Preferred for Drive Uploads
+    token_secret = os.environ.get("GOOGLE_TOKEN_JSON")
+    if token_secret:
+        user_info = _decode_secret(token_secret)
+        if user_info:
+            print("Using User Credentials (OAuth)")
+            return Credentials.from_authorized_user_info(user_info, scopes)
+        else:
+            print("GOOGLE_TOKEN_JSON found but failed to decode.")
+
+    # 2. [LOCAL] Try local token.json file
+    local_token_path = "assets/creds/token.json"
+    if os.path.exists(local_token_path):
+        print("Using local User Credentials (token.json)")
+        return Credentials.from_authorized_user_file(local_token_path, scopes)
+
+    # 3. [FALLBACK] Service Account (Will fail for Drive Uploads)
+    print("Warning: Falling back to Service Account")
+    sa_secret = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    if sa_secret:
+        sa_info = _decode_secret(sa_secret)
+        if sa_info:
+            return ServiceAccountCredentials.from_service_account_info(sa_info, scopes=scopes)
+
+    raise RuntimeError("No valid Google credentials found! Please check GitHub Secrets.")
 
 
 _cached_gspread_client = None
@@ -64,7 +87,7 @@ def _get_gspread_client() -> gspread.Client:
     """Get authenticated gspread client (cached)."""
     global _cached_gspread_client
     if _cached_gspread_client is None:
-        creds = _get_credentials()
+        creds = _get_credentials(SCOPES)
         _cached_gspread_client = gspread.authorize(creds)
     return _cached_gspread_client
 
@@ -73,7 +96,7 @@ def _get_drive_service():
     """Get authenticated Google Drive service (cached)."""
     global _cached_drive_service
     if _cached_drive_service is None:
-        creds = _get_credentials()
+        creds = _get_credentials(SCOPES)
         _cached_drive_service = build("drive", "v3", credentials=creds)
     return _cached_drive_service
 
