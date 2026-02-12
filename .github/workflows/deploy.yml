@@ -61,4 +61,5 @@ jobs:
           --set-env-vars BATCH_SHEET_URL=${{ secrets.BATCH_SHEET_URL }} \
           --set-env-vars DRIVE_VIDEO_FOLDER_ID=${{ secrets.DRIVE_VIDEO_FOLDER_ID }} \
           --set-env-vars DRIVE_LOGS_FOLDER_ID=${{ secrets.DRIVE_LOGS_FOLDER_ID }} \
-          --set-env-vars GOOGLE_APPLICATION_CREDENTIALS_JSON='${{ secrets.DRIVE_CREDS_JSON }}'
+          --set-env-vars GOOGLE_APPLICATION_CREDENTIALS_JSON='${{ secrets.DRIVE_CREDS_JSON }}' \
+          --set-env-vars GOOGLE_TOKEN_JSON='${{ secrets.GOOGLE_TOKEN_JSON }}'
