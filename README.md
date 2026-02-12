@@ -1,204 +1,28 @@
 # StudioZero
 
-StudioZero is an AI-powered video generation pipeline that creates short, stylized vertical videos (9:16 aspect ratio) from movie titles. Input a movie name, and the system automatically fetches movie data, generates a compelling narrative via LLM, synthesizes voiceovers, downloads matching stock footage, and renders a final video with Hormozi-style animated captions.
+AI-powered video generation pipeline that creates short, vertical (9:16) social media videos from movie titles. Input a movie name and the system automatically fetches movie data, generates a narrative script, synthesizes voiceovers, downloads matching stock footage, and renders a final video with animated captions.
 
-**Target Output**: Viral-ready social media videos suitable for TikTok, Instagram Reels, and YouTube Shorts.
+**Output**: Viral-ready videos for TikTok, Instagram Reels, and YouTube Shorts.
 
-## How It Works
+## Pipeline at a Glance
 
 ```
 Movie Name → Wikipedia/TMDB → Gemini LLM → Gemini TTS + Pexels + Whisper → FFmpeg → Video
 ```
 
-### The 5-Step Pipeline
+| Step | What Happens | Services Used |
+|------|-------------|---------------|
+| 1. Script Generation | Fetch movie data, generate 6-scene narrative | Wikipedia, TMDB, Gemini (Groq fallback) |
+| 2. Asset Generation | Parallel TTS audio + stock video per scene | Gemini TTS, Pexels API |
+| 3. Transcription | Word-level timestamp extraction | OpenAI Whisper (local) |
+| 4. Subtitles | Hormozi-style word-by-word captions | pysubs2 (ASS format) |
+| 5. Rendering | Compose video with audio ducking + subtitles | FFmpeg |
 
-The pipeline is implemented as a **generator-based orchestration engine** that yields real-time progress updates:
+For the full technical breakdown, see [VIDEO_PIPELINE.md](docs/VIDEO_PIPELINE.md).
 
-#### Step 1: Movie Data Retrieval & Script Generation
-- Searches Wikipedia for movie data (with TMDB fallback)
-- Extracts plot, year, tagline, and poster path
-- Passes data to Gemini LLM (with Groq fallback) with a comprehensive system prompt
-- LLM generates a `VideoScript` with:
-  - Genre classification and voice selection (from 30 available voices)
-  - 6-scene narrative arc with detailed annotations
-  - Visual search queries per scene (literal, abstract, atmospheric)
-  - Mood-based pacing recommendations
+## Quick Start
 
-#### Step 2: Parallel Asset Generation
-- **TTS (Parallel)**: Gemini generates narration audio per scene with mood-based style prompts
-- **Stock Video (Parallel)**: Pexels API downloads portrait footage using 3 visual queries per scene
-- **Ending Scene**: Special handling for movie poster reveal with Ken Burns zoom effect
-- Fallback to local base videos if Pexels search fails
-
-#### Step 3: Whisper Transcription
-- Whisper "base" model extracts word-level timestamps from each audio file
-- Cumulative timestamp adjustment across all scenes for frame-accurate sync
-
-#### Step 4: Karaoke Subtitle Generation
-- Generates ASS (Advanced SubStation Alpha) subtitles
-- Hormozi-style formatting: Arial Black 80pt, white with black outline
-- Word-by-word appearance based on Whisper timestamps
-
-#### Step 5: Video Rendering
-- **Video Normalization**: All clips normalized to 1080x1920, 30fps, H.264
-- **Audio Mixing**: Voiceover concatenation with looped background music
-- **Audio Ducking**: Sidechain compression reduces music when voice is present
-- **Subtitle Burning**: ASS subtitles overlaid via FFmpeg `ass` filter
-- **Final Encode**: H.264 MP4 with AAC audio (192kbps)
-
-## Technology Stack
-
-| Component | Technology | Details |
-|-----------|------------|---------|
-| **Language** | Python 3.10+ | Modern async/threading support |
-| **LLM** | Google Gemini (primary) + Groq (fallback) | Gemini 2.0 Flash with Groq Llama fallback |
-| **Text-to-Speech** | Google Gemini 2.5 Flash TTS | 30 voices, mood-based style prompts |
-| **Transcription** | OpenAI Whisper | Base model with word-level timestamps |
-| **Stock Video** | Pexels API | Portrait filtering, 3-query fallback |
-| **Video Rendering** | FFmpeg | filter_complex pipelines, Ken Burns |
-| **Subtitles** | pysubs2 | ASS format, Hormozi-style captions |
-| **Movie Data** | Wikipedia API + TMDB | Dual-source with fallback |
-| **Data Validation** | Pydantic 2.0+ | Structured script models |
-| **Retry Logic** | tenacity | Exponential backoff for rate limits |
-| **Config** | python-dotenv | Environment variable management |
-| **Cloud Storage** | Google Drive API | Video/log uploads via service account |
-| **Job Queue** | Google Sheets API | Batch processing with status tracking |
-| **Sheets Client** | gspread | Pythonic Google Sheets interface |
-
-## Project Structure
-
-```
-StudioZero/
-├── src/                          # Main application code
-│   ├── app.py                    # CLI entry point with argument parsing
-│   ├── pipeline.py               # 5-step orchestration engine (generator-based)
-│   ├── narrative.py              # Gemini/Groq LLM script generation with Pydantic models
-│   ├── moviedbapi.py             # Wikipedia/TMDB client for movie data
-│   ├── gemini_tts.py             # Google Gemini TTS voice synthesis
-│   ├── stock_media.py            # Pexels API video download with fallback
-│   ├── subtitles.py              # ASS subtitle generation (word-by-word captions)
-│   ├── renderer.py               # FFmpeg video composition with Ken Burns
-│   ├── config.py                 # Environment variables & path management
-│   ├── config_mappings.py        # Voice/music genre mappings
-│   ├── batch_runner.py           # Batch processing from Google Sheets queue
-│   ├── cloud_services.py         # Google Drive/Sheets integration
-│   └── marketing.py              # Social media caption generation
-├── assets/
-│   ├── basevideos/               # Fallback stock footage (.mp4 clips)
-│   ├── music/                    # Background music tracks by genre
-│   └── creds/                    # Google service account credentials
-├── output/
-│   ├── temp/                     # Intermediate files (audio, video, metadata)
-│   ├── final/                    # Final rendered videos
-│   └── pipeline_logs/            # Script generation logs (JSON)
-├── requirements.txt              # Python dependencies
-├── .env.template                 # Environment variable template
-└── .env                          # API keys and configuration (create from template)
-```
-
-## Module Overview
-
-### Core Modules
-
-| Module | Responsibility |
-|--------|---------------|
-| **app.py** | CLI interface, argument parsing, logging setup, pipeline orchestration |
-| **pipeline.py** | Generator-based 5-step orchestration, caching, parallel scene processing |
-| **narrative.py** | Gemini/Groq LLM integration, system prompts, Pydantic models for scripts |
-| **moviedbapi.py** | Wikipedia/TMDB API client, plot extraction, poster download |
-| **gemini_tts.py** | Gemini TTS API, 30 voices, mood-based style prompts, WAV generation |
-| **stock_media.py** | Pexels API, portrait filtering, 3-query fallback, local video fallback |
-| **subtitles.py** | ASS subtitle generation, Hormozi-style formatting, word timing |
-| **renderer.py** | FFmpeg composition, Ken Burns, audio ducking, subtitle burning |
-| **config.py** | Environment loading, path management, API key validation |
-| **config_mappings.py** | Voice metadata, music-genre mapping, mood-speed mapping |
-| **batch_runner.py** | Batch processing loop, Google Sheet job queue, iCloud export |
-| **cloud_services.py** | Google Drive uploads, Google Sheets read/write, service account auth |
-| **marketing.py** | LLM-powered social caption generation, genre-based hashtags |
-
-### Key Data Models (Pydantic)
-
-```python
-VideoScript:
-  - title: str              # Movie title
-  - genre: str              # Primary genre classification
-  - overall_mood: str       # TTS voice tone consistency
-  - selected_voice_id: str  # Chosen voice for narration
-  - selected_music_file: str # Background music filename
-  - scenes: List[Scene]     # 6 scene objects
-
-Scene:
-  - scene_index: int        # 0-5 index
-  - narration: str          # 25-40 word conversational text
-  - visual_queries: List[str] # 3 search queries (literal, abstract, atmospheric)
-  - mood: str               # Scene emotional tone
-  - tts_speed: float        # 1.0-1.6 speed multiplier
-
-SceneAssets:
-  - audio_path: Path        # Generated WAV file
-  - audio_duration: float   # Duration in seconds
-  - video_path: Path        # Downloaded/fallback video
-  - word_timestamps: List   # Whisper-extracted timing
-```
-
-## Data Flow
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Movie Name Input                         │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Step 1: Movie Data Retrieval & Script Generation               │
-│  ├─ Wikipedia/TMDB Search                                       │
-│  ├─ Extract Plot, Year, Tagline                                 │
-│  └─ Gemini LLM → VideoScript (6 scenes, voice, music, moods)    │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Step 2: Parallel Asset Generation (ThreadPoolExecutor)         │
-│  ├─ Scene 1-5:                                                  │
-│  │   ├─ Gemini TTS → Audio (WAV)                                │
-│  │   └─ Pexels API → Video (MP4) [or local fallback]            │
-│  └─ Scene 6 (Ending):                                           │
-│      ├─ Poster Download → Ken Burns Video                       │
-│      └─ Closing Narration Audio                                 │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Step 3: Whisper Transcription                                  │
-│  └─ Word-level timestamps with cumulative offset adjustment     │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Step 4: Subtitle Generation                                    │
-│  └─ ASS format (Hormozi-style: 80pt Arial Black, word-by-word)  │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Step 5: FFmpeg Rendering                                       │
-│  ├─ Normalize Videos (1080x1920, 30fps, H.264)                  │
-│  ├─ Concatenate Videos + Audio                                  │
-│  ├─ Loop Background Music                                       │
-│  ├─ Sidechain Compression (audio ducking)                       │
-│  ├─ Burn ASS Subtitles                                          │
-│  └─ Final H.264 + AAC Encode                                    │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                 Output: output/final/<movie>.mp4                │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## Setup
-
-### 1. Install Python Dependencies
+### 1. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -213,108 +37,78 @@ brew install ffmpeg
 # Ubuntu/Debian
 sudo apt install ffmpeg
 
-# Windows (via chocolatey)
+# Windows
 choco install ffmpeg
 ```
 
-FFmpeg must be compiled with `libx264` and `libass` support.
+FFmpeg must include `libx264` and `libass` support.
 
 ### 3. Configure API Keys
-
-Copy the template and fill in your values:
 
 ```bash
 cp .env.template .env
 ```
 
-**Required API Keys (for video generation):**
+Fill in your keys:
 
-```bash
-GEMINI_API_KEY=your_gemini_key    # Primary LLM + TTS
-GROQ_API_KEY=your_groq_key        # Fallback LLM + caption generation
-PEXELS_API_KEY=your_pexels_key    # Stock video
-TMDB_API_KEY=your_tmdb_key        # Optional but recommended for movie data
-```
+| Key | Source | Required |
+|-----|--------|----------|
+| `GEMINI_API_KEY` | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | Yes (LLM + TTS) |
+| `GROQ_API_KEY` | [console.groq.com/keys](https://console.groq.com/keys) | Yes (fallback + captions) |
+| `PEXELS_API_KEY` | [pexels.com/api](https://www.pexels.com/api/) | Yes (stock video) |
+| `TMDB_API_KEY` | [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) | Recommended (movie data) |
 
-**Get API Keys:**
-- **Gemini**: [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (primary)
-- **Groq**: [console.groq.com/keys](https://console.groq.com/keys) (fallback + captions)
-- **Pexels**: [pexels.com/api](https://www.pexels.com/api/)
-- **TMDB**: [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)
-
-### 4. Configure Batch Processing (Optional)
-
-For automated batch processing from Google Sheets:
-
-**a) Create a Google Service Account:**
-1. Go to [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts)
-2. Create a new service account
-3. Enable Google Drive API and Google Sheets API
-4. Download the JSON credentials file
-5. Place it in `assets/creds/drive_credentials.json`
-
-**b) Add batch configuration to `.env`:**
-
-```bash
-# Path to service account credentials
-DRIVE_APPLICATION_CREDENTIALS=assets/creds/drive_credentials.json
-
-# Google Sheet URL with movie queue
-BATCH_SHEET_URL=https://docs.google.com/spreadsheets/d/your_sheet_id
-
-# Google Drive folder IDs for uploads
-DRIVE_VIDEO_FOLDER_ID=your_video_folder_id
-DRIVE_LOGS_FOLDER_ID=your_logs_folder_id
-```
-
-**c) Share your Google Sheet and Drive folders** with the service account email (found in the JSON file).
-
-### 5. Add Fallback Footage (Optional)
-
-Place `.mp4` video clips in `assets/basevideos/` for when Pexels search fails. These should be portrait (9:16) clips.
-
-### 6. Add Background Music (Optional)
-
-Place music tracks in `assets/music/<genre>/` folders. Supported genres: action, comedy, drama, horror, romance, sci-fi, thriller, etc.
-
-## Usage
-
-### Basic Usage
+### 4. Generate a Video
 
 ```bash
 python -m src.app "Inception"
 ```
 
-### CLI Options
+Output lands in `output/final/Inception.mp4`.
+
+## Usage
+
+### Single Video
 
 ```bash
-# Full pipeline with verbose logging
+# Basic
+python -m src.app "The Matrix"
+
+# Verbose logging
 python -m src.app "The Matrix" --verbose
 
-# Generate assets only (skip final render)
+# Generate assets only (skip render)
 python -m src.app "Pulp Fiction" --assets-only
 
-# Use cached data (offline mode)
+# Use cached data (no API calls)
 python -m src.app "Interstellar" --offline
 
 # Custom output path
 python -m src.app "Dune" -o custom_output.mp4
 ```
 
-### Output
+### Batch Processing
 
-- **Final Video**: `output/final/<movie_name>.mp4`
-- **Intermediate Files**: `output/temp/<movie_name>/`
-- **Pipeline Logs**: `output/pipeline_logs/`
-- **Cache**: `pipeline_cache.json`
+Process multiple movies from a Google Sheet queue:
 
-## Batch Processing
+```bash
+# Process all pending
+python -m src.batch_runner
 
-Process multiple movies automatically from a Google Sheet queue.
+# Override sheet URL
+python -m src.batch_runner --sheet-url "https://docs.google.com/spreadsheets/d/..."
 
-### Google Sheet Setup
+# Limit to N movies
+python -m src.batch_runner --limit 5
+
+# Verbose
+python -m src.batch_runner --verbose
+```
+
+#### Google Sheet Setup
 
 Create a sheet with these columns:
+
 | Column | Description |
 |--------|-------------|
 | `movie_title` | Movie name to process |
@@ -326,122 +120,125 @@ Create a sheet with these columns:
 | `icloud_link` | Auto-populated with local iCloud path |
 | `caption` | Auto-populated with generated social caption |
 | `notes` | Auto-populated with error details (blank on success) |
+| `ytshorts_status` | Auto-populated posting status |
+| `ig_status` | Auto-populated posting status |
+| `tiktok_status` | Auto-populated posting status |
 
-### Running Batch Processing
+Share the sheet with your Google service account email.
 
-```bash
-# Use default sheet from .env
-python -m src.batch_runner
+#### Batch Setup
 
-# Override sheet URL
-python -m src.batch_runner --sheet-url "https://docs.google.com/spreadsheets/d/..."
+1. Create a [Google service account](https://console.cloud.google.com/iam-admin/serviceaccounts) with Drive + Sheets API enabled
+2. Download credentials JSON to `assets/creds/drive_credentials.json`
+3. Add to `.env`:
+   ```bash
+   DRIVE_APPLICATION_CREDENTIALS=assets/creds/drive_credentials.json
+   BATCH_SHEET_URL=https://docs.google.com/spreadsheets/d/your_sheet_id
+   DRIVE_VIDEO_FOLDER_ID=your_video_folder_id
+   DRIVE_LOGS_FOLDER_ID=your_logs_folder_id
+   ```
+4. Share your Sheet and Drive folders with the service account email
 
-# Limit number of movies to process
-python -m src.batch_runner --limit 5
+#### macOS Automation
 
-# Process only one movie
-python -m src.batch_runner --limit 1
-
-# Verbose logging
-python -m src.batch_runner --verbose
-```
-
-### Batch Processing Pipeline
-
-For each pending job, the batch runner:
-1. Marks row as `Processing` with start timestamp
-2. Runs the full video generation pipeline
-3. Generates a viral social media caption (via Groq LLM)
-4. Copies video to iCloud (macOS)
-5. Uploads video to Google Drive
-6. Uploads pipeline log to Google Drive
-7. Updates row with `Completed` status and all links
-
-Failed jobs are marked with error details in the `notes` column.
-
-### Shell Script Shortcut (macOS Automation)
-
-For quick video generation via macOS Shortcuts or cron jobs, use this shell script:
+Trigger batch processing via macOS Shortcuts or cron:
 
 ```bash
 #!/bin/bash
-
-PROJECT_DIR="/Users/samirhusain/Personal/code_projects/StudioZero"
-PYTHON_BIN="/Users/samirhusain/Personal/code_projects/StudioZero/.venv/bin/python"
-
+PROJECT_DIR="/path/to/StudioZero"
+PYTHON_BIN="$PROJECT_DIR/.venv/bin/python"
 LOG_FILE="$PROJECT_DIR/output/shortcut_log.txt"
 
 {
     echo "=== Run started: $(date) ==="
-    cd "$PROJECT_DIR" || { echo "ERROR: Could not cd to $PROJECT_DIR"; exit 1; }
+    cd "$PROJECT_DIR" || exit 1
     "$PYTHON_BIN" -m src.batch_runner --limit 1
     echo "=== Run finished: $(date) ==="
-    echo ""
 } >> "$LOG_FILE" 2>&1
 ```
 
-**Usage:**
-1. Save as `generate_video.sh` in the project root
-2. Make executable: `chmod +x generate_video.sh`
-3. Run directly: `./generate_video.sh`
-4. Or set up as a macOS Shortcut to trigger video generation with one click
+## Project Structure
 
-The script:
-- Processes exactly one pending movie from the Google Sheet queue (`--limit 1`)
-- Logs all output to `output/shortcut_log.txt` for debugging
-- Can be triggered by macOS Shortcuts, cron, or other automation tools
-
-## Advanced Features
-
-### Generator-Based Progress Reporting
-The pipeline yields `PipelineStatus` objects for real-time UI feedback, enabling progress bars and status updates.
-
-### Caching System
-`pipeline_cache.json` stores generated scripts for offline processing and faster re-runs.
-
-### Multi-Level Fallback
 ```
-Pexels Query 1 → Pexels Query 2 → Pexels Query 3 → Local Fallback Video
+StudioZero/
+├── src/
+│   ├── app.py              # CLI entry point
+│   ├── pipeline.py         # 5-step orchestration engine (generator-based)
+│   ├── narrative.py        # LLM script generation (Gemini + Groq fallback)
+│   ├── moviedbapi.py       # Wikipedia/TMDB movie data client
+│   ├── gemini_tts.py       # Gemini TTS (30 voices, mood-based)
+│   ├── stock_media.py      # Pexels stock video download
+│   ├── subtitles.py        # ASS subtitle generation
+│   ├── renderer.py         # FFmpeg video composition
+│   ├── config.py           # Environment variables & paths
+│   ├── config_mappings.py  # Voice/music/mood mappings
+│   ├── batch_runner.py     # Batch processing from Google Sheets
+│   ├── cloud_services.py   # Google Drive/Sheets integration
+│   ├── marketing.py        # Social media caption generation
+│   └── logging_utils.py    # Logging configuration
+├── assets/
+│   ├── basevideos/         # 24 fallback video clips
+│   ├── music/              # Background tracks by genre (17 genres)
+│   └── creds/              # Google service account credentials
+├── output/
+│   ├── temp/               # Intermediate files per movie
+│   ├── final/              # Rendered videos
+│   └── pipeline_logs/      # Script generation logs
+├── docs/
+│   └── VIDEO_PIPELINE.md   # Detailed pipeline documentation
+├── requirements.txt
+├── .env.template
+└── CLAUDE.md               # AI assistant project context
 ```
 
-### Audio Ducking
-Professional sidechain compression automatically lowers music volume when voice is present:
-- Threshold: 0.1
-- Ratio: 10:1
-- Attack: 50ms
-- Release: 200ms
+## Technology Stack
 
-### Ken Burns Effect
-Subtle zoom applied to static poster images for dynamic ending sequences.
+| Component | Technology |
+|-----------|-----------|
+| Language | Python 3.10+ |
+| LLM (primary) | Google Gemini 2.0 Flash |
+| LLM (fallback) | Groq LLaMA 3.3 70B |
+| Text-to-Speech | Google Gemini 2.5 Flash TTS (30 voices) |
+| Transcription | OpenAI Whisper (base, local) |
+| Stock Video | Pexels API |
+| Movie Data | Wikipedia API + TMDB v3 |
+| Video Rendering | FFmpeg (H.264, ASS subtitles, sidechain compression) |
+| Subtitles | pysubs2 (ASS format) |
+| Data Validation | Pydantic 2.0+ |
+| Retry Logic | tenacity (exponential backoff) |
+| Cloud Storage | Google Drive API |
+| Job Queue | Google Sheets API + gspread |
+| Config | python-dotenv |
 
-### Voice Selection
-30 available voices (14 female, 16 male) with genre-optimized recommendations:
-- Dramatic: Orus, Fenrir
-- Conversational: Kore, Puck
-- Warm: Aoede, Leda
-- Energetic: Zephyr, Charon
+## Key Features
 
-### Mood-Based TTS Pacing
-14 emotional contexts with optimized speech speeds (1.0-1.6x):
-- Tense/Suspenseful: 0.95x
-- Exciting/Action: 1.15x
-- Calm/Reflective: 0.9x
-- Dramatic: 1.0x
+- **30 TTS voices** with genre-optimized selection (14 female, 16 male)
+- **Mood-based pacing** across 14 emotional contexts (0.9x-1.6x speed)
+- **Audio ducking** via sidechain compression (music auto-lowers during narration)
+- **Ken Burns effect** on movie poster for dynamic ending scenes
+- **Multi-level fallback** at every stage (Wikipedia→TMDB, Gemini→Groq, Pexels→Local)
+- **Pipeline caching** for offline re-rendering without API calls
+- **Social media captions** auto-generated with hook-first format and genre hashtags
+- **Batch automation** from Google Sheets with Drive upload and status tracking
+- **Generator-based progress** reporting via `PipelineStatus` objects
 
-### Social Media Caption Generation
-Automated viral caption generation for TikTok/Instagram Reels:
-- Hook-first format optimized for engagement
-- Genre-specific hashtag selection (15 genres supported)
-- Conversational tone via Groq LLM
-- Includes soft CTA for follower growth
+## Output Specs
+
+| Property | Value |
+|----------|-------|
+| Resolution | 1080x1920 (9:16 portrait) |
+| Frame Rate | 30 fps |
+| Video Codec | H.264 (libx264, CRF 23) |
+| Audio Codec | AAC 192kbps |
+| Duration | ~45-60 seconds |
+| Scenes | 6 (hook → context → escalation → turn → climax → resolution) |
 
 ## Requirements
 
 - Python 3.10+
 - FFmpeg 4.0+ (with libx264, libass)
-- FFprobe (included with FFmpeg)
 - ~2GB RAM for Whisper transcription
-- Internet connection for API calls
+- Internet connection for API calls (or use `--offline` with cached data)
 
 ## License
 
