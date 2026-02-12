@@ -12,6 +12,8 @@ This module orchestrates the complete video generation workflow:
 import json
 import logging
 import random
+import shutil
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
@@ -78,13 +80,23 @@ ENDING_TEMPLATES = [
 _whisper_model = None
 
 
+_whisper_load_lock = threading.Lock()
+
+
 def _get_whisper_model():
-    """Lazily load the Whisper model."""
+    """Lazily load the Whisper model (thread-safe)."""
     global _whisper_model
     if _whisper_model is None:
-        logger.info("Loading Whisper model (base)...")
-        _whisper_model = whisper.load_model("base")
+        with _whisper_load_lock:
+            if _whisper_model is None:
+                logger.info("Loading Whisper model (base)...")
+                _whisper_model = whisper.load_model("base")
     return _whisper_model
+
+
+def _preload_whisper_model():
+    """Start loading Whisper model in background thread."""
+    threading.Thread(target=_get_whisper_model, daemon=True).start()
 
 
 @dataclass
@@ -154,24 +166,32 @@ class VideoGenerationPipeline:
         5. Render final video
     """
 
-    def __init__(self, offline: bool = False):
+    def __init__(self, offline: bool = False, clean: bool = False):
         """
         Initialize the pipeline.
 
         Args:
             offline: If True, use cached data instead of making API calls.
+            clean: If True, delete temp files after successful render.
         """
         self.offline = offline
+        self.clean = clean
         if not offline:
             Config.validate()
         Config.ensure_directories()
         self.movie_client = None if offline else MovieDBClient(tmdb_api_key=Config.TMDB_API_KEY)
         self.story_gen = None if offline else StoryGenerator()
 
+    def _cleanup_temp_dir(self, movie_name: str) -> None:
+        """Remove the temp directory for a movie after successful render."""
+        temp_dir = Config.TEMP_DIR / Config.safe_title(movie_name)
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir)
+            logger.info(f"Cleaned up temp directory: {temp_dir}")
+
     def _get_output_dir(self, movie_name: str) -> Path:
         """Get the temp output directory for a movie."""
-        safe_title = "".join(x for x in movie_name if x.isalnum() or x in " -_").strip().replace(" ", "_")
-        output_dir = Config.TEMP_DIR / safe_title
+        output_dir = Config.TEMP_DIR / Config.safe_title(movie_name)
         output_dir.mkdir(parents=True, exist_ok=True)
         return output_dir
 
@@ -231,7 +251,7 @@ class VideoGenerationPipeline:
         video_metadata = {}
 
         # Get TTS customization - use script-level overall_mood for consistency
-        tts_speed = getattr(scene, 'tts_speed', 1.0)
+        tts_speed = scene.tts_speed
 
         def generate_tts():
             nonlocal audio_path, audio_duration
@@ -298,6 +318,9 @@ class VideoGenerationPipeline:
             # Step 1: Fetch Movie Data & Generate Script
             # =================================================================
             yield PipelineStatus(step=1, message="Fetching movie data...")
+
+            # Start loading Whisper model in background (needed in Step 3)
+            _preload_whisper_model()
 
             if self.offline:
                 cache_data = self._load_cache(movie_name)
@@ -406,7 +429,7 @@ class VideoGenerationPipeline:
 
             yield PipelineStatus(
                 step=1,
-                message=f"Script generated: {len(script.scenes)} scenes, genre={script.genre}, voice={script.selected_voice_id}, mood={getattr(script, 'overall_mood', 'neutral')}, lang={getattr(script, 'lang_code', 'a')}",
+                message=f"Script generated: {len(script.scenes)} scenes, genre={script.genre}, voice={script.selected_voice_id}, mood={script.overall_mood}, lang={script.lang_code}",
                 data={'script': script.model_dump()}
             )
 
@@ -458,7 +481,7 @@ class VideoGenerationPipeline:
                                 scene=scene,
                                 output_dir=output_dir,
                                 voice_id=script.selected_voice_id,
-                                overall_mood=getattr(script, 'overall_mood', 'neutral'),
+                                overall_mood=script.overall_mood,
                             )
 
                         for msg in status_msgs:
@@ -545,7 +568,7 @@ class VideoGenerationPipeline:
                         output_path=ending_audio_path,
                         voice=script.selected_voice_id,
                         speed=1.2,  # Slightly slower for the reveal (but still 25% faster overall)
-                        mood=getattr(script, 'overall_mood', 'neutral'),
+                        mood=script.overall_mood,
                     )
 
                     if tts_result is not None:
@@ -688,9 +711,8 @@ class VideoGenerationPipeline:
                     yield PipelineStatus(step=5, message=f"Music file not found: {script.selected_music_file}")
 
             # Output path
-            safe_name = "".join(c for c in movie_name if c.isalnum() or c in " -_").strip().replace(" ", "_")
             Config.FINAL_DIR.mkdir(parents=True, exist_ok=True)
-            final_output_path = str(Config.FINAL_DIR / f"{safe_name}.mp4")
+            final_output_path = str(Config.FINAL_DIR / f"{Config.safe_title(movie_name)}.mp4")
 
             try:
                 renderer = VideoRenderer()
@@ -726,6 +748,11 @@ class VideoGenerationPipeline:
             if not self.offline:
                 self._save_cache(movie_name, cache_data)
 
+            # Clean up temp files if requested
+            if self.clean:
+                self._cleanup_temp_dir(movie_name)
+                yield PipelineStatus(step=5, message="Temp files cleaned up")
+
             return scene_assets_list, script, final_output_path
 
         except Exception as e:
@@ -737,7 +764,8 @@ class VideoGenerationPipeline:
 def run_pipeline(
     movie_name: str,
     progress_callback=None,
-    offline: bool = False
+    offline: bool = False,
+    clean: bool = False
 ) -> Tuple[List[SceneAssets], Optional[VideoScript], Optional[str]]:
     """
     Convenience function to run the pipeline with a callback-based interface.
@@ -746,11 +774,12 @@ def run_pipeline(
         movie_name: Name of the movie to generate video for.
         progress_callback: Optional callback function(step, message, data, is_error).
         offline: If True, use cached data.
+        clean: If True, delete temp files after successful render.
 
     Returns:
         Tuple of (scene_assets_list, script, final_video_path).
     """
-    pipeline = VideoGenerationPipeline(offline=offline)
+    pipeline = VideoGenerationPipeline(offline=offline, clean=clean)
     gen = pipeline.run(movie_name)
 
     try:

@@ -1,0 +1,39 @@
+# Version control
+.git
+.gitignore
+
+# Environment and secrets
+.env
+.env.*
+assets/creds/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# Output files (keep directory structure via Dockerfile mkdir)
+output/temp/
+output/final/
+output/pipeline_logs/
+
+# Large fallback videos (656MB) — not needed in cloud
+assets/basevideos/
+
+# OS junk
+.DS_Store
+*.swp
+*.swo
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docs / misc
+*.md
+LICENSE
+CLAUDE.md

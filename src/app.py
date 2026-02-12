@@ -11,6 +11,8 @@ Usage:
 """
 
 import argparse
+import logging
+import sys
 from datetime import datetime
 
 from src.logging_utils import setup_logging
@@ -55,7 +57,8 @@ def run_pipeline_with_logging(
     movie_name: str,
     logger: logging.Logger,
     offline: bool = False,
-    assets_only: bool = False
+    assets_only: bool = False,
+    clean: bool = False
 ):
     """
     Run the video generation pipeline with logging output.
@@ -65,11 +68,12 @@ def run_pipeline_with_logging(
         logger: Logger instance for output.
         offline: If True, use cached data.
         assets_only: If True, stop after gathering assets (skip rendering).
+        clean: If True, delete temp files after successful render.
 
     Returns:
         Tuple of (scene_assets, script, final_video_path).
     """
-    pipeline = VideoGenerationPipeline(offline=offline)
+    pipeline = VideoGenerationPipeline(offline=offline, clean=clean)
     gen = pipeline.run(movie_name)
 
     scene_assets = []
@@ -149,6 +153,12 @@ Examples:
         help='Use cached data from output/temp folder instead of calling APIs'
     )
 
+    parser.add_argument(
+        '--clean',
+        action='store_true',
+        help='Delete temp files after successful render'
+    )
+
     args = parser.parse_args()
 
     # Setup logging
@@ -161,6 +171,8 @@ Examples:
         logger.info("Mode: OFFLINE (using cached data)")
     if args.assets_only:
         logger.info("Mode: ASSETS-ONLY (skip rendering)")
+    if args.clean:
+        logger.info("Mode: CLEAN (temp files will be deleted after render)")
     print()
 
     start_time = datetime.now()
@@ -171,7 +183,8 @@ Examples:
             movie_name=args.movie,
             logger=logger,
             offline=args.offline,
-            assets_only=args.assets_only
+            assets_only=args.assets_only,
+            clean=args.clean
         )
 
         elapsed = datetime.now() - start_time

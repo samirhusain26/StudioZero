@@ -1,10 +1,9 @@
 import logging
 import subprocess
 import os
-import random
 import tempfile
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING
 
 import ffmpeg
 
@@ -20,11 +19,6 @@ OUTPUT_WIDTH = 1080
 OUTPUT_HEIGHT = 1920
 FPS = 30
 
-
-# Base video clip duration range (seconds)
-VIDEO_CLIP_DURATION_MIN = 3
-VIDEO_CLIP_DURATION_MAX = 4
-
 # Duration of silent poster at the end (seconds)
 SILENT_POSTER_DURATION = 1.0
 
@@ -34,29 +28,23 @@ class VideoRenderer:
     Renders vertical 9:16 videos with Ken Burns effects and Hormozi-style captions.
     """
 
-    def __init__(self, base_videos_dir: Optional[str] = None):
-        """
-        Initialize the VideoRenderer.
-        
-        Args:
-            base_videos_dir: Path to directory containing base video clips.
-        """
-        self.base_videos_dir = base_videos_dir
-        self._base_videos: List[str] = []
-        
-        if base_videos_dir and os.path.exists(base_videos_dir):
-            self._base_videos = [
-                os.path.join(base_videos_dir, f)
-                for f in os.listdir(base_videos_dir)
-                if f.endswith(('.mp4', '.mov', '.avi', '.mkv'))
-            ]
-            logger.info(f"Loaded {len(self._base_videos)} base videos from {base_videos_dir}")
+    # Class-level caches for expensive checks
+    _ffmpeg_available: Optional[bool] = None
+    _ass_filter_available: Optional[bool] = None
+
+    def __init__(self):
+        """Initialize the VideoRenderer."""
+        pass
 
     def check_ffmpeg(self) -> bool:
         """
         Checks if both FFmpeg and FFprobe are installed and accessible.
+        Result is cached after first check.
         Returns True if both are found, False otherwise.
         """
+        if VideoRenderer._ffmpeg_available is not None:
+            return VideoRenderer._ffmpeg_available
+
         ffmpeg_ok = False
         ffprobe_ok = False
 
@@ -88,8 +76,34 @@ class VideoRenderer:
 
         if ffmpeg_ok and ffprobe_ok:
             logger.info("FFmpeg and FFprobe are installed and accessible.")
+            VideoRenderer._ffmpeg_available = True
             return True
+
+        VideoRenderer._ffmpeg_available = False
         return False
+
+    def _check_ass_filter(self) -> bool:
+        """Check if FFmpeg has ASS subtitle filter support (cached)."""
+        if VideoRenderer._ass_filter_available is not None:
+            return VideoRenderer._ass_filter_available
+
+        try:
+            check_result = subprocess.run(
+                ['ffmpeg', '-filters'],
+                capture_output=True,
+                text=True
+            )
+            available = ' ass ' in check_result.stdout or 'ass\n' in check_result.stdout
+            if not available:
+                logger.warning(
+                    "FFmpeg not compiled with libass - subtitles will be skipped. "
+                    "To enable subtitles, reinstall FFmpeg with: brew install ffmpeg"
+                )
+            VideoRenderer._ass_filter_available = available
+            return available
+        except Exception:
+            VideoRenderer._ass_filter_available = False
+            return False
 
     def _get_media_duration(self, path: str) -> float:
         """Get duration of a media file in seconds."""
@@ -99,12 +113,6 @@ class VideoRenderer:
         except Exception as e:
             logger.warning(f"Could not probe duration for {path}: {e}")
             return 0.0
-
-    def _get_random_base_video(self) -> Optional[str]:
-        """Get a random base video path."""
-        if not self._base_videos:
-            return None
-        return random.choice(self._base_videos)
 
     def _create_video_from_image(
         self,
@@ -168,259 +176,6 @@ class VideoRenderer:
             raise RuntimeError(f"Failed to create video from image: {result.stderr[-500:]}")
 
         return output_path
-
-    def _escape_text_for_ffmpeg(self, text: str) -> str:
-        """Escape special characters for FFmpeg drawtext filter."""
-        # Escape characters that need escaping in FFmpeg drawtext
-        text = text.replace("\\", "\\\\")
-        text = text.replace("'", "'\\''")
-        text = text.replace(":", "\\:")
-        text = text.replace("[", "\\[")
-        text = text.replace("]", "\\]")
-        text = text.replace(",", "\\,")
-        text = text.replace(";", "\\;")
-        return text
-
-    def _build_subtitle_filter(
-        self,
-        word_timestamps: List[Dict[str, Any]],
-        time_offset: float = 0.0
-    ) -> str:
-        """
-        Build FFmpeg drawtext filter chain for Hormozi-style word-by-word captions.
-        
-        Classic Hormozi style: Yellow text, bold, black outline, centered.
-        
-        Args:
-            word_timestamps: List of {'word': str, 'start': float, 'end': float}
-            time_offset: Offset to add to all timestamps (for concatenated clips)
-            
-        Returns:
-            FFmpeg filter string for subtitles
-        """
-        if not word_timestamps:
-            return ""
-
-        filters = []
-        
-        for i, wt in enumerate(word_timestamps):
-            word = self._escape_text_for_ffmpeg(wt['word'])
-            start = wt['start'] + time_offset
-            end = wt['end'] + time_offset
-            
-            # Hormozi style: Yellow (#FFFF00), bold, black stroke
-            # Using system font (sans-serif will use Arial/Helvetica on most systems)
-            drawtext = (
-                f"drawtext=text='{word}'"
-                f":fontsize=72"
-                f":fontcolor=#FFFF00"  # Yellow - classic Hormozi
-                f":borderw=4"
-                f":bordercolor=black"
-                f":shadowx=2"
-                f":shadowy=2"
-                f":shadowcolor=black@0.6"
-                f":x=(w-text_w)/2"
-                f":y=h*0.75"
-                f":enable='between(t,{start:.3f},{end:.3f})'"
-            )
-            filters.append(drawtext)
-        
-        return ",".join(filters)
-
-    def create_audio_video_clip(
-        self,
-        audio_path: str,
-        output_path: str,
-        word_timestamps: Optional[List[Dict[str, Any]]] = None
-    ) -> str:
-        """
-        Creates a vertical 9:16 video clip using base videos stitched together
-        to match audio duration, with Hormozi-style word-by-word subtitles.
-        
-        This method does NOT use images - it relies entirely on base videos.
-        
-        Args:
-            audio_path: Path to the audio narration
-            output_path: Output path for the video clip
-            word_timestamps: List of {'word': str, 'start': float, 'end': float}
-            
-        Returns:
-            Path to the created clip
-        """
-        try:
-            # Get audio duration
-            audio_duration = self._get_media_duration(audio_path)
-            if audio_duration <= 0:
-                raise ValueError(f"Invalid audio duration for {audio_path}")
-
-            if not self._base_videos:
-                raise ValueError("No base videos available for rendering")
-
-            # Build list of video segments to fill the audio duration
-            segments = []
-            total_video_duration = 0.0
-            
-            while total_video_duration < audio_duration:
-                video_path = self._get_random_base_video()
-                video_duration = self._get_media_duration(video_path)
-                
-                # Use a random clip duration between 3-6 seconds
-                clip_duration = min(
-                    random.uniform(3.0, 6.0),
-                    audio_duration - total_video_duration,
-                    video_duration - 1.0  # Leave 1s buffer
-                )
-                
-                if clip_duration <= 0:
-                    break
-                
-                # Random start point within the video
-                max_start = max(0, video_duration - clip_duration - 0.5)
-                start_time = random.uniform(0, max_start) if max_start > 0 else 0
-                
-                segments.append({
-                    'path': video_path,
-                    'start': start_time,
-                    'duration': clip_duration
-                })
-                total_video_duration += clip_duration
-
-            if not segments:
-                raise ValueError("Could not create any video segments")
-
-            # Build FFmpeg filter complex
-            inputs = []
-            filter_parts = []
-            
-            for i, seg in enumerate(segments):
-                inputs.extend(['-i', seg['path']])
-                filter_parts.append(
-                    f"[{i}:v]"
-                    f"trim=start={seg['start']:.3f}:duration={seg['duration']:.3f},"
-                    f"setpts=PTS-STARTPTS,"
-                    f"scale={OUTPUT_WIDTH}:{OUTPUT_HEIGHT}:force_original_aspect_ratio=increase,"
-                    f"crop={OUTPUT_WIDTH}:{OUTPUT_HEIGHT},"
-                    f"setsar=1,fps={FPS}[v{i}]"
-                )
-            
-            # Add audio input
-            inputs.extend(['-i', audio_path])
-            audio_idx = len(segments)
-            
-            # Concatenate all video segments
-            concat_inputs = "".join([f"[v{i}]" for i in range(len(segments))])
-            filter_parts.append(f"{concat_inputs}concat=n={len(segments)}:v=1:a=0[video]")
-            
-            # Add subtitle overlay
-            subtitle_filter = self._build_subtitle_filter(word_timestamps or [])
-            if subtitle_filter:
-                filter_parts.append(f"[video]{subtitle_filter}[final]")
-                video_output = "[final]"
-            else:
-                video_output = "[video]"
-            
-            # Build complete filter_complex
-            filter_complex = ";\n".join(filter_parts)
-            
-            # Build FFmpeg command
-            cmd = ['ffmpeg', '-y']
-            cmd.extend(inputs)
-            cmd.extend([
-                '-filter_complex', filter_complex,
-                '-map', video_output,
-                '-map', f'{audio_idx}:a',
-                '-c:v', 'libx264',
-                '-preset', 'medium',
-                '-crf', '23',
-                '-pix_fmt', 'yuv420p',
-                '-c:a', 'aac',
-                '-b:a', '192k',
-                '-t', str(audio_duration),
-                '-r', str(FPS),
-                '-shortest',
-                output_path
-            ])
-            
-            logger.info(f"Running FFmpeg for audio-video clip: {output_path}")
-            logger.debug(f"Using {len(segments)} video segments for {audio_duration:.2f}s audio")
-            
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True
-            )
-            
-            if result.returncode != 0:
-                logger.error(f"FFmpeg stderr: {result.stderr}")
-                raise RuntimeError(f"FFmpeg failed: {result.stderr[-500:]}")
-            
-            logger.info(f"Successfully created audio-video clip: {output_path}")
-            return output_path
-            
-        except Exception as e:
-            logger.error(f"Error creating audio-video clip: {e}")
-            raise
-
-    def render_final_video(
-        self,
-        scene_clips: List[str],
-        output_path: str
-    ) -> str:
-        """
-        Concatenates scene clips into a final video.
-        
-        Args:
-            scene_clips: List of paths to scene clip videos
-            output_path: Output path for the final video
-            
-        Returns:
-            Path to the final video
-        """
-        try:
-            if not scene_clips:
-                raise ValueError("No scene clips provided for rendering.")
-
-            # Use ffmpeg concat demuxer for efficiency
-            # Create a concat file
-            concat_list_path = output_path + ".concat.txt"
-            with open(concat_list_path, 'w') as f:
-                for clip in scene_clips:
-                    # Escape single quotes in path
-                    escaped_path = clip.replace("'", "'\\''")
-                    f.write(f"file '{escaped_path}'\n")
-            
-            cmd = [
-                'ffmpeg', '-y',
-                '-f', 'concat',
-                '-safe', '0',
-                '-i', concat_list_path,
-                '-c:v', 'libx264',
-                '-preset', 'medium',
-                '-crf', '23',
-                '-pix_fmt', 'yuv420p',
-                '-c:a', 'aac',
-                '-b:a', '192k',
-                output_path
-            ]
-            
-            logger.info(f"Rendering final video from {len(scene_clips)} clips...")
-            
-            result = subprocess.run(cmd, capture_output=True, text=True)
-            
-            # Clean up concat list
-            if os.path.exists(concat_list_path):
-                os.remove(concat_list_path)
-            
-            if result.returncode != 0:
-                logger.error(f"FFmpeg stderr: {result.stderr}")
-                raise RuntimeError(f"FFmpeg failed: {result.stderr[-500:]}")
-            
-            logger.info(f"Successfully rendered final video: {output_path}")
-            return output_path
-
-        except Exception as e:
-            logger.error(f"Error rendering final video: {e}")
-            raise
 
     def render_from_scenes(
         self,
@@ -520,7 +275,6 @@ class VideoRenderer:
                     concat_file=str(video_concat_file),
                     output_path=str(concat_video_path),
                     media_type="video",
-                    normalize_videos=True,
                     temp_dir=temp_path,
                     target_durations=audio_durations,
                 )
@@ -634,7 +388,6 @@ class VideoRenderer:
         concat_file: str,
         output_path: str,
         media_type: str = "video",
-        normalize_videos: bool = True,
         temp_dir: Optional[Path] = None,
         target_durations: Optional[List[float]] = None,
     ) -> None:
@@ -647,12 +400,11 @@ class VideoRenderer:
             concat_file: Path to the concat list file.
             output_path: Output path for concatenated media.
             media_type: 'video' or 'audio'.
-            normalize_videos: If True, normalize videos before concat (video only).
             temp_dir: Temporary directory for normalized files.
             target_durations: List of target durations for each video (video only).
                               Each video will be trimmed to its corresponding duration.
         """
-        if media_type == "video" and normalize_videos:
+        if media_type == "video":
             # Read the concat file to get video paths
             video_paths = []
             with open(concat_file, 'r') as f:
@@ -713,27 +465,6 @@ class VideoRenderer:
                 logger.error(f"FFmpeg concat stderr: {result.stderr}")
                 raise RuntimeError(f"Failed to concatenate video: {result.stderr[-500:]}")
 
-        elif media_type == "video":
-            # Non-normalized path (legacy)
-            cmd = [
-                'ffmpeg', '-y',
-                '-f', 'concat',
-                '-safe', '0',
-                '-i', concat_file,
-                '-c:v', 'libx264',
-                '-preset', 'fast',
-                '-crf', '23',
-                '-pix_fmt', 'yuv420p',
-                '-an',
-                output_path
-            ]
-            logger.debug(f"Concatenating video: {' '.join(cmd)}")
-            result = subprocess.run(cmd, capture_output=True, text=True)
-
-            if result.returncode != 0:
-                logger.error(f"FFmpeg concat stderr: {result.stderr}")
-                raise RuntimeError(f"Failed to concatenate video: {result.stderr[-500:]}")
-
         else:  # audio
             cmd = [
                 'ffmpeg', '-y',
@@ -771,15 +502,14 @@ class VideoRenderer:
 
         Subtitle Burning:
             - Uses the 'ass' filter instead of drawtext
-            - Applied AFTER scaling video to 1080x1920, BEFORE final encode
+            - Video is already normalized to 1080x1920 from _normalize_video
 
         Final Output:
             - Video: libx264, yuv420p, CRF 23
             - Audio: AAC, 192kbps
-            - Output: output/final_video.mp4
 
         Args:
-            video_path: Path to concatenated video.
+            video_path: Path to concatenated video (already normalized to 1080x1920).
             voice_path: Path to concatenated voiceover audio.
             music_path: Path to background music (optional).
             subtitle_path: Path to .ass subtitle file (optional).
@@ -799,33 +529,14 @@ class VideoRenderer:
         # Build filter complex
         filter_parts = []
 
-        # Video filter: scale to output resolution first, then apply ASS subtitles
-        # The ass filter must be applied AFTER scaling to ensure correct subtitle positioning
-        video_filter = (
-            f"[0:v]scale={OUTPUT_WIDTH}:{OUTPUT_HEIGHT}:force_original_aspect_ratio=increase,"
-            f"crop={OUTPUT_WIDTH}:{OUTPUT_HEIGHT},setsar=1,fps={FPS}"
-        )
+        # Video filter: lightweight passthrough since video is already normalized
+        # to 1080x1920 by _normalize_video. Only setsar needed to keep filter graph valid.
+        video_filter = "[0:v]setsar=1"
 
-        # Note: ASS subtitle burning requires FFmpeg compiled with --enable-libass
-        # If not available, subtitles will be skipped with a warning
+        # Check ASS subtitle support (cached)
         use_subtitles = False
         if subtitle_path and Path(subtitle_path).exists():
-            # Check if FFmpeg has ass filter support
-            try:
-                check_result = subprocess.run(
-                    ['ffmpeg', '-filters'],
-                    capture_output=True,
-                    text=True
-                )
-                if ' ass ' in check_result.stdout or 'ass\n' in check_result.stdout:
-                    use_subtitles = True
-                else:
-                    logger.warning(
-                        "FFmpeg not compiled with libass - subtitles will be skipped. "
-                        "To enable subtitles, reinstall FFmpeg with: brew install ffmpeg"
-                    )
-            except Exception:
-                pass
+            use_subtitles = self._check_ass_filter()
 
         if use_subtitles:
             # Escape path for FFmpeg ass filter

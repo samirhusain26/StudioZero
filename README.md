@@ -83,6 +83,9 @@ python -m src.app "Pulp Fiction" --assets-only
 # Use cached data (no API calls)
 python -m src.app "Interstellar" --offline
 
+# Clean up temp files after render
+python -m src.app "The Dark Knight" --clean
+
 # Custom output path
 python -m src.app "Dune" -o custom_output.mp4
 ```
@@ -217,7 +220,7 @@ StudioZero/
 - **Audio ducking** via sidechain compression (music auto-lowers during narration)
 - **Ken Burns effect** on movie poster for dynamic ending scenes
 - **Multi-level fallback** at every stage (Wikipedia→TMDB, Gemini→Groq, Pexels→Local)
-- **Pipeline caching** for offline re-rendering without API calls
+- **Pipeline caching** for offline re-rendering without API calls (`--offline`), with optional temp cleanup (`--clean`)
 - **Social media captions** auto-generated with hook-first format and genre hashtags
 - **Batch automation** from Google Sheets with Drive upload and status tracking
 - **Generator-based progress** reporting via `PipelineStatus` objects

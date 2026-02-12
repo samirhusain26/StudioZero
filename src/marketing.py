@@ -138,6 +138,9 @@ DO NOT add any explanation or commentary - just the caption."""
             raise
 
 
+_caption_generator = None
+
+
 def generate_social_caption(script: VideoScript) -> str:
     """
     Convenience function to generate a social media caption from a VideoScript.
@@ -148,5 +151,7 @@ def generate_social_caption(script: VideoScript) -> str:
     Returns:
         A formatted social media caption string.
     """
-    generator = CaptionGenerator()
-    return generator.generate_social_caption(script)
+    global _caption_generator
+    if _caption_generator is None:
+        _caption_generator = CaptionGenerator()
+    return _caption_generator.generate_social_caption(script)

@@ -1,8 +1,11 @@
 """
 Google Sheets and Google Drive integration for StudioZero pipeline.
-Uses service account authentication via drive_credentials.json.
+Uses service account authentication via drive_credentials.json or
+GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable (for Cloud Run).
 """
 
+import json
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -20,24 +23,31 @@ SCOPES = [
 ]
 
 
-def _get_credentials_path() -> Path:
-    """Get the path to service account credentials from environment."""
+def _get_credentials() -> Credentials:
+    """
+    Load service account credentials.
+
+    Priority:
+      1. GOOGLE_APPLICATION_CREDENTIALS_JSON env var (inline JSON string, for Cloud Run)
+      2. DRIVE_APPLICATION_CREDENTIALS env var (file path, for local development)
+    """
+    # 1. Try inline JSON from environment (Cloud Run / containers)
+    creds_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    if creds_json:
+        info = json.loads(creds_json)
+        return Credentials.from_service_account_info(info, scopes=SCOPES)
+
+    # 2. Fall back to file path (local development)
     creds_path_str = Config.DRIVE_APPLICATION_CREDENTIALS
     if not creds_path_str:
         raise ValueError(
-            "DRIVE_APPLICATION_CREDENTIALS not set in environment. "
-            "Set it to the path of your Google service account JSON file."
+            "No Google credentials found. Set either:\n"
+            "  - GOOGLE_APPLICATION_CREDENTIALS_JSON (inline JSON for Cloud Run), or\n"
+            "  - DRIVE_APPLICATION_CREDENTIALS (file path for local dev)"
         )
-    # Handle both absolute and relative paths
     creds_path = Path(creds_path_str)
     if not creds_path.is_absolute():
         creds_path = Config.PROJECT_ROOT / creds_path
-    return creds_path
-
-
-def _get_credentials() -> Credentials:
-    """Load service account credentials."""
-    creds_path = _get_credentials_path()
     if not creds_path.exists():
         raise FileNotFoundError(
             f"Service account credentials not found at {creds_path}. "
@@ -46,16 +56,26 @@ def _get_credentials() -> Credentials:
     return Credentials.from_service_account_file(str(creds_path), scopes=SCOPES)
 
 
+_cached_gspread_client = None
+_cached_drive_service = None
+
+
 def _get_gspread_client() -> gspread.Client:
-    """Get authenticated gspread client."""
-    creds = _get_credentials()
-    return gspread.authorize(creds)
+    """Get authenticated gspread client (cached)."""
+    global _cached_gspread_client
+    if _cached_gspread_client is None:
+        creds = _get_credentials()
+        _cached_gspread_client = gspread.authorize(creds)
+    return _cached_gspread_client
 
 
 def _get_drive_service():
-    """Get authenticated Google Drive service."""
-    creds = _get_credentials()
-    return build("drive", "v3", credentials=creds)
+    """Get authenticated Google Drive service (cached)."""
+    global _cached_drive_service
+    if _cached_drive_service is None:
+        creds = _get_credentials()
+        _cached_drive_service = build("drive", "v3", credentials=creds)
+    return _cached_drive_service
 
 
 def get_pending_jobs(sheet_url: str) -> list[dict]:
@@ -72,11 +92,14 @@ def get_pending_jobs(sheet_url: str) -> list[dict]:
     sheet = client.open_by_url(sheet_url).sheet1
 
     records = sheet.get_all_records()
-    pending = [row for row in records if row.get("Status", "").strip().lower() == "pending"]
 
-    # Add row index (1-based, +2 for header row offset)
-    for i, row in enumerate(pending):
-        row["_row_index"] = records.index(row) + 2
+    # Build pending list with correct row indices using enumerate
+    # (records.index(row) would return wrong index for duplicate rows)
+    pending = []
+    for i, row in enumerate(records):
+        if row.get("Status", "").strip().lower() == "pending":
+            row["_row_index"] = i + 2  # +2 for 1-based index + header row
+            pending.append(row)
 
     return pending
 

@@ -17,7 +17,7 @@ import os
 import re
 import wave
 from pathlib import Path
-from typing import Tuple, Optional, Dict
+from typing import Tuple, Optional
 
 from google import genai
 from google.genai import types
@@ -63,25 +63,12 @@ GEMINI_VOICES = {
     "Zubenelgenubi": "Male",
 }
 
-# Voice characteristics for better selection
-VOICE_CHARACTERISTICS = {
-    "Kore": {"tone": "firm", "style": "confident", "best_for": ["drama", "narration"]},
-    "Aoede": {"tone": "breezy", "style": "conversational", "best_for": ["casual", "friendly"]},
-    "Charon": {"tone": "informative", "style": "calm", "best_for": ["documentary", "educational"]},
-    "Puck": {"tone": "upbeat", "style": "energetic", "best_for": ["comedy", "animation"]},
-    "Zephyr": {"tone": "bright", "style": "clear", "best_for": ["narration", "storytelling"]},
-    "Fenrir": {"tone": "excitable", "style": "dynamic", "best_for": ["action", "excitement"]},
-    "Leda": {"tone": "youthful", "style": "fresh", "best_for": ["young", "modern"]},
-    "Orus": {"tone": "firm", "style": "authoritative", "best_for": ["serious", "commanding"]},
-    "Achernar": {"tone": "warm", "style": "gentle", "best_for": ["romance", "emotional"]},
-    "Gacrux": {"tone": "clear", "style": "professional", "best_for": ["news", "formal"]},
-}
-
 # Voice mapping from old voice IDs to Gemini voices
+# Legacy mapping kept for backwards compatibility with existing scripts
 VOICE_MAPPING = {
     # American Female voices
     'af_bella': 'Achernar',     # Soft, Emotional -> Warm, gentle female
-    'af_sarah': 'Puck',         # Energetic, Happy -> Upbeat (note: Puck is male but energetic)
+    'af_sarah': 'Puck',         # Energetic, Happy -> Upbeat male (cross-gender for energy match)
     'af_nicole': 'Leda',        # Whispered, Mysterious -> Youthful female
     'af_heart': 'Aoede',        # Warm, Conversational -> Breezy female
     'af_sky': 'Zephyr',         # Youthful, Dreamy -> Bright female
@@ -129,7 +116,7 @@ def _get_client():
     """
     global _gemini_client
     if _gemini_client is None:
-        api_key = os.getenv("GEMINI_API_KEY") or Config.GEMINI_API_KEY
+        api_key = Config.GEMINI_API_KEY
         if not api_key:
             raise RuntimeError(
                 "GEMINI_API_KEY not found. Please set it in your .env file.\n"
@@ -370,140 +357,3 @@ def generate_audio(
     # All attempts failed
     logger.error(f"Failed to generate audio after all attempts for text: {text[:50]}...")
     return None
-
-
-def generate_audio_with_metadata(
-    text: str,
-    output_path: str,
-    voice: str = "af_bella",
-    speed: float = 1.0,
-    mood: Optional[str] = None,
-) -> Optional[Dict]:
-    """
-    Generate audio with full metadata returned.
-
-    Args:
-        text: The text to convert to speech.
-        output_path: The path where the audio file will be saved.
-        voice: The voice to use.
-        speed: Speech speed multiplier.
-        mood: Optional mood string for style control.
-
-    Returns:
-        Dict with keys: output_path, duration, voice, gemini_voice, mood, speed, text_length.
-        Returns None if audio generation fails.
-    """
-    gemini_voice = _map_voice(voice)
-
-    result = generate_audio(
-        text=text,
-        output_path=output_path,
-        voice=voice,
-        speed=speed,
-        mood=mood,
-    )
-
-    if result is None:
-        return None
-
-    final_path, duration = result
-
-    return {
-        'output_path': final_path,
-        'duration': duration,
-        'voice': voice,
-        'gemini_voice': gemini_voice,
-        'mood': mood,
-        'speed': speed,
-        'text_length': len(text),
-    }
-
-
-def list_available_voices() -> list:
-    """
-    Returns a list of available Gemini voice names.
-
-    Returns:
-        List of voice name strings.
-    """
-    return list(GEMINI_VOICES.keys())
-
-
-def get_voice_info(voice_id: str) -> Dict:
-    """
-    Get information about a voice.
-
-    Args:
-        voice_id: The voice ID (old ID or Gemini voice name).
-
-    Returns:
-        Dict with voice information including gender and characteristics.
-    """
-    gemini_voice = _map_voice(voice_id)
-    gender = GEMINI_VOICES.get(gemini_voice, "Unknown")
-    characteristics = VOICE_CHARACTERISTICS.get(gemini_voice, {})
-
-    return {
-        'voice_id': voice_id,
-        'gemini_voice': gemini_voice,
-        'gender': gender,
-        'tone': characteristics.get('tone', 'neutral'),
-        'style': characteristics.get('style', 'standard'),
-        'best_for': characteristics.get('best_for', []),
-    }
-
-
-def get_voices_by_gender(gender: str) -> list:
-    """
-    Get all voices of a specific gender.
-
-    Args:
-        gender: 'Male' or 'Female'
-
-    Returns:
-        List of voice names matching the gender.
-    """
-    return [name for name, g in GEMINI_VOICES.items() if g.lower() == gender.lower()]
-
-
-def get_recommended_voice_for_genre(genre: str) -> str:
-    """
-    Get a recommended Gemini voice for a genre.
-
-    Args:
-        genre: The content genre (e.g., 'action', 'romance', 'documentary')
-
-    Returns:
-        Recommended Gemini voice name.
-    """
-    genre_lower = genre.lower()
-
-    genre_voice_map = {
-        # Action/Thriller - authoritative or excitable
-        'action': 'Orus',
-        'thriller': 'Fenrir',
-        'war': 'Orus',
-        'crime': 'Charon',
-        # Horror/Mystery - atmospheric
-        'horror': 'Leda',
-        'mystery': 'Charon',
-        'sci-fi': 'Charon',
-        # Comedy/Animation - upbeat
-        'comedy': 'Puck',
-        'animation': 'Puck',
-        'family': 'Aoede',
-        # Romance - warm
-        'romance': 'Achernar',
-        # Drama - expressive
-        'drama': 'Kore',
-        'period': 'Gacrux',
-        # Documentary - informative
-        'documentary': 'Charon',
-        'history': 'Charon',
-        'biographical': 'Gacrux',
-        # Fantasy/Adventure - storytelling
-        'fantasy': 'Fenrir',
-        'adventure': 'Zephyr',
-    }
-
-    return genre_voice_map.get(genre_lower, DEFAULT_VOICE)

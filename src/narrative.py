@@ -466,16 +466,3 @@ Output ONLY valid JSON."""
         except ValidationError as e:
             raise ValueError(f"Response doesn't match VideoScript schema: {e}")
 
-    def generate_script_dict(
-        self,
-        movie_title: str,
-        plot: str,
-        callback: Callable = None
-    ) -> dict:
-        """
-        Generate video script and return as a dictionary.
-
-        Convenience method for integration with existing code.
-        """
-        result = self.generate_script(movie_title, plot, callback)
-        return result.model_dump()

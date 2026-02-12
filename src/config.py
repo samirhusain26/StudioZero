@@ -46,6 +46,11 @@ class Config:
         str(Path.home() / "Library" / "Mobile Documents" / "com~apple~CloudDocs" / "StudioZero" / "Videos")
     )
     
+    @staticmethod
+    def safe_title(name: str) -> str:
+        """Sanitize a string for use in file/directory names."""
+        return "".join(c for c in name if c.isalnum() or c in " -_").strip().replace(" ", "_")
+
     @classmethod
     def validate(cls):
         """
@@ -53,14 +58,14 @@ class Config:
         Raises a ValueError with instructions if keys are missing.
         """
         missing_keys = []
+        if not cls.GEMINI_API_KEY:
+            missing_keys.append("GEMINI_API_KEY")
         if not cls.GROQ_API_KEY:
             missing_keys.append("GROQ_API_KEY")
         if not cls.TMDB_API_KEY:
             missing_keys.append("TMDB_API_KEY")
         if not cls.PEXELS_API_KEY:
             missing_keys.append("PEXELS_API_KEY")
-        # Note: GEMINI_API_KEY is not required - Cloud TTS uses service account credentials
-        # Set GOOGLE_APPLICATION_CREDENTIALS env var or use gcloud auth application-default login
 
         if missing_keys:
             error_message = (
@@ -69,17 +74,15 @@ class Config:
                 "SETUP INSTRUCTIONS:\n"
                 "1. Create a file named '.env' in the project root directory.\n"
                 "2. Copy the contents of '.env.template' (if available) or add the following:\n\n"
+                "GEMINI_API_KEY=your_gemini_api_key_here\n"
                 "GROQ_API_KEY=your_groq_api_key_here\n"
                 "TMDB_API_KEY=your_tmdb_api_key_here\n"
                 "PEXELS_API_KEY=your_pexels_api_key_here\n\n"
                 "Where to get keys:\n"
+                "- GEMINI_API_KEY: https://aistudio.google.com/apikey\n"
                 "- GROQ_API_KEY: https://console.groq.com/keys\n"
                 "- TMDB_API_KEY: https://www.themoviedb.org/settings/api\n"
-                "- PEXELS_API_KEY: https://www.pexels.com/api/\n\n"
-                "For Gemini TTS (Google Cloud Text-to-Speech):\n"
-                "- Enable Cloud Text-to-Speech API in GCP Console\n"
-                "- Set GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json\n"
-                "- Or run: gcloud auth application-default login\n"
+                "- PEXELS_API_KEY: https://www.pexels.com/api/\n"
                 "-------------------------------------------------------------------\n"
             )
             raise ValueError(error_message)

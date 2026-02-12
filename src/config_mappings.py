@@ -128,9 +128,9 @@ LANG_CODES = {
 
 
 # Voice metadata - these IDs map to Gemini TTS voices in gemini_tts.py
-# Mapping: af_bella->Kore, af_sarah->Puck, af_nicole->Charon, af_heart->Aoede,
-#          af_sky->Leda, am_adam->Orus, am_michael->Zephyr, bf_emma->Kore,
-#          bf_isabella->Aoede, bm_george->Charon, bm_lewis->Zephyr
+# Mapping: af_bella->Achernar, af_sarah->Puck, af_nicole->Leda, af_heart->Aoede,
+#          af_sky->Zephyr, am_adam->Orus, am_michael->Charon, bf_emma->Kore,
+#          bf_isabella->Gacrux, bm_george->Charon, bm_lewis->Fenrir
 # All speed_range values increased by 25% for faster social media pacing
 TTS_VOICES = {
     # American Female voices (lang_code='a')
@@ -214,18 +214,6 @@ TTS_VOICES = {
         'best_for': ['fantasy', 'adventure', 'history', 'period'],
         'tone': 'narrative',
     },
-}
-
-
-# Speed presets for different emotional contexts (kept for API compatibility)
-# All speeds increased by 25% for faster social media pacing
-SPEED_PRESETS = {
-    'dramatic_slow': 1.0,      # Emotional reveals, deaths, twists
-    'contemplative': 1.05,     # Introspective moments, setup
-    'normal': 1.25,            # Standard narration
-    'energetic': 1.4,          # Action sequences, excitement
-    'urgent': 1.45,            # Chase scenes, tension peaks
-    'frantic': 1.5,            # Climax moments, panic
 }
 
 
@@ -354,45 +342,6 @@ def get_lang_code_for_voice(voice_id: str) -> str:
     """
     metadata = get_voice_metadata(voice_id)
     return metadata.get('lang_code', 'a')
-
-
-def get_speed_for_mood(mood: str) -> float:
-    """Get recommended TTS speed for a scene mood.
-
-    Args:
-        mood: The mood/emotion of the scene (e.g., 'tense', 'dramatic', 'happy').
-
-    Returns:
-        Speed multiplier (0.8 - 1.2 typical range).
-    """
-    return SCENE_MOOD_SPEEDS.get(mood.lower(), 1.0)
-
-
-def get_voice_speed_range(voice_id: str) -> tuple[float, float]:
-    """Get the recommended speed range for a voice.
-
-    Args:
-        voice_id: The voice ID.
-
-    Returns:
-        Tuple of (min_speed, max_speed).
-    """
-    metadata = get_voice_metadata(voice_id)
-    return metadata.get('speed_range', (0.9, 1.1))
-
-
-def clamp_speed_for_voice(voice_id: str, desired_speed: float) -> float:
-    """Clamp a speed value to the recommended range for a voice.
-
-    Args:
-        voice_id: The voice ID.
-        desired_speed: The desired speed multiplier.
-
-    Returns:
-        Speed clamped to the voice's recommended range.
-    """
-    min_speed, max_speed = get_voice_speed_range(voice_id)
-    return max(min_speed, min(max_speed, desired_speed))
 
 
 def get_available_voices_for_groq() -> str:

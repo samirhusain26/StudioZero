@@ -6,6 +6,7 @@ stock videos that match visual keywords from the narrative script.
 Videos are optimized for cinematic quality with 4K enhancement.
 """
 
+import logging
 import os
 import random
 from pathlib import Path
@@ -15,6 +16,7 @@ import requests
 
 from src.config import Config
 
+logger = logging.getLogger(__name__)
 
 # Pexels API endpoint
 PEXELS_VIDEO_SEARCH_URL = "https://api.pexels.com/videos/search"
@@ -330,7 +332,7 @@ def _use_local_fallback(
     # Randomly select one fallback video
     selected_file = random.choice(mp4_files)
 
-    print(f"Warning: Pexels search failed for all queries. Using local fallback: {selected_file.name}")
+    logger.warning(f"Pexels search failed for all queries. Using local fallback: {selected_file.name}")
 
     metadata = {
         "width": None,
@@ -345,41 +347,3 @@ def _use_local_fallback(
     }
 
     return str(selected_file), metadata
-
-
-def search_videos(query: str, count: int = 5) -> list:
-    """
-    Searches for videos and returns metadata without downloading.
-
-    Useful for previewing search results before downloading.
-
-    Args:
-        query: Search query string.
-        count: Number of results to return.
-
-    Returns:
-        List of video metadata dictionaries.
-    """
-    try:
-        videos = _search_videos(query, per_page=count)
-
-        results = []
-        for video in videos:
-            video_files = video.get("video_files", [])
-            best_file = _find_best_video_file(video_files)
-
-            results.append({
-                "id": video.get("id"),
-                "width": best_file.get("width") if best_file else None,
-                "height": best_file.get("height") if best_file else None,
-                "duration": video.get("duration"),
-                "pexels_url": video.get("url"),
-                "photographer": video.get("user", {}).get("name"),
-                "preview_url": video.get("image"),
-            })
-
-        return results
-
-    except PexelsAPIError as e:
-        print(f"Warning: Failed to search videos: {e}")
-        return []

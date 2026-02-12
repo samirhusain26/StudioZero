@@ -65,6 +65,27 @@ def copy_to_icloud(mp4_path: str) -> Optional[str]:
     return str(destination.resolve())
 
 
+def save_caption_file(video_path: str, caption_text: str) -> Optional[str]:
+    """
+    Save a social media caption to a .txt file next to the video file.
+
+    Args:
+        video_path: Path to the MP4 video file.
+        caption_text: The generated social media caption text.
+
+    Returns:
+        Path to the saved caption file, or None on failure.
+    """
+    try:
+        caption_path = Path(video_path).with_suffix(".txt")
+        caption_path.write_text(caption_text, encoding="utf-8")
+        logger.info(f"Caption saved to: {caption_path}")
+        return str(caption_path)
+    except Exception as e:
+        logger.warning(f"Failed to save caption file: {e}")
+        return None
+
+
 def format_duration(seconds: float) -> str:
     """Format duration in seconds to a human-readable string."""
     minutes, secs = divmod(int(seconds), 60)
@@ -128,6 +149,9 @@ def process_movie(
         logger.info(f"Generating social caption for '{movie_name}'...")
         social_caption = generate_social_caption(script)
         logger.info("Caption generated successfully")
+
+        # Step 3b: Save caption as .txt file next to the video
+        save_caption_file(mp4_path, social_caption)
 
         # Step 4: Copy to iCloud (Will return None if on Colab)
         logger.info(f"Copying to iCloud...")
