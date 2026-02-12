@@ -1,0 +1,64 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [ "main" ]  # Runs when you push code to main branch
+  workflow_dispatch:      # Allows manual trigger button in GitHub
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  REPO_NAME: studio-zero-repo
+  IMAGE_NAME: studio-zero
+  JOB_NAME: studio-zero-job
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    # These permissions are required for google-github-actions/auth
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Authenticate to Google Cloud
+    - name: Google Auth
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    # Set up gcloud CLI
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    # Configure Docker for Google Artifact Registry
+    - name: Configure Docker
+      run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+    # Build and Push the Docker Image
+    - name: Build and Push Container
+      run: |
+        TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+        echo "Building and pushing $TAG..."
+        docker build -t $TAG .
+        docker push $TAG
+        echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+
+    # Update the Cloud Run Job
+    - name: Update Cloud Run Job
+      run: |
+        gcloud run jobs update ${{ env.JOB_NAME }} \
+          --image ${{ env.IMAGE_TAG }} \
+          --region ${{ env.REGION }} \
+          --set-env-vars GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} \
+          --set-env-vars GROQ_API_KEY=${{ secrets.GROQ_API_KEY }} \
+          --set-env-vars PEXELS_API_KEY=${{ secrets.PEXELS_API_KEY }} \
+          --set-env-vars TMDB_API_KEY=${{ secrets.TMDB_API_KEY }} \
+          --set-env-vars BATCH_SHEET_URL=${{ secrets.BATCH_SHEET_URL }} \
+          --set-env-vars DRIVE_VIDEO_FOLDER_ID=${{ secrets.DRIVE_VIDEO_FOLDER_ID }} \
+          --set-env-vars DRIVE_LOGS_FOLDER_ID=${{ secrets.DRIVE_LOGS_FOLDER_ID }} \
+          --set-env-vars GOOGLE_APPLICATION_CREDENTIALS_JSON='${{ secrets.DRIVE_CREDS_JSON }}'
