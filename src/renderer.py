@@ -628,3 +628,87 @@ class VideoRenderer:
         if result.returncode != 0:
             logger.error(f"FFmpeg render stderr: {result.stderr}")
             raise RuntimeError(f"Failed to render final video: {result.stderr[-500:]}")
+
+
+def assemble_veo_clips(clip_paths: List[str], output_filepath: str) -> str:
+    """
+    Concatenate Veo-generated MP4 clips into a single seamless vertical video.
+
+    Uses the FFmpeg concat demuxer with stream copy to preserve both native
+    video and audio tracks without re-encoding or desync. All Veo clips are
+    expected to share the same codec parameters (produced by the same model).
+
+    If clips have mismatched parameters, falls back to re-encoding to ensure
+    a valid output.
+
+    Args:
+        clip_paths: Ordered list of MP4 file paths to concatenate.
+        output_filepath: Where to save the final assembled MP4.
+
+    Returns:
+        The output_filepath where the assembled video was saved.
+
+    Raises:
+        ValueError: If clip_paths is empty.
+        RuntimeError: If FFmpeg concatenation fails.
+    """
+    if not clip_paths:
+        raise ValueError("No clip paths provided for assembly")
+
+    Path(output_filepath).parent.mkdir(parents=True, exist_ok=True)
+
+    # Write concat list to a temp file next to the output
+    concat_list_path = Path(output_filepath).with_suffix(".concat.txt")
+    try:
+        with open(concat_list_path, "w") as f:
+            for clip in clip_paths:
+                escaped = clip.replace("'", "'\\''")
+                f.write(f"file '{escaped}'\n")
+
+        # First attempt: stream copy (fast, no quality loss, preserves audio sync)
+        cmd = [
+            "ffmpeg", "-y",
+            "-f", "concat",
+            "-safe", "0",
+            "-i", str(concat_list_path),
+            "-c", "copy",  # Copy both video and audio streams
+            "-movflags", "+faststart",
+            output_filepath,
+        ]
+
+        logger.info(f"Assembling {len(clip_paths)} Veo clips into {output_filepath}")
+        result = subprocess.run(cmd, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            # Fallback: re-encode to handle codec mismatches
+            logger.warning(
+                "Stream-copy concat failed, falling back to re-encode: "
+                f"{result.stderr[-200:]}"
+            )
+            cmd_reencode = [
+                "ffmpeg", "-y",
+                "-f", "concat",
+                "-safe", "0",
+                "-i", str(concat_list_path),
+                "-c:v", "libx264",
+                "-preset", "fast",
+                "-crf", "23",
+                "-pix_fmt", "yuv420p",
+                "-c:a", "aac",
+                "-b:a", "192k",
+                "-movflags", "+faststart",
+                "-r", str(FPS),
+                output_filepath,
+            ]
+            result2 = subprocess.run(cmd_reencode, capture_output=True, text=True)
+            if result2.returncode != 0:
+                logger.error(f"FFmpeg re-encode concat stderr: {result2.stderr}")
+                raise RuntimeError(f"Failed to assemble Veo clips: {result2.stderr[-500:]}")
+
+        logger.info(f"Veo clips assembled: {output_filepath}")
+        return output_filepath
+
+    finally:
+        # Clean up temp concat file
+        if concat_list_path.exists():
+            concat_list_path.unlink()

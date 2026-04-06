@@ -99,6 +99,7 @@ def process_movie(
     sheet_url: str,
     row_index: int,
     verbose: bool = False,
+    mode: str = "movie",
 ) -> None:
     """
     Process a single movie through the full pipeline.
@@ -138,17 +139,21 @@ def process_movie(
             movie_name=movie_name,
             progress_callback=progress_callback,
             offline=False,
+            mode=mode,
         )
 
-        if not mp4_path or not script:
+        animation_modes = {"animated", "animation-script", "animation-render"}
+        if not mp4_path or (mode not in animation_modes and not script):
             raise RuntimeError(f"Pipeline failed to produce output for '{movie_name}'")
 
         logger.info(f"Pipeline complete: {mp4_path}")
 
-        # Step 3: Generate Social Caption
-        logger.info(f"Generating social caption for '{movie_name}'...")
-        social_caption = generate_social_caption(script)
-        logger.info("Caption generated successfully")
+        # Step 3: Generate Social Caption (only for modes that produce a script)
+        social_caption = ""
+        if script:
+            logger.info(f"Generating social caption for '{movie_name}'...")
+            social_caption = generate_social_caption(script)
+            logger.info("Caption generated successfully")
 
         # Step 3b: Save caption as .txt file next to the video
         save_caption_file(mp4_path, social_caption)
@@ -251,8 +256,22 @@ def run_batch(sheet_url: str, verbose: bool = False, limit: Optional[int] = None
             })
             continue
 
+        # Determine pipeline mode from Job_Type column
+        job_type_raw = (
+            job.get("Job_Type") or
+            job.get("job_type") or
+            job.get("JobType") or
+            ""
+        ).strip().lower()
+        mode_map = {
+            "animated": "animated",
+            "animation-script": "animation-script",
+            "animation-render": "animation-render",
+        }
+        mode = mode_map.get(job_type_raw, "movie")
+
         logger.info(f"\n{'='*60}")
-        logger.info(f"Processing job {i}/{len(pending_jobs)}: '{movie_name}'")
+        logger.info(f"Processing job {i}/{len(pending_jobs)}: '{movie_name}' (mode={mode})")
         logger.info(f"{'='*60}")
 
         process_movie(
@@ -260,6 +279,7 @@ def run_batch(sheet_url: str, verbose: bool = False, limit: Optional[int] = None
             sheet_url=sheet_url,
             row_index=row_index,
             verbose=verbose,
+            mode=mode,
         )
 
     logger.info(f"\nBatch processing complete. Processed {len(pending_jobs)} job(s).")

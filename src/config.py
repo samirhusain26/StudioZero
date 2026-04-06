@@ -1,6 +1,9 @@
+import logging
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -28,7 +31,13 @@ class Config:
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
     # Gemini model for script generation (with Groq fallback)
-    GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-flash-latest")
+    GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-3.1-pro-preview")
+    GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-3.1-flash-image-preview")
+
+    # Google Cloud Vertex AI (for Veo 3.1 animated pipeline)
+    VERTEX_PROJECT_ID = os.getenv("VERTEX_PROJECT_ID")
+    VERTEX_LOCATION = os.getenv("VERTEX_LOCATION", "us-central1")
+    VERTEX_VEO_MODEL = os.getenv("VERTEX_VEO_MODEL", "veo-3.1")
 
     # Google service account credentials for Drive and Sheets
     DRIVE_APPLICATION_CREDENTIALS = os.getenv("DRIVE_APPLICATION_CREDENTIALS")
@@ -52,24 +61,39 @@ class Config:
         return "".join(c for c in name if c.isalnum() or c in " -_").strip().replace(" ", "_")
 
     @classmethod
-    def validate(cls):
+    def validate(cls, mode: str = "movie"):
         """
-        Validates that necessary API keys are present.
+        Validates that necessary API keys are present for the given pipeline mode.
         Raises a ValueError with instructions if keys are missing.
         """
         missing_keys = []
+        warning_keys = []
+
+        # GEMINI_API_KEY is required for all modes
         if not cls.GEMINI_API_KEY:
             missing_keys.append("GEMINI_API_KEY")
-        if not cls.GROQ_API_KEY:
-            missing_keys.append("GROQ_API_KEY")
-        if not cls.TMDB_API_KEY:
-            missing_keys.append("TMDB_API_KEY")
-        if not cls.PEXELS_API_KEY:
-            missing_keys.append("PEXELS_API_KEY")
+
+        if mode == "movie":
+            # Movie pipeline needs all keys
+            if not cls.TMDB_API_KEY:
+                missing_keys.append("TMDB_API_KEY")
+            if not cls.PEXELS_API_KEY:
+                missing_keys.append("PEXELS_API_KEY")
+            if not cls.GROQ_API_KEY:
+                warning_keys.append("GROQ_API_KEY")
+        elif mode in ("animated", "animation-script", "animation-render", "animation-series"):
+            # Animation pipelines only need Gemini
+            if not cls.GROQ_API_KEY:
+                warning_keys.append("GROQ_API_KEY")
+
+        if warning_keys:
+            logger.warning(
+                f"Optional API keys not set (fallback features unavailable): {', '.join(warning_keys)}"
+            )
 
         if missing_keys:
             error_message = (
-                f"Missing required environment variables: {', '.join(missing_keys)}.\n\n"
+                f"Missing required environment variables for '{mode}' mode: {', '.join(missing_keys)}.\n\n"
                 "-------------------------------------------------------------------\n"
                 "SETUP INSTRUCTIONS:\n"
                 "1. Create a file named '.env' in the project root directory.\n"
