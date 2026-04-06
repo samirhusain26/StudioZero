@@ -35,8 +35,8 @@ def run(ctx: StepContext) -> StepResult:
 
         # Rate-limit: wait between TTS requests to avoid 429s (10 req/min limit)
         if artifact_paths:
-            logger.info("Waiting 8s between TTS requests to avoid rate limits...")
-            time.sleep(8)
+            logger.info("Waiting 12s between TTS requests to avoid rate limits (10 RPM)...")
+            time.sleep(12)
 
         logger.info(f"Generating TTS for scene {scene.scene_id} ({scene.mood})...")
 

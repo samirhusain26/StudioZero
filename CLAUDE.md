@@ -2,44 +2,43 @@
 
 ## What is StudioZero?
 
-StudioZero is an AI-powered automated video generation system that creates short, vertical (9:16) social media videos. It supports three modes:
+StudioZero is an AI-powered automated video generation system that creates short, vertical (9:16) social media videos. It supports two video types through an interactive wizard:
 
-1. **Movie mode** (default): Input a movie name → narrative recap video with voiceover, stock footage, animated captions, and background music.
-2. **Animated mode (One-shot)**: Input a theme → episodic parody featuring household items/food as characters, generated with Gemini Pro + Vertex AI Veo 3.1.
-3. **Animation Series mode**: Multi-episode series scripting and rendering with persistent tracking.
+1. **Movie Recap**: Input a movie name → narrative recap video with voiceover, stock footage, Hormozi-style subtitles, and background music.
+2. **Animation**: Input a theme/storyline → AI-generated animated movie via Veo 3.1 (one-shot or multi-episode series).
+
+A separate **batch automation** channel processes jobs from Google Sheets.
 
 ## Quick Reference
 
 ```bash
-# Movie Mode (Default)
-python -m src.app "The Matrix"
-python -m src.app "Interstellar" --offline  # Use cached data
+# Interactive Wizard (default)
+python -m src.cli
 
-# Animated Mode (One-Shot)
-python -m src.app "Star Wars" --mode animated
+# Headless Mode (backwards-compatible)
+python -m src.cli --headless "The Matrix"
+python -m src.cli --headless "Interstellar" --offline
+python -m src.cli --headless "Kitchen Wars" --mode animation-series \
+    --storyline "A spatula rebels" --char-desc "Sir Spatula: dented metal" --episodes 3
 
-# Animation Series (Phase 1: Scripting)
-python -m src.app "ProjectName" --mode animation-script --storyline "Story" --episodes 3
-
-# Animation Series (Phase 2: Rendering)
-python -m src.app "ProjectName" --mode animation-render --episode-num 1
-
-# Animation Series (9-Step Pipeline — Recommended)
-python -m src.app "Kitchen Wars" --mode animation-series --storyline "A spatula rebels against the chef" --char-desc "Sir Spatula: a dented metal spatula; Chef Knife: a gleaming 8-inch blade" --episodes 3
-python -m src.app "Kitchen Wars" --mode animation-series --episodes 3  # Resume from last step
-
-# Batch Process (from Google Sheet)
+# Batch Process (Google Sheet automation — separate channel)
 python -m src.batch_runner
 ```
 
 ## Architecture Overview
 
-All pipelines are orchestrated in `src/pipeline.py` using a **Generator Pattern** yielding `PipelineStatus`.
+### Entry Points
+- **`src/cli.py`** — Main entry point. Dispatches to interactive wizard or headless mode.
+- **`src/wizard.py`** — Rich-based interactive wizard with review gates at key decision points.
+- **`src/headless.py`** — Non-interactive runner (original CLI behavior, used by batch_runner too).
+- **`src/batch_runner.py`** — Standalone Google Sheets batch automation.
 
-### Key Pipelines
-- **Movie Pipeline:** Wikipedia/TMDB data → Script → Parallel TTS + Pexels → Whisper → ASS Subtitles → FFmpeg Render.
-- **Animated Mode (One-Shot):** Parody Script → Character Blueprints → Veo 3.1 Scene Rendering → FFmpeg Assembly.
-- **Animation Series Pipeline:** `AnimationManager` project management → Phase 1: Scripting → Phase 2: Render individual episodes.
+### Pipelines
+All pipelines use a **Generator Pattern** yielding `PipelineStatus` (with `review_gate` field for wizard pausing).
+
+- **Movie Pipeline** (`pipeline.py`): TMDB data → Script → Parallel TTS + Pexels → Whisper → ASS Subtitles → FFmpeg Render.
+- **Animated One-Shot** (`pipeline.py`): Parody Script → Character Blueprints → Veo 3.1 Rendering → FFmpeg Assembly.
+- **Animation Series** (`animation_pipeline.py`): 9-step pipeline with crash recovery — World Builder → Character Designer → per-episode (Writer → Storyboard → Voice → Veo → Sound → Editor → Publisher).
 
 ## Key Data Models (in narrative.py)
 
@@ -53,15 +52,18 @@ All pipelines are orchestrated in `src/pipeline.py` using a **Generator Pattern*
 
 ```bash
 src/
-├── app.py              # CLI entry point (movie|animated|animation-script|animation-render)
-├── pipeline.py         # Orchestration engine (movie, animated, series pipelines)
+├── cli.py              # Main entry point — wizard or headless dispatch
+├── wizard.py           # Interactive stepwise wizard (rich-based)
+├── headless.py         # Non-interactive pipeline runner
+├── pipeline.py         # Orchestration engine (movie, animated pipelines)
+├── animation_pipeline.py # 9-step series pipeline with crash recovery
 ├── animation_manager.py # State and persistence for multi-episode projects
 ├── narrative.py        # LLM script and character blueprint generation
 ├── veo_client.py       # Vertex AI Veo 3.1 client
 ├── renderer.py         # FFmpeg composition - concat, ducking, subtitles, Ken Burns
 ├── gemini_tts.py       # Google Gemini TTS - 30 voices, mood-based style
 ├── config.py           # Environment, path management, Vertex AI config
-├── batch_runner.py     # Batch processing from Google Sheets queue
+├── batch_runner.py     # Batch processing from Google Sheets queue (separate channel)
 ├── cloud_services.py   # Google Drive/Sheets integration
 └── marketing.py        # Social media caption generation
 ```
@@ -74,9 +76,11 @@ All config in `.env` (API keys for Gemini, Groq, Pexels, TMDB, Vertex AI). Key p
 
 - **Python 3.10+** with strict type hinting.
 - **Pydantic v2** for all data validation models.
+- **Rich** for interactive terminal UI (wizard).
 - **Tenacity** for API retry logic with exponential backoff.
 - **Threading** via `ThreadPoolExecutor` for parallel movie asset generation.
 - **Generator pattern** for pipeline progress reporting (`yield PipelineStatus(...)`).
+- **Review gates** — `PipelineStatus.review_gate=True` pauses the wizard for user confirmation; headless mode ignores them.
 - **FFmpeg Filters:** `sidechaincompress` for ducking, `zoompan` for Ken Burns, `ass` for subtitles.
 - Videos: 1080x1920 (9:16 portrait), 30fps, H.264 + AAC.
 

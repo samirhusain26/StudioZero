@@ -16,11 +16,25 @@ import logging
 import os
 import re
 import wave
+import time
 from pathlib import Path
 from typing import Tuple, Optional
 
 from google import genai
 from google.genai import types
+from google.genai.errors import ClientError, ServerError as GenAIServerError
+from google.api_core.exceptions import (
+    ServiceUnavailable,
+    ResourceExhausted,
+    DeadlineExceeded,
+    InternalServerError,
+)
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+)
 
 from src.config import Config
 
@@ -249,6 +263,43 @@ def _extract_audio_from_response(response) -> Optional[bytes]:
     return part.inline_data.data
 
 
+@retry(
+    retry=retry_if_exception_type((
+        ServiceUnavailable,
+        ResourceExhausted,
+        DeadlineExceeded,
+        InternalServerError,
+        ClientError,
+        GenAIServerError,
+        ConnectionError,
+        TimeoutError,
+    )),
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=2, min=10, max=60),
+    before_sleep=lambda retry_state: logger.warning(
+        f"Gemini TTS request failed (attempt {retry_state.attempt_number}), retrying: "
+        f"{retry_state.outcome.exception()}"
+    ),
+)
+def _call_gemini_tts(client, prompt: str, gemini_voice: str) -> Optional[bytes]:
+    """Wrapper for the actual Gemini API call with tenacity retry."""
+    response = client.models.generate_content(
+        model="gemini-2.5-flash-preview-tts",
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            response_modalities=["AUDIO"],
+            speech_config=types.SpeechConfig(
+                voice_config=types.VoiceConfig(
+                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                        voice_name=gemini_voice,
+                    )
+                )
+            ),
+        )
+    )
+    return _extract_audio_from_response(response)
+
+
 def generate_audio(
     text: str,
     output_path: str,
@@ -318,27 +369,11 @@ def generate_audio(
         try:
             logger.info(f"TTS attempt ({attempt_name}): generating audio...")
 
-            # Generate audio using Gemini TTS
-            response = client.models.generate_content(
-                model="gemini-2.5-flash-preview-tts",
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_modalities=["AUDIO"],
-                    speech_config=types.SpeechConfig(
-                        voice_config=types.VoiceConfig(
-                            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                                voice_name=gemini_voice,
-                            )
-                        )
-                    ),
-                )
-            )
-
-            # Safely extract audio data from response
-            audio_data = _extract_audio_from_response(response)
+            # Generate audio using Gemini TTS (with tenacity retry inside)
+            audio_data = _call_gemini_tts(client, prompt, gemini_voice)
 
             if audio_data is None:
-                logger.warning(f"TTS attempt ({attempt_name}) returned empty/blocked response, will retry...")
+                logger.warning(f"TTS attempt ({attempt_name}) returned empty/blocked response, will try sanitized if available...")
                 continue
 
             # Write to WAV file
@@ -351,7 +386,7 @@ def generate_audio(
             return output_path, max(0.1, duration_seconds)
 
         except Exception as e:
-            logger.warning(f"TTS attempt ({attempt_name}) failed with exception: {e}")
+            logger.warning(f"TTS attempt ({attempt_name}) failed after retries: {e}")
             continue
 
     # All attempts failed

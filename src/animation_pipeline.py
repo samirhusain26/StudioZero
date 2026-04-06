@@ -120,6 +120,7 @@ def run_animation_series(
                 step=step_counter,
                 message=f"[{step_name}] Complete — {len(result.artifact_paths)} artifact(s)",
                 data=result.data,
+                review_gate=True,
             )
         except Exception as e:
             state.mark_failed(step_name, str(e))

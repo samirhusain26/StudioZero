@@ -11,3 +11,4 @@ Wikipedia-API>=0.6.0  # for fetching movie plots
 gspread>=6.0.0        # for Google Sheets integration
 google-api-python-client>=2.100.0  # for Google Drive uploads
 google-auth>=2.23.0   # for service account authentication
+rich>=13.0.0          # for interactive wizard UI

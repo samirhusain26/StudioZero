@@ -92,8 +92,8 @@ def _get_veo_client() -> genai.Client:
         ConnectionError,
         TimeoutError,
     )),
-    stop=stop_after_attempt(4),
-    wait=wait_exponential(multiplier=2, min=15, max=90),
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=2, min=35, max=120),
     before_sleep=lambda retry_state: logger.warning(
         f"Veo request failed (attempt {retry_state.attempt_number}), retrying: "
         f"{retry_state.outcome.exception()}"

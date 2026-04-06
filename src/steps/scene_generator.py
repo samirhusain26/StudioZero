@@ -41,8 +41,8 @@ def run(ctx: StepContext) -> StepResult:
 
         # Rate-limit: wait between Veo requests to avoid 429s
         if artifact_paths:
-            logger.info("Waiting 15s between Veo requests to avoid rate limits...")
-            time.sleep(15)
+            logger.info("Waiting 35s between Veo requests to avoid rate limits (2 RPM)...")
+            time.sleep(35)
 
         logger.info(f"Rendering scene {shot.scene_id} via Veo 3.1...")
 

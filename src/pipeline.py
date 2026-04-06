@@ -56,6 +56,7 @@ class PipelineStatus:
     message: str
     data: Optional[Dict[str, Any]] = None
     is_error: bool = False
+    review_gate: bool = False
 
 
 def _create_silent_audio(output_path: str, duration_seconds: float = 3.0,
@@ -403,6 +404,8 @@ def run_animated_pipeline(
     yield PipelineStatus(
         step=2,
         message=f"[Animated] Character generation complete: {len(character_images)} unique character(s)",
+        data={"characters": character_images},
+        review_gate=True,
     )
 
     # =================================================================
@@ -849,7 +852,8 @@ class VideoGenerationPipeline:
             yield PipelineStatus(
                 step=1,
                 message=f"Script generated: {len(script.scenes)} scenes, genre={script.genre}, voice={script.selected_voice_id}, mood={script.overall_mood}, lang={script.lang_code}",
-                data={'script': script.model_dump()}
+                data={'script': script.model_dump()},
+                review_gate=True,
             )
 
             # =================================================================
