@@ -9,8 +9,9 @@ clip with native lip-sync and audio.
 import logging
 import mimetypes
 import time
+import urllib.request
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional
 
 from google import genai
 from google.genai import types
@@ -32,9 +33,9 @@ from src.config import Config
 
 logger = logging.getLogger(__name__)
 
-# Model for fast video generation
-# Use preview name for standard GenAI API, or -001 for Vertex AI
-VEO_MODEL = "veo-3.1-fast-generate-preview"
+# Model is configured via Config.VEO_MODEL (settings.json or env var VEO_MODEL)
+# Default: veo-3.1-lite-generate-preview (cheapest)
+VEO_MODEL = Config.VEO_MODEL
 
 # How often (seconds) to poll for long-running video generation
 _POLL_INTERVAL = 10
@@ -105,6 +106,7 @@ def generate_veo_scene(
     dialogue: str,
     voice_profile: str,
     output_path: str,
+    on_poll: Optional[Callable[[int], None]] = None,
 ) -> str:
     """
     Generate an animated video scene using Veo 3.1.
@@ -141,7 +143,7 @@ def generate_veo_scene(
     if Config.VERTEX_PROJECT_ID:
         model_name = "veo-3.1-fast-generate-001"
 
-    # Read the reference image
+    # Read the reference image for character consistency across episodes
     image_bytes = image_file.read_bytes()
     mime_type = mimetypes.guess_type(image_path)[0] or "image/png"
 
@@ -149,7 +151,6 @@ def generate_veo_scene(
     prompt_text = _build_veo_prompt(visual_description, dialogue, voice_profile)
     logger.info(f"Veo prompt ({len(prompt_text)} chars) using model {model_name}: {prompt_text[:120]}...")
 
-    # Submit generation request using generate_videos (long-running operation)
     operation = client.models.generate_videos(
         model=model_name,
         prompt=prompt_text,
@@ -169,19 +170,65 @@ def generate_veo_scene(
                 f"Veo generation timed out after {_MAX_POLL_TIME}s"
             )
         elapsed = int(time.time() - (deadline - _MAX_POLL_TIME))
-        logger.debug(f"Polling Veo operation... ({elapsed}s elapsed)")
+        
+        # Log metadata if available (often contains progress or state)
+        meta = getattr(operation, 'metadata', None)
+        status_msg = f"Polling Veo operation... ({elapsed}s elapsed)"
+        if meta:
+            # Handle both dict-like and attribute-like access
+            if isinstance(meta, dict):
+                progress = meta.get('progress_percentage')
+                if progress is not None:
+                    status_msg += f" - Progress: {progress}%"
+            elif hasattr(meta, 'progress_percentage'):
+                status_msg += f" - Progress: {meta.progress_percentage}%"
+
+        logger.info(status_msg)
+        if on_poll:
+            on_poll(elapsed)
         time.sleep(_POLL_INTERVAL)
         operation = client.operations.get(operation)
 
+    # Check for errors in the completed operation
+    if operation.error:
+        logger.error(f"Veo operation failed — full error: {operation.error}")
+        logger.error(f"Full operation state: {operation}")
+        raise RuntimeError(f"Veo generation error: {operation.error}")
+
     # Extract video from completed operation
+    logger.info("Veo generation complete, extracting video data...")
+    logger.debug(f"Full operation response: {getattr(operation, 'response', None)}")
+
     if operation.response and operation.response.generated_videos:
         video = operation.response.generated_videos[0]
+        if hasattr(video, 'video_metadata'):
+            logger.info(f"Veo Video Metadata: {video.video_metadata}")
+
         if hasattr(video, 'video') and video.video:
-            video_data = video.video.video_bytes
-            if video_data:
+            raw = video.video
+            if raw.video_bytes:
                 out = Path(output_path)
-                out.write_bytes(video_data)
-                logger.info(f"Veo scene saved: {out} ({len(video_data)} bytes)")
+                out.write_bytes(raw.video_bytes)
+                logger.info(f"Veo scene saved: {out} ({len(raw.video_bytes)} bytes)")
                 return str(out)
+            elif raw.uri:
+                # Video returned as a URI — download it
+                logger.info(f"Veo returned URI, downloading: {raw.uri}")
+                uri = raw.uri
+                if "key=" not in uri:
+                    uri = f"{uri}&key={Config.GEMINI_API_KEY}"
+                out = Path(output_path)
+                urllib.request.urlretrieve(uri, out)
+                logger.info(f"Veo scene downloaded and saved: {out} ({out.stat().st_size} bytes)")
+                return str(out)
+            else:
+                logger.error("video.video exists but both video_bytes and uri are empty")
+        else:
+            logger.error(f"No video attribute on generated_videos[0]. Object: {video}")
+    else:
+        logger.error(
+            f"operation.response={getattr(operation, 'response', None)} | "
+            f"generated_videos={getattr(getattr(operation, 'response', None), 'generated_videos', None)}"
+        )
 
     raise RuntimeError("Veo returned no video data in response")

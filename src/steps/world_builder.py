@@ -1,123 +1,91 @@
 """
-Step 1: World Builder — Generate the Series Bible.
+Step 4: World Builder — Define visual layout and atmosphere for every unique location.
 
-Input: storyline, character descriptions, episode count
-Output: SeriesBible JSON (setting, rules, tone, character roster, arc outline)
-Persists: project_dir/series_bible.json
+Input:  all_episodes.json (extract unique location_slugs from scene breakdowns)
+Output: worlds/{location_id}_layout.json + worlds/{location_id}_reference.png
+Persists: project_dir/worlds/
+
+Runs after Screenwriter so it knows exactly which locations are needed.
+Reference images give the Director agent a visual anchor for each environment,
+ensuring consistency across all scenes set in the same place.
 """
 
 import json
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from google.genai import types
 from pydantic import BaseModel, Field
 
 from src.config import Config
+from src.narrative import generate_character_blueprint
 from src.steps import StepContext, StepResult
+from src.steps.writer import load_story
+from src.steps.screenwriter import load_all_episodes
 
 logger = logging.getLogger(__name__)
 
 
-# ---------------------------------------------------------------------------
-# Pydantic Models
-# ---------------------------------------------------------------------------
+# ── Pydantic Models ──────────────────────────────────────────────────────────
 
-class CharacterProfile(BaseModel):
-    """A single character in the series roster."""
-    character_id: str = Field(..., description="Unique slug (e.g., 'bruised_apple')")
-    display_name: str = Field(..., description="Display name (e.g., 'Sir Bruised Apple')")
-    base_object: str = Field(..., description="Real-world object the character is (e.g., 'apple')")
-    personality_traits: List[str] = Field(..., description="3-5 personality adjectives")
+class WorldLayout(BaseModel):
+    """Visual and atmospheric definition for one location."""
+    location_id: str = Field(..., description="Matches the location_slug from scene breakdowns")
+    display_name: str = Field(..., description="Human-readable location name")
     visual_description: str = Field(
         ...,
-        description="Detailed 3D Pixar-style appearance description, minimum 30 words"
+        description=(
+            "Full environment description for Veo prompts. Min 50 words. "
+            "Include: layout, surfaces, colours, props, lighting source, atmosphere. "
+            "3D Pixar-style rendering aesthetic."
+        )
     )
-    voice_profile: str = Field(
+    atmosphere: str = Field(
         ...,
-        description="Pitch, texture, accent, emotional quality for TTS/Veo"
+        description="Emotional atmosphere of this location, e.g. 'chaotic and warm, smells of burnt toast'"
     )
-    role_in_story: str = Field(..., description="Protagonist, antagonist, comic relief, etc.")
-
-
-class SeriesBible(BaseModel):
-    """The foundational document for an animation series."""
-    project_title: str = Field(..., description="Title of the animation series")
-    setting: str = Field(..., description="Where the story takes place (e.g., 'A chaotic kitchen')")
-    tone: str = Field(..., description="Overall tone (e.g., 'dark comedy with heart')")
-    rules: List[str] = Field(
+    lighting_notes: str = Field(
         ...,
-        description="World rules (e.g., 'Objects can only move when humans aren't watching')"
+        description="Specific lighting setup: source, colour temperature, shadow direction"
     )
-    character_roster: List[CharacterProfile] = Field(
-        ..., min_length=2, description="All recurring characters"
-    )
-    series_arc_outline: str = Field(
+    color_palette: List[str] = Field(
         ...,
-        description="2-3 sentence high-level arc spanning all episodes"
-    )
-    episode_count: int = Field(..., ge=1, le=10)
-    episode_summaries: List[str] = Field(
-        ...,
-        description="One-line summary for each episode"
+        min_length=3,
+        max_length=5,
+        description="3-5 dominant hex or named colours that define this location's look"
     )
 
 
-# ---------------------------------------------------------------------------
-# System Prompt
-# ---------------------------------------------------------------------------
+# ── Helpers ──────────────────────────────────────────────────────────────────
 
-_SYSTEM_PROMPT = """You are a senior showrunner creating a Series Bible for a viral animated short-form series.
+def _generate_world_layout(
+    location_slug: str,
+    scene_contexts: List[str],
+    gemini_client,
+    story_tone: str,
+    story_setting: str,
+) -> WorldLayout:
+    """Ask Gemini to produce a full WorldLayout for a location slug."""
+    schema = WorldLayout.model_json_schema()
 
-## YOUR TASK:
-Create a detailed Series Bible from the user's storyline and character descriptions.
-All characters MUST be anthropomorphic household objects or food items.
+    scene_samples = "\n".join(f"  - {ctx[:120]}" for ctx in scene_contexts[:3])
 
-## REQUIREMENTS:
-1. **Setting**: Vivid, specific location with atmosphere.
-2. **Tone**: Clear emotional register (dark comedy, wholesome, absurdist, etc.).
-3. **Rules**: 3-5 world rules that create dramatic tension and comedy.
-4. **Character Roster**: Full profiles for each character with:
-   - Unique visual description (3D Pixar-style, minimum 30 words)
-   - Specific voice profile (pitch, texture, accent, emotion)
-   - Clear story role and personality traits
-5. **Series Arc**: A satisfying arc that spans all episodes.
-6. **Episode Summaries**: One-line hook per episode showing escalation.
-
-Characters must be CONSISTENT — same IDs and traits will be used across all episodes.
-Output ONLY valid JSON matching the SeriesBible schema."""
-
-
-# ---------------------------------------------------------------------------
-# Step Implementation
-# ---------------------------------------------------------------------------
-
-def run(ctx: StepContext) -> StepResult:
-    """Generate the Series Bible for the animation project."""
-    bible_path = ctx.project_dir / "series_bible.json"
-
-    # Resume: if bible already exists, load and return
-    if bible_path.exists():
-        logger.info("Series bible already exists, loading from disk")
-        return StepResult(artifact_paths=[str(bible_path)])
-
-    schema = SeriesBible.model_json_schema()
-
-    user_prompt = (
-        f"Create a Series Bible for a {ctx.num_episodes}-episode animated series.\n\n"
-        f"Storyline: {ctx.storyline}\n\n"
-        f"Characters: {ctx.character_descriptions}\n\n"
-        f"Generate {ctx.num_episodes} episode summaries.\n\n"
+    prompt = (
+        f"You are a production designer for a 3D animated series.\n"
+        f"Series setting: {story_setting}\n"
+        f"Series tone: {story_tone}\n\n"
+        f"Design the visual layout for this location: '{location_slug}'\n\n"
+        f"Sample scenes set here:\n{scene_samples}\n\n"
+        f"Produce a detailed WorldLayout with at least 50 words in visual_description. "
+        f"This description will be injected verbatim into every Veo prompt for this location "
+        f"to maintain visual consistency across all scenes set here.\n\n"
         f"Output ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}"
     )
 
-    combined_prompt = f"{_SYSTEM_PROMPT}\n\n---\n\n{user_prompt}"
-
-    logger.info("Generating series bible...")
-    response = ctx.gemini_client.models.generate_content(
+    response = gemini_client.models.generate_content(
         model=Config.GEMINI_MODEL_NAME,
-        contents=combined_prompt,
+        contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
             response_schema=schema,
@@ -125,16 +93,107 @@ def run(ctx: StepContext) -> StepResult:
     )
 
     raw = json.loads(response.text)
-    bible = SeriesBible.model_validate(raw)
-
-    # Persist
-    bible_path.write_text(bible.model_dump_json(indent=2), encoding="utf-8")
-    logger.info(f"Series bible saved: '{bible.project_title}' — {len(bible.character_roster)} characters")
-
-    return StepResult(artifact_paths=[str(bible_path)])
+    return WorldLayout.model_validate(raw)
 
 
-def load_bible(project_dir: Path) -> SeriesBible:
-    """Load a previously saved SeriesBible from disk."""
-    path = project_dir / "series_bible.json"
-    return SeriesBible.model_validate_json(path.read_text(encoding="utf-8"))
+def _generate_world_image(layout: WorldLayout, gemini_client) -> bytes | None:
+    """Generate a reference image for a world layout using Gemini Imagen."""
+    image_prompt = (
+        f"Generate an establishing shot reference image for an animated location. "
+        f"3D Pixar-style rendering. Plain white background border for reference use.\n\n"
+        f"Location: {layout.display_name}\n"
+        f"Description: {layout.visual_description}\n"
+        f"Lighting: {layout.lighting_notes}\n"
+        f"Color palette: {', '.join(layout.color_palette)}"
+    )
+
+    # Reuse the same image generation utility used by the Casting step
+    return generate_character_blueprint(
+        visual_description=image_prompt,
+        gemini_client=gemini_client,
+    )
+
+
+# ── Step Implementation ──────────────────────────────────────────────────────
+
+def run(ctx: StepContext) -> StepResult:
+    """Generate world layout files and reference images for all unique locations."""
+    story = load_story(ctx.project_dir)
+    all_eps = load_all_episodes(ctx.project_dir)
+
+    # Extract all unique location slugs and the scene contexts where they appear
+    location_scenes: dict[str, List[str]] = {}
+    for ep in all_eps.episodes:
+        for scene in ep.scenes:
+            slug = scene.location_slug
+            if slug not in location_scenes:
+                location_scenes[slug] = []
+            location_scenes[slug].append(scene.visual_context)
+
+    logger.info(f"[world_builder] Unique locations across all episodes: {sorted(location_scenes.keys())}")
+
+    artifact_paths: List[str] = []
+
+    for location_slug, scene_contexts in location_scenes.items():
+        layout_path = ctx.worlds_dir / f"{location_slug}_layout.json"
+        img_path = ctx.worlds_dir / f"{location_slug}_reference.png"
+
+        # ── Layout JSON ─────────────────────────────────────────────────────
+        if layout_path.exists():
+            logger.info(f"[world_builder] Layout exists for '{location_slug}' — skipping LLM call")
+            layout = WorldLayout.model_validate_json(layout_path.read_text(encoding="utf-8"))
+        else:
+            logger.info(
+                f"[world_builder] Designing layout for '{location_slug}' "
+                f"({len(scene_contexts)} scene(s) set here)..."
+            )
+            layout = _generate_world_layout(
+                location_slug=location_slug,
+                scene_contexts=scene_contexts,
+                gemini_client=ctx.gemini_client,
+                story_tone=story.tone,
+                story_setting=story.setting,
+            )
+            layout_path.write_text(layout.model_dump_json(indent=2), encoding="utf-8")
+            logger.info(
+                f"[world_builder] Layout saved: '{layout.display_name}' "
+                f"— palette: {', '.join(layout.color_palette)}"
+            )
+
+        artifact_paths.append(str(layout_path))
+
+        # ── Reference image ─────────────────────────────────────────────────
+        if img_path.exists():
+            logger.info(f"[world_builder] Reference image exists for '{location_slug}' — skipping")
+            artifact_paths.append(str(img_path))
+            continue
+
+        logger.info(f"[world_builder] Generating reference image for '{layout.display_name}'...")
+        image_data = _generate_world_image(layout, ctx.gemini_client)
+
+        if image_data:
+            img_path.write_bytes(image_data)
+            artifact_paths.append(str(img_path))
+            logger.info(f"[world_builder] Reference image saved: {img_path.name}")
+        else:
+            logger.warning(f"[world_builder] No image returned for '{location_slug}' — continuing")
+
+    if not artifact_paths:
+        raise RuntimeError("[world_builder] No world layout assets were generated")
+
+    logger.info(f"[world_builder] World building complete — {len(location_scenes)} location(s) defined")
+    return StepResult(artifact_paths=artifact_paths)
+
+
+def load_world_layout(worlds_dir: Path, location_id: str) -> WorldLayout:
+    """Load a persisted world layout from disk."""
+    path = worlds_dir / f"{location_id}_layout.json"
+    return WorldLayout.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+def load_all_world_layouts(worlds_dir: Path) -> List[WorldLayout]:
+    """Load all world layout files from the worlds directory."""
+    layouts = []
+    for layout_path in sorted(worlds_dir.glob("*_layout.json")):
+        layouts.append(WorldLayout.model_validate_json(layout_path.read_text(encoding="utf-8")))
+    return layouts

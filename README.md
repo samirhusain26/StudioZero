@@ -1,84 +1,66 @@
 # StudioZero
 
-AI-powered video generation pipeline that creates short, vertical (9:16) social media videos. It autonomously handles everything from script generation and voiceovers to stock video selection and final rendering.
+AI-powered video generation pipeline that creates short, vertical (9:16) social media videos. It autonomously handles everything from script generation and voiceovers to visual asset selection and final rendering.
 
-## Pipeline Modes
+## Core Operational Routes
 
-- **Movie Mode (Default)**: Input a movie name → generates a narrative recap with AI voiceover, stock footage, and Hormozi-style captions.
-- **Animated Mode (One-Shot)**: Input a theme → generates a funny parody with anthropomorphic household items/food as 3D Pixar-style characters using Vertex AI Veo 3.1.
-- **Animation Series Mode**: Generate a multi-episode project with consistent characters and persistent tracking.
+StudioZero is organized into two primary production routes:
+
+1.  **Stock Footage Route**: 
+    *   **User Entry**: Input a movie name or story idea. If the input is unrecognizable, the system automatically generates a creative random story.
+    *   **Sheet Automated**: Fetches multiple jobs from a Google Sheet for high-volume automated production.
+    *   **Output**: Narrative recaps with AI voiceover, stock footage (Pexels), and Hormozi-style captions.
+
+2.  **Animation Series Route**:
+    *   **Modular 7-Step Pipeline**: A robust, crash-resilient process for multi-episode series (Writer, Screenwriter, Casting, World Builder, Director, Scene Gen, Editor).
+    *   **Features**: Consistent characters via visual blueprints, world-building (Series Bible), and Vertex AI Veo 3.1 video generation.
+    *   **Retry Gate**: Interactive failure handling that allows users to retry, edit prompts, or skip failed video generation scenes.
 
 ## Quick Start
 
 ### 1. Install Dependencies
-
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 2. Configure API Keys
-
 ```bash
 cp .env.template .env
 ```
+Requires: Google Gemini (LLM/TTS/Vision), Groq (Fallback), Pexels (Stock Media), and Vertex AI (Veo 3.1).
 
-Key required services: Google Gemini (LLM/TTS), Groq (Fallback/Captions), Pexels (Stock Video), and Vertex AI (Veo 3.1).
-
-### 3. Generate a Video
-
-#### Movie Mode
+### 3. Run the Application
 ```bash
-python -m src.app "Inception"
+python -m src.app
 ```
-
-#### Animated Parody
-```bash
-python -m src.app "Game of Thrones" --mode animated
-```
-
-#### Animation Series (Multi-Phase)
-```bash
-# Phase 1: Write the multi-episode series bible
-python -m src.app "Kitchen Chronicles" --mode animation-script --storyline "A drama about a toaster seeking revenge" --episodes 3
-
-# Phase 2: Render a specific episode
-python -m src.app "Kitchen Chronicles" --mode animation-render --episode-num 1
-```
-
-## Advanced Usage
-
-| Flag | Description |
-|------|-------------|
-| `--mode` | `movie`, `animated`, `animation-script`, `animation-render` |
-| `--offline` | Use cached data from `output/temp/` (no API calls) |
-| `--assets-only` | Stop after gathering assets, skip rendering |
-| `--clean` | Delete temporary files after successful render |
-| `--verbose` / `-v` | Enable detailed debug logging |
-| `--output` / `-o` | Specify custom output path for the final MP4 |
+You will be prompted to choose between:
+*   **CLI Wizard**: The recommended interactive terminal interface for both production routes.
+*   **Web Dashboard**: A modern FastAPI/WebSocket interface for project management and real-time monitoring.
 
 ## Documentation
 
-Detailed guides and technical references are available in the `docs/` directory:
+Detailed guides and technical references:
 
-- [**PIPELINE_OVERVIEW.md**](docs/PIPELINE_OVERVIEW.md) — Master documentation of all operational modes.
-- [**TECHNICAL_REFERENCE.md**](docs/TECHNICAL_REFERENCE.md) — Low-level breakdown of the rendering engine.
+- [**FLOW_AND_FEATURES.md**](docs/FLOW_AND_FEATURES.md) — Visual flow maps and development roadmap.
+- [**PIPELINE_OVERVIEW.md**](docs/PIPELINE_OVERVIEW.md) — Deep dive into Stock Footage vs. Animation routes.
+- [**TECHNICAL_REFERENCE.md**](docs/TECHNICAL_REFERENCE.md) — Technical breakdown of the rendering engine and 7-step logic.
+- [**PROJECT_STRUCTURE.md**](docs/PROJECT_STRUCTURE.md) — Codebase map and technical stack.
+- [**BATCH_PROCESSING.md**](docs/BATCH_PROCESSING.md) — Guide for Google Sheets automation.
 - [**MODELS_REFERENCE.md**](docs/MODELS_REFERENCE.md) — Pydantic schema and data model documentation.
-- [**BATCH_PROCESSING.md**](docs/BATCH_PROCESSING.md) — Google Sheets automation and macOS scheduling.
-- [**PROJECT_STRUCTURE.md**](docs/PROJECT_STRUCTURE.md) — Architectural map and technical stack.
 
 ## Key Features
 
-- **30+ TTS Voices**: Automatic selection based on genre/mood (14 female, 16 male).
-- **Mood-Based Pacing**: TTS speed and tone automatically adjust to 14 emotional contexts.
-- **Audio Ducking**: Background music automatically ducks during narration via sidechain compression.
-- **Character Consistency**: In animated modes, character blueprints are shared across scenes/episodes for visual anchoring.
-- **Smart Fallbacks**: Wikipedia → TMDB, Gemini → Groq, Pexels → Local assets.
-- **Batch Processing**: Automate production via a Google Sheets queue using `src/batch_runner.py`.
+- **Modular 7-Step Pipeline**: Production-grade animation series workflow with isolated pre-production and production phases.
+- **Smart Input Validation**: Detects "garbage" text and falls back to AI-generated random stories to ensure successful runs.
+- **Hierarchical Resilience**: Wikipedia → TMDB, Gemini → Groq, Pexels → Local assets.
+- **Hormozi-Style Captions**: High-energy, frame-accurate karaoke subtitles (ASS format).
+- **Sidechain Audio Ducking**: Professional-grade audio mixing with automatic music ducking.
+- **Crash Recovery**: The animation series pipeline persists state in `pipeline_state.json` and can resume from any failure point.
 
 ## Technical Specs
 
 - **Resolution**: 1080x1920 (9:16 portrait)
 - **Frame Rate**: 30 FPS
 - **Video Codec**: H.264 (libx264)
-- **Subtitles**: Hormozi-style ASS (Advanced SubStation Alpha)
 - **Audio**: AAC 192kbps with sidechain ducking
+- **Models**: Gemini 2.5 Flash (Scripts/TTS/Vision), Veo 3.1 (Video)

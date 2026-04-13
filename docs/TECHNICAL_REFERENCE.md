@@ -1,83 +1,63 @@
 # StudioZero: Technical Pipeline Reference
 
-This document provides a low-level technical reference for the StudioZero video generation engine. It detail every stage of the process across the Movie, Animated, and Animation Series pipelines.
+This document provides a low-level technical reference for the StudioZero video generation engine. It details the two production routes and the shared infrastructure.
 
 ---
 
-## 1. Movie Recap Pipeline (Default)
+## 1. Route A: Stock Footage Pipeline
 
-The movie pipeline generates high-energy recaps from a movie title.
+This pipeline focuses on speed and narrative clarity using stock media.
 
-### Step 1: Data Retrieval & Scripting
-- **Sources:** Wikipedia API (primary plot) and TMDB API (poster, year, tagline).
-- **LLM:** Google Gemini 2.0/2.5 Pro (Primary) or Groq LLaMA 3.3 70B (Fallback).
-- **Schema:** `VideoScript` pydantic model (exactly 6 scenes).
-- **Logic:** Identifies genre, selects voice ID, determines overall mood, and generates 3 Pexels search queries per scene.
+### Input Handling & Integrity
+*   **Validation**: Uses `src.narrative.validate_input` (Gemini 2.5 Flash) to analyze user text.
+*   **Random Story Logic**: If input is invalid, `generate_random_story_idea` creates a `Title - Summary` pair to ensure the pipeline always has valid content to process.
 
-### Step 2: Parallel Asset Generation
-- **TTS:** Gemini TTS generates 24kHz mono WAVs. Pacing is adjusted per scene via `mood` and `tts_speed`. All clips are boosted 25% for social media.
-- **Visuals:** Pexels API search with a 3-query fallback chain:
-  `Literal -> Metaphorical -> Atmospheric -> assets/basevideos/`.
-- **Poster Scene:** Downloads TMDB poster, generates "Ken Burns" video, and creates special "reveal" narration.
+### Asset Generation
+*   **Scripting**: LLM generates a 6-scene script with Pexels-optimized search queries.
+*   **TTS**: Gemini TTS generates high-quality audio.Pacing is automatically adjusted by 25% for social media speed.
+*   **Video**: Pexels API fetching with a multi-query fallback system (Literal → Metaphorical → Atmospheric).
 
-### Step 3: Transcription & Subtitles
-- **Whisper:** Local `base` model transcribes all scenes with `word_timestamps=True`.
-- **Subtitles:** `pysubs2` generates an ASS file with Hormozi-style (karaoke) formatting.
-
-### Step 4: Final Rendering
-- **Normalization:** FFmpeg ensures all clips are 1080x1920, 30fps, H.264. Short videos are looped via `-stream_loop -1`.
-- **Audio Mixing:** Sidechain compression (ducking) lowers music volume when the voice track is active.
-- **Filter:** `sidechaincompress=threshold=0.1:ratio=10:attack=50:release=200`.
+### Rendering (FFmpeg)
+*   **Sidechain Ducking**: Background music volume is dynamically lowered when voice is detected.
+*   **Normalization**: All clips are standardized to 1080x1920 @ 30fps.
+*   **Reveal Ending**: TMDB poster fetch + Ken Burns effect animation.
 
 ---
 
-## 2. Animated Parody Pipeline (One-Shot)
+## 2. Route B: Animation Pipeline (Modular 7-Step)
 
-The animated pipeline uses Vertex AI Veo 3.1 to generate episodic parodies.
+A robust, step-based workflow for multi-episode series with character and world consistency.
 
-### Step 1: Parody Scripting
-- **LLM:** Gemini Pro generates an `EpisodicScript` (6 scenes) based on a theme.
-- **Characters:** All characters are household items/food with punny names parodying the theme.
+### Orchestration & State
+*   **Orchestrator**: `src/animation_pipeline.py`.
+*   **Persistence**: `src/pipeline_state.py` manages `pipeline_state.json`, storing completion flags and artifact paths for every step.
 
-### Step 2: Character Blueprints
-- **Model:** Gemini Image Gen (`gemini-3.1-flash-image-preview`).
-- **Output:** PNG reference sheets (front-facing 3/4 view, white background).
-- **Purpose:** Passed to Veo 3.1 as a "visual ingredient" to anchor character appearance.
-
-### Step 3: Veo 3.1 Rendering
-- **Model:** `veo-3.1-fast-generate-001`.
-- **Input:** Visual description + reference image + character dialogue + voice profile.
-- **Output:** MP4 clips with native video, audio, and lip-sync.
-
-### Step 4: Assembly & Subtitles
-- **Concatenation:** Uses FFmpeg stream-copy (`-c copy`) for speed. Falls back to re-encode on failure.
-- **Subtitles:** Optional transcription of the final audio track to burn in captions.
-
----
-
-## 3. Animation Series Pipeline (Multi-Episode)
-
-The series pipeline allows for persistent series management.
-
-### Phase 1: Series Bible & Scripting
-- **CLI:** `--mode animation-script`.
-- **Orchestration:** `generate_animation_project` creates a multi-episode `AnimationProject`.
-- **Persistence:** Saved to `output/temp/<title>/project.json` via `AnimationManager`.
-
-### Phase 2: Episode Rendering
-- **CLI:** `--mode animation-render --episode-num <N>`.
-- **Tracking:** Progress stored in `project_log.json` (pending, rendering, completed, failed).
-- **Consistency:** Re-uses character blueprints stored at the project root across all episodes.
+### Detailed Steps:
+1.  **Writer**: Takes the brief and expands it into a full story, character seeds, and episode outlines.
+2.  **Screenwriter**: Converts the story into detailed scene breakdowns for all episodes.
+3.  **Casting**: Generates character blueprints and visual reference images using Gemini Image Gen.
+4.  **World Builder**: Establishes the series bible, setting, and location layout references.
+5.  **Director**: Combines episode scenes with character/world references to engineer final Veo prompts.
+6.  **Scene Generator**: Renders high-fidelity video clips via **Vertex AI Veo 3.1**.
+7.  **Editor**: Final FFmpeg assembly with audio mixing and Hormozi-style karaoke subtitles.
 
 ---
 
 ## Technical Specifications Summary
 
-| Feature | Movie Mode | Animated/Series Mode |
-|---------|------------|----------------------|
-| **Aspect Ratio** | 1080x1920 (9:16) | 1080x1920 (9:16) |
-| **Video Model** | Pexels (Stock) | Vertex AI Veo 3.1 |
-| **Voice Model** | Gemini TTS | Veo Native (Voice Profile) |
-| **Subtitles** | Hormozi ASS (Mandatory) | Hormozi ASS (Optional) |
-| **Audio Mix** | Voice + Music Ducking | Veo Scene Audio |
-| **Persistence** | `pipeline_cache.json` | `project.json` + `project_log.json` |
+| Feature | Stock Footage Route | Animation Route |
+| :--- | :--- | :--- |
+| **Video Engine** | Pexels API (Stock) | Vertex AI Veo 3.1 |
+| **Voice Engine** | Gemini TTS | Gemini TTS |
+| **Subtitle Format** | Hormozi-style ASS | Hormozi-style ASS |
+| **Audio Mix** | Sidechain Ducking | Sidechain Ducking |
+| **Resilience** | Input Validation + Random Story | 7-Step State Persistence + Retry Gate |
+| **UI Support** | CLI / Batch / Web | CLI / Web |
+
+---
+
+## Web Server Architecture
+
+The dashboard uses **FastAPI** with **WebSockets** for real-time log streaming.
+*   **Project Manager**: `src/project_manager.py` handles CRUD for projects.
+*   **WebSocket streaming**: Progress is yielded via the `PipelineStatus` generator and pushed to the client in real-time.

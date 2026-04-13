@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudioZero</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .log-entry { font-family: 'Menlo', 'Consolas', monospace; font-size: 0.75rem; line-height: 1.4; }
+    .fade-in { animation: fadeIn 0.2s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+    .step-row { transition: all 0.15s ease; }
+    .step-row:hover { background: rgba(99, 102, 241, 0.05); }
+    .step-error { max-width: 100%; }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+    /* Modal backdrop blur */
+    #step-modal { backdrop-filter: blur(4px); }
+
+    /* Better focus ring */
+    input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3); }
+  </style>
+</head>
+<body class="h-full text-gray-200">
+
+  <div id="app" class="min-h-full flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center justify-between">
+      <h1 class="text-xl font-bold tracking-tight cursor-pointer" onclick="router.go('dashboard')">
+        <span class="text-indigo-400">Studio</span>Zero
+      </h1>
+      <div class="flex items-center gap-4">
+        <span id="header-subtitle" class="text-sm text-gray-500"></span>
+        <button id="nav-finals" onclick="router.go('finals')"
+          class="text-sm text-gray-400 hover:text-indigo-400 transition">
+          Finals Library
+        </button>
+        <button id="nav-settings" onclick="router.go('settings')"
+          class="text-sm text-gray-400 hover:text-indigo-400 transition">
+          Settings
+        </button>
+      </div>
+    </header>
+
+    <!-- Main content area -->
+    <main id="main" class="flex-1 p-6 max-w-7xl mx-auto w-full"></main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

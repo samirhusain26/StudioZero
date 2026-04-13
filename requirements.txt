@@ -12,3 +12,5 @@ gspread>=6.0.0        # for Google Sheets integration
 google-api-python-client>=2.100.0  # for Google Drive uploads
 google-auth>=2.23.0   # for service account authentication
 rich>=13.0.0          # for interactive wizard UI
+uvicorn>=0.44.0       # for web dashboard server
+fastapi>=0.135.0      # for web dashboard API

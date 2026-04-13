@@ -127,12 +127,11 @@ def run_single(cfg: RunConfig) -> int:
     try:
         # Animation Series mode uses a separate pipeline
         if cfg.mode == "animation-series":
-            from src.animation_pipeline import run_animation_series
+            from src.animation_pipeline import run_animation_pipeline
 
-            gen = run_animation_series(
+            gen = run_animation_pipeline(
                 project_title=cfg.movie,
-                storyline=cfg.storyline,
-                character_descriptions=cfg.character_descriptions,
+                brief=cfg.storyline or "",
                 num_episodes=cfg.num_episodes,
                 resume=not cfg.no_resume,
             )

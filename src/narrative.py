@@ -467,146 +467,6 @@ Output ONLY valid JSON."""
             raise ValueError(f"Response doesn't match VideoScript schema: {e}")
 
 
-# ============================================================================
-# Animated Episodic Parody Models & Functions
-# ============================================================================
-
-class EpisodicScene(BaseModel):
-    """A single scene in an animated episodic parody."""
-    scene_number: int = Field(..., ge=1, le=6, description="Scene number (1-6)")
-    character_name: str = Field(
-        ...,
-        description="Name of the household item or food character featured in this scene (e.g., 'Sir Spatula', 'General Garlic')"
-    )
-    dialogue: str = Field(
-        ...,
-        description="The character's spoken dialogue for this scene (15-30 words). Witty, punny, and in-character."
-    )
-    voice_profile: str = Field(
-        ...,
-        description="Descriptive voice profile for Veo TTS (e.g., 'deep gravelly baritone with a dramatic pause habit', 'squeaky high-pitched with nervous energy')"
-    )
-    visual_description: str = Field(
-        ...,
-        description=(
-            "Highly detailed visual description for Veo 3.1 video generation. "
-            "MUST specify: 3D Pixar-style cinematic animation, 9:16 vertical ratio, "
-            "character appearance, pose, expression, environment, lighting, camera angle. "
-            "Minimum 40 words."
-        )
-    )
-
-
-class EpisodicScript(BaseModel):
-    """Complete script for an animated episodic parody."""
-    title: str = Field(..., description="Title of the episodic parody (e.g., 'Game of Scones')")
-    theme: str = Field(..., description="The source material being parodied")
-    scenes: List[EpisodicScene] = Field(
-        ...,
-        min_length=6,
-        max_length=6,
-        description="Exactly 6 scenes for a ~1-minute parody episode"
-    )
-
-
-_EPISODIC_SYSTEM_PROMPT = """You are a comedy writer for animated short-form content (TikTok/Reels/Shorts).
-
-Your job: take a theme (movie, TV show, or cultural reference) and create a 6-scene, ~1-minute PARODY where ALL characters are everyday household items or food items brought to life.
-
-## RULES:
-- Every character MUST be a household object or food item (e.g., a fork, a toaster, a banana, a mug).
-- Give each character a punny name that references both the object AND the source material.
-- Dialogue should be witty, self-aware, and full of puns related to the character's nature as an object.
-- Keep it family-friendly but genuinely funny — not just "random = funny".
-- The parody should follow the general plot beats of the source material but with absurd object-based twists.
-
-## VISUAL DESCRIPTION REQUIREMENTS (CRITICAL):
-Every scene's visual_description MUST include ALL of these elements:
-1. "3D Pixar-style cinematic animation" — always start with this phrase
-2. "9:16 vertical ratio" — always include this
-3. Character appearance: what the object looks like anthropomorphized (eyes, limbs, expression, outfit/accessories)
-4. Environment: detailed setting description (kitchen counter, pantry shelf, etc.)
-5. Lighting: specific lighting style (warm rim light, dramatic shadows, soft ambient glow, etc.)
-6. Camera: specific camera angle (low angle hero shot, close-up, wide establishing shot, over-the-shoulder, etc.)
-7. Minimum 40 words per visual_description
-
-## PACING:
-- Scene 1: Introduce the world and main character with a hook
-- Scene 2-3: Rising conflict — the parody plot thickens
-- Scene 4: The twist or betrayal
-- Scene 5: Climax — the big confrontation
-- Scene 6: Resolution with a punchline
-
-Output ONLY valid JSON matching the provided schema. No markdown."""
-
-
-def generate_episodic_script(
-    theme_or_movie: str,
-    gemini_client: genai.Client,
-) -> EpisodicScript:
-    """
-    Generate a 6-scene animated episodic parody script using Gemini Pro,
-    with Groq LLaMA fallback on failure.
-
-    Characters are everyday household items or food items parodying the given theme.
-
-    Args:
-        theme_or_movie: The source material to parody (e.g., "Game of Thrones").
-        gemini_client: An initialized google.genai.Client instance.
-
-    Returns:
-        EpisodicScript with 6 scenes of parody content.
-    """
-    schema = EpisodicScript.model_json_schema()
-
-    user_prompt = (
-        f"Create a 6-scene animated parody of \"{theme_or_movie}\" where all characters are "
-        f"household items or food. Make it funny, punny, and visually rich.\n\n"
-        f"Output ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}"
-    )
-
-    combined_prompt = f"{_EPISODIC_SYSTEM_PROMPT}\n\n---\n\n{user_prompt}"
-
-    # Try Gemini first
-    try:
-        response = gemini_client.models.generate_content(
-            model=Config.GEMINI_MODEL_NAME,
-            contents=combined_prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=schema,
-            ),
-        )
-        raw_json = json.loads(response.text)
-        script = EpisodicScript.model_validate(raw_json)
-        logger.info(f"Episodic script generated (Gemini): '{script.title}' — {len(script.scenes)} scenes")
-        return script
-
-    except Exception as gemini_err:
-        logger.warning(f"Gemini episodic script generation failed: {gemini_err}. Trying Groq fallback...")
-
-    # Groq fallback
-    if not Config.GROQ_API_KEY:
-        raise RuntimeError(f"Gemini failed and no GROQ_API_KEY set for fallback. Original error: {gemini_err}")
-
-    groq_client = groq.Groq(api_key=Config.GROQ_API_KEY)
-    groq_response = groq_client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {"role": "system", "content": _EPISODIC_SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-        response_format={"type": "json_object"},
-        temperature=0.9,
-        max_tokens=4096,
-    )
-
-    raw_json = json.loads(groq_response.choices[0].message.content)
-    script = EpisodicScript.model_validate(raw_json)
-    logger.info(f"Episodic script generated (Groq fallback): '{script.title}' — {len(script.scenes)} scenes")
-    return script
-
-
 def generate_character_blueprint(
     visual_description: str,
     gemini_client: genai.Client,
@@ -702,94 +562,54 @@ class AnthropomorphicScript(BaseModel):
     )
 
 
-class AnimationEpisode(BaseModel):
-    """A single episode in an animation project."""
-    episode_number: int = Field(..., ge=1)
-    episode_title: str = Field(..., description="Title of this specific episode")
-    script: AnthropomorphicScript = Field(..., description="The script for this episode")
-
-
-class AnimationProject(BaseModel):
-    """A complete multi-episode animation project."""
-    project_title: str = Field(..., description="Overall title of the animation series")
-    storyline: str = Field(..., description="The general storyline or plot for the series")
-    character_descriptions: str = Field(..., description="Descriptions of the food/household items characters")
-    episodes: List[AnimationEpisode] = Field(..., description="List of episodes in the series")
-
-
-_ANIMATION_PROJECT_SYSTEM_PROMPT = """You are a senior head writer for a viral animated series. 
-
-Your task is to take a general storyline and character descriptions (anthropomorphic food or household items) and expand them into a multi-episode series.
-
-## PROJECT STRUCTURE:
-1. **Series Bible**: You define the overall project title and confirm the world-building.
-2. **Episodic Flow**: You break the storyline into 3-5 distinct episodes.
-3. **Detailed Scripts**: For EACH episode, you provide a full AnthropomorphicScript (6-8 scenes).
-
-## RULES FOR ANTHROPOMORPHIC SCRIPTS:
-- Every character MUST be a household object or food item.
-- Scene 1 of EVERY episode must be a scroll-stopping hook (cognitive dissonance + high stakes).
-- Dialogue: Max 15-20 words per scene.
-- Visual Context: Highly detailed, 3D Pixar-style, 9:16 vertical, minimum 40 words.
-- Pacing: Escalate tension within each episode.
-- Consistency: Character IDs and personalities must remain consistent across all episodes.
-
-Output ONLY valid JSON matching the AnimationProject schema."""
-
-
-def generate_animation_project(
-    storyline: str,
-    character_descriptions: str,
-    gemini_client: genai.Client,
-    num_episodes: int = 3
-) -> AnimationProject:
+def validate_input(text: str, gemini_client: genai.Client) -> dict:
     """
-    Generate a multi-episode animation project script.
-
-    Args:
-        storyline: The general storyline for the series.
-        character_descriptions: Descriptions of the characters (food/household items).
-        gemini_client: An initialized google.genai.Client instance.
-        num_episodes: Number of episodes to generate (default 3).
-
-    Returns:
-        AnimationProject containing the series bible and episode scripts.
+    Check if the input text is a recognizable movie/story idea or garbage/unrecognizable text.
+    Returns a dict with 'is_valid' (bool) and 'reason' (str).
     """
-    schema = AnimationProject.model_json_schema()
-
-    user_prompt = (
-        f"Create a {num_episodes}-episode animated series based on this storyline and characters.\n\n"
-        f"Storyline: {storyline}\n\n"
-        f"Characters: {character_descriptions}\n\n"
-        f"Requirements:\n"
-        f"- Generate {num_episodes} episodes.\n"
-        f"- Each episode needs a full AnthropomorphicScript with 6 scenes.\n"
-        f"- Maintain character consistency across all episodes.\n"
-        f"- Ensure high-stakes, first-person dialogue (max 20 words/scene).\n\n"
-        f"Output ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}"
+    prompt = (
+        f"Analyze the following text: '{text}'\n\n"
+        "Is this a recognizable movie title, a coherent story idea, or a specific theme "
+        "that could be used to generate a video script?\n\n"
+        "If it is garbage text, random characters, or completely nonsensical, return JSON: "
+        '{"is_valid": false, "type": "garbage"}\n'
+        "If it is a valid movie, story, or theme, return JSON: "
+        '{"is_valid": true, "type": "valid"}\n\n'
+        "Output ONLY valid JSON."
     )
 
-    combined_prompt = f"{_ANIMATION_PROJECT_SYSTEM_PROMPT}\n\n---\n\n{user_prompt}"
+    try:
+        response = gemini_client.models.generate_content(
+            model=Config.GEMINI_MODEL_NAME,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+            ),
+        )
+        return json.loads(response.text)
+    except Exception as e:
+        logger.error(f"Input validation failed: {e}")
+        return {"is_valid": True, "type": "unknown"}  # Fallback to true to be safe
 
-    logger.info(f"Generating animation project with {num_episodes} episodes...")
 
-    response = gemini_client.models.generate_content(
-        model=Config.GEMINI_MODEL_NAME,
-        contents=combined_prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=schema,
-        ),
+def generate_random_story_idea(gemini_client: genai.Client) -> str:
+    """Generate a random, creative story idea/title."""
+    prompt = (
+        "Generate a creative and unique movie title and a 2-sentence plot summary "
+        "for a random story. The genre should be something visually interesting "
+        "(e.g., Sci-Fi, Fantasy, Noir, or Action).\n\n"
+        "Format: Title: [Title] - Summary: [Summary]"
     )
 
-    raw_json = json.loads(response.text)
-    project = AnimationProject.model_validate(raw_json)
-
-    logger.info(
-        f"Animation project generated: '{project.project_title}' — "
-        f"{len(project.episodes)} episodes"
-    )
-    return project
+    try:
+        response = gemini_client.models.generate_content(
+            model=Config.GEMINI_MODEL_NAME,
+            contents=prompt,
+        )
+        return response.text.strip()
+    except Exception as e:
+        logger.error(f"Random story generation failed: {e}")
+        return "The Cosmic Odyssey: A lone astronaut discovers a portal to a dimension made of pure light and sound."
 
 
 

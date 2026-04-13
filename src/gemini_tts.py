@@ -284,7 +284,7 @@ def _extract_audio_from_response(response) -> Optional[bytes]:
 def _call_gemini_tts(client, prompt: str, gemini_voice: str) -> Optional[bytes]:
     """Wrapper for the actual Gemini API call with tenacity retry."""
     response = client.models.generate_content(
-        model="gemini-2.5-flash-preview-tts",
+        model=Config.TTS_MODEL,
         contents=prompt,
         config=types.GenerateContentConfig(
             response_modalities=["AUDIO"],

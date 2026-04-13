@@ -1,6 +1,6 @@
 # Project Structure & Architecture
 
-StudioZero is a modular AI video generation system designed for high scalability and rapid iteration. This document provides an architectural map of the codebase and detailed information on the project's technical stack.
+StudioZero is a modular AI video generation system designed for high scalability and rapid iteration. This document provides an architectural map of the codebase and technical stack.
 
 ---
 
@@ -9,33 +9,49 @@ StudioZero is a modular AI video generation system designed for high scalability
 ```text
 StudioZero/
 ├── src/
-│   ├── app.py              # CLI Entry Point & Argument Parsing
-│   ├── pipeline.py         # Pipeline Orchestrator (Generator Pattern)
-│   ├── animation_manager.py # Multi-episode State Persistence
-│   ├── narrative.py        # LLM Scripting (Movie, Animated, Series)
+│   ├── app.py              # Main entry point (Interface Switcher)
+│   ├── cli.py              # Interactive CLI Wizard
+│   ├── headless.py         # Headless (non-interactive) runner
+│   ├── server.py           # FastAPI Web Dashboard backend
+│   ├── pipeline.py         # Stock Footage Route Orchestrator
+│   ├── animation_pipeline.py # Animation Series Route Orchestrator (7-step)
+│   ├── pipeline_state.py   # Persistence & State for Animation series
+│   ├── project_manager.py  # Project CRUD for Web Dashboard
+│   ├── server_launcher.py  # Server startup helper
+│   ├── steps/              # Modular Pipeline Steps (Animation Series)
+│   │   ├── writer.py        # Brief → Story + Character Seeds
+│   │   ├── screenwriter.py  # Story → Episode Scene Breakdowns
+│   │   ├── casting.py       # Scene Breakdowns → Character Blueprints
+│   │   ├── world_builder.py # Scene Breakdowns → Location Layouts
+│   │   ├── director.py      # Episode scenes + refs → Veo Prompts
+│   │   ├── scene_generator.py # Veo Prompts → MP4 Clips
+│   │   └── editor.py        # Clips → Assembled Episode MP4
+│   ├── narrative.py        # LLM Scripting, Validation, and Random Story logic
 │   ├── veo_client.py       # Vertex AI Veo 3.1 Integration
 │   ├── renderer.py         # FFmpeg Video & Audio Composition
+│   ├── subtitles.py        # Hormozi-style karaoke captions (ASS)
 │   ├── gemini_tts.py       # Google Gemini TTS Engine
 │   ├── moviedbapi.py       # Wikipedia & TMDB Data Fetching
-│   ├── stock_media.py      # Pexels API Stock Video Downloader
-│   ├── subtitles.py        # ASS (Hormozi-style) Subtitle Generator
-│   ├── marketing.py        # Social Media Caption Generator
+│   ├── stock_media.py      # Pexels API Integration
+│   ├── batch_runner.py     # Google Sheets Batch processor
+│   ├── cloud_services.py   # Google Drive & Sheets integrations
+│   ├── project_manager.py  # Project listing and management utility
 │   ├── config.py           # Environment & Path Configuration
-│   ├── config_mappings.py  # Voice, Music, and Genre Meta-data
-│   ├── batch_runner.py     # Batch Processing Orchestrator
-│   ├── cloud_services.py   # Google Drive & Sheets Integration
-│   └── logging_utils.py    # Centralized Logging Configuration
+│   ├── config_mappings.py  # Music/Voice/Mood lookup tables
+│   ├── marketing.py        # Social media caption generation (Groq)
+│   └── logging_utils.py    # Centralized Logging
+├── static/                 # Web Dashboard Frontend (HTML/JS/CSS)
 ├── assets/
-│   ├── basevideos/         # Fallback portrait video clips
-│   ├── music/              # Background tracks organized by genre
+│   ├── basevideos/         # Fallback portrait clips
+│   ├── music/              # Background tracks by genre
 │   └── creds/              # Service account credentials
-├── docs/                   # Detailed documentation (Pipelines, Models, Guides)
 ├── output/
 │   ├── final/              # Rendered MP4 videos
-│   ├── temp/               # Per-project temporary asset storage
+│   ├── temp/               # Per-project temporary assets and state
+│   ├── projects/           # Project state JSON files (Web Dashboard)
 │   └── pipeline_logs/      # Script generation JSON logs
-├── .env.template           # Template for environment variables
-└── README.md               # Project overview and quick start
+├── docs/                   # Detailed documentation
+└── README.md               # Project overview
 ```
 
 ---
@@ -43,35 +59,26 @@ StudioZero/
 ## 2. Technical Stack
 
 | Component | Technology |
-|-----------|------------|
+| :--- | :--- |
 | **Language** | Python 3.10+ |
-| **Data Validation** | Pydantic v2 |
-| **LLM (Primary)** | Google Gemini 2.0/2.5 Pro/Flash |
+| **LLM (Primary)** | Google Gemini 2.5 Flash |
 | **LLM (Fallback)** | Groq LLaMA 3.3 70B |
 | **Video Generation** | Vertex AI Veo 3.1 |
-| **Image Generation** | Gemini Image Generation |
+| **Image Generation** | Gemini 2.0 Flash (Blueprints) |
 | **Text-to-Speech** | Google Gemini TTS |
-| **Transcription** | OpenAI Whisper (Local `base` model) |
-| **Rendering Engine** | FFmpeg (H.264, libass, sidechain compression) |
-| **Stock Video** | Pexels API |
-| **Metadata Sources** | Wikipedia API, TMDB v3 API |
-| **Automation** | Google Sheets API, Google Drive API |
-| **Retry Logic** | Tenacity (Exponential Backoff) |
+| **Rendering** | FFmpeg (H.264, libass, sidechain) |
+| **Transcription** | OpenAI Whisper (Local) |
+| **Dashboard** | FastAPI, WebSockets, Vanilla CSS |
 
 ---
 
 ## 3. Key Design Patterns
 
 ### Generator-Based Progress
-Both the Movie and Animated pipelines are implemented as Python generators in `src/pipeline.py`. They yield `PipelineStatus` objects, allowing the calling application (CLI or Batch Runner) to track real-time progress without blocking.
+Both production routes use Python generators that yield `PipelineStatus` objects. This allows any UI (CLI or Web) to consume real-time updates and update progress bars/logs without blocking the main thread.
 
-### Multi-Level Fallback Chains
-Resilience is a core architectural mandate:
-1. **Data:** Wikipedia → TMDB API → TMDB Search.
-2. **LLM:** Gemini → Groq LLaMA.
-3. **TTS:** Voice Narration → Sanitized Text → Silent Audio.
-4. **Visuals:** Query 1 → Query 2 → Query 3 → Local Fallback Video.
-5. **Rendering:** Stream-copy Concat → Full Re-encode.
+### Modular Step Pattern (Animation Series)
+The Animation route decomposes video generation into 7 discrete steps in `src/steps/`. Each step is isolated, making it easy to test, modify, or replace individual components (e.g., swapping the Screenwriter LLM) without affecting the rest of the pipeline.
 
-### Persistent Project State
-For multi-episode animation series, the `AnimationManager` tracks the lifecycle of episodes in `project_log.json`, enabling atomic rendering of individual episodes from a shared series project.
+### Crash-Resilient State
+The `PipelineState` model tracks every step's completion and artifact paths. This allows the Animation pipeline to resume from the exact point of failure, critical for long-running video generation tasks.

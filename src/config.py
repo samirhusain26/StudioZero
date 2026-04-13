@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from pathlib import Path
@@ -8,35 +9,60 @@ logger = logging.getLogger(__name__)
 # Load environment variables from .env file
 load_dotenv()
 
+def _load_settings_file() -> dict:
+    """Load settings overrides from output/settings.json if it exists."""
+    settings_path = Path(__file__).resolve().parent.parent / "output" / "settings.json"
+    if settings_path.exists():
+        try:
+            data = json.loads(settings_path.read_text(encoding="utf-8"))
+            return data
+        except Exception:
+            pass
+    return {}
+
+_settings = _load_settings_file()
+_creds = _settings.get("credentials", {})
+_models = _settings.get("models", {})
+
+
+def _get(key: str, default: str = "") -> str:
+    """Return settings file value, then env var, then default."""
+    return _creds.get(key) or os.getenv(key) or default
+
+
 class Config:
     """
     Configuration class to manage environment variables and directory paths.
     """
-    
+
     # Define project root relative to this file (src/config.py)
     # .parent is src/, .parent.parent is project root
     PROJECT_ROOT = Path(__file__).resolve().parent.parent
-    
+
     # Define directories using pathlib for cross-platform compatibility
     ASSETS_DIR = PROJECT_ROOT / "assets"
     OUTPUT_DIR = PROJECT_ROOT / "output"
     TEMP_DIR = OUTPUT_DIR / "temp"
     FINAL_DIR = OUTPUT_DIR / "final"
     LOGS_DIR = OUTPUT_DIR / "pipeline_logs"
-    
-    # Load API keys
-    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-    TMDB_API_KEY = os.getenv("TMDB_API_KEY")
-    PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
-    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    PROJECTS_DIR = OUTPUT_DIR / "projects"
+    SETTINGS_FILE = OUTPUT_DIR / "settings.json"
+
+    # Load API keys (settings file overrides .env)
+    GROQ_API_KEY = _get("GROQ_API_KEY")
+    TMDB_API_KEY = _get("TMDB_API_KEY")
+    PEXELS_API_KEY = _get("PEXELS_API_KEY")
+    GEMINI_API_KEY = _get("GEMINI_API_KEY")
 
     # Gemini model for script generation (with Groq fallback)
-    GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-3.1-pro-preview")
-    GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-3.1-flash-image-preview")
+    GEMINI_MODEL_NAME = _models.get("llm_model") or os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash")
+    GEMINI_IMAGE_MODEL = _models.get("image_model") or os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
+    VEO_MODEL = _models.get("video_model") or os.getenv("VEO_MODEL", "veo-3.1-lite-generate-preview")
+    TTS_MODEL = _models.get("tts_model") or os.getenv("TTS_MODEL", "gemini-2.5-flash-preview-tts")
 
     # Google Cloud Vertex AI (for Veo 3.1 animated pipeline)
-    VERTEX_PROJECT_ID = os.getenv("VERTEX_PROJECT_ID")
-    VERTEX_LOCATION = os.getenv("VERTEX_LOCATION", "us-central1")
+    VERTEX_PROJECT_ID = _get("VERTEX_PROJECT_ID")
+    VERTEX_LOCATION = _get("VERTEX_LOCATION") or "us-central1"
     VERTEX_VEO_MODEL = os.getenv("VERTEX_VEO_MODEL", "veo-3.1")
 
     # Google service account credentials for Drive and Sheets
@@ -121,6 +147,7 @@ class Config:
         cls.TEMP_DIR.mkdir(parents=True, exist_ok=True)
         cls.FINAL_DIR.mkdir(parents=True, exist_ok=True)
         cls.LOGS_DIR.mkdir(parents=True, exist_ok=True)
+        cls.PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Run validation on import to ensure fail-fast behavior if preferred,
 # or let the main application call Config.validate()

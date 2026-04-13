@@ -19,8 +19,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator, List, Optional, Tuple, Dict, Any
 
-import whisper
-
 from src.config import Config
 from src.moviedbapi import MovieDBClient
 from src.narrative import StoryGenerator, VideoScript, Scene
@@ -57,6 +55,7 @@ class PipelineStatus:
     data: Optional[Dict[str, Any]] = None
     is_error: bool = False
     review_gate: bool = False
+    retry_gate: bool = False  # Veo scene failure — user must retry/edit/skip before continuing
 
 
 def _create_silent_audio(output_path: str, duration_seconds: float = 3.0,
@@ -91,160 +90,6 @@ def _create_silent_audio(output_path: str, duration_seconds: float = 3.0,
     return output_path
 
 
-def run_animation_script_writer(
-    storyline: str,
-    character_descriptions: str,
-    num_episodes: int = 3,
-) -> Generator[PipelineStatus, None, Optional[Path]]:
-    """
-    Phase 1 of Animation Pipeline: Generate a multi-episode project script.
-    """
-    from google import genai as genai_lib
-    from src.narrative import generate_animation_project
-    from src.animation_manager import AnimationManager
-
-    yield PipelineStatus(step=1, message=f"Starting animation script writer job for {num_episodes} episodes...")
-
-    gemini_client = genai_lib.Client(api_key=Config.GEMINI_API_KEY)
-
-    try:
-        project = generate_animation_project(
-            storyline=storyline,
-            character_descriptions=character_descriptions,
-            gemini_client=gemini_client,
-            num_episodes=num_episodes
-        )
-        
-        manager = AnimationManager(project.project_title)
-        manager.save_project(project)
-
-        yield PipelineStatus(
-            step=1,
-            message=f"Animation project '{project.project_title}' generated and saved with {len(project.episodes)} episodes.",
-            data={"project_title": project.project_title, "num_episodes": len(project.episodes)}
-        )
-        return manager.project_file
-
-    except Exception as e:
-        yield PipelineStatus(step=1, message=f"Animation script writer failed: {e}", is_error=True)
-        return None
-
-
-def run_animation_episode_pipeline(
-    project_name: str,
-    episode_number: Optional[int] = None,
-) -> Generator[PipelineStatus, None, Optional[str]]:
-    """
-    Phase 2 of Animation Pipeline: Render a single episode from a project.
-    """
-    from google import genai as genai_lib
-    from src.animation_manager import AnimationManager
-    from src.narrative import generate_character_blueprint
-    from src.veo_client import generate_veo_scene
-    from src.renderer import assemble_veo_clips
-
-    manager = AnimationManager(project_name)
-    project = manager.load_project()
-    if not project:
-        yield PipelineStatus(step=0, message=f"Project '{project_name}' not found.", is_error=True)
-        return None
-
-    if episode_number is None:
-        episode_number = manager.get_next_pending_episode()
-        if episode_number is None:
-            yield PipelineStatus(step=0, message=f"All episodes in project '{project_name}' are already completed.")
-            return None
-
-    episode = next((ep for ep in project.episodes if ep.episode_number == episode_number), None)
-    if not episode:
-        yield PipelineStatus(step=0, message=f"Episode {episode_number} not found in project '{project_name}'.", is_error=True)
-        return None
-
-    yield PipelineStatus(step=1, message=f"Starting video generation for Episode {episode_number}: '{episode.episode_title}'")
-    manager.update_episode_status(episode_number, "rendering")
-
-    output_dir = manager.project_dir / f"episode_{episode_number}"
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    gemini_client = genai_lib.Client(api_key=Config.GEMINI_API_KEY)
-
-    # =================================================================
-    # Step 1: Character Blueprint Generation
-    # =================================================================
-    yield PipelineStatus(step=2, message="Generating character reference images...")
-    character_images: dict[str, str] = {}
-    
-    # Identify unique characters in this episode
-    unique_characters = {scene.character_id: scene for scene in episode.script.scenes}
-
-    for char_id, scene in unique_characters.items():
-        # Check if blueprint already exists in project root (shared across episodes)
-        safe_char_id = Config.safe_title(char_id)
-        shared_img_path = manager.project_dir / f"character_{safe_char_id}.png"
-        
-        if shared_img_path.exists():
-            character_images[char_id] = str(shared_img_path)
-            yield PipelineStatus(step=2, message=f"Using existing blueprint for '{char_id}'")
-            continue
-
-        yield PipelineStatus(step=2, message=f"Generating new blueprint for '{char_id}'...")
-        try:
-            image_data = generate_character_blueprint(scene.visual_context, gemini_client)
-            if image_data:
-                shared_img_path.write_bytes(image_data)
-                character_images[char_id] = str(shared_img_path)
-                yield PipelineStatus(step=2, message=f"Blueprint saved for '{char_id}'")
-            else:
-                yield PipelineStatus(step=2, message=f"Failed to generate blueprint for '{char_id}'", is_error=True)
-        except Exception as e:
-            yield PipelineStatus(step=2, message=f"Blueprint error for '{char_id}': {e}", is_error=True)
-
-    # =================================================================
-    # Step 2: Veo Scene Rendering
-    # =================================================================
-    yield PipelineStatus(step=3, message="Rendering scenes with Veo 3.1...")
-    clip_paths: list[str] = []
-
-    for scene in episode.script.scenes:
-        yield PipelineStatus(step=3, message=f"Rendering scene {scene.scene_id}: '{scene.character_id}'...")
-        ref_image = character_images.get(scene.character_id)
-        if not ref_image:
-            yield PipelineStatus(step=3, message=f"No blueprint for '{scene.character_id}', skipping scene {scene.scene_id}", is_error=True)
-            continue
-
-        clip_output = str(output_dir / f"veo_scene_{scene.scene_id}.mp4")
-        try:
-            generate_veo_scene(
-                image_path=ref_image,
-                visual_description=scene.visual_context,
-                dialogue=scene.dialogue,
-                voice_profile=scene.voice_profile,
-                output_path=clip_output,
-            )
-            clip_paths.append(clip_output)
-            yield PipelineStatus(step=3, message=f"Scene {scene.scene_id} rendered")
-        except Exception as e:
-            yield PipelineStatus(step=3, message=f"Veo rendering failed for scene {scene.scene_id}: {e}", is_error=True)
-
-    if not clip_paths:
-        manager.update_episode_status(episode_number, "failed", error="No scenes rendered")
-        return None
-
-    # =================================================================
-    # Step 3: Assembly
-    # =================================================================
-    yield PipelineStatus(step=4, message="Assembling final video...")
-    final_output = str(Config.FINAL_DIR / f"{manager.project_name}_ep{episode_number}.mp4")
-    try:
-        assemble_veo_clips(clip_paths, final_output)
-        manager.update_episode_status(episode_number, "completed", output_path=final_output)
-        yield PipelineStatus(step=4, message=f"Episode {episode_number} completed: {final_output}")
-        return final_output
-    except Exception as e:
-        manager.update_episode_status(episode_number, "failed", error=f"Assembly failed: {e}")
-        yield PipelineStatus(step=4, message=f"Assembly failed: {e}", is_error=True)
-        return None
-
 # Creative ending templates for the movie reveal
 # {title} = movie title, {year} = release year
 # Templates designed to be impactful and clearly state the movie name and year
@@ -269,6 +114,7 @@ def _get_whisper_model():
     if _whisper_model is None:
         with _whisper_load_lock:
             if _whisper_model is None:
+                import whisper
                 logger.info("Loading Whisper model (base)...")
                 _whisper_model = whisper.load_model("base")
     return _whisper_model
@@ -308,227 +154,6 @@ def generate_ending_text(movie_title: str, release_year: str) -> str:
     """
     template = random.choice(ENDING_TEMPLATES)
     return template.format(title=movie_title, year=release_year or "an unforgettable year")
-
-
-def run_animated_pipeline(
-    prompt_idea: str,
-) -> Generator[PipelineStatus, None, Tuple[List[SceneAssets], None, Optional[str]]]:
-    """
-    Full pipeline for animated episodic parodies using Gemini Pro + Veo 3.1.
-
-    Yields PipelineStatus updates at each stage so CLI and batch runner
-    logging works identically to the movie pipeline.
-
-    Args:
-        prompt_idea: The creative prompt or movie name to build the parody from.
-
-    Returns:
-        Tuple of ([], None, final_video_path) — SceneAssets list is empty since
-        this pipeline produces Veo clips directly.
-    """
-    from google import genai as genai_lib
-    from src.narrative import (
-        generate_episodic_script,
-        generate_character_blueprint,
-        EpisodicScript,
-    )
-    from src.veo_client import generate_veo_scene
-    from src.renderer import assemble_veo_clips
-
-    Config.ensure_directories()
-    project_name = Config.safe_title(prompt_idea)
-    output_dir = Config.TEMP_DIR / project_name
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    gemini_client = genai_lib.Client(api_key=Config.GEMINI_API_KEY)
-
-    # =================================================================
-    # Step 1: Script Adaptation
-    # =================================================================
-    yield PipelineStatus(step=1, message=f"[Animated] Generating episodic parody script for '{prompt_idea}'...")
-
-    try:
-        script = generate_episodic_script(prompt_idea, gemini_client)
-    except Exception as e:
-        yield PipelineStatus(step=1, message=f"[Animated] Script generation failed: {e}", is_error=True)
-        return [], None, None
-
-    # Save script JSON
-    import json as _json
-    script_path = output_dir / "episodic_script.json"
-    with open(script_path, "w", encoding="utf-8") as f:
-        _json.dump(script.model_dump(), f, indent=2, ensure_ascii=False)
-
-    yield PipelineStatus(
-        step=1,
-        message=f"[Animated] Script complete: '{script.title}' — {len(script.scenes)} scenes",
-        data={"title": script.title, "theme": script.theme},
-    )
-
-    # =================================================================
-    # Step 2: Character Blueprint Generation
-    # =================================================================
-    yield PipelineStatus(step=2, message="[Animated] Generating character reference images...")
-
-    # Deduplicate characters across scenes
-    character_images: dict[str, str] = {}  # character_name -> image_path
-    seen = set()
-
-    for scene in script.scenes:
-        name = scene.character_name
-        if name in seen:
-            continue
-        seen.add(name)
-
-        yield PipelineStatus(step=2, message=f"[Animated] Generating blueprint for '{name}'...")
-
-        try:
-            image_data = generate_character_blueprint(scene.visual_description, gemini_client)
-        except Exception as e:
-            yield PipelineStatus(step=2, message=f"[Animated] Blueprint failed for '{name}': {e}", is_error=True)
-            continue
-
-        if image_data:
-            safe_name = Config.safe_title(name)
-            img_path = output_dir / f"character_{safe_name}.png"
-            img_path.write_bytes(image_data)
-            character_images[name] = str(img_path)
-            yield PipelineStatus(step=2, message=f"[Animated] Blueprint saved for '{name}': {img_path.name}")
-        else:
-            yield PipelineStatus(step=2, message=f"[Animated] No image returned for '{name}'", is_error=True)
-
-    if not character_images:
-        yield PipelineStatus(step=2, message="[Animated] No character blueprints generated. Cannot proceed.", is_error=True)
-        return [], None, None
-
-    yield PipelineStatus(
-        step=2,
-        message=f"[Animated] Character generation complete: {len(character_images)} unique character(s)",
-        data={"characters": character_images},
-        review_gate=True,
-    )
-
-    # =================================================================
-    # Step 3: Veo Scene Rendering
-    # =================================================================
-    yield PipelineStatus(step=3, message="[Animated] Rendering scenes with Veo 3.1...")
-
-    clip_paths: list[str] = []
-
-    for scene in script.scenes:
-        scene_num = scene.scene_number
-        yield PipelineStatus(step=3, message=f"[Animated] Rendering scene {scene_num}/6: '{scene.character_name}'...")
-
-        # Find the character's reference image
-        ref_image = character_images.get(scene.character_name)
-        if not ref_image:
-            yield PipelineStatus(
-                step=3,
-                message=f"[Animated] No blueprint for '{scene.character_name}', skipping scene {scene_num}",
-                is_error=True,
-            )
-            continue
-
-        clip_output = str(output_dir / f"veo_scene_{scene_num}.mp4")
-
-        try:
-            generate_veo_scene(
-                image_path=ref_image,
-                visual_description=scene.visual_description,
-                dialogue=scene.dialogue,
-                voice_profile=scene.voice_profile,
-                output_path=clip_output,
-            )
-            clip_paths.append(clip_output)
-            yield PipelineStatus(step=3, message=f"[Animated] Scene {scene_num} rendered: {Path(clip_output).name}")
-        except Exception as e:
-            yield PipelineStatus(
-                step=3,
-                message=f"[Animated] Veo rendering failed for scene {scene_num}: {e}",
-                is_error=True,
-            )
-
-    if not clip_paths:
-        yield PipelineStatus(step=3, message="[Animated] No scenes were rendered. Cannot assemble.", is_error=True)
-        return [], None, None
-
-    yield PipelineStatus(step=3, message=f"[Animated] Veo rendering complete: {len(clip_paths)} clip(s)")
-
-    # =================================================================
-    # Step 4: Assembly
-    # =================================================================
-    yield PipelineStatus(step=4, message="[Animated] Assembling final video...")
-
-    Config.FINAL_DIR.mkdir(parents=True, exist_ok=True)
-    final_output = str(Config.FINAL_DIR / f"{project_name}_animated.mp4")
-
-    try:
-        assemble_veo_clips(clip_paths, final_output)
-    except Exception as e:
-        yield PipelineStatus(step=4, message=f"[Animated] Assembly failed: {e}", is_error=True)
-        return [], None, None
-
-    yield PipelineStatus(
-        step=4,
-        message=f"[Animated] Video assembled: {final_output}",
-        data={"output_path": final_output},
-    )
-
-    # =================================================================
-    # Step 5 (Optional): Subtitles from Veo audio
-    # =================================================================
-    yield PipelineStatus(step=5, message="[Animated] Extracting audio for subtitle generation...")
-
-    try:
-        import subprocess as _sp
-        extracted_audio = str(output_dir / "assembled_audio.wav")
-        extract_cmd = [
-            "ffmpeg", "-y",
-            "-i", final_output,
-            "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1",
-            extracted_audio,
-        ]
-        result = _sp.run(extract_cmd, capture_output=True, text=True)
-
-        if result.returncode == 0 and Path(extracted_audio).exists():
-            segments = whisper_transcribe(extracted_audio)
-
-            if segments:
-                subtitle_path = str(output_dir / "subtitles.ass")
-                generate_karaoke_subtitles(
-                    whisper_segments=segments,
-                    output_ass_path=subtitle_path,
-                    words_per_line=4,
-                )
-                yield PipelineStatus(step=5, message=f"[Animated] Subtitles generated: {subtitle_path}")
-
-                # Re-render with subtitles burned in
-                subtitled_output = str(Config.FINAL_DIR / f"{project_name}_animated_subs.mp4")
-                burn_cmd = [
-                    "ffmpeg", "-y",
-                    "-i", final_output,
-                    "-vf", f"ass='{subtitle_path}'",
-                    "-c:v", "libx264", "-preset", "fast", "-crf", "23",
-                    "-c:a", "copy",
-                    subtitled_output,
-                ]
-                burn_result = _sp.run(burn_cmd, capture_output=True, text=True)
-
-                if burn_result.returncode == 0:
-                    final_output = subtitled_output
-                    yield PipelineStatus(step=5, message=f"[Animated] Subtitles burned in: {final_output}")
-                else:
-                    yield PipelineStatus(step=5, message="[Animated] Subtitle burn-in failed, using video without subs")
-            else:
-                yield PipelineStatus(step=5, message="[Animated] No speech segments found, skipping subtitles")
-        else:
-            yield PipelineStatus(step=5, message="[Animated] Audio extraction failed, skipping subtitles")
-
-    except Exception as e:
-        yield PipelineStatus(step=5, message=f"[Animated] Subtitle step failed (non-fatal): {e}")
-
-    logger.info(f"Animated pipeline complete for '{prompt_idea}': {final_output}")
-    return [], None, final_output
 
 
 class VideoGenerationPipeline:
@@ -689,46 +314,28 @@ class VideoGenerationPipeline:
         if not self.offline:
             Config.validate(mode=mode)
 
-        # Route to special animation modes if requested
-        if mode == "animation-script":
-            storyline = kwargs.get('storyline')
-            char_desc = kwargs.get('character_descriptions')
-            num_episodes = kwargs.get('num_episodes', 3)
+        # Route to animation series pipeline if requested
+        if mode == "animation-series":
+            from src.animation_pipeline import run_animation_pipeline
+            brief = kwargs.get('brief', kwargs.get('storyline', ""))
+            num_episodes = kwargs.get('num_episodes', 1)
 
-            if not storyline or not char_desc:
-                yield PipelineStatus(
-                    step=0,
-                    message="storyline and character_descriptions are required for animation-script mode.",
-                    is_error=True,
-                )
-                return ([], None, None)
-
-            result = yield from run_animation_script_writer(
-                storyline=storyline,
-                character_descriptions=char_desc,
-                num_episodes=num_episodes
+            gen = run_animation_pipeline(
+                project_title=movie_name,
+                brief=brief,
+                num_episodes=num_episodes,
             )
-            # Return result path as final_video_path for compatibility
-            return ([], None, str(result) if result else None)
-
-        if mode == "animation-render":
-            from src.animation_manager import AnimationManager
-            project_name = kwargs.get('project_name') or movie_name
-            # Try to resolve the project name (handles theme -> generated title mapping)
-            resolved = AnimationManager.find_project_by_theme(project_name)
-            if resolved:
-                project_name = resolved
-            episode_number = kwargs.get('episode_number')
-            result = yield from run_animation_episode_pipeline(
-                project_name=project_name,
-                episode_number=episode_number
-            )
-            return ([], None, result)
-
-        # Route to legacy animated pipeline if requested
-        if mode == "animated":
-            result = yield from run_animated_pipeline(movie_name)
-            return result if result else ([], None, None)
+            
+            # Consume and re-yield the series pipeline status
+            final_path = None
+            try:
+                while True:
+                    status = next(gen)
+                    yield status
+            except StopIteration as e:
+                final_path = e.value
+            
+            return ([], None, final_path)
 
         scene_assets_list: List[SceneAssets] = []
         script: Optional[VideoScript] = None

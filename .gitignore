@@ -4,19 +4,29 @@
 
 # macOS
 .DS_Store
+**/.DS_Store
 
 # -----------------------------------------------------------------------------
 # Python
 # -----------------------------------------------------------------------------
 __pycache__/
+**/__pycache__/
 *.py[cod]
+**/*.py[cod]
 *$py.class
 *.egg-info/
 dist/
 build/
+.pytest_cache/
+.coverage
+.mypy_cache/
+.python-version
+.ipynb_checkpoints/
 
 # Virtual Environments
 .env
+.env.local
+.env.*.local
 .venv
 env/
 venv/
@@ -26,12 +36,14 @@ venv.bak/
 env.yaml
 
 # -----------------------------------------------------------------------------
-# IDEs
+# IDEs & Tools
 # -----------------------------------------------------------------------------
 .idea/
 .vscode/
 *.swp
 *.swo
+.claude/
+.gemini/
 
 # -----------------------------------------------------------------------------
 # Project - Generated Content
@@ -40,15 +52,20 @@ env.yaml
 output/
 
 # Downloaded/generated assets (stock videos, TTS audio)
-# Note: assets/music/ and assets/basevideos/ are tracked separately
-assets/
+# We ignore the assets directory but explicitly track music and basevideos
+assets/*
+!assets/music/
+!assets/basevideos/
 
 # Log files
 logs/
-*.log
+**/*.log
 
 # Whisper models (downloaded on first run)
 models/
+
+# Pipeline cache files
+pipeline_cache.json
 
 # -----------------------------------------------------------------------------
 # Project - Sensitive Files
@@ -56,5 +73,5 @@ models/
 # Google Cloud service account credentials
 creds/
 
-# Pipeline cache files
-pipeline_cache.json
+# SQLite local database (tracking removed)
+sqlite_mcp_server.db

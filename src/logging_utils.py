@@ -20,6 +20,7 @@ MODULE_LOGGERS = [
     'src.batch_runner',
     'src.cloud_services',
     'src.marketing',
+    'src.veo_client',
 ]
 
 

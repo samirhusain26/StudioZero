@@ -1,0 +1,4 @@
+- add more models and more information about ai models
+- enable more information on libraries needed and make app standalone
+- the animated seried generator has casting create character sheets, then worldbuilding uses those character images to then generate scne starting images that anchors the characters into the world where teh scene is set, then the veo generation prompt uses this world building image for reference, otherwise the videos generated have character sheet as starting image of a scene. 
+- add different animation styles as options for the videos

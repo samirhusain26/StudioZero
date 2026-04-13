@@ -8,6 +8,8 @@ successful step after a crash.
 
 import json
 import logging
+import os
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -42,7 +44,7 @@ class PipelineState(BaseModel):
     """
     Full pipeline state for an animation series project.
 
-    Series-level steps (world_builder, character_designer) run once.
+    Series-level steps (writer, screenwriter, casting, world_builder) run once.
     Episode-level steps run per-episode.
     """
     project_title: str
@@ -110,7 +112,13 @@ class PipelineState(BaseModel):
 
 
 def load_state(project_dir: Path) -> Optional[PipelineState]:
-    """Load pipeline state from disk, or return None if no state file exists."""
+    """
+    Load pipeline state from disk.
+
+    Returns None only if the state file does not exist (normal fresh-start case).
+    Raises RuntimeError if the file exists but is corrupt — this prevents a silent
+    full re-run that would re-bill Veo for already-rendered clips.
+    """
     state_file = project_dir / "pipeline_state.json"
     if not state_file.exists():
         return None
@@ -118,14 +126,30 @@ def load_state(project_dir: Path) -> Optional[PipelineState]:
         data = json.loads(state_file.read_text(encoding="utf-8"))
         return PipelineState.model_validate(data)
     except Exception as e:
-        logger.warning(f"Failed to load pipeline state: {e}")
-        return None
+        raise RuntimeError(
+            f"pipeline_state.json exists but is corrupt and cannot be loaded: {e}\n"
+            f"File: {state_file}\n"
+            f"To start fresh, delete the file manually or delete the project and recreate it."
+        ) from e
 
 
 def save_state(state: PipelineState, project_dir: Path):
-    """Persist pipeline state to disk."""
+    """
+    Atomically persist pipeline state to disk.
+
+    Writes to a temp file in the same directory then renames to the target,
+    ensuring the state file is never left in a partial/truncated state if the
+    process is killed during a write (e.g. during a long Veo polling loop).
+    """
     state_file = project_dir / "pipeline_state.json"
-    state_file.write_text(
-        state.model_dump_json(indent=2),
-        encoding="utf-8",
-    )
+    fd, tmp_path = tempfile.mkstemp(dir=project_dir, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(state.model_dump_json(indent=2))
+        os.replace(tmp_path, state_file)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
