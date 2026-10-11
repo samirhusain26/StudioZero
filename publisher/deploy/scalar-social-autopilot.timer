@@ -1,0 +1,11 @@
+[Unit]
+Description=Autopilot twice a day (after the 04:30 token renewals; a refill that meets a busy publisher retries next run)
+
+[Timer]
+OnCalendar=*-*-* 05,17:15:00
+Persistent=true
+RandomizedDelaySec=120
+Unit=scalar-social-autopilot.service
+
+[Install]
+WantedBy=timers.target

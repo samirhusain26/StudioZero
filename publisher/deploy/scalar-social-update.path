@@ -1,0 +1,15 @@
+[Unit]
+Description=Watch for a Pi update request from the UI (check or confirmed apply)
+
+[Path]
+PathExists=/var/lib/scalar-social-update/inbox/request.json
+Unit=scalar-social-update.service
+# A request the service refuses to touch (state folder or inbox not a real directory: only root or the update user
+# could cause that) stays in place; this stops the path unit after 20 triggers in 60 s (normal use is a few per minute at most) instead of looping. Recover:
+# fix the folders (re-run bootstrap-git.sh), then sudo systemctl reset-failed scalar-social-update.path && sudo
+# systemctl restart scalar-social-update.path
+TriggerLimitIntervalSec=60
+TriggerLimitBurst=20
+
+[Install]
+WantedBy=paths.target

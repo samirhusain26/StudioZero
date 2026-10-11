@@ -1,0 +1,15 @@
+[Unit]
+Description=Apply unit and pi-package changes after a completed self-update (never publishes)
+
+[Path]
+PathExists=/var/lib/scalar-social-update/units-pending.json
+Unit=scalar-social-apply-units.service
+# apply-units.sh removes units-pending.json before anything else, so one trigger is one run. If it cannot (the update
+# state folder is not what it expects), this stops the path unit after 20 triggers in 60 s instead of looping. Recover:
+# sudo rm /var/lib/scalar-social-update/units-pending.json, then
+# sudo systemctl reset-failed scalar-social-apply-units.path && sudo systemctl restart scalar-social-apply-units.path
+TriggerLimitIntervalSec=60
+TriggerLimitBurst=20
+
+[Install]
+WantedBy=paths.target

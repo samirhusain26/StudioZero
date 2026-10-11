@@ -1,0 +1,2710 @@
+{
+  "scalar-24": {
+    "bed": "scalar-24",
+    "file": "episodes/music/scalar-24.m4a",
+    "sha256": "b1305bdc8390a47a7cca4e1fd29f27dc9891141310f5de91deb5879938a83d91",
+    "trackId": "owner-gemini-6",
+    "title": "Skipping Downstairs",
+    "source": "music/sources/6.mp4",
+    "sourceSha256": "c1023e629eb9476fba97ae014fc831eafc98ff8e6adfe989f8fa352c6ba6cf7e",
+    "segments_s": [
+      [
+        0.593,
+        6.593
+      ],
+      [
+        0.593,
+        6.593
+      ],
+      [
+        6.593,
+        8.593
+      ],
+      [
+        8.593,
+        18.593
+      ]
+    ],
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "lufs": -14.1,
+    "truePeakDbtp": -1.4,
+    "limiterCeilingDb": -2.0,
+    "license": "owner-supplied",
+    "rights": "Owner statement: AI-generated with Gemini, reuse authorized 2026-09-28, reaffirmed 2026-10-05; no attribution required. Not an independent licence verification."
+  },
+  "continuum-20": {
+    "bed": "continuum-20",
+    "file": "episodes/music/continuum-20.m4a",
+    "sha256": "039993abd60fe5763dc51b067dc0148319dc3615052d0993e69c2b3e95f3a73d",
+    "trackId": "owner-gemini-2",
+    "title": "Midday Market Rush",
+    "source": "music/sources/2.mp4",
+    "sourceSha256": "d5c629bfa605cc2f867e53e8911145c5f8ed9ce301b8e2a0ed96f908f23204f4",
+    "segments_s": [
+      [
+        1.08,
+        7.08
+      ],
+      [
+        3.08,
+        7.08
+      ],
+      [
+        7.08,
+        17.08
+      ]
+    ],
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "lufs": -14.3,
+    "truePeakDbtp": -1.3,
+    "limiterCeilingDb": -2.5,
+    "license": "owner-supplied",
+    "rights": "Owner statement: AI-generated with Gemini, reuse authorized 2026-09-28, reaffirmed 2026-10-05; no attribution required. Not an independent licence verification."
+  },
+  "continuum-22": {
+    "bed": "continuum-22",
+    "file": "episodes/music/continuum-22.m4a",
+    "sha256": "a6c2b13204193f8142cac350c6bfd5ed70b2d764522be824650d1666e891474b",
+    "trackId": "owner-gemini-2",
+    "title": "Midday Market Rush",
+    "source": "music/sources/2.mp4",
+    "sourceSha256": "d5c629bfa605cc2f867e53e8911145c5f8ed9ce301b8e2a0ed96f908f23204f4",
+    "segments_s": [
+      [
+        1.08,
+        7.08
+      ],
+      [
+        3.08,
+        7.08
+      ],
+      [
+        5.08,
+        7.08
+      ],
+      [
+        7.08,
+        17.08
+      ]
+    ],
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "lufs": -14.4,
+    "truePeakDbtp": -1.3,
+    "limiterCeilingDb": -2.5,
+    "license": "owner-supplied",
+    "rights": "Owner statement: AI-generated with Gemini, reuse authorized 2026-09-28, reaffirmed 2026-10-05; no attribution required. Not an independent licence verification."
+  },
+  "whenabouts-22": {
+    "bed": "whenabouts-22",
+    "file": "episodes/music/whenabouts-22.m4a",
+    "sha256": "2a346984d7988d8cf5b974e988a3d8236afc0e8a5294ae18c3f911f24dbedab2",
+    "trackId": "owner-gemini-5",
+    "title": "Golden Question",
+    "source": "music/sources/5.mp4",
+    "sourceSha256": "2d36f34032f1526d56b3c333e9c26a96946ee1f83b3fe1da0902e34c3a933812",
+    "segments_s": [
+      [
+        0.088,
+        2.088
+      ],
+      [
+        0.088,
+        10.088
+      ],
+      [
+        10.088,
+        20.088
+      ]
+    ],
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "lufs": -14.5,
+    "truePeakDbtp": -1.1,
+    "limiterCeilingDb": -2.5,
+    "license": "owner-supplied",
+    "rights": "Owner statement: AI-generated with Gemini, reuse authorized 2026-09-28, reaffirmed 2026-10-05; no attribution required. Not an independent licence verification."
+  },
+  "tectonic-22": {
+    "bed": "tectonic-22",
+    "file": "episodes/music/tectonic-22.m4a",
+    "sha256": "2bad525f978dd428dff413d6f3888f14b55e59af3d76a17fda74ce5eaab4340d",
+    "trackId": "owner-gemini-3",
+    "title": "The Pocket Heist",
+    "source": "music/sources/3.mp4",
+    "sourceSha256": "452393305628aa74a217006cf33b812aa0756ca80114032ca18190a1d3401108",
+    "segments_s": [
+      [
+        1.546,
+        5.546
+      ],
+      [
+        23.546,
+        31.546
+      ],
+      [
+        31.546,
+        41.546
+      ]
+    ],
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "lufs": -14.0,
+    "truePeakDbtp": -1.4,
+    "limiterCeilingDb": -2.0,
+    "license": "owner-supplied",
+    "rights": "Owner statement: AI-generated with Gemini, reuse authorized 2026-09-28, reaffirmed 2026-10-05; no attribution required. Not an independent licence verification."
+  },
+  "tectonic-24": {
+    "bed": "tectonic-24",
+    "file": "episodes/music/tectonic-24.m4a",
+    "sha256": "a5869de8b1792956d9cddf200ebfe7233033d0bcf09187eeb8fb1b3e363d11ab",
+    "trackId": "owner-gemini-3",
+    "title": "The Pocket Heist",
+    "source": "music/sources/3.mp4",
+    "sourceSha256": "452393305628aa74a217006cf33b812aa0756ca80114032ca18190a1d3401108",
+    "segments_s": [
+      [
+        1.546,
+        7.546
+      ],
+      [
+        23.546,
+        31.546
+      ],
+      [
+        31.546,
+        41.546
+      ]
+    ],
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "lufs": -14.0,
+    "truePeakDbtp": -1.4,
+    "limiterCeilingDb": -2.0,
+    "license": "owner-supplied",
+    "rights": "Owner statement: AI-generated with Gemini, reuse authorized 2026-09-28, reaffirmed 2026-10-05; no attribution required. Not an independent licence verification."
+  },
+  "whenabouts-22-oga-vaporware-1": {
+    "bed": "whenabouts-22-oga-vaporware-1",
+    "file": "episodes/music/whenabouts-22-oga-vaporware-1.m4a",
+    "sha256": "cc6fdd355db14c4525a57431cf2de206eef683f44e43755dd978a8949165e2c5",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-vaporware-1",
+    "title": "Vaporware 1",
+    "artist": "cynicmusic",
+    "game": "whenabouts",
+    "source": "music/sources/oga/calm-piano-1-vaporware/003_Vaporware_1.mp3",
+    "sourceSha256": "1697fa1b7ed6f3fe1eca4daa4f9d1a2eb3db8fe40a0f3c283529ab47e57b5b38",
+    "page": "https://opengameart.org/content/calm-piano-1-vaporware",
+    "segments_s": [
+      [
+        87.056,
+        109.056
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 76.0,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/calm-piano-1-vaporware, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-calm4-sand-castles": {
+    "bed": "whenabouts-22-oga-calm4-sand-castles",
+    "file": "episodes/music/whenabouts-22-oga-calm4-sand-castles.m4a",
+    "sha256": "94daba5b5b4b8d96f79e9920e0014af32344f60dc16788e2dbe3ef08d934bfa0",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.5,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-calm4-sand-castles",
+    "title": "Calm4 - Sand Castles",
+    "artist": "SubspaceAudio",
+    "game": "whenabouts",
+    "source": "music/sources/oga/jrpg-pack-4-calm/Calm4 - Sand Castles.ogg",
+    "sourceSha256": "3c2a13c19f7cbdaad338c1f17225700da37d89c02f4cedae34d79ca92d5c69df",
+    "page": "https://opengameart.org/content/jrpg-pack-4-calm",
+    "segments_s": [
+      [
+        23.573,
+        45.573
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (SubspaceAudio, https://opengameart.org/content/jrpg-pack-4-calm, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-you-loved-me-once": {
+    "bed": "continuum-20-oga-you-loved-me-once",
+    "file": "episodes/music/continuum-20-oga-you-loved-me-once.m4a",
+    "sha256": "37858e512f11ea90c48b77e62241f55ff7fd78f83b50d6e4bc2b1b78f2d9d9fd",
+    "lufs": -20.0,
+    "truePeakDbtp": -11.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-you-loved-me-once",
+    "title": "You Loved Me Once",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/relaxing-instrumentals-collection/18 HoliznaCC0 - You Loved Me Once.mp3",
+    "sourceSha256": "883552b207f3be4f3c8db5abd56ac9979b54273949d4d4a62b12a8b39d2009b6",
+    "page": "https://opengameart.org/content/relaxing-instrumentals-collection",
+    "segments_s": [
+      [
+        143.612,
+        163.612
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 76.0,
+    "key": "D major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/relaxing-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-you-loved-me-once": {
+    "bed": "continuum-22-oga-you-loved-me-once",
+    "file": "episodes/music/continuum-22-oga-you-loved-me-once.m4a",
+    "sha256": "eaecb88872acc2ccdfdd5ab14b8d52d37ede5af27886288f54f605953d22e0d3",
+    "lufs": -20.0,
+    "truePeakDbtp": -11.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-you-loved-me-once",
+    "title": "You Loved Me Once",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/relaxing-instrumentals-collection/18 HoliznaCC0 - You Loved Me Once.mp3",
+    "sourceSha256": "883552b207f3be4f3c8db5abd56ac9979b54273949d4d4a62b12a8b39d2009b6",
+    "page": "https://opengameart.org/content/relaxing-instrumentals-collection",
+    "segments_s": [
+      [
+        144.816,
+        166.816
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 76.0,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/relaxing-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-oga-synthwave-15k": {
+    "bed": "tectonic-22-oga-synthwave-15k",
+    "file": "episodes/music/tectonic-22-oga-synthwave-15k.m4a",
+    "sha256": "63dfbd4159b1a447593d489a3d925d684872274b61bf89f89e1de534960105b7",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.0,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-synthwave-15k",
+    "title": "Synthwave 15k",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/calm-ambient-2-synthwave-15k/002_Synthwave_15k.mp3",
+    "sourceSha256": "8795429283315a6fd3249ea09a940158960ff7c40643a95fc3f7455f29db275f",
+    "page": "https://opengameart.org/content/calm-ambient-2-synthwave-15k",
+    "segments_s": [
+      [
+        56.685,
+        78.685
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/calm-ambient-2-synthwave-15k, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-oga-synthwave-15k": {
+    "bed": "tectonic-24-oga-synthwave-15k",
+    "file": "episodes/music/tectonic-24-oga-synthwave-15k.m4a",
+    "sha256": "9b2395f2fa7b679e3cf7ebe4b265a0a90e85ed35882caac6294321d40240b5b4",
+    "lufs": -20.0,
+    "truePeakDbtp": -4.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-synthwave-15k",
+    "title": "Synthwave 15k",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/calm-ambient-2-synthwave-15k/002_Synthwave_15k.mp3",
+    "sourceSha256": "8795429283315a6fd3249ea09a940158960ff7c40643a95fc3f7455f29db275f",
+    "page": "https://opengameart.org/content/calm-ambient-2-synthwave-15k",
+    "segments_s": [
+      [
+        57.668,
+        81.668
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/calm-ambient-2-synthwave-15k, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-jazz-take-2": {
+    "bed": "whenabouts-22-oga-jazz-take-2",
+    "file": "episodes/music/whenabouts-22-oga-jazz-take-2.m4a",
+    "sha256": "3037c6b9fd84f9ccb380433821da31cf2d804b535a9657d9202d59f1b4ec3dc6",
+    "lufs": -20.0,
+    "truePeakDbtp": -4.4,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-jazz-take-2",
+    "title": "Jazz Take 2",
+    "artist": "Pro Sensory",
+    "game": "whenabouts",
+    "source": "music/sources/oga/jazz-slower/Jazz Take 2.wav",
+    "sourceSha256": "da5279d11c799c7e4ebba11de4bac4e99ff0011611d18fffbdb3afb2924ffd3e",
+    "page": "https://opengameart.org/content/jazz-slower",
+    "segments_s": [
+      [
+        82.18,
+        104.18
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 107.7,
+    "key": "B major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Pro Sensory, https://opengameart.org/content/jazz-slower, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-boredom": {
+    "bed": "continuum-20-oga-boredom",
+    "file": "episodes/music/continuum-20-oga-boredom.m4a",
+    "sha256": "5fd15d7306077803fc456153c705deb6d8451172d9ed060d5fc5ab1b77ca181a",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.5,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-boredom",
+    "title": "Boredom",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/relaxing-instrumentals-collection/03 HoliznaCC0 - Boredom.mp3",
+    "sourceSha256": "5fd746ad9665243a1d050fb40c9adddface6bc52c73aede8410b3c320b878e13",
+    "page": "https://opengameart.org/content/relaxing-instrumentals-collection",
+    "segments_s": [
+      [
+        40.689,
+        60.689
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 89.1,
+    "key": "C major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/relaxing-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-boredom": {
+    "bed": "continuum-22-oga-boredom",
+    "file": "episodes/music/continuum-22-oga-boredom.m4a",
+    "sha256": "c9e3cff7e35835d7796368ee2b7612ce3e2ad47275e226bcbd0b79615f0d868a",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.5,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-boredom",
+    "title": "Boredom",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/relaxing-instrumentals-collection/03 HoliznaCC0 - Boredom.mp3",
+    "sourceSha256": "5fd746ad9665243a1d050fb40c9adddface6bc52c73aede8410b3c320b878e13",
+    "page": "https://opengameart.org/content/relaxing-instrumentals-collection",
+    "segments_s": [
+      [
+        38.689,
+        60.689
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 89.1,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/relaxing-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-beginning-4": {
+    "bed": "whenabouts-22-oga-beginning-4",
+    "file": "episodes/music/whenabouts-22-oga-beginning-4.m4a",
+    "sha256": "fc625cca736c86d84bec5a9161c19064cafa5607db48f3732121111536846072",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-beginning-4",
+    "title": "Beginning 4",
+    "artist": "Holizna",
+    "game": "whenabouts",
+    "source": "music/sources/oga/title-screens-beginnings-collection/02 HoliznaCC0 - Beginning 4.mp3",
+    "sourceSha256": "c89c75ff4e3b920a2557ef8ffdf78d66039211b675ec452f707c52e3b15ddc6e",
+    "page": "https://opengameart.org/content/title-screens-beginnings-collection",
+    "segments_s": [
+      [
+        100.373,
+        122.373
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 92.3,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/title-screens-beginnings-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-little-cafe-0": {
+    "bed": "whenabouts-22-oga-little-cafe-0",
+    "file": "episodes/music/whenabouts-22-oga-little-cafe-0.m4a",
+    "sha256": "4c2191e58ea46b76a8b0fc4b93e63f5e4f47c07830bec48117c4201c332484e1",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.9,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-little-cafe-0",
+    "title": "little cafe 0",
+    "artist": "OatCog",
+    "game": "whenabouts",
+    "source": "music/sources/oga/coffee-house-bump/little_cafe_0.wav",
+    "sourceSha256": "bb2668c05173600c90b68f6192f7b7316582af18d9a28acc3f7fc98a3c8339ce",
+    "page": "https://opengameart.org/content/coffee-house-bump",
+    "segments_s": [
+      [
+        124.824,
+        146.824
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 99.4,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (OatCog, https://opengameart.org/content/coffee-house-bump, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-calm5-summer-memories": {
+    "bed": "whenabouts-22-oga-calm5-summer-memories",
+    "file": "episodes/music/whenabouts-22-oga-calm5-summer-memories.m4a",
+    "sha256": "e2c5993ff6afeb23c44e50657d5fced809151a6d179fdeeca0d512cc332c7996",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-calm5-summer-memories",
+    "title": "Calm5 - Summer Memories",
+    "artist": "SubspaceAudio",
+    "game": "whenabouts",
+    "source": "music/sources/oga/jrpg-pack-4-calm/Calm5 - Summer Memories.ogg",
+    "sourceSha256": "25a4de0e070f5fe9a79a36460796dea62837ce3671aecbc77f46cf32b32af094",
+    "page": "https://opengameart.org/content/jrpg-pack-4-calm",
+    "segments_s": [
+      [
+        8.468,
+        30.468
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 89.1,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (SubspaceAudio, https://opengameart.org/content/jrpg-pack-4-calm, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-beginning-5": {
+    "bed": "whenabouts-22-oga-beginning-5",
+    "file": "episodes/music/whenabouts-22-oga-beginning-5.m4a",
+    "sha256": "c97df2f06074a566e14fe11549a5bf8aaf20336388685b960cef00387233ef59",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-beginning-5",
+    "title": "Beginning 5",
+    "artist": "Holizna",
+    "game": "whenabouts",
+    "source": "music/sources/oga/title-screens-beginnings-collection/05 HoliznaCC0 - Beginning 5.mp3",
+    "sourceSha256": "13fe41ebf3f7ee988a9e158c5b5f480df14896416f8aeb9b7d828d818d44bd74",
+    "page": "https://opengameart.org/content/title-screens-beginnings-collection",
+    "segments_s": [
+      [
+        63.465,
+        85.465
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 107.7,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/title-screens-beginnings-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-letting-go-of-the-past": {
+    "bed": "tectonic-22-holizna-letting-go-of-the-past",
+    "file": "episodes/music/tectonic-22-holizna-letting-go-of-the-past.m4a",
+    "sha256": "be4ad6bc12063012496e1768659357a072682e8f01862fa40c4d03e9523f5955",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-letting-go-of-the-past",
+    "title": "Letting Go Of The Past",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/16 HoliznaCC0 - Letting Go Of The Past.mp3",
+    "sourceSha256": "9897c9d28ebedc86b14ba810d69992e914b7fbf6c1d8ecec9ff3efd07397ab1a",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        116.012,
+        138.012
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 76.0,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-letting-go-of-the-past": {
+    "bed": "tectonic-24-holizna-letting-go-of-the-past",
+    "file": "episodes/music/tectonic-24-holizna-letting-go-of-the-past.m4a",
+    "sha256": "14be7f295aa474f1b89ca8f43a76b19c88af38e30ca28616fac936e9f365c6c0",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.8,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-letting-go-of-the-past",
+    "title": "Letting Go Of The Past",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/16 HoliznaCC0 - Letting Go Of The Past.mp3",
+    "sourceSha256": "9897c9d28ebedc86b14ba810d69992e914b7fbf6c1d8ecec9ff3efd07397ab1a",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        110.796,
+        134.796
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 76.0,
+    "key": "D major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-holizna-first-snow": {
+    "bed": "scalar-24-holizna-first-snow",
+    "file": "episodes/music/scalar-24-holizna-first-snow.m4a",
+    "sha256": "9cef29dfdedba9710b3fc654ce744d3da8ab410815416024c496f6fdc28346cb",
+    "lufs": -20.0,
+    "truePeakDbtp": -4.4,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-first-snow",
+    "title": "First Snow",
+    "artist": "HoliznaCC0",
+    "game": "scalar",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection/01 HoliznaCC0 - First Snow.mp3.mp3",
+    "sourceSha256": "855a35d81441ec653ceb36b44dbdbd1f750b62a2b530d8ccf2f03172349f6ee8",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        37.966,
+        61.966
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 83.4,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-town2-where-time-stands-still": {
+    "bed": "scalar-24-oga-town2-where-time-stands-still",
+    "file": "episodes/music/scalar-24-oga-town2-where-time-stands-still.m4a",
+    "sha256": "cf5f80489171bd26f2a88b82d41a2c3a0aa6132f4f59c9124fcddc82544c16b9",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.5,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-town2-where-time-stands-still",
+    "title": "Town2 - Where Time Stands Still",
+    "artist": "SubspaceAudio",
+    "game": "scalar",
+    "source": "music/sources/oga/jrpg-pack-2-towns/Town2 - Where Time Stands Still.ogg",
+    "sourceSha256": "71f1874154431146a564d7cb9062f333a35e5217bf28a3f4346bccf36a529814",
+    "page": "https://opengameart.org/content/jrpg-pack-2-towns",
+    "segments_s": [
+      [
+        50.737,
+        74.737
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 89.1,
+    "key": "D major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (SubspaceAudio, https://opengameart.org/content/jrpg-pack-2-towns, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-calm3-peaceful-days": {
+    "bed": "whenabouts-22-oga-calm3-peaceful-days",
+    "file": "episodes/music/whenabouts-22-oga-calm3-peaceful-days.m4a",
+    "sha256": "178b7db07df562d0cb1de3cf384c7d76f721a24156df20cde62f508f4d9a8867",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-calm3-peaceful-days",
+    "title": "Calm3 - Peaceful Days",
+    "artist": "SubspaceAudio",
+    "game": "whenabouts",
+    "source": "music/sources/oga/jrpg-pack-4-calm/Calm3 - Peaceful Days.ogg",
+    "sourceSha256": "dc4ad1cdf78debc20534fdd391cd2adb94b53cdcfae68ee8ab64ecffd157d170",
+    "page": "https://opengameart.org/content/jrpg-pack-4-calm",
+    "segments_s": [
+      [
+        26.417,
+        48.417
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 76.0,
+    "key": "G major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (SubspaceAudio, https://opengameart.org/content/jrpg-pack-4-calm, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-a-cup-of-tea": {
+    "bed": "continuum-20-oga-a-cup-of-tea",
+    "file": "episodes/music/continuum-20-oga-a-cup-of-tea.m4a",
+    "sha256": "1990dc47e79a98fc51ce5258923103617422f00d1e5ddd88451a0f8489f359d7",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-a-cup-of-tea",
+    "title": "A cup of tea",
+    "artist": "TAD",
+    "game": "continuum",
+    "source": "music/sources/oga/lofi-compilation/A cup of tea.mp3",
+    "sourceSha256": "03f8128bfa193e9fee5f0647f189baeb7adbf2a1f7b0fecf849ad57e6355091c",
+    "page": "https://opengameart.org/content/lofi-compilation",
+    "segments_s": [
+      [
+        30.345,
+        50.345
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 71.8,
+    "key": "Eb major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (TAD, https://opengameart.org/content/lofi-compilation, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-a-cup-of-tea": {
+    "bed": "continuum-22-oga-a-cup-of-tea",
+    "file": "episodes/music/continuum-22-oga-a-cup-of-tea.m4a",
+    "sha256": "59c312eabd73d973e5f2c0cac068f014c96f5d1f9140934f5b339d7af675011b",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-a-cup-of-tea",
+    "title": "A cup of tea",
+    "artist": "TAD",
+    "game": "continuum",
+    "source": "music/sources/oga/lofi-compilation/A cup of tea.mp3",
+    "sourceSha256": "03f8128bfa193e9fee5f0647f189baeb7adbf2a1f7b0fecf849ad57e6355091c",
+    "page": "https://opengameart.org/content/lofi-compilation",
+    "segments_s": [
+      [
+        28.345,
+        50.345
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 71.8,
+    "key": "Eb major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (TAD, https://opengameart.org/content/lofi-compilation, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-holizna-blue-skies": {
+    "bed": "scalar-24-holizna-blue-skies",
+    "file": "episodes/music/scalar-24-holizna-blue-skies.m4a",
+    "sha256": "78fc39f131987f0c350d9b65cd1fe87fcb62e947eab6d65899c46ecd892cc07d",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.5,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-blue-skies",
+    "title": "Blue Skies",
+    "artist": "HoliznaCC0",
+    "game": "scalar",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/03 HoliznaCC0 - Blue Skies.mp3.mp3",
+    "sourceSha256": "1b5916797fe6341663a7172d8f653e95691d9462be51537c56ebfaabd81b8696",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        130.893,
+        154.893
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 83.4,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-so-broke": {
+    "bed": "tectonic-22-holizna-so-broke",
+    "file": "episodes/music/tectonic-22-holizna-so-broke.m4a",
+    "sha256": "cfec490c833c73f2af101082737f28ea4d5e227b4cc86b61149ea6e078b67ecf",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.4,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-so-broke",
+    "title": "So Broke",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_3/03 HoliznaCC0 - So Broke.mp3",
+    "sourceSha256": "0216026edf40002188977b4bc2301aa1c5621b96d61e42e44ee2bff908d53255",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        153.024,
+        175.024
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "E major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-so-broke": {
+    "bed": "tectonic-24-holizna-so-broke",
+    "file": "episodes/music/tectonic-24-holizna-so-broke.m4a",
+    "sha256": "e004b4fb5d99db9b174c8b6e6a01972e6bf99aaee20599e43b2dae16a59fccce",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-so-broke",
+    "title": "So Broke",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_3/03 HoliznaCC0 - So Broke.mp3",
+    "sourceSha256": "0216026edf40002188977b4bc2301aa1c5621b96d61e42e44ee2bff908d53255",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        151.024,
+        175.024
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "E major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-dreams": {
+    "bed": "continuum-20-oga-dreams",
+    "file": "episodes/music/continuum-20-oga-dreams.m4a",
+    "sha256": "9a13b0f3664487bc2e5cc0e98cfc358178fa1ffdfde4f3e393b5fae05df6afb1",
+    "lufs": -20.0,
+    "truePeakDbtp": -12.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-dreams",
+    "title": "Dreams",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/chillout-instrumentals-collection/01 HoliznaCC0 - Dreams.mp3",
+    "sourceSha256": "4537fdb9b3bed68cf32fa3a6c59a270098d3b7b91bdffa3e643e6a9596e26c19",
+    "page": "https://opengameart.org/content/chillout-instrumentals-collection",
+    "segments_s": [
+      [
+        125.338,
+        145.338
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 89.1,
+    "key": "C major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/chillout-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-dreams": {
+    "bed": "continuum-22-oga-dreams",
+    "file": "episodes/music/continuum-22-oga-dreams.m4a",
+    "sha256": "a4ac93f8a82165c0780927a3831619ddda1563545da5c3e9f1acd79e6887d0b7",
+    "lufs": -20.0,
+    "truePeakDbtp": -12.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-dreams",
+    "title": "Dreams",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/chillout-instrumentals-collection/01 HoliznaCC0 - Dreams.mp3",
+    "sourceSha256": "4537fdb9b3bed68cf32fa3a6c59a270098d3b7b91bdffa3e643e6a9596e26c19",
+    "page": "https://opengameart.org/content/chillout-instrumentals-collection",
+    "segments_s": [
+      [
+        123.338,
+        145.338
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 89.1,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/chillout-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-holizna-morning-coffee": {
+    "bed": "continuum-20-holizna-morning-coffee",
+    "file": "episodes/music/continuum-20-holizna-morning-coffee.m4a",
+    "sha256": "9478e1f26aa9cb3b14a871c71557a4024f74c5a3afdd0b376b547e9d30dc2b4f",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-morning-coffee",
+    "title": "Morning Coffee",
+    "artist": "HoliznaCC0",
+    "game": "continuum",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_2/09 HoliznaCC0 - Morning Coffee.mp3",
+    "sourceSha256": "91de2d8f409730a7fa9b0d94f52d5637d7f913e8cee11d54e462a99b06a86758",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        60.6,
+        80.6
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 86.1,
+    "key": "D major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-holizna-morning-coffee": {
+    "bed": "continuum-22-holizna-morning-coffee",
+    "file": "episodes/music/continuum-22-holizna-morning-coffee.m4a",
+    "sha256": "d35e3586e2bac140887f12b0e6f65bfb2cc8e43d6403f68f0a372fedf395d481",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-morning-coffee",
+    "title": "Morning Coffee",
+    "artist": "HoliznaCC0",
+    "game": "continuum",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_2/09 HoliznaCC0 - Morning Coffee.mp3",
+    "sourceSha256": "91de2d8f409730a7fa9b0d94f52d5637d7f913e8cee11d54e462a99b06a86758",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        117.892,
+        139.892
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 86.1,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-quiet-village-4": {
+    "bed": "scalar-24-oga-quiet-village-4",
+    "file": "episodes/music/scalar-24-oga-quiet-village-4.m4a",
+    "sha256": "2e55eded97ddc22edbf014b2bd08b9d0ec96f60cf7e02c8b447d01a3f7585297",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-quiet-village-4",
+    "title": "Quiet Village 4",
+    "artist": "Holizna",
+    "game": "scalar",
+    "source": "music/sources/oga/quiet-village-collection/03 HoliznaCC0 - Quiet Village 4.mp3",
+    "sourceSha256": "2e20d0d3405aa093ee108d74a03ab773d568b440c589dd38c7460fdad9e9373f",
+    "page": "https://opengameart.org/content/quiet-village-collection",
+    "segments_s": [
+      [
+        40.37,
+        64.37
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 107.7,
+    "key": "G major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/quiet-village-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-urban-shop": {
+    "bed": "scalar-24-oga-urban-shop",
+    "file": "episodes/music/scalar-24-oga-urban-shop.m4a",
+    "sha256": "81ae87aa3a8624859fac536a1da724075c36e58083f10acf14a4d981557e0560",
+    "lufs": -20.0,
+    "truePeakDbtp": -9.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-urban-shop",
+    "title": "urban shop",
+    "artist": "MintoDog",
+    "game": "scalar",
+    "source": "music/sources/oga/urban-shop/urban_shop_bpm92.mp3",
+    "sourceSha256": "eccbfb9fb4ac010a2aa5ef03426d21c18f033b37198cd15364c4b7083f06add5",
+    "page": "https://opengameart.org/content/urban-shop",
+    "segments_s": [
+      [
+        32.649,
+        56.649
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 92.3,
+    "key": "Eb major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (MintoDog, https://opengameart.org/content/urban-shop, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-oga-synthwave-4k": {
+    "bed": "tectonic-22-oga-synthwave-4k",
+    "file": "episodes/music/tectonic-22-oga-synthwave-4k.m4a",
+    "sha256": "89342f2833e74fbeb61d74d8dd87a451e1619bbea0d0d39addb9caee2f3dfcb9",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.4,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-synthwave-4k",
+    "title": "Synthwave 4k",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/calm-ambient-1-synthwave-4k/001_Synthwave_4k.mp3",
+    "sourceSha256": "6114e75ca51347bcad6bcf613680a517f6532ea6fbb873d09b7ad3f7f00ac365",
+    "page": "https://opengameart.org/content/calm-ambient-1-synthwave-4k",
+    "segments_s": [
+      [
+        87.95,
+        109.95
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/calm-ambient-1-synthwave-4k, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-oga-synthwave-4k": {
+    "bed": "tectonic-24-oga-synthwave-4k",
+    "file": "episodes/music/tectonic-24-oga-synthwave-4k.m4a",
+    "sha256": "be5a437b0d538f83bf750eee841a6a2396c8d79cd952624da0958eb52a6e4656",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-synthwave-4k",
+    "title": "Synthwave 4k",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/calm-ambient-1-synthwave-4k/001_Synthwave_4k.mp3",
+    "sourceSha256": "6114e75ca51347bcad6bcf613680a517f6532ea6fbb873d09b7ad3f7f00ac365",
+    "page": "https://opengameart.org/content/calm-ambient-1-synthwave-4k",
+    "segments_s": [
+      [
+        85.95,
+        109.95
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/calm-ambient-1-synthwave-4k, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-oga-lifewave2k": {
+    "bed": "tectonic-22-oga-lifewave2k",
+    "file": "episodes/music/tectonic-22-oga-lifewave2k.m4a",
+    "sha256": "aefb07610692e06c331e34b25f86de8f23197092e357f90e60dfee7897557b7d",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.0,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-lifewave2k",
+    "title": "lifeWave2k",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/calm-ambient-3-lifewave-2k/006_lifeWave2k.mp3",
+    "sourceSha256": "f6a796483aee743d72fd9abd44002694246bb3a7977239abbace2a56a0d344ce",
+    "page": "https://opengameart.org/content/calm-ambient-3-lifewave-2k",
+    "segments_s": [
+      [
+        17.176,
+        39.176
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/calm-ambient-3-lifewave-2k, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-oga-lifewave2k": {
+    "bed": "tectonic-24-oga-lifewave2k",
+    "file": "episodes/music/tectonic-24-oga-lifewave2k.m4a",
+    "sha256": "82be92442306df43c50634a947c178b3512159e7ee9366e0b876769e7305c135",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.9,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-lifewave2k",
+    "title": "lifeWave2k",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/calm-ambient-3-lifewave-2k/006_lifeWave2k.mp3",
+    "sourceSha256": "f6a796483aee743d72fd9abd44002694246bb3a7977239abbace2a56a0d344ce",
+    "page": "https://opengameart.org/content/calm-ambient-3-lifewave-2k",
+    "segments_s": [
+      [
+        15.176,
+        39.176
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/calm-ambient-3-lifewave-2k, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-advertisements": {
+    "bed": "continuum-20-oga-advertisements",
+    "file": "episodes/music/continuum-20-oga-advertisements.m4a",
+    "sha256": "41679a7fbcd66052b0ac9593262251b1c4fc07f3c51b02b543e765ad5aba5a20",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-advertisements",
+    "title": "Advertisements",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/chillout-instrumentals-collection/06 HoliznaCC0 - Advertisements.mp3",
+    "sourceSha256": "a64f13ec7490732c91da837d555916c7f0107889ee8fe2421de4882a8e5530fd",
+    "page": "https://opengameart.org/content/chillout-instrumentals-collection",
+    "segments_s": [
+      [
+        63.7,
+        83.7
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 92.3,
+    "key": "E major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/chillout-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-advertisements": {
+    "bed": "continuum-22-oga-advertisements",
+    "file": "episodes/music/continuum-22-oga-advertisements.m4a",
+    "sha256": "154b677116337d28b032921c17eb3a3b486aff3b979d5f816df24c55e3c68377",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-advertisements",
+    "title": "Advertisements",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/chillout-instrumentals-collection/06 HoliznaCC0 - Advertisements.mp3",
+    "sourceSha256": "a64f13ec7490732c91da837d555916c7f0107889ee8fe2421de4882a8e5530fd",
+    "page": "https://opengameart.org/content/chillout-instrumentals-collection",
+    "segments_s": [
+      [
+        61.7,
+        83.7
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 92.3,
+    "key": "E major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/chillout-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-holizna-opinions": {
+    "bed": "continuum-20-holizna-opinions",
+    "file": "episodes/music/continuum-20-holizna-opinions.m4a",
+    "sha256": "c6b06a7d36f9b70a1c39aca066d1e881b6df009c1f9337568efe6845f775cb90",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-opinions",
+    "title": "Opinions",
+    "artist": "HoliznaCC0",
+    "game": "continuum",
+    "source": "music/sources/holizna/chill_beats/05 HoliznaCC0 - Opinions.mp3",
+    "sourceSha256": "d17fb6c6fd6aa6436ee0653297b92ab6bc7c24af20f8694668660a956eebdb57",
+    "page": "https://opengameart.org/content/chill-beats-collection",
+    "segments_s": [
+      [
+        14.021,
+        34.021
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "G major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/chill-beats-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-holizna-opinions": {
+    "bed": "continuum-22-holizna-opinions",
+    "file": "episodes/music/continuum-22-holizna-opinions.m4a",
+    "sha256": "6527b6a29557c817b08523ff6f83163d3ff35175864003b721c96261587a48cb",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.8,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-opinions",
+    "title": "Opinions",
+    "artist": "HoliznaCC0",
+    "game": "continuum",
+    "source": "music/sources/holizna/chill_beats/05 HoliznaCC0 - Opinions.mp3",
+    "sourceSha256": "d17fb6c6fd6aa6436ee0653297b92ab6bc7c24af20f8694668660a956eebdb57",
+    "page": "https://opengameart.org/content/chill-beats-collection",
+    "segments_s": [
+      [
+        15.016,
+        37.016
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "G major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/chill-beats-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-a-small-fire-will-do": {
+    "bed": "scalar-24-oga-a-small-fire-will-do",
+    "file": "episodes/music/scalar-24-oga-a-small-fire-will-do.m4a",
+    "sha256": "2d5dcea906a944938488f4719dc0b3b4900a68db6e1c695a3286a2fc81b809f3",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-a-small-fire-will-do",
+    "title": "a small fire will do",
+    "artist": "Trex0n",
+    "game": "scalar",
+    "source": "music/sources/oga/a-small-fire-will-do-calming-loop/a_small_fire_will_do.wav",
+    "sourceSha256": "1cb42057e724224d6047f651b95598f5c094caaaba47f6430dd5d540c09c4414",
+    "page": "https://opengameart.org/content/a-small-fire-will-do-calming-loop",
+    "segments_s": [
+      [
+        9.023,
+        33.023
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Trex0n, https://opengameart.org/content/a-small-fire-will-do-calming-loop, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-elevator": {
+    "bed": "whenabouts-22-oga-elevator",
+    "file": "episodes/music/whenabouts-22-oga-elevator.m4a",
+    "sha256": "a6b0c8c0d85199687f5bacacb698a9647c4337fbb6b0966dc6c68074e6cf8ff0",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.5,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-elevator",
+    "title": "Elevator",
+    "artist": "Pro Sensory",
+    "game": "whenabouts",
+    "source": "music/sources/oga/elevator-music/Elevator.mp3",
+    "sourceSha256": "eca932ca45d60eb89aa717842a6fccaf7744ec6ee95c50965539c4a096fb2699",
+    "page": "https://opengameart.org/content/elevator-music",
+    "segments_s": [
+      [
+        43.078,
+        65.078
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 89.1,
+    "key": "G major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Pro Sensory, https://opengameart.org/content/elevator-music, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-town1-home-town": {
+    "bed": "scalar-24-oga-town1-home-town",
+    "file": "episodes/music/scalar-24-oga-town1-home-town.m4a",
+    "sha256": "4056d08fca168bcc434877c90557427023e0d7ee125c1b69de0fd8e246d48f90",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-town1-home-town",
+    "title": "Town1 - Home Town",
+    "artist": "SubspaceAudio",
+    "game": "scalar",
+    "source": "music/sources/oga/jrpg-pack-2-towns/Town1 - Home Town.ogg",
+    "sourceSha256": "21dfdcc43e1f097020c2c8b5fce5e47790a3fd9b496d903f37304cc5440a6be4",
+    "page": "https://opengameart.org/content/jrpg-pack-2-towns",
+    "segments_s": [
+      [
+        11.02,
+        35.02
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 95.7,
+    "key": "F major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (SubspaceAudio, https://opengameart.org/content/jrpg-pack-2-towns, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-families": {
+    "bed": "tectonic-22-holizna-families",
+    "file": "episodes/music/tectonic-22-holizna-families.m4a",
+    "sha256": "6e66898c034c4898d3c0105f87e51216be8113e270a62ab8eef5aad3748c3f1c",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-families",
+    "title": "Families",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/chill_beats/03 HoliznaCC0 - Families.mp3",
+    "sourceSha256": "b0a7645ed11cd36567c9681b1eaa7f059896f6ed95fadcbb660edacec78c4486",
+    "page": "https://opengameart.org/content/chill-beats-collection",
+    "segments_s": [
+      [
+        63.012,
+        85.012
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "Bb major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/chill-beats-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-families": {
+    "bed": "tectonic-24-holizna-families",
+    "file": "episodes/music/tectonic-24-holizna-families.m4a",
+    "sha256": "c76b428e0d32708278bc68b2e8b7812d2b0cedb68a2ec37845a043785999ee26",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-families",
+    "title": "Families",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/chill_beats/03 HoliznaCC0 - Families.mp3",
+    "sourceSha256": "b0a7645ed11cd36567c9681b1eaa7f059896f6ed95fadcbb660edacec78c4486",
+    "page": "https://opengameart.org/content/chill-beats-collection",
+    "segments_s": [
+      [
+        61.012,
+        85.012
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "Bb major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/chill-beats-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-holizna-clouds": {
+    "bed": "continuum-20-holizna-clouds",
+    "file": "episodes/music/continuum-20-holizna-clouds.m4a",
+    "sha256": "8921289b59b8469871f58e9294ad191c151aa029451640c139177b25f5caecbe",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-clouds",
+    "title": "Clouds",
+    "artist": "HoliznaCC0",
+    "game": "continuum",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/21 HoliznaCC0 - Clouds.mp3",
+    "sourceSha256": "ae970bdaf997065c5b5ea3520c909514f3a4ed2c84521a83eed1325bffaa26c9",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        99.761,
+        119.761
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 71.8,
+    "key": "D major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-holizna-clouds": {
+    "bed": "continuum-22-holizna-clouds",
+    "file": "episodes/music/continuum-22-holizna-clouds.m4a",
+    "sha256": "7f2efa418b9f041b01aaa56782f2ed7cbf053086a5ac0de770eca2a0501d6d72",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-clouds",
+    "title": "Clouds",
+    "artist": "HoliznaCC0",
+    "game": "continuum",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/21 HoliznaCC0 - Clouds.mp3",
+    "sourceSha256": "ae970bdaf997065c5b5ea3520c909514f3a4ed2c84521a83eed1325bffaa26c9",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        97.761,
+        119.761
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 71.8,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-2-hour-delay": {
+    "bed": "tectonic-22-holizna-2-hour-delay",
+    "file": "episodes/music/tectonic-22-holizna-2-hour-delay.m4a",
+    "sha256": "2cc91f8f77ddf4c33747f818eca083c89cf259d00efa4861dbf210a49ec72902",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-2-hour-delay",
+    "title": "2 Hour Delay",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection/03 HoliznaCC0 - 2 Hour Delay.mp3",
+    "sourceSha256": "92d93af6fd4c2e88cf3ae9c3578074cefa7def8a955d92806fc6851b71d748e7",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        18.012,
+        40.012
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-2-hour-delay": {
+    "bed": "tectonic-24-holizna-2-hour-delay",
+    "file": "episodes/music/tectonic-24-holizna-2-hour-delay.m4a",
+    "sha256": "d81d337a4513f8e576066e5fcbfb15698b0b1fc1af99751dec290290d02f98d2",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-2-hour-delay",
+    "title": "2 Hour Delay",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection/03 HoliznaCC0 - 2 Hour Delay.mp3",
+    "sourceSha256": "92d93af6fd4c2e88cf3ae9c3578074cefa7def8a955d92806fc6851b71d748e7",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        88.017,
+        112.017
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-childhood": {
+    "bed": "continuum-20-oga-childhood",
+    "file": "episodes/music/continuum-20-oga-childhood.m4a",
+    "sha256": "8e229b3484b17f022952b9e15a1dd81b1204c7b7b7aa87459bb0be7ec178ae14",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-childhood",
+    "title": "Childhood",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/chillout-instrumentals-collection/03 HoliznaCC0 - Childhood.mp3",
+    "sourceSha256": "a8da6e982ef5e7ee2a709c9f29cb1ef8c907f128248e1a96bddd7fc9799dc89e",
+    "page": "https://opengameart.org/content/chillout-instrumentals-collection",
+    "segments_s": [
+      [
+        56.688,
+        76.688
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 92.3,
+    "key": "F major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/chillout-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-childhood": {
+    "bed": "continuum-22-oga-childhood",
+    "file": "episodes/music/continuum-22-oga-childhood.m4a",
+    "sha256": "5ac53ff36d917df6a05ab3976b24a52d50b005075db26c211c34b9549c6f153b",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-childhood",
+    "title": "Childhood",
+    "artist": "Holizna",
+    "game": "continuum",
+    "source": "music/sources/oga/chillout-instrumentals-collection/03 HoliznaCC0 - Childhood.mp3",
+    "sourceSha256": "a8da6e982ef5e7ee2a709c9f29cb1ef8c907f128248e1a96bddd7fc9799dc89e",
+    "page": "https://opengameart.org/content/chillout-instrumentals-collection",
+    "segments_s": [
+      [
+        54.688,
+        76.688
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 92.3,
+    "key": "F major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/chillout-instrumentals-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-holizna-puppy-love": {
+    "bed": "continuum-20-holizna-puppy-love",
+    "file": "episodes/music/continuum-20-holizna-puppy-love.m4a",
+    "sha256": "31608b1d4975e73680cab38f63045be2b05b19625826266a7bcb2322f1a24ab8",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.9,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-puppy-love",
+    "title": "Puppy Love",
+    "artist": "HoliznaCC0",
+    "game": "continuum",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/19 HoliznaCC0 - Puppy Love.mp3",
+    "sourceSha256": "14feb5e33e2c4ff2c33a6cdc4d97bb0e2db1b22434ecc335ad194b443a815935",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        104.022,
+        124.022
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "F major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-holizna-puppy-love": {
+    "bed": "continuum-22-holizna-puppy-love",
+    "file": "episodes/music/continuum-22-holizna-puppy-love.m4a",
+    "sha256": "cefc3882a358b5ae98110d17853b98918dea1e14870580d3d5e59f5962125dbe",
+    "lufs": -20.0,
+    "truePeakDbtp": -11.0,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-puppy-love",
+    "title": "Puppy Love",
+    "artist": "HoliznaCC0",
+    "game": "continuum",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/19 HoliznaCC0 - Puppy Love.mp3",
+    "sourceSha256": "14feb5e33e2c4ff2c33a6cdc4d97bb0e2db1b22434ecc335ad194b443a815935",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        42.021,
+        64.021
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "F major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-oga-song18": {
+    "bed": "tectonic-22-oga-song18",
+    "file": "episodes/music/tectonic-22-oga-song18.m4a",
+    "sha256": "33db047157f09a575a78a3a3affed74684131fd161215a0f81f3e98becf2cebe",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-song18",
+    "title": "song18",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/crystal-cave-song18/song18.mp3",
+    "sourceSha256": "42349d7c615fe947866100a90289d61a1e64620e11f2d041b37166eaaa4e5840",
+    "page": "https://opengameart.org/content/crystal-cave-song18",
+    "segments_s": [
+      [
+        21.948,
+        43.948
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 99.4,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/crystal-cave-song18, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-oga-song18": {
+    "bed": "tectonic-24-oga-song18",
+    "file": "episodes/music/tectonic-24-oga-song18.m4a",
+    "sha256": "a91c3e0a337d4dc4551fb41dfed7ce38c5cdc7a37936363be4a4db7f83134b83",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-song18",
+    "title": "song18",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/crystal-cave-song18/song18.mp3",
+    "sourceSha256": "42349d7c615fe947866100a90289d61a1e64620e11f2d041b37166eaaa4e5840",
+    "page": "https://opengameart.org/content/crystal-cave-song18",
+    "segments_s": [
+      [
+        22.339,
+        46.339
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 99.4,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/crystal-cave-song18, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-slow-stride-loop": {
+    "bed": "continuum-20-oga-slow-stride-loop",
+    "file": "episodes/music/continuum-20-oga-slow-stride-loop.m4a",
+    "sha256": "db0ca168fa5dde4bbeba2ab30b652a356a63fced7177e5e20a2c5de590e0cdfb",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.0,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-slow-stride-loop",
+    "title": "Slow Stride Loop",
+    "artist": "isaiah658",
+    "game": "continuum",
+    "source": "music/sources/oga/slow-stride/Slow Stride Loop.flac",
+    "sourceSha256": "42598ee6d19ccc9b2659a6a4bde081aab0e8d0ea8fc6d97428d46803653ab337",
+    "page": "https://opengameart.org/content/slow-stride",
+    "segments_s": [
+      [
+        26.838,
+        46.838
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 112.3,
+    "key": "E major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (isaiah658, https://opengameart.org/content/slow-stride, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-slow-stride-loop": {
+    "bed": "continuum-22-oga-slow-stride-loop",
+    "file": "episodes/music/continuum-22-oga-slow-stride-loop.m4a",
+    "sha256": "7106b32c18c48cacfcdd480f35f5a4913336e080fd94877043055a124068a95f",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.8,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-slow-stride-loop",
+    "title": "Slow Stride Loop",
+    "artist": "isaiah658",
+    "game": "continuum",
+    "source": "music/sources/oga/slow-stride/Slow Stride Loop.flac",
+    "sourceSha256": "42598ee6d19ccc9b2659a6a4bde081aab0e8d0ea8fc6d97428d46803653ab337",
+    "page": "https://opengameart.org/content/slow-stride",
+    "segments_s": [
+      [
+        75.017,
+        97.017
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 112.3,
+    "key": "E major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (isaiah658, https://opengameart.org/content/slow-stride, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-calm2-childhood-friends": {
+    "bed": "whenabouts-22-oga-calm2-childhood-friends",
+    "file": "episodes/music/whenabouts-22-oga-calm2-childhood-friends.m4a",
+    "sha256": "bb9e7bcc33998c1cafc26697079fd8898b543cb257d35d229f5192de5af265e5",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.9,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-calm2-childhood-friends",
+    "title": "Calm2 - Childhood Friends",
+    "artist": "SubspaceAudio",
+    "game": "whenabouts",
+    "source": "music/sources/oga/jrpg-pack-4-calm/Calm2 - Childhood Friends.ogg",
+    "sourceSha256": "dc536901748772e4822118887d6f164343b1d9e4fea3a7c197ac2fcb06d6f344",
+    "page": "https://opengameart.org/content/jrpg-pack-4-calm",
+    "segments_s": [
+      [
+        13.739,
+        35.739
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 112.3,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (SubspaceAudio, https://opengameart.org/content/jrpg-pack-4-calm, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-cozy-puzzle-in-game-1": {
+    "bed": "scalar-24-oga-cozy-puzzle-in-game-1",
+    "file": "episodes/music/scalar-24-oga-cozy-puzzle-in-game-1.m4a",
+    "sha256": "2fcfa3c1b07969a8b5e9b0ea872931a931f331c3421312d5b4f53117853a72a1",
+    "lufs": -20.0,
+    "truePeakDbtp": -9.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-cozy-puzzle-in-game-1",
+    "title": "cozy puzzle in-game 1",
+    "artist": "MintoDog",
+    "game": "scalar",
+    "source": "music/sources/oga/cozy-puzzle-in-game-1/cozy_puzzle_in-game_1_bpm118.mp3",
+    "sourceSha256": "534ce0956812e31814605b33216fabfa82ea5ef39375197573806659ab6fec21",
+    "page": "https://opengameart.org/content/cozy-puzzle-in-game-1",
+    "segments_s": [
+      [
+        65.343,
+        89.343
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "G major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (MintoDog, https://opengameart.org/content/cozy-puzzle-in-game-1, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-hot-spring-town": {
+    "bed": "scalar-24-oga-hot-spring-town",
+    "file": "episodes/music/scalar-24-oga-hot-spring-town.m4a",
+    "sha256": "e2bb094f59da31d52abca43be099e5cde074125242240dfae5a49b4afd84b071",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-hot-spring-town",
+    "title": "hot spring town",
+    "artist": "Kistol",
+    "game": "scalar",
+    "source": "music/sources/oga/hot-springs-town/hot_spring_town.flac",
+    "sourceSha256": "efe6844ebbacef3b6d22c7d0208ae20b1eba666555316bdd323b4c5315f46edd",
+    "page": "https://opengameart.org/content/hot-springs-town",
+    "segments_s": [
+      [
+        38.036,
+        62.036
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 123.0,
+    "key": "A major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Kistol, https://opengameart.org/content/hot-springs-town, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-lofihiphop": {
+    "bed": "continuum-20-oga-lofihiphop",
+    "file": "episodes/music/continuum-20-oga-lofihiphop.m4a",
+    "sha256": "29c6698ff1b21093510820373b8430d20dd41f17bf3499f0776801f95ef7ed01",
+    "lufs": -20.0,
+    "truePeakDbtp": -3.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-lofihiphop",
+    "title": "lofihiphop",
+    "artist": "omfgdude",
+    "game": "continuum",
+    "source": "music/sources/oga/lofi-hip-hop/lofihiphop.ogg",
+    "sourceSha256": "8641e8203d0e7dc06db0276b69fc15f59e9f45faf76d2d647bc076a3339c1ef1",
+    "page": "https://opengameart.org/content/lofi-hip-hop",
+    "segments_s": [
+      [
+        87.326,
+        107.326
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "Eb major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (omfgdude, https://opengameart.org/content/lofi-hip-hop, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-lofihiphop": {
+    "bed": "continuum-22-oga-lofihiphop",
+    "file": "episodes/music/continuum-22-oga-lofihiphop.m4a",
+    "sha256": "4753221ee8054c47976ee347b8dd2aa2cfdb3eb788632619adc8e7f301f70f3b",
+    "lufs": -20.0,
+    "truePeakDbtp": -3.4,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-lofihiphop",
+    "title": "lofihiphop",
+    "artist": "omfgdude",
+    "game": "continuum",
+    "source": "music/sources/oga/lofi-hip-hop/lofihiphop.ogg",
+    "sourceSha256": "8641e8203d0e7dc06db0276b69fc15f59e9f45faf76d2d647bc076a3339c1ef1",
+    "page": "https://opengameart.org/content/lofi-hip-hop",
+    "segments_s": [
+      [
+        85.326,
+        107.326
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "Eb major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (omfgdude, https://opengameart.org/content/lofi-hip-hop, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-holizna-old-age": {
+    "bed": "whenabouts-22-holizna-old-age",
+    "file": "episodes/music/whenabouts-22-holizna-old-age.m4a",
+    "sha256": "ed1c3fb50da632fc1c1ac46a0ece04c5676615e75ec12772f127250bd1b6d4fb",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.9,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-old-age",
+    "title": "Old Age",
+    "artist": "HoliznaCC0",
+    "game": "whenabouts",
+    "source": "music/sources/holizna/chill_beats/06 HoliznaCC0 - Old Age.mp3",
+    "sourceSha256": "6931b7ae6e4f247132b7425977cb71cc6692af9ce7dc6141e7e382746407af75",
+    "page": "https://opengameart.org/content/chill-beats-collection",
+    "segments_s": [
+      [
+        139.789,
+        161.789
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 86.1,
+    "key": "Ab major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/chill-beats-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-whatever": {
+    "bed": "tectonic-22-holizna-whatever",
+    "file": "episodes/music/tectonic-22-holizna-whatever.m4a",
+    "sha256": "98a8cd8a579051399500f2b72443f832049225279886fe2f4215fa1148aefcf0",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-whatever",
+    "title": "Whatever",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_2/14 HoliznaCC0 - Whatever.mp3",
+    "sourceSha256": "2cfda866e25cd05e3c18d32d7f52555bcb8495a49d2c3c43afa8cf4c39227954",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        144.026,
+        166.026
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-whatever": {
+    "bed": "tectonic-24-holizna-whatever",
+    "file": "episodes/music/tectonic-24-holizna-whatever.m4a",
+    "sha256": "051d4956a4271cbf86dab9283c8b390b4688eadf21ad079e8975dfc7eb1a41d9",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-whatever",
+    "title": "Whatever",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_2/14 HoliznaCC0 - Whatever.mp3",
+    "sourceSha256": "2cfda866e25cd05e3c18d32d7f52555bcb8495a49d2c3c43afa8cf4c39227954",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        142.026,
+        166.026
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "D major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-holizna-come-again": {
+    "bed": "whenabouts-22-holizna-come-again",
+    "file": "episodes/music/whenabouts-22-holizna-come-again.m4a",
+    "sha256": "2201bc3bbab94a4efa9a40726784a59d29da31f00de43e34bcfbdc46c2440f5c",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.8,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-come-again",
+    "title": "Come Again",
+    "artist": "HoliznaCC0",
+    "game": "whenabouts",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_3/04 HoliznaCC0 - Come Again.mp3",
+    "sourceSha256": "a4531887f504e8b26b0d9827ee00d2b87a6a15112467433fad309755cd92a52e",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        130.489,
+        152.489
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "F# major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-holizna-shut-up-or-shut-in": {
+    "bed": "scalar-24-holizna-shut-up-or-shut-in",
+    "file": "episodes/music/scalar-24-holizna-shut-up-or-shut-in.m4a",
+    "sha256": "0861d8136a8835d4dc46e4bebaef0f2ace965fd5aa72cf304206a0518d380a6e",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-shut-up-or-shut-in",
+    "title": "Shut up, or shut in",
+    "artist": "HoliznaCC0",
+    "game": "scalar",
+    "source": "music/sources/holizna/sad_lofi_1/13 HoliznaCC0 - Shut up, or shut in.mp3",
+    "sourceSha256": "0a38dd961fd9f753f1db133ace6fc9576158c8cece731b8da3f220b00019c31c",
+    "page": "https://opengameart.org/content/sad-lo-fi-lofi-collectioni",
+    "segments_s": [
+      [
+        16.012,
+        40.012
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 89.1,
+    "key": "F# major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/sad-lo-fi-lofi-collectioni, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-ambienttrack-1": {
+    "bed": "continuum-20-oga-ambienttrack-1",
+    "file": "episodes/music/continuum-20-oga-ambienttrack-1.m4a",
+    "sha256": "7c02292053820caa81d11c6a349cff8d4c218eee75b1c59decb3ac0a99b0355e",
+    "lufs": -20.0,
+    "truePeakDbtp": -9.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-ambienttrack-1",
+    "title": "ambienttrack 1",
+    "artist": "annandistance",
+    "game": "continuum",
+    "source": "music/sources/oga/feel-good-slow-ambient-track-with-a-beat/ambienttrack_1.ogg",
+    "sourceSha256": "d49c2572259faf2c296dd59aa50feb19788f0b2cf82f9852340e9eeec27c8114",
+    "page": "https://opengameart.org/content/feel-good-slow-ambient-track-with-a-beat",
+    "segments_s": [
+      [
+        68.333,
+        88.333
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 95.7,
+    "key": "A major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (annandistance, https://opengameart.org/content/feel-good-slow-ambient-track-with-a-beat, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-ambienttrack-1": {
+    "bed": "continuum-22-oga-ambienttrack-1",
+    "file": "episodes/music/continuum-22-oga-ambienttrack-1.m4a",
+    "sha256": "5d1f2c9caf00db0916cb59f0f90b188674622038b8ec2872470b622909908460",
+    "lufs": -20.0,
+    "truePeakDbtp": -9.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-ambienttrack-1",
+    "title": "ambienttrack 1",
+    "artist": "annandistance",
+    "game": "continuum",
+    "source": "music/sources/oga/feel-good-slow-ambient-track-with-a-beat/ambienttrack_1.ogg",
+    "sourceSha256": "d49c2572259faf2c296dd59aa50feb19788f0b2cf82f9852340e9eeec27c8114",
+    "page": "https://opengameart.org/content/feel-good-slow-ambient-track-with-a-beat",
+    "segments_s": [
+      [
+        66.333,
+        88.333
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 95.7,
+    "key": "A major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (annandistance, https://opengameart.org/content/feel-good-slow-ambient-track-with-a-beat, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-quiet-village-1": {
+    "bed": "scalar-24-oga-quiet-village-1",
+    "file": "episodes/music/scalar-24-oga-quiet-village-1.m4a",
+    "sha256": "1944492317232a7b0ee4cbd4d6ec73463f55f4cf5a61431a97b9ef45592d0367",
+    "lufs": -20.0,
+    "truePeakDbtp": -6.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-quiet-village-1",
+    "title": "Quiet Village 1",
+    "artist": "Holizna",
+    "game": "scalar",
+    "source": "music/sources/oga/quiet-village-collection/04 HoliznaCC0 - Quiet Village 1.mp3",
+    "sourceSha256": "f0d70f0960fba21e6eaec7a3a15d7f57582d296d4635bbbee9557a99ca6aa654",
+    "page": "https://opengameart.org/content/quiet-village-collection",
+    "segments_s": [
+      [
+        63.578,
+        87.578
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 64.6,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/quiet-village-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-dream-pop": {
+    "bed": "tectonic-22-holizna-dream-pop",
+    "file": "episodes/music/tectonic-22-holizna-dream-pop.m4a",
+    "sha256": "bb5fcdc455d31ecf0f0fb110a9083002e4b1c02d72fecb10b66c2723e034b82f",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-dream-pop",
+    "title": "Dream Pop",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/chill_beats/08 HoliznaCC0 - Dream Pop.mp3",
+    "sourceSha256": "f9d1a64e5a79c15bd8a2e1a03ea5ee43cd96201013bf4f819a0557a93d692af2",
+    "page": "https://opengameart.org/content/chill-beats-collection",
+    "segments_s": [
+      [
+        80.59,
+        102.59
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 71.8,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/chill-beats-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-dream-pop": {
+    "bed": "tectonic-24-holizna-dream-pop",
+    "file": "episodes/music/tectonic-24-holizna-dream-pop.m4a",
+    "sha256": "06bcd42f89ecc8626246d17cd9601effea1a26eb191d8af187346ee750915197",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-dream-pop",
+    "title": "Dream Pop",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/chill_beats/08 HoliznaCC0 - Dream Pop.mp3",
+    "sourceSha256": "f9d1a64e5a79c15bd8a2e1a03ea5ee43cd96201013bf4f819a0557a93d692af2",
+    "page": "https://opengameart.org/content/chill-beats-collection",
+    "segments_s": [
+      [
+        44.305,
+        68.305
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 71.8,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/chill-beats-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-everything-you-ever-dreamed": {
+    "bed": "tectonic-22-holizna-everything-you-ever-dreamed",
+    "file": "episodes/music/tectonic-22-holizna-everything-you-ever-dreamed.m4a",
+    "sha256": "3c0458fcba1c7c7f19aeb66f857cdf78c62d6410f5fd1c699d2d62f65d1dfe09",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.0,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-everything-you-ever-dreamed",
+    "title": "Everything You Ever Dreamed",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection/02 HoliznaCC0 - Everything You Ever Dreamed.mp3",
+    "sourceSha256": "c5a2e0aa16cd92df54bb76322ab49e83b0bff5c30e751fe74d3a603e3ddb030f",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        66.054,
+        88.054
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "E major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-everything-you-ever-dreamed": {
+    "bed": "tectonic-24-holizna-everything-you-ever-dreamed",
+    "file": "episodes/music/tectonic-24-holizna-everything-you-ever-dreamed.m4a",
+    "sha256": "5b54a1bc3fcb2c5d0907c91884105f5d9fd9c8933a1761a2ebd7a662d1e7b929",
+    "lufs": -20.0,
+    "truePeakDbtp": -10.1,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-everything-you-ever-dreamed",
+    "title": "Everything You Ever Dreamed",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection/02 HoliznaCC0 - Everything You Ever Dreamed.mp3",
+    "sourceSha256": "c5a2e0aa16cd92df54bb76322ab49e83b0bff5c30e751fe74d3a603e3ddb030f",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        66.051,
+        90.051
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "E major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-holizna-laundry-on-the-wire": {
+    "bed": "scalar-24-holizna-laundry-on-the-wire",
+    "file": "episodes/music/scalar-24-holizna-laundry-on-the-wire.m4a",
+    "sha256": "7381480f2faf416663f4f72b57d076afb828fcdf4df2027a7a846d66f899aa4f",
+    "lufs": -20.0,
+    "truePeakDbtp": -2.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-laundry-on-the-wire",
+    "title": "Laundry On The Wire",
+    "artist": "HoliznaCC0",
+    "game": "scalar",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection/01 HoliznaCC0 - Laundry On The Wire.mp3.mp3",
+    "sourceSha256": "931d01538e8f72adb390ccc49c50dd8c482c5aae33b9e39d7b7b8e0037a82102",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        43.017,
+        67.017
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 80.7,
+    "key": "G major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-morning-rain": {
+    "bed": "continuum-20-oga-morning-rain",
+    "file": "episodes/music/continuum-20-oga-morning-rain.m4a",
+    "sha256": "43770933d2a6c2d9c127c68803b6b7c57dadd5df4d934e6de011212505e3d40a",
+    "lufs": -20.0,
+    "truePeakDbtp": -1.4,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-morning-rain",
+    "title": "Morning rain",
+    "artist": "TAD",
+    "game": "continuum",
+    "source": "music/sources/oga/lofi-compilation/Morning rain.mp3",
+    "sourceSha256": "11c9c43be5d3baf5892cd59034ba3c1b690db9a4b986070530597d0afaa12306",
+    "page": "https://opengameart.org/content/lofi-compilation",
+    "segments_s": [
+      [
+        38.565,
+        58.565
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "D major",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (TAD, https://opengameart.org/content/lofi-compilation, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-morning-rain": {
+    "bed": "continuum-22-oga-morning-rain",
+    "file": "episodes/music/continuum-22-oga-morning-rain.m4a",
+    "sha256": "f3d0163b50b15374a0f3efa2ff570ef068f5739daa910746986f19e675ba98a1",
+    "lufs": -20.0,
+    "truePeakDbtp": -1.4,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-morning-rain",
+    "title": "Morning rain",
+    "artist": "TAD",
+    "game": "continuum",
+    "source": "music/sources/oga/lofi-compilation/Morning rain.mp3",
+    "sourceSha256": "11c9c43be5d3baf5892cd59034ba3c1b690db9a4b986070530597d0afaa12306",
+    "page": "https://opengameart.org/content/lofi-compilation",
+    "segments_s": [
+      [
+        7.04,
+        29.04
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "D major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (TAD, https://opengameart.org/content/lofi-compilation, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-quiet-village-3": {
+    "bed": "scalar-24-oga-quiet-village-3",
+    "file": "episodes/music/scalar-24-oga-quiet-village-3.m4a",
+    "sha256": "55098fed7eab2c403612b5b50609ce9187d2e62e8ebd3422bc17b3c57db70138",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.4,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-quiet-village-3",
+    "title": "Quiet Village 3",
+    "artist": "Holizna",
+    "game": "scalar",
+    "source": "music/sources/oga/quiet-village-collection/02 HoliznaCC0 - Quiet Village 3.mp3",
+    "sourceSha256": "8e9df92a36f30fbf601f9f6c51ed3ec3afd37cfee91bd46dc5c2e73aa3b2d7e1",
+    "page": "https://opengameart.org/content/quiet-village-collection",
+    "segments_s": [
+      [
+        164.643,
+        188.643
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 107.7,
+    "key": "A minor",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/quiet-village-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-oga-beginning-7": {
+    "bed": "whenabouts-22-oga-beginning-7",
+    "file": "episodes/music/whenabouts-22-oga-beginning-7.m4a",
+    "sha256": "7a47c8401516c782221a1a9c57b7e96fd06324086c0f4261aee7955c8e214758",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-beginning-7",
+    "title": "Beginning 7",
+    "artist": "Holizna",
+    "game": "whenabouts",
+    "source": "music/sources/oga/title-screens-beginnings-collection/03 HoliznaCC0 - Beginning 7.mp3",
+    "sourceSha256": "b331e6c483bfecbb489a1bd302d80bf93c028584b49cb0dd84a7e442cb6b8132",
+    "page": "https://opengameart.org/content/title-screens-beginnings-collection",
+    "segments_s": [
+      [
+        19.324,
+        41.324
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 117.5,
+    "key": "B major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/title-screens-beginnings-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-holizna-creature-comforts": {
+    "bed": "scalar-24-holizna-creature-comforts",
+    "file": "episodes/music/scalar-24-holizna-creature-comforts.m4a",
+    "sha256": "6fc597733a0d50ea416d9590477d7e172811bbd90b59dc3ec5a7010e01936e76",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.2,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-creature-comforts",
+    "title": "Creature Comforts",
+    "artist": "HoliznaCC0",
+    "game": "scalar",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_3/23 HoliznaCC0 - Creature Comforts.mp3",
+    "sourceSha256": "07982da35ea272ff4c4dab555f024816d34c341bc079640dcbc372228cc5572b",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        102.587,
+        126.587
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 71.8,
+    "key": "C# major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-holizna-yesterday": {
+    "bed": "whenabouts-22-holizna-yesterday",
+    "file": "episodes/music/whenabouts-22-holizna-yesterday.m4a",
+    "sha256": "c9eee85c0c870929e9559e60a38c8a8746d59e31536a44568e29694edf0f9adf",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-yesterday",
+    "title": "Yesterday",
+    "artist": "HoliznaCC0",
+    "game": "whenabouts",
+    "source": "music/sources/holizna/sad_lofi_1/15 HoliznaCC0 - Yesterday.mp3",
+    "sourceSha256": "48d8abfd52a65cddbb142708526b9eb078671189c1ecb5eb2c4e95c5c481a1d9",
+    "page": "https://opengameart.org/content/sad-lo-fi-lofi-collectioni",
+    "segments_s": [
+      [
+        46.305,
+        68.305
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 71.8,
+    "key": "G major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/sad-lo-fi-lofi-collectioni, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-oga-krank-space-atmo": {
+    "bed": "tectonic-22-oga-krank-space-atmo",
+    "file": "episodes/music/tectonic-22-oga-krank-space-atmo.m4a",
+    "sha256": "747861004e7e069a4be2e82a82eae30fbc618055881e4ca31893deb2ed252eba",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-krank-space-atmo",
+    "title": "krank-space-atmo",
+    "artist": "legoluft",
+    "game": "tectonic",
+    "source": "music/sources/oga/atmospheric-puzzles/krank-space-atmo.ogg",
+    "sourceSha256": "550607f7af7e102366e3f437d686d9bd865a97f05d1587643727a54975f2bd4b",
+    "page": "https://opengameart.org/content/atmospheric-puzzles",
+    "segments_s": [
+      [
+        14.831,
+        36.831
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 92.3,
+    "key": "G minor",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (legoluft, https://opengameart.org/content/atmospheric-puzzles, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-oga-krank-space-atmo": {
+    "bed": "tectonic-24-oga-krank-space-atmo",
+    "file": "episodes/music/tectonic-24-oga-krank-space-atmo.m4a",
+    "sha256": "fc9557dcd7a6712663b94452263706a93b19d6cf3760567b3e6326246a51fc6f",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-krank-space-atmo",
+    "title": "krank-space-atmo",
+    "artist": "legoluft",
+    "game": "tectonic",
+    "source": "music/sources/oga/atmospheric-puzzles/krank-space-atmo.ogg",
+    "sourceSha256": "550607f7af7e102366e3f437d686d9bd865a97f05d1587643727a54975f2bd4b",
+    "page": "https://opengameart.org/content/atmospheric-puzzles",
+    "segments_s": [
+      [
+        12.831,
+        36.831
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 92.3,
+    "key": "G minor",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (legoluft, https://opengameart.org/content/atmospheric-puzzles, retrieved 2026-10-09); no attribution required."
+  },
+  "whenabouts-22-holizna-glad-to-be-stuck-inside": {
+    "bed": "whenabouts-22-holizna-glad-to-be-stuck-inside",
+    "file": "episodes/music/whenabouts-22-holizna-glad-to-be-stuck-inside.m4a",
+    "sha256": "b79c8e362c2bc11fefc6f9f815bfdd58f02de132470a3e19c82ea32d6be32209",
+    "lufs": -20.0,
+    "truePeakDbtp": -5.8,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-glad-to-be-stuck-inside",
+    "title": "Glad To Be Stuck Inside",
+    "artist": "HoliznaCC0",
+    "game": "whenabouts",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection_2/07 HoliznaCC0 - Glad To Be Stuck Inside.mp3.mp3",
+    "sourceSha256": "22eff9485adec756ca44ee5171f9abda70d3bda7983da355a82ae7f3347dd88a",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        115.071,
+        137.071
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 86.1,
+    "key": "E minor",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-20-oga-cat-caffe": {
+    "bed": "continuum-20-oga-cat-caffe",
+    "file": "episodes/music/continuum-20-oga-cat-caffe.m4a",
+    "sha256": "6363be38db507050e1f5acb46191f3a8270ef47711caecb062463156c6eb491f",
+    "lufs": -20.0,
+    "truePeakDbtp": -2.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-cat-caffe",
+    "title": "Cat caffe",
+    "artist": "TAD",
+    "game": "continuum",
+    "source": "music/sources/oga/lofi-compilation/Cat caffe.mp3",
+    "sourceSha256": "896b036154c439e0790fa821bf4a5a1d208d17954c8db1b10c72a6d053c7d3d9",
+    "page": "https://opengameart.org/content/lofi-compilation",
+    "segments_s": [
+      [
+        73.441,
+        93.441
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 95.7,
+    "key": "G minor",
+    "revealSeconds": 10,
+    "durationSeconds": 20,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (TAD, https://opengameart.org/content/lofi-compilation, retrieved 2026-10-09); no attribution required."
+  },
+  "continuum-22-oga-cat-caffe": {
+    "bed": "continuum-22-oga-cat-caffe",
+    "file": "episodes/music/continuum-22-oga-cat-caffe.m4a",
+    "sha256": "50720ad4df7d17c5aff2c6e37a123e462506c6af82cdbd0b107c7edfdd3cb8cf",
+    "lufs": -20.0,
+    "truePeakDbtp": -2.3,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-cat-caffe",
+    "title": "Cat caffe",
+    "artist": "TAD",
+    "game": "continuum",
+    "source": "music/sources/oga/lofi-compilation/Cat caffe.mp3",
+    "sourceSha256": "896b036154c439e0790fa821bf4a5a1d208d17954c8db1b10c72a6d053c7d3d9",
+    "page": "https://opengameart.org/content/lofi-compilation",
+    "segments_s": [
+      [
+        68.91,
+        90.91
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 95.7,
+    "key": "G minor",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (TAD, https://opengameart.org/content/lofi-compilation, retrieved 2026-10-09); no attribution required."
+  },
+  "scalar-24-oga-quiet-village-2": {
+    "bed": "scalar-24-oga-quiet-village-2",
+    "file": "episodes/music/scalar-24-oga-quiet-village-2.m4a",
+    "sha256": "e125a38fe2b52a94ae43a2b11f8391f139e97d721afec80040db88af8bc7cbc7",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.8,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-quiet-village-2",
+    "title": "Quiet Village 2",
+    "artist": "Holizna",
+    "game": "scalar",
+    "source": "music/sources/oga/quiet-village-collection/01 HoliznaCC0 - Quiet Village 2.mp3",
+    "sourceSha256": "ea4a0da4d9b771e26ff0616e1c148853fbe4d426f8a652f73e2bcb026db3a625",
+    "page": "https://opengameart.org/content/quiet-village-collection",
+    "segments_s": [
+      [
+        42.866,
+        66.866
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 112.3,
+    "key": "D minor",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (Holizna, https://opengameart.org/content/quiet-village-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-oga-tylersong3-normal": {
+    "bed": "tectonic-22-oga-tylersong3-normal",
+    "file": "episodes/music/tectonic-22-oga-tylersong3-normal.m4a",
+    "sha256": "92ad02e95e002319a1098867843ac20465ea4e01c8f2c799cd8017d04a988288",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-tylersong3-normal",
+    "title": "TylerSong3 Normal",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/aquaria/TylerSong3_Normal.wav",
+    "sourceSha256": "44f5ff8ccdc184ff41466934f59b9fb8490b66d31f5e08f0064de36e2b4763ee",
+    "page": "https://opengameart.org/content/aquaria",
+    "segments_s": [
+      [
+        5.02,
+        27.02
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 60.1,
+    "key": "F major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/aquaria, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-oga-tylersong3-normal": {
+    "bed": "tectonic-24-oga-tylersong3-normal",
+    "file": "episodes/music/tectonic-24-oga-tylersong3-normal.m4a",
+    "sha256": "3f932022020860139b851f39f319fa1a28e9f43f9afdd7c2b681602a9b6e55aa",
+    "lufs": -20.0,
+    "truePeakDbtp": -8.8,
+    "limiterCeilingDb": -1.5,
+    "trackId": "oga-tylersong3-normal",
+    "title": "TylerSong3 Normal",
+    "artist": "cynicmusic",
+    "game": "tectonic",
+    "source": "music/sources/oga/aquaria/TylerSong3_Normal.wav",
+    "sourceSha256": "44f5ff8ccdc184ff41466934f59b9fb8490b66d31f5e08f0064de36e2b4763ee",
+    "page": "https://opengameart.org/content/aquaria",
+    "segments_s": [
+      [
+        19.019,
+        43.019
+      ]
+    ],
+    "alignment": "downbeat",
+    "feltBpm": 60.1,
+    "key": "F major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (cynicmusic, https://opengameart.org/content/aquaria, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-snow-drift": {
+    "bed": "tectonic-22-holizna-snow-drift",
+    "file": "episodes/music/tectonic-22-holizna-snow-drift.m4a",
+    "sha256": "48db605b5e4033cb320a7bada24d611be7b8cb979db57c326001fd5f5df50a42",
+    "lufs": -20.0,
+    "truePeakDbtp": -11.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-snow-drift",
+    "title": "Snow Drift",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection/02 HoliznaCC0 - Snow Drift.mp3",
+    "sourceSha256": "7e7b7f7adeebf4c0da4e309488b1c30d4c50ec9d98b9907086bd735cb911f58a",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        128.5,
+        150.5
+      ]
+    ],
+    "alignment": "free",
+    "feltBpm": 86.1,
+    "key": "C major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-snow-drift": {
+    "bed": "tectonic-24-holizna-snow-drift",
+    "file": "episodes/music/tectonic-24-holizna-snow-drift.m4a",
+    "sha256": "6d2e745de8a377bcea88402cea6be1f3aafd1c7c26c009517efb66cf625978c9",
+    "lufs": -20.0,
+    "truePeakDbtp": -11.7,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-snow-drift",
+    "title": "Snow Drift",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/lo-fi_and_chill_lofi_collection/02 HoliznaCC0 - Snow Drift.mp3",
+    "sourceSha256": "7e7b7f7adeebf4c0da4e309488b1c30d4c50ec9d98b9907086bd735cb911f58a",
+    "page": "https://opengameart.org/content/lo-fi-and-chill-collection",
+    "segments_s": [
+      [
+        127.5,
+        151.5
+      ]
+    ],
+    "alignment": "free",
+    "feltBpm": 86.1,
+    "key": "C major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/lo-fi-and-chill-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-22-holizna-new-shoes": {
+    "bed": "tectonic-22-holizna-new-shoes",
+    "file": "episodes/music/tectonic-22-holizna-new-shoes.m4a",
+    "sha256": "9173b8a64623e75c471bf9cec410b8d160da596603406b70890d4a0367f310d8",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.5,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-new-shoes",
+    "title": "New Shoes",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/26 HoliznaCC0 - New Shoes.mp3",
+    "sourceSha256": "adae2eab4ac5c900eb9ca215e3406ba796194774ba808fd826d6e659d79e335d",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        83.0,
+        105.0
+      ]
+    ],
+    "alignment": "free",
+    "feltBpm": 80.7,
+    "key": "F major",
+    "revealSeconds": 12,
+    "durationSeconds": 22,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  },
+  "tectonic-24-holizna-new-shoes": {
+    "bed": "tectonic-24-holizna-new-shoes",
+    "file": "episodes/music/tectonic-24-holizna-new-shoes.m4a",
+    "sha256": "81d2aafeceba52c615e08f07fce9f58cc73dfe7b0b56c369dc6472cc5d0fa880",
+    "lufs": -20.0,
+    "truePeakDbtp": -7.6,
+    "limiterCeilingDb": -1.5,
+    "trackId": "holizna-new-shoes",
+    "title": "New Shoes",
+    "artist": "HoliznaCC0",
+    "game": "tectonic",
+    "source": "music/sources/holizna/happy_lo-fi_lofi_collection/26 HoliznaCC0 - New Shoes.mp3",
+    "sourceSha256": "adae2eab4ac5c900eb9ca215e3406ba796194774ba808fd826d6e659d79e335d",
+    "page": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+    "segments_s": [
+      [
+        105.5,
+        129.5
+      ]
+    ],
+    "alignment": "free",
+    "feltBpm": 80.7,
+    "key": "F major",
+    "revealSeconds": 14,
+    "durationSeconds": 24,
+    "license": "CC0-1.0",
+    "rights": "CC0-1.0 (HoliznaCC0, https://opengameart.org/content/happy-lo-fi-lofi-collection, retrieved 2026-10-09); no attribution required."
+  }
+}

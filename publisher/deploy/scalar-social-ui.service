@@ -1,0 +1,46 @@
+[Unit]
+Description=Scalar social private management UI (loopback only; never publishes)
+After=network.target
+# A crash loop (e.g. new code that fails at start) stops after 30 starts in 5 min. That leaves the update unit time
+# to roll a failed self-update back (it waits ~2 min), after which the next restart runs the previous code.
+# Recover by hand: sudo systemctl reset-failed scalar-social-ui && sudo systemctl start scalar-social-ui
+StartLimitIntervalSec=300
+StartLimitBurst=30
+
+[Service]
+# Ready (sd_notify READY=1) only once it listens and has reported a switched update as serving; a UI that never
+# gets there is killed after TimeoutStartSec and counts as a failed start (the update unit then rolls back).
+Type=notify
+TimeoutStartSec=90
+User=scalar-social
+Group=scalar-social
+WorkingDirectory=/opt/scalar-social
+# Tailscale Serve (tailnet only) proxies the Pi's https://<pi>.<tailnet>.ts.net address to this port. That address is
+# not in git: /etc/scalar-social/ui.env (root-owned) sets SCALAR_UI_ORIGIN=https://<pi>.<tailnet>.ts.net.
+EnvironmentFile=/etc/scalar-social/ui.env
+ExecStart=/usr/bin/python3 /opt/scalar-social/repo/publisher/app/ui_server.py --state /var/lib/scalar-social --config /etc/scalar-social/config.json --update-state /var/lib/scalar-social-update --static /opt/scalar-social/repo/publisher/app/static --host 127.0.0.1 --port 8765 --allowed-origin ${SCALAR_UI_ORIGIN}
+LoadCredential=UI_PASSCODE:/etc/scalar-social/credentials/UI_PASSCODE
+# A finished self-update exits 86 (updater.watch_once); on-failure brings the UI back on the new commit.
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+# The update inbox (request.json, ui.json) is the only place outside its state the UI writes; '-' = absent before
+# the git bootstrap.
+ReadWritePaths=/var/lib/scalar-social -/var/lib/scalar-social-update/inbox
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+# The UI never needs outbound network: only loopback traffic from Tailscale Serve.
+IPAddressAllow=localhost
+IPAddressDeny=any
+MemoryMax=96M
+
+[Install]
+WantedBy=multi-user.target

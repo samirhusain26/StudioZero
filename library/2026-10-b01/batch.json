@@ -1,0 +1,2913 @@
+{
+  "schemaVersion": 1,
+  "batchId": "2026-10-b01",
+  "createdAt": "2026-10-08T01:59:17Z",
+  "generator": {
+    "repoCommit": "7e7deb5e857831e76747f323f7c3e49dcccfdc45",
+    "dirty": true,
+    "assetKitVersion": "kit-1"
+  },
+  "sourceSnapshotHash": "0870dc615277f9bfa0909f160540f5aa3ebd23dff40d9b5022c4127bc5ef7629",
+  "styleRecipes": [
+    {
+      "styleId": "continuum-poster-1",
+      "game": "continuum",
+      "version": 1,
+      "summary": "Swiss data poster: cream #F7F3EC paper with a faint 90 px print grid and a pink/black spine bleeding off the left edge; black #111 type and 3–6 px rules, one hot-pink #F472B6 accent used as fills (with black text) for the subject and the answer. Montserrat 900 headlines, Montserrat 600–800 copy, IBM Plex Mono 700 figures. Head-to-head: two stacked white A/B cards with identical hatched empty tracks; at the reveal both bars grow together from one labelled zero line on one linear scale (axis 0 → nice round max), values count up to the exact text, winner turns pink with a check. Missing-slot: an ordinal ladder (equal rungs, “rank order · not to scale”) of two anchors with three dashed A/B/C insertion gaps; the pink target card drops into its gap on the downbeat, then values count up and thin bars grow from the ladder’s left edge, which becomes a labelled zero line. Ease-out entries ≤ 0.5 s, no camera moves, calm think window, source line always visible."
+    },
+    {
+      "styleId": "scalar-notebook-1",
+      "game": "scalar",
+      "version": 1,
+      "summary": "Field notebook on a graph-paper desk: paper #FAFAF9, charcoal #18181B ink, teal #14B8A6 accent, thermal green #22C55E / orange #F97316. ' +\n    'Fraunces 900 headlines and clue text, Geist Mono labels and numbers. Sharp-cornered white index cards (3 px ink border, hard 8 px offset shadow, ' +\n    'orange header rule, teal number tab) are dealt in from off-frame with a decelerating slide-and-settle; a tally card counts the countries that still fit ' +\n    '(195 → … → 1) on an honest zero-based bar. Reveal = a speckled green rubber stamp slammed onto the pile, then a ruled locator card ' +\n    '(orthographic, answer in teal, neighbours paper with ink outlines). Candidate checklists tick/cross per clue with thermal green/orange marks."
+    },
+    {
+      "styleId": "tectonic-ocean-1",
+      "game": "tectonic",
+      "version": 1,
+      "summary": "Low-poly ocean: deep navy #0B1F33 full-frame depth gradient with a faint static triangular facet mesh; maps sit in a rounded '\n    + 'card of lighter shallow-water navy. Neighbors are muted sand #E8D5B0, other land is dim slate #4A5966 and unlabelled, the answer is '\n    + 'warm orange #F2A154 with a subtle low-poly facet overlay. Nunito 900 for the question, 800 for map labels (white with navy halo). '\n    + 'Canonical globe rings in one orthographic projection centred on the target, cropped to the generator window. Neighbors drift in '\n    + 'radially (0.5 s ease-out); the gap is a dashed white outline pulsing softly; before the reveal a shadow gathers, then the answer piece '\n    + 'drops in with a spring and a soft drop shadow, the label pops, and the camera pulls back (span ×2.2, same centre, ease-in-out)."
+    },
+    {
+      "styleId": "whenabouts-almanac-1",
+      "game": "whenabouts",
+      "version": 1,
+      "summary": "Almanac: parchment #F4ECD8 with a soft vignette, laid-paper lines and a double-rule page frame; sepia ink #2B1D0E; '\n    + 'highlighter yellow #EAB308 as fill only, deep ochre #A16207 for accent text. Fraunces italic 900 headlines, Geist Mono for '\n    + 'years and labels. Typographic event card (double rule, vector fleurons, no photos). A horizontal ruler timeline pans in '\n    + 'unlabelled, then carries the A/B/C year marks (or the pinned anchor). Calm ease-out entries; anticipation wind-up; the '\n    + 'reveal is a year odometer rolling to the answer (or the “?” token gliding onto its side of the anchor at an honest distance), followed by a single '\n    + 'pan/zoom of the ruler and a yellow highlight on the correct mark."
+    }
+  ],
+  "episodes": [
+    {
+      "episodeId": "continuum-headtohead-002",
+      "questionId": "continuum:area:ESP-JPN:head-to-head",
+      "revision": 1,
+      "game": "continuum",
+      "format": "head-to-head",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "continuum-poster-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Which is bigger?",
+        "question": "Larger area: Spain or Japan?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Spain"
+          },
+          {
+            "key": "B",
+            "label": "Japan"
+          }
+        ],
+        "answer": "Spain",
+        "answerAliases": [],
+        "explanation": "Spain 506,000 km² · Japan 378,000 km². Japan has 2.5× as many people."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Spain (2023)",
+            "url": "https://api.worldbank.org/v2/country/ESP/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Japan (2023)",
+            "url": "https://api.worldbank.org/v2/country/JPN/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Spain (2025)",
+            "url": "https://api.worldbank.org/v2/country/ESP/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Japan (2025)",
+            "url": "https://api.worldbank.org/v2/country/JPN/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "ratio": 1.339,
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "concern",
+            "resolution": "Resolved: ratio now rounded (2.4996 → \"2.5×\") instead of floored.",
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Two familiar countries; Japan’s large population misleads some viewers about its size."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-2:continuum-20",
+        "sha256": "039993abd60fe5763dc51b067dc0148319dc3615052d0993e69c2b3e95f3a73d",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/continuum-headtohead-002.mp4",
+        "sha256": "9eb6dccb93615d85c9365581eb0a1a654dc07f34d000c79fb46b9419740f871b",
+        "bytes": 983494,
+        "durationSeconds": 20,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/continuum-headtohead-002.jpg",
+        "sha256": "9b5f7911001e51a792a2e556b20ad1f8856b5e7c0486ae54c6a80105994706f5",
+        "bytes": 142693
+      },
+      "publication": {
+        "deepLink": "/continuum",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Which is bigger by area?\n\nA) Spain  B) Japan — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "tiktok": "Which is bigger by area?\n\nA) Spain  B) Japan — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "facebook": "Which is bigger by area?\n\nA) Spain  B) Japan — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "threads": "Which is bigger by area?\n\nA) Spain  B) Japan — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Which is bigger by area? A) Spain  B) Japan — comment your letter. {link}",
+          "bluesky": "Which is bigger by area?\nA) Spain  B) Japan — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Which is bigger by area: Spain or Japan? #shorts",
+          "description": "Which is bigger by area?\n\nA) Spain  B) Japan — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/continuum?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=continuum-headtohead-002\n\n#geography #quiz #worldfacts #trivia #scalargame"
+        },
+        "altText": "Animated quiz from Scalargame comparing two countries by area. Following a pause, bar charts on one scale reveal the answer, with 2023 World Bank figures.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#worldfacts",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which is bigger by area?",
+          "options": [
+            "Spain",
+            "Japan"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Spain  B) Japan — comment your letter",
+          "threads": "A) Spain  B) Japan — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "continuum-headtohead-003",
+      "questionId": "continuum:area:NGA-TCD:head-to-head",
+      "revision": 1,
+      "game": "continuum",
+      "format": "head-to-head",
+      "language": "en",
+      "difficulty": "challenging",
+      "styleId": "continuum-poster-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Which is bigger?",
+        "question": "Larger area: Chad or Nigeria?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Chad"
+          },
+          {
+            "key": "B",
+            "label": "Nigeria"
+          }
+        ],
+        "answer": "Chad",
+        "answerAliases": [],
+        "explanation": "Chad 1.28 million km² · Nigeria 924,000 km². Nigeria has 11.3× as many people."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Chad (2023)",
+            "url": "https://api.worldbank.org/v2/country/TCD/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Nigeria (2023)",
+            "url": "https://api.worldbank.org/v2/country/NGA/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Chad (2025)",
+            "url": "https://api.worldbank.org/v2/country/TCD/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Nigeria (2025)",
+            "url": "https://api.worldbank.org/v2/country/NGA/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "ratio": 1.39,
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Nigeria is Africa’s most populous country, which pulls guesses away from the correct, less familiar answer."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-2:continuum-20",
+        "sha256": "039993abd60fe5763dc51b067dc0148319dc3615052d0993e69c2b3e95f3a73d",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/continuum-headtohead-003.mp4",
+        "sha256": "8b2b94f27f64fe83281767f17b912b58e894c1331101515188a6046875055497",
+        "bytes": 992125,
+        "durationSeconds": 20,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/continuum-headtohead-003.jpg",
+        "sha256": "09419eb909fde32a0ec3e1e7fcc07ee7d58a456e68c7d4dc3258ae883781ecfb",
+        "bytes": 144026
+      },
+      "publication": {
+        "deepLink": "/continuum",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Which is bigger by area?\n\nA) Chad  B) Nigeria — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "tiktok": "Which is bigger by area?\n\nA) Chad  B) Nigeria — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "facebook": "Which is bigger by area?\n\nA) Chad  B) Nigeria — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "threads": "Which is bigger by area?\n\nA) Chad  B) Nigeria — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Which is bigger by area? A) Chad  B) Nigeria — comment your letter. {link}",
+          "bluesky": "Which is bigger by area?\nA) Chad  B) Nigeria — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Which is bigger by area: Chad or Nigeria? #shorts",
+          "description": "Which is bigger by area?\n\nA) Chad  B) Nigeria — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/continuum?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=continuum-headtohead-003\n\n#geography #quiz #worldfacts #trivia #scalargame"
+        },
+        "altText": "Animated quiz from Scalargame comparing two countries by area. Following a pause, bar charts on one scale reveal the answer, with 2023 World Bank figures.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#worldfacts",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which is bigger by area?",
+          "options": [
+            "Chad",
+            "Nigeria"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Chad  B) Nigeria — comment your letter",
+          "threads": "A) Chad  B) Nigeria — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "continuum-slot-001",
+      "questionId": "continuum:population:AUS:missing-slot:ESP-ITA",
+      "revision": 1,
+      "game": "continuum",
+      "format": "missing-slot",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "continuum-poster-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Where does it fit?",
+        "question": "Ranked by population, where does Australia go?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Fewer people than Spain"
+          },
+          {
+            "key": "B",
+            "label": "Between Spain and Italy"
+          },
+          {
+            "key": "C",
+            "label": "More people than Italy"
+          }
+        ],
+        "answer": "Fewer people than Spain",
+        "answerAliases": [
+          "Below Spain"
+        ],
+        "explanation": "Australia 27.6 million < Spain 49.4 million < Italy 58.9 million."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Spain (2025)",
+            "url": "https://api.worldbank.org/v2/country/ESP/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Australia (2025)",
+            "url": "https://api.worldbank.org/v2/country/AUS/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Italy (2025)",
+            "url": "https://api.worldbank.org/v2/country/ITA/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "slot": "below",
+          "adjacentRatios": [
+            1.787,
+            1.194
+          ],
+          "gameDataAgrees": true,
+          "minRatio": 1.15,
+          "referenceYear": 2025,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Familiar countries; viewers who know Australia is huge in area are surprised it has fewer people than Spain."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-2:continuum-22",
+        "sha256": "a6c2b13204193f8142cac350c6bfd5ed70b2d764522be824650d1666e891474b",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/continuum-slot-001.mp4",
+        "sha256": "a87396bbd85525add2dcc23a8d389f5e0e33a87c38f7a3a410d0ffce9ae562de",
+        "bytes": 1188027,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/continuum-slot-001.jpg",
+        "sha256": "3d85f896de559b006a5c9af298d46845d9f07f1f12a02009da962547de3520e8",
+        "bytes": 191306
+      },
+      "publication": {
+        "deepLink": "/continuum",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Ranked by population, where does Australia go?\n\nA) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "tiktok": "Ranked by population, where does Australia go?\n\nA) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "facebook": "Ranked by population, where does Australia go?\n\nA) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "threads": "Ranked by population, where does Australia go?\n\nA) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Ranked by population, where does Australia go? A) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter. {link}",
+          "bluesky": "Ranked by population, where does Australia go?\nA) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Ranked by population, where does Australia go? #shorts",
+          "description": "Ranked by population, where does Australia go?\n\nA) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/continuum?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=continuum-slot-001\n\n#geography #quiz #worldfacts #trivia #scalargame"
+        },
+        "altText": "Animated quiz from Scalargame: a ranking ladder of two countries by population and a third country to place in that ranking. The answer and the 2025 World Bank figures are revealed at the end.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#worldfacts",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Ranked by population, where does Australia go?",
+          "options": [
+            "Below Spain",
+            "Between",
+            "Above Italy"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter",
+          "threads": "A) Fewer people than Spain  B) Between Spain and Italy  C) More people than Italy — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "continuum-slot-002",
+      "questionId": "continuum:area:GBR:missing-slot:PRT-GRC",
+      "revision": 1,
+      "game": "continuum",
+      "format": "missing-slot",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "continuum-poster-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Where does it fit?",
+        "question": "Ranked by area, where does the United Kingdom go?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Smaller than Portugal"
+          },
+          {
+            "key": "B",
+            "label": "Between Portugal and Greece"
+          },
+          {
+            "key": "C",
+            "label": "Larger than Greece"
+          }
+        ],
+        "answer": "Larger than Greece",
+        "answerAliases": [
+          "Above Greece"
+        ],
+        "explanation": "Portugal 92,200 km² < Greece 132,000 km² < United Kingdom 244,000 km²."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Portugal (2023)",
+            "url": "https://api.worldbank.org/v2/country/PRT/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — United Kingdom (2023)",
+            "url": "https://api.worldbank.org/v2/country/GBR/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Greece (2023)",
+            "url": "https://api.worldbank.org/v2/country/GRC/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "slot": "above",
+          "adjacentRatios": [
+            1.431,
+            1.846
+          ],
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "European neighbors most viewers can picture; the gaps are wide."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-2:continuum-22",
+        "sha256": "a6c2b13204193f8142cac350c6bfd5ed70b2d764522be824650d1666e891474b",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/continuum-slot-002.mp4",
+        "sha256": "304a7d1c6a7a97b7ebd02053f5d1013590f95b9bffb589a9f88a2d108b60c0c7",
+        "bytes": 1219633,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/continuum-slot-002.jpg",
+        "sha256": "8ccedab1295e8d8ff3e361cc92a73fde157444d294772c8583ed1e6b77df7bd0",
+        "bytes": 200477
+      },
+      "publication": {
+        "deepLink": "/continuum",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Ranked by area, where does the United Kingdom go?\n\nA) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "tiktok": "Ranked by area, where does the United Kingdom go?\n\nA) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "facebook": "Ranked by area, where does the United Kingdom go?\n\nA) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "threads": "Ranked by area, where does the United Kingdom go?\n\nA) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Ranked by area, where does the United Kingdom go? A) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter. {link}",
+          "bluesky": "Ranked by area, where does the United Kingdom go?\nA) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Ranked by area, where does the United Kingdom go? #shorts",
+          "description": "Ranked by area, where does the United Kingdom go?\n\nA) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/continuum?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=continuum-slot-002\n\n#geography #quiz #worldfacts #trivia #scalargame"
+        },
+        "altText": "Animated quiz from Scalargame: a ranking ladder of two countries by area and a third country to place in that ranking. The answer and the 2023 World Bank figures are revealed at the end.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#worldfacts",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Ranked by area, where does the United Kingdom go?",
+          "options": [
+            "Below Portugal",
+            "Between",
+            "Above Greece"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter",
+          "threads": "A) Smaller than Portugal  B) Between Portugal and Greece  C) Larger than Greece — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "continuum-slot-003",
+      "questionId": "continuum:population:GHA:missing-slot:NPL-ARG",
+      "revision": 1,
+      "game": "continuum",
+      "format": "missing-slot",
+      "language": "en",
+      "difficulty": "moderate",
+      "styleId": "continuum-poster-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Where does it fit?",
+        "question": "Ranked by population, where does Ghana go?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Fewer people than Nepal"
+          },
+          {
+            "key": "B",
+            "label": "Between Nepal and Argentina"
+          },
+          {
+            "key": "C",
+            "label": "More people than Argentina"
+          }
+        ],
+        "answer": "Between Nepal and Argentina",
+        "answerAliases": [
+          "Between"
+        ],
+        "explanation": "Nepal 29.6 million < Ghana 35.1 million < Argentina 45.9 million."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Nepal (2025)",
+            "url": "https://api.worldbank.org/v2/country/NPL/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Ghana (2025)",
+            "url": "https://api.worldbank.org/v2/country/GHA/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Argentina (2025)",
+            "url": "https://api.worldbank.org/v2/country/ARG/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "slot": "between",
+          "adjacentRatios": [
+            1.184,
+            1.308
+          ],
+          "gameDataAgrees": true,
+          "minRatio": 1.15,
+          "referenceYear": 2025,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Less familiar populations; the gaps are real but need estimation. Nepal replaces Venezuela, whose population estimates are disputed."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-2:continuum-22",
+        "sha256": "a6c2b13204193f8142cac350c6bfd5ed70b2d764522be824650d1666e891474b",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/continuum-slot-003.mp4",
+        "sha256": "bb886a13b8dc7224c5a2a0a978ac39e8209fa1b6aa9b0cb59168265a26ae3e9d",
+        "bytes": 1181004,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/continuum-slot-003.jpg",
+        "sha256": "f15d6c3a4afaab5e7d9855a7b230d1696ec62ac89922276750ab440791ae8269",
+        "bytes": 192604
+      },
+      "publication": {
+        "deepLink": "/continuum",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Ranked by population, where does Ghana go?\n\nA) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "tiktok": "Ranked by population, where does Ghana go?\n\nA) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "facebook": "Ranked by population, where does Ghana go?\n\nA) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "threads": "Ranked by population, where does Ghana go?\n\nA) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Ranked by population, where does Ghana go? A) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter. {link}",
+          "bluesky": "Ranked by population, where does Ghana go?\nA) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Ranked by population, where does Ghana go? #shorts",
+          "description": "Ranked by population, where does Ghana go?\n\nA) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/continuum?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=continuum-slot-003\n\n#geography #quiz #worldfacts #trivia #scalargame"
+        },
+        "altText": "Animated quiz from Scalargame: a ranking ladder of two countries by population and a third country to place in that ranking. The answer and the 2025 World Bank figures are revealed at the end.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#worldfacts",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Ranked by population, where does Ghana go?",
+          "options": [
+            "Below Nepal",
+            "Between",
+            "Above Argentina"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter",
+          "threads": "A) Fewer people than Nepal  B) Between Nepal and Argentina  C) More people than Argentina — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "scalar-clues-002",
+      "questionId": "scalar:CAN:clues",
+      "revision": 1,
+      "game": "scalar",
+      "format": "progressive-clues",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "scalar-notebook-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Three clues. One country.",
+        "question": "Which country?",
+        "clues": [
+          "In the Americas",
+          "Has a monarch as head of state",
+          "More than 10 million people"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Jamaica"
+          },
+          {
+            "key": "B",
+            "label": "Canada"
+          },
+          {
+            "key": "C",
+            "label": "Mexico"
+          }
+        ],
+        "answer": "Canada",
+        "answerAliases": [],
+        "explanation": "Canada is one of 9 monarchies in the Americas, and the only one with more than 10 million people."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "UN M49 standard country and area codes (continent grouping used by Scalar)",
+            "url": "https://unstats.un.org/unsd/methodology/m49/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Canada",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/north-america/ca.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Canada (2025)",
+            "url": "https://api.worldbank.org/v2/country/CAN/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            35,
+            9,
+            1
+          ],
+          "universe": 195,
+          "numericMargin": 0.03,
+          "scalarDailyPickWindow": "2026-10-06+90d clear",
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "The monarchy clue surprises; population then makes it easy.",
+          "editorialNote": "Recheck before publication: Jamaica’s move to a republic would change the count of 9 monarchies."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-6:scalar-24",
+        "sha256": "b1305bdc8390a47a7cca4e1fd29f27dc9891141310f5de91deb5879938a83d91",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/scalar-clues-002.mp4",
+        "sha256": "21782631bc0637912cceef6672011b64c1c45f1d2a7912b255113e7f3af30bf9",
+        "bytes": 1726999,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/scalar-clues-002.jpg",
+        "sha256": "b195e0bf6262805372c182badc064ef2e3ef96f3abcdcf6e3274ca6c78bc2b70",
+        "bytes": 228485
+      },
+      "publication": {
+        "deepLink": "/scalar",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Three clues. One country.\n1. In the Americas\n2. Has a monarch as head of state\n3. More than 10 million people\n\nA) Jamaica  B) Canada  C) Mexico — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #countries #trivia #scalargame",
+          "tiktok": "Three clues. One country.\n1. In the Americas\n2. Has a monarch as head of state\n3. More than 10 million people\n\nA) Jamaica  B) Canada  C) Mexico — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #countries #trivia #scalargame",
+          "facebook": "Three clues. One country.\n1. In the Americas\n2. Has a monarch as head of state\n3. More than 10 million people\n\nA) Jamaica  B) Canada  C) Mexico — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #countries #trivia #scalargame",
+          "threads": "Three clues. One country.\n1. In the Americas\n2. Has a monarch as head of state\n3. More than 10 million people\n\nA) Jamaica  B) Canada  C) Mexico — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Three clues, one country: In the Americas · Has a monarch as head of state · More than 10 million people. A) Jamaica  B) Canada  C) Mexico — comment your letter. {link}",
+          "bluesky": "Three clues, one country: In the Americas · Has a monarch as head of state · More than 10 million people.\nA) Jamaica  B) Canada  C) Mexico — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Three clues, one country. Which is it? #shorts",
+          "description": "Three clues. One country.\n1. In the Americas\n2. Has a monarch as head of state\n3. More than 10 million people\n\nA) Jamaica  B) Canada  C) Mexico — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/scalar?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=scalar-clues-002\n\n#geography #quiz #countries #trivia #scalargame"
+        },
+        "altText": "Animated geography quiz from Scalargame: three clues about a mystery country appear one by one on index cards, a counter shows how many countries still fit, then three answer choices. The answer is revealed and explained at the end.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#countries",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fits all three clues?",
+          "options": [
+            "Jamaica",
+            "Canada",
+            "Mexico"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Jamaica  B) Canada  C) Mexico — comment your letter",
+          "threads": "A) Jamaica  B) Canada  C) Mexico — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "scalar-clues-003",
+      "questionId": "scalar:MNG:clues",
+      "revision": 1,
+      "game": "scalar",
+      "format": "progressive-clues",
+      "language": "en",
+      "difficulty": "moderate",
+      "styleId": "scalar-notebook-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Three clues. One country.",
+        "question": "Which country?",
+        "clues": [
+          "In Asia",
+          "Shares land borders with 2 countries",
+          "Larger than 1 million km²"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Nepal"
+          },
+          {
+            "key": "B",
+            "label": "Mongolia"
+          },
+          {
+            "key": "C",
+            "label": "Kuwait"
+          }
+        ],
+        "answer": "Mongolia",
+        "answerAliases": [],
+        "explanation": "Mongolia borders only China and Russia, and covers 1.56 million km²."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "UN M49 standard country and area codes (continent grouping used by Scalar)",
+            "url": "https://unstats.un.org/unsd/methodology/m49/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Mongolia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/east-n-southeast-asia/mg.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Mongolia (2023)",
+            "url": "https://api.worldbank.org/v2/country/MNG/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            48,
+            8,
+            1
+          ],
+          "universe": 195,
+          "numericMargin": 0.03,
+          "scalarDailyPickWindow": "2026-10-06+90d clear",
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Requires connecting “two neighbors” with “very large”; several small two-neighbor Asian states are plausible."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-6:scalar-24",
+        "sha256": "b1305bdc8390a47a7cca4e1fd29f27dc9891141310f5de91deb5879938a83d91",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/scalar-clues-003.mp4",
+        "sha256": "8ad28608a13fb3f406c0c7202ff41e90ee5d5b9188bc89186b38a997bc42c866",
+        "bytes": 1696385,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/scalar-clues-003.jpg",
+        "sha256": "2e16d90ad44065b1523037370871a8e7abe9429f751b09cdff0603410508883b",
+        "bytes": 225000
+      },
+      "publication": {
+        "deepLink": "/scalar",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Three clues. One country.\n1. In Asia\n2. Shares land borders with 2 countries\n3. Larger than 1 million km²\n\nA) Nepal  B) Mongolia  C) Kuwait — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #countries #trivia #scalargame",
+          "tiktok": "Three clues. One country.\n1. In Asia\n2. Shares land borders with 2 countries\n3. Larger than 1 million km²\n\nA) Nepal  B) Mongolia  C) Kuwait — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #countries #trivia #scalargame",
+          "facebook": "Three clues. One country.\n1. In Asia\n2. Shares land borders with 2 countries\n3. Larger than 1 million km²\n\nA) Nepal  B) Mongolia  C) Kuwait — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #countries #trivia #scalargame",
+          "threads": "Three clues. One country.\n1. In Asia\n2. Shares land borders with 2 countries\n3. Larger than 1 million km²\n\nA) Nepal  B) Mongolia  C) Kuwait — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Three clues, one country: In Asia · Shares land borders with 2 countries · Larger than 1 million km². A) Nepal  B) Mongolia  C) Kuwait — comment your letter. {link}",
+          "bluesky": "Three clues, one country: In Asia · Shares land borders with 2 countries · Larger than 1 million km².\nA) Nepal  B) Mongolia  C) Kuwait — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Three clues, one country. Which is it? #shorts",
+          "description": "Three clues. One country.\n1. In Asia\n2. Shares land borders with 2 countries\n3. Larger than 1 million km²\n\nA) Nepal  B) Mongolia  C) Kuwait — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/scalar?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=scalar-clues-003\n\n#geography #quiz #countries #trivia #scalargame"
+        },
+        "altText": "Animated geography quiz from Scalargame: three clues about a mystery country appear one by one on index cards, a counter shows how many countries still fit, then three answer choices. The answer is revealed and explained at the end.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#countries",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fits all three clues?",
+          "options": [
+            "Nepal",
+            "Mongolia",
+            "Kuwait"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Nepal  B) Mongolia  C) Kuwait — comment your letter",
+          "threads": "A) Nepal  B) Mongolia  C) Kuwait — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "scalar-elimination-001",
+      "questionId": "scalar:ARG:elimination",
+      "revision": 1,
+      "game": "scalar",
+      "format": "candidate-elimination",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "scalar-notebook-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Only one of these fits every clue.",
+        "question": "Which country fits all three clues?",
+        "clues": [
+          "Larger than 2 million km²",
+          "Fewer than 50 million people",
+          "Shares land borders with 5 countries"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Brazil"
+          },
+          {
+            "key": "B",
+            "label": "Chile"
+          },
+          {
+            "key": "C",
+            "label": "Argentina"
+          }
+        ],
+        "answer": "Argentina",
+        "answerAliases": [],
+        "explanation": "Argentina: 2.78 million km², 45.9 million people, and 5 neighbors: Bolivia, Brazil, Chile, Paraguay and Uruguay."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Argentina",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/ar.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Argentina (2025)",
+            "url": "https://api.worldbank.org/v2/country/ARG/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Argentina (2023)",
+            "url": "https://api.worldbank.org/v2/country/ARG/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            13,
+            6,
+            2
+          ],
+          "universe": 195,
+          "numericMargin": 0.03,
+          "eliminatedPerClue": [
+            [
+              "CHL"
+            ],
+            [
+              "BRA"
+            ],
+            []
+          ],
+          "scalarDailyPickWindow": "2026-10-06+90d clear",
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Well-known countries; each clue removes one by a wide margin."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-6:scalar-24",
+        "sha256": "b1305bdc8390a47a7cca4e1fd29f27dc9891141310f5de91deb5879938a83d91",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/scalar-elimination-001.mp4",
+        "sha256": "889b28df812940e811153558f927431e9d42f406219837b5ec7e5b63d61486d7",
+        "bytes": 1950388,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/scalar-elimination-001.jpg",
+        "sha256": "e6205e6ff737035ba0f8476f8cba593528cb345b5b24f7f1cf3504dcbd6f4f0f",
+        "bytes": 258131
+      },
+      "publication": {
+        "deepLink": "/scalar",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Only one of these countries fits every clue:\n1. Larger than 2 million km²\n2. Fewer than 50 million people\n3. Shares land borders with 5 countries\n\nA) Brazil  B) Chile  C) Argentina — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #countries #trivia #scalargame",
+          "tiktok": "Only one of these countries fits every clue:\n1. Larger than 2 million km²\n2. Fewer than 50 million people\n3. Shares land borders with 5 countries\n\nA) Brazil  B) Chile  C) Argentina — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #countries #trivia #scalargame",
+          "facebook": "Only one of these countries fits every clue:\n1. Larger than 2 million km²\n2. Fewer than 50 million people\n3. Shares land borders with 5 countries\n\nA) Brazil  B) Chile  C) Argentina — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #countries #trivia #scalargame",
+          "threads": "Only one of these countries fits every clue:\n1. Larger than 2 million km²\n2. Fewer than 50 million people\n3. Shares land borders with 5 countries\n\nA) Brazil  B) Chile  C) Argentina — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Only one fits every clue: Larger than 2 million km² · Fewer than 50 million people · Shares land borders with 5 countries. A) Brazil  B) Chile  C) Argentina — comment your letter. {link}",
+          "bluesky": "Only one of these countries fits every clue:\nA) Brazil  B) Chile  C) Argentina — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Only one of these countries fits every clue #shorts",
+          "description": "Only one of these countries fits every clue:\n1. Larger than 2 million km²\n2. Fewer than 50 million people\n3. Shares land borders with 5 countries\n\nA) Brazil  B) Chile  C) Argentina — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/scalar?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=scalar-elimination-001\n\n#geography #quiz #countries #trivia #scalargame"
+        },
+        "altText": "Animated geography quiz from Scalargame: three candidate countries and three clues. Following a pause, the clues rule candidates out one by one and the answer is revealed and explained.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#countries",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fits all three clues?",
+          "options": [
+            "Brazil",
+            "Chile",
+            "Argentina"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Brazil  B) Chile  C) Argentina — comment your letter",
+          "threads": "A) Brazil  B) Chile  C) Argentina — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "scalar-elimination-002",
+      "questionId": "scalar:UZB:elimination",
+      "revision": 1,
+      "game": "scalar",
+      "format": "candidate-elimination",
+      "language": "en",
+      "difficulty": "moderate",
+      "styleId": "scalar-notebook-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Only one of these fits every clue.",
+        "question": "Which country fits all three clues?",
+        "clues": [
+          "Shares land borders with 5 countries",
+          "Smaller than 500,000 km²",
+          "More than 10 million people"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Kazakhstan"
+          },
+          {
+            "key": "B",
+            "label": "Uzbekistan"
+          },
+          {
+            "key": "C",
+            "label": "Kyrgyzstan"
+          }
+        ],
+        "answer": "Uzbekistan",
+        "answerAliases": [],
+        "explanation": "Uzbekistan is landlocked, and so is every neighbor: Afghanistan, Kazakhstan, Kyrgyzstan, Tajikistan and Turkmenistan."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Uzbekistan",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/central-asia/uz.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Uzbekistan (2025)",
+            "url": "https://api.worldbank.org/v2/country/UZB/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Uzbekistan (2023)",
+            "url": "https://api.worldbank.org/v2/country/UZB/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            25,
+            18,
+            9
+          ],
+          "universe": 195,
+          "numericMargin": 0.03,
+          "eliminatedPerClue": [
+            [
+              "KGZ"
+            ],
+            [
+              "KAZ"
+            ],
+            []
+          ],
+          "scalarDailyPickWindow": "2026-10-06+90d clear",
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Similar Central Asian names; requires reasoning about size and neighbors rather than recognition."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-6:scalar-24",
+        "sha256": "b1305bdc8390a47a7cca4e1fd29f27dc9891141310f5de91deb5879938a83d91",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/scalar-elimination-002.mp4",
+        "sha256": "236d9c320a06ba13234498fb5336508478d4a2cccc5640eedf5bcd240b187af2",
+        "bytes": 1999202,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/scalar-elimination-002.jpg",
+        "sha256": "19c51652db9faa6001a5d374b8d63a0a10a8f20dde41356fd927f43d61a3f40f",
+        "bytes": 265625
+      },
+      "publication": {
+        "deepLink": "/scalar",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Only one of these countries fits every clue:\n1. Shares land borders with 5 countries\n2. Smaller than 500,000 km²\n3. More than 10 million people\n\nA) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #countries #trivia #scalargame",
+          "tiktok": "Only one of these countries fits every clue:\n1. Shares land borders with 5 countries\n2. Smaller than 500,000 km²\n3. More than 10 million people\n\nA) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #countries #trivia #scalargame",
+          "facebook": "Only one of these countries fits every clue:\n1. Shares land borders with 5 countries\n2. Smaller than 500,000 km²\n3. More than 10 million people\n\nA) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #countries #trivia #scalargame",
+          "threads": "Only one of these countries fits every clue:\n1. Shares land borders with 5 countries\n2. Smaller than 500,000 km²\n3. More than 10 million people\n\nA) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Only one fits every clue: Shares land borders with 5 countries · Smaller than 500,000 km² · More than 10 million people. A) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter. {link}",
+          "bluesky": "Only one of these countries fits every clue:\nA) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Only one of these countries fits every clue #shorts",
+          "description": "Only one of these countries fits every clue:\n1. Shares land borders with 5 countries\n2. Smaller than 500,000 km²\n3. More than 10 million people\n\nA) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/scalar?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=scalar-elimination-002\n\n#geography #quiz #countries #trivia #scalargame"
+        },
+        "altText": "Animated geography quiz from Scalargame: three candidate countries and three clues. Following a pause, the clues rule candidates out one by one and the answer is revealed and explained.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#countries",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fits all three clues?",
+          "options": [
+            "Kazakhstan",
+            "Uzbekistan",
+            "Kyrgyzstan"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter",
+          "threads": "A) Kazakhstan  B) Uzbekistan  C) Kyrgyzstan — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "scalar-elimination-003",
+      "questionId": "scalar:MYS:elimination",
+      "revision": 1,
+      "game": "scalar",
+      "format": "candidate-elimination",
+      "language": "en",
+      "difficulty": "challenging",
+      "styleId": "scalar-notebook-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Only one of these fits every clue.",
+        "question": "Which country fits all three clues?",
+        "clues": [
+          "Fewer than 200 million people",
+          "Has a monarch as head of state",
+          "Smaller than 500,000 km²"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Indonesia"
+          },
+          {
+            "key": "B",
+            "label": "Vietnam"
+          },
+          {
+            "key": "C",
+            "label": "Malaysia"
+          }
+        ],
+        "answer": "Malaysia",
+        "answerAliases": [],
+        "explanation": "Malaysia has a monarch as head of state. Indonesia has more than 200 million people; Vietnam has no monarch."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Malaysia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/east-n-southeast-asia/my.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Malaysia (2025)",
+            "url": "https://api.worldbank.org/v2/country/MYS/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Malaysia (2023)",
+            "url": "https://api.worldbank.org/v2/country/MYS/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            188,
+            43,
+            40
+          ],
+          "universe": 195,
+          "numericMargin": 0.03,
+          "eliminatedPerClue": [
+            [
+              "IDN"
+            ],
+            [
+              "VNM"
+            ],
+            []
+          ],
+          "scalarDailyPickWindow": "2026-10-06+90d clear",
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "The monarchy clue is the surprise: few viewers know Malaysia has a king."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-6:scalar-24",
+        "sha256": "b1305bdc8390a47a7cca4e1fd29f27dc9891141310f5de91deb5879938a83d91",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/scalar-elimination-003.mp4",
+        "sha256": "ca0e3c34e394ddce38fdaa20982945ef4aba9220eba6590290bc8ef811ef0d0c",
+        "bytes": 1926809,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/scalar-elimination-003.jpg",
+        "sha256": "cfbaf17fce3a34cee7ddd6e179d420797bbf3a052a7766bff1bdf49d9c601060",
+        "bytes": 258642
+      },
+      "publication": {
+        "deepLink": "/scalar",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Only one of these countries fits every clue:\n1. Fewer than 200 million people\n2. Has a monarch as head of state\n3. Smaller than 500,000 km²\n\nA) Indonesia  B) Vietnam  C) Malaysia — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #countries #trivia #scalargame",
+          "tiktok": "Only one of these countries fits every clue:\n1. Fewer than 200 million people\n2. Has a monarch as head of state\n3. Smaller than 500,000 km²\n\nA) Indonesia  B) Vietnam  C) Malaysia — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #countries #trivia #scalargame",
+          "facebook": "Only one of these countries fits every clue:\n1. Fewer than 200 million people\n2. Has a monarch as head of state\n3. Smaller than 500,000 km²\n\nA) Indonesia  B) Vietnam  C) Malaysia — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #countries #trivia #scalargame",
+          "threads": "Only one of these countries fits every clue:\n1. Fewer than 200 million people\n2. Has a monarch as head of state\n3. Smaller than 500,000 km²\n\nA) Indonesia  B) Vietnam  C) Malaysia — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Only one fits every clue: Fewer than 200 million people · Has a monarch as head of state · Smaller than 500,000 km². A) Indonesia  B) Vietnam  C) Malaysia — comment your letter. {link}",
+          "bluesky": "Only one of these countries fits every clue:\nA) Indonesia  B) Vietnam  C) Malaysia — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Only one of these countries fits every clue #shorts",
+          "description": "Only one of these countries fits every clue:\n1. Fewer than 200 million people\n2. Has a monarch as head of state\n3. Smaller than 500,000 km²\n\nA) Indonesia  B) Vietnam  C) Malaysia — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/scalar?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=scalar-elimination-003\n\n#geography #quiz #countries #trivia #scalargame"
+        },
+        "altText": "Animated geography quiz from Scalargame: three candidate countries and three clues. Following a pause, the clues rule candidates out one by one and the answer is revealed and explained.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#countries",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fits all three clues?",
+          "options": [
+            "Indonesia",
+            "Vietnam",
+            "Malaysia"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Indonesia  B) Vietnam  C) Malaysia — comment your letter",
+          "threads": "A) Indonesia  B) Vietnam  C) Malaysia — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "tectonic-missing-002",
+      "questionId": "tectonic:URY:missing-country",
+      "revision": 1,
+      "game": "tectonic",
+      "format": "missing-country",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "tectonic-ocean-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "One country is missing.",
+        "question": "Which country fills the gap?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Uruguay"
+          },
+          {
+            "key": "B",
+            "label": "Ecuador"
+          },
+          {
+            "key": "C",
+            "label": "Panama"
+          }
+        ],
+        "answer": "Uruguay",
+        "answerAliases": [],
+        "explanation": "Uruguay fits between Argentina and Brazil."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Uruguay",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/uy.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "ARG",
+            "BRA"
+          ],
+          "gapEnclosedBy": 2,
+          "adjacencyAgreesWithGlobe": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "A clear coastal gap between two famous neighbors."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-3:tectonic-22",
+        "sha256": "2bad525f978dd428dff413d6f3888f14b55e59af3d76a17fda74ce5eaab4340d",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/tectonic-missing-002.mp4",
+        "sha256": "cc11c41f594158e9802851b373b19e243ab8214aecacf8e1b7639c2c530d98d3",
+        "bytes": 1722762,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/tectonic-missing-002.jpg",
+        "sha256": "9e8bbabd36a363ed26b384bc2bab069d5793231b0ef13b66be87fb9e33c46630",
+        "bytes": 152626
+      },
+      "publication": {
+        "deepLink": "/tectonic",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "One country is missing from this map. Which one fills the gap?\n\nA) Uruguay  B) Ecuador  C) Panama — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #maps #quiz #trivia #scalargame",
+          "tiktok": "One country is missing from this map. Which one fills the gap?\n\nA) Uruguay  B) Ecuador  C) Panama — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #maps #quiz #trivia #scalargame",
+          "facebook": "One country is missing from this map. Which one fills the gap?\n\nA) Uruguay  B) Ecuador  C) Panama — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #maps #quiz #trivia #scalargame",
+          "threads": "One country is missing from this map. Which one fills the gap?\n\nA) Uruguay  B) Ecuador  C) Panama — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "One country is missing from this map. Which one fills the gap? A) Uruguay  B) Ecuador  C) Panama — comment your letter. {link}",
+          "bluesky": "One country is missing from this map. Which one fills the gap?\nA) Uruguay  B) Ecuador  C) Panama — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "One country is missing from this map. Which one? #shorts",
+          "description": "One country is missing from this map. Which one fills the gap?\n\nA) Uruguay  B) Ecuador  C) Panama — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/tectonic?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=tectonic-missing-002\n\n#geography #maps #quiz #trivia #scalargame"
+        },
+        "altText": "Animated map quiz from Scalargame: neighboring countries drift into place around an empty, outlined gap, then three answer choices. Following a pause, the missing country drops into place and the map zooms out.",
+        "hashtags": [
+          "#geography",
+          "#maps",
+          "#quiz",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fills the gap?",
+          "options": [
+            "Uruguay",
+            "Ecuador",
+            "Panama"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Uruguay  B) Ecuador  C) Panama — comment your letter",
+          "threads": "A) Uruguay  B) Ecuador  C) Panama — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "tectonic-missing-003",
+      "questionId": "tectonic:BWA:missing-country",
+      "revision": 1,
+      "game": "tectonic",
+      "format": "missing-country",
+      "language": "en",
+      "difficulty": "moderate",
+      "styleId": "tectonic-ocean-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "One country is missing.",
+        "question": "Which country fills the gap?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Madagascar"
+          },
+          {
+            "key": "B",
+            "label": "Kenya"
+          },
+          {
+            "key": "C",
+            "label": "Botswana"
+          }
+        ],
+        "answer": "Botswana",
+        "answerAliases": [],
+        "explanation": "Botswana fits between Namibia, South Africa, Zambia and Zimbabwe."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Botswana",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/bc.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "ZAF",
+            "NAM",
+            "ZWE",
+            "ZMB"
+          ],
+          "gapEnclosedBy": 4,
+          "adjacencyAgreesWithGlobe": false,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "concern",
+            "resolution": "Resolved for the video: decoys replaced (Madagascar, Kenya) and must lie outside the drawn map window; Zambia named per Factbook. Game globe BWA–LSO adjacency bug reported as a separate task; the video draws real geometry, not the adjacency list.",
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Southern Africa is less familiar; the decoys are nearby."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-3:tectonic-22",
+        "sha256": "2bad525f978dd428dff413d6f3888f14b55e59af3d76a17fda74ce5eaab4340d",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/tectonic-missing-003.mp4",
+        "sha256": "2304f2eadae54979682019c125b4c06a51928918386a5d679c63c8bf754655de",
+        "bytes": 1847182,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/tectonic-missing-003.jpg",
+        "sha256": "13acd5a1d28b4937fff2609de3c489e63e7b6b6c5f2a57dc070b5dc6414af63e",
+        "bytes": 175433
+      },
+      "publication": {
+        "deepLink": "/tectonic",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "One country is missing from this map. Which one fills the gap?\n\nA) Madagascar  B) Kenya  C) Botswana — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #maps #quiz #trivia #scalargame",
+          "tiktok": "One country is missing from this map. Which one fills the gap?\n\nA) Madagascar  B) Kenya  C) Botswana — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #maps #quiz #trivia #scalargame",
+          "facebook": "One country is missing from this map. Which one fills the gap?\n\nA) Madagascar  B) Kenya  C) Botswana — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #maps #quiz #trivia #scalargame",
+          "threads": "One country is missing from this map. Which one fills the gap?\n\nA) Madagascar  B) Kenya  C) Botswana — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "One country is missing from this map. Which one fills the gap? A) Madagascar  B) Kenya  C) Botswana — comment your letter. {link}",
+          "bluesky": "One country is missing from this map. Which one fills the gap?\nA) Madagascar  B) Kenya  C) Botswana — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "One country is missing from this map. Which one? #shorts",
+          "description": "One country is missing from this map. Which one fills the gap?\n\nA) Madagascar  B) Kenya  C) Botswana — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/tectonic?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=tectonic-missing-003\n\n#geography #maps #quiz #trivia #scalargame"
+        },
+        "altText": "Animated map quiz from Scalargame: neighboring countries drift into place around an empty, outlined gap, then three answer choices. Following a pause, the missing country drops into place and the map zooms out.",
+        "hashtags": [
+          "#geography",
+          "#maps",
+          "#quiz",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fills the gap?",
+          "options": [
+            "Madagascar",
+            "Kenya",
+            "Botswana"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Madagascar  B) Kenya  C) Botswana — comment your letter",
+          "threads": "A) Madagascar  B) Kenya  C) Botswana — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "tectonic-neighbors-001",
+      "questionId": "tectonic:MEX:neighbor-clues",
+      "revision": 1,
+      "game": "tectonic",
+      "format": "neighbor-clues",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "tectonic-ocean-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "These are all its land neighbors.",
+        "question": "Which country is it?",
+        "clues": [
+          "United States",
+          "Guatemala",
+          "Belize"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Mexico"
+          },
+          {
+            "key": "B",
+            "label": "Honduras"
+          },
+          {
+            "key": "C",
+            "label": "El Salvador"
+          }
+        ],
+        "answer": "Mexico",
+        "answerAliases": [],
+        "explanation": "These are all of Mexico’s land neighbors."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Mexico",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/north-america/mx.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — United States",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/north-america/us.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Guatemala",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/gt.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Belize",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/bh.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            2,
+            1,
+            1
+          ],
+          "landNeighbors": [
+            "GTM",
+            "USA",
+            "BLZ"
+          ],
+          "allNeighborsShown": true,
+          "adjacencyAgreesWithGlobe": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "The United States clue alone narrows it to two."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-3:tectonic-24",
+        "sha256": "a5869de8b1792956d9cddf200ebfe7233033d0bcf09187eeb8fb1b3e363d11ab",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/tectonic-neighbors-001.mp4",
+        "sha256": "a0ccf2d8a6627edd24f4ee90134eb2a6b1812b033ca3c8bdad24285430ee849f",
+        "bytes": 1611689,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/tectonic-neighbors-001.jpg",
+        "sha256": "d492c95abebda1a6465008cc728528b86dd9e141515a50c5f8386a6563836b18",
+        "bytes": 154594
+      },
+      "publication": {
+        "deepLink": "/tectonic",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Its only land neighbors: United States, Guatemala, Belize. Which country is it?\n\nA) Mexico  B) Honduras  C) El Salvador — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #maps #quiz #trivia #scalargame",
+          "tiktok": "Its only land neighbors: United States, Guatemala, Belize. Which country is it?\n\nA) Mexico  B) Honduras  C) El Salvador — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #maps #quiz #trivia #scalargame",
+          "facebook": "Its only land neighbors: United States, Guatemala, Belize. Which country is it?\n\nA) Mexico  B) Honduras  C) El Salvador — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #maps #quiz #trivia #scalargame",
+          "threads": "Its only land neighbors: United States, Guatemala, Belize. Which country is it?\n\nA) Mexico  B) Honduras  C) El Salvador — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Its only land neighbors: United States, Guatemala, Belize. Which country? A) Mexico  B) Honduras  C) El Salvador — comment your letter. {link}",
+          "bluesky": "Its only land neighbors: United States, Guatemala, Belize. Which country?\nA) Mexico  B) Honduras  C) El Salvador — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Its only land neighbors: United States, Guatemala, Belize. Which country? #shorts",
+          "description": "Its only land neighbors: United States, Guatemala, Belize. Which country is it?\n\nA) Mexico  B) Honduras  C) El Salvador — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/tectonic?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=tectonic-neighbors-001\n\n#geography #maps #quiz #trivia #scalargame"
+        },
+        "altText": "Animated map quiz from Scalargame: three neighboring countries appear as clue cards (United States, Guatemala, Belize), then three answer choices. Following a pause, the cards move to their true positions on a map and the answer is revealed.",
+        "hashtags": [
+          "#geography",
+          "#maps",
+          "#quiz",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country borders all of these?",
+          "options": [
+            "Mexico",
+            "Honduras",
+            "El Salvador"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Mexico  B) Honduras  C) El Salvador — comment your letter",
+          "threads": "A) Mexico  B) Honduras  C) El Salvador — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "tectonic-neighbors-002",
+      "questionId": "tectonic:GAB:neighbor-clues",
+      "revision": 1,
+      "game": "tectonic",
+      "format": "neighbor-clues",
+      "language": "en",
+      "difficulty": "moderate",
+      "styleId": "tectonic-ocean-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "These are all its land neighbors.",
+        "question": "Which country is it?",
+        "clues": [
+          "Cameroon",
+          "Equatorial Guinea",
+          "Republic of the Congo"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Central African Republic"
+          },
+          {
+            "key": "B",
+            "label": "Nigeria"
+          },
+          {
+            "key": "C",
+            "label": "Gabon"
+          }
+        ],
+        "answer": "Gabon",
+        "answerAliases": [],
+        "explanation": "These are all of Gabon’s land neighbors."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Gabon",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/gb.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Cameroon",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/cm.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Equatorial Guinea",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ek.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Republic of the Congo",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/cf.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            6,
+            1,
+            1
+          ],
+          "landNeighbors": [
+            "CMR",
+            "GNQ",
+            "COG"
+          ],
+          "allNeighborsShown": true,
+          "adjacencyAgreesWithGlobe": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Central Africa is less familiar; geography must be pictured."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-3:tectonic-24",
+        "sha256": "a5869de8b1792956d9cddf200ebfe7233033d0bcf09187eeb8fb1b3e363d11ab",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/tectonic-neighbors-002.mp4",
+        "sha256": "80cda93e34474aada480fed8fe477f2016744a4c3d9a0691436652ea444c7239",
+        "bytes": 1658632,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/tectonic-neighbors-002.jpg",
+        "sha256": "272617c4870b4ad31477deb41c658e56a50e6318b875bbe89efd5030ee292b91",
+        "bytes": 166741
+      },
+      "publication": {
+        "deepLink": "/tectonic",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Its only land neighbors: Cameroon, Equatorial Guinea, Republic of the Congo. Which country is it?\n\nA) Central African Republic  B) Nigeria  C) Gabon — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #maps #quiz #trivia #scalargame",
+          "tiktok": "Its only land neighbors: Cameroon, Equatorial Guinea, Republic of the Congo. Which country is it?\n\nA) Central African Republic  B) Nigeria  C) Gabon — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #maps #quiz #trivia #scalargame",
+          "facebook": "Its only land neighbors: Cameroon, Equatorial Guinea, Republic of the Congo. Which country is it?\n\nA) Central African Republic  B) Nigeria  C) Gabon — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #maps #quiz #trivia #scalargame",
+          "threads": "Its only land neighbors: Cameroon, Equatorial Guinea, Republic of the Congo. Which country is it?\n\nA) Central African Republic  B) Nigeria  C) Gabon — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Its only land neighbors: Cameroon, Equatorial Guinea, Republic of the Congo. Which country? A) Central African Republic  B) Nigeria  C) Gabon — comment your letter. {link}",
+          "bluesky": "Its only land neighbors: Cameroon, Equatorial Guinea, Republic of the Congo. Which country?\nChoices in the video — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Its only land neighbors: Cameroon, Equatorial Guinea, Republic of the Congo. Which country? #shorts",
+          "description": "Its only land neighbors: Cameroon, Equatorial Guinea, Republic of the Congo. Which country is it?\n\nA) Central African Republic  B) Nigeria  C) Gabon — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/tectonic?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=tectonic-neighbors-002\n\n#geography #maps #quiz #trivia #scalargame"
+        },
+        "altText": "Animated map quiz from Scalargame: three neighboring countries appear as clue cards (Cameroon, Equatorial Guinea, Republic of the Congo), then three answer choices. Following a pause, the cards move to their true positions on a map and the answer is revealed.",
+        "hashtags": [
+          "#geography",
+          "#maps",
+          "#quiz",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country borders all of these?",
+          "options": [
+            "Central African Republic",
+            "Nigeria",
+            "Gabon"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Central African Republic  B) Nigeria  C) Gabon — comment your letter",
+          "threads": "A) Central African Republic  B) Nigeria  C) Gabon — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "tectonic-neighbors-003",
+      "questionId": "tectonic:MWI:neighbor-clues",
+      "revision": 1,
+      "game": "tectonic",
+      "format": "neighbor-clues",
+      "language": "en",
+      "difficulty": "challenging",
+      "styleId": "tectonic-ocean-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "These are all its land neighbors.",
+        "question": "Which country is it?",
+        "clues": [
+          "Tanzania",
+          "Mozambique",
+          "Zambia"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Zimbabwe"
+          },
+          {
+            "key": "B",
+            "label": "Malawi"
+          },
+          {
+            "key": "C",
+            "label": "Burundi"
+          }
+        ],
+        "answer": "Malawi",
+        "answerAliases": [],
+        "explanation": "These are all of Malawi’s land neighbors."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Malawi",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/mi.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Tanzania",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/tz.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Mozambique",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/mz.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Zambia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/za.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            8,
+            2,
+            1
+          ],
+          "landNeighbors": [
+            "MOZ",
+            "TZA",
+            "ZMB"
+          ],
+          "allNeighborsShown": true,
+          "adjacencyAgreesWithGlobe": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Several countries border two of the three; only one borders all three."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-3:tectonic-24",
+        "sha256": "a5869de8b1792956d9cddf200ebfe7233033d0bcf09187eeb8fb1b3e363d11ab",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/tectonic-neighbors-003.mp4",
+        "sha256": "37847cea9df63c62465e6953ebc99485ef9a6f86fe310edb27066a4c1e076ff9",
+        "bytes": 1589984,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/tectonic-neighbors-003.jpg",
+        "sha256": "5eed0c611184b4569e8951e61b5d816ff9d1a1e8913a5e0a20011a2f38467385",
+        "bytes": 153785
+      },
+      "publication": {
+        "deepLink": "/tectonic",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Its only land neighbors: Tanzania, Mozambique, Zambia. Which country is it?\n\nA) Zimbabwe  B) Malawi  C) Burundi — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #maps #quiz #trivia #scalargame",
+          "tiktok": "Its only land neighbors: Tanzania, Mozambique, Zambia. Which country is it?\n\nA) Zimbabwe  B) Malawi  C) Burundi — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #maps #quiz #trivia #scalargame",
+          "facebook": "Its only land neighbors: Tanzania, Mozambique, Zambia. Which country is it?\n\nA) Zimbabwe  B) Malawi  C) Burundi — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #maps #quiz #trivia #scalargame",
+          "threads": "Its only land neighbors: Tanzania, Mozambique, Zambia. Which country is it?\n\nA) Zimbabwe  B) Malawi  C) Burundi — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Its only land neighbors: Tanzania, Mozambique, Zambia. Which country? A) Zimbabwe  B) Malawi  C) Burundi — comment your letter. {link}",
+          "bluesky": "Its only land neighbors: Tanzania, Mozambique, Zambia. Which country?\nA) Zimbabwe  B) Malawi  C) Burundi — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Its only land neighbors: Tanzania, Mozambique, Zambia. Which country? #shorts",
+          "description": "Its only land neighbors: Tanzania, Mozambique, Zambia. Which country is it?\n\nA) Zimbabwe  B) Malawi  C) Burundi — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/tectonic?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=tectonic-neighbors-003\n\n#geography #maps #quiz #trivia #scalargame"
+        },
+        "altText": "Animated map quiz from Scalargame: three neighboring countries appear as clue cards (Tanzania, Mozambique, Zambia), then three answer choices. Following a pause, the cards move to their true positions on a map and the answer is revealed.",
+        "hashtags": [
+          "#geography",
+          "#maps",
+          "#quiz",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country borders all of these?",
+          "options": [
+            "Zimbabwe",
+            "Malawi",
+            "Burundi"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Zimbabwe  B) Malawi  C) Burundi — comment your letter",
+          "threads": "A) Zimbabwe  B) Malawi  C) Burundi — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "whenabouts-beforeafter-001",
+      "questionId": "whenabouts:1123:before-after:50",
+      "revision": 1,
+      "game": "whenabouts",
+      "format": "before-after",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "whenabouts-almanac-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Before or after?",
+        "question": "Super Mario Bros. was released. Before or after the Berlin Wall fell?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Before"
+          },
+          {
+            "key": "B",
+            "label": "After"
+          }
+        ],
+        "answer": "Before",
+        "answerAliases": [],
+        "explanation": "Super Mario Bros.: September 13, 1985. The Berlin Wall fell on November 9, 1989, 4 years later."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "The Strong: Super Mario Bros.",
+            "url": "https://www.museumofplay.org/games/super-mario-bros/",
+            "retrieved": "2026-09-26"
+          },
+          {
+            "title": "State of Berlin: Opening and fall of the Berlin Wall",
+            "url": "https://www.berlin.de/en/history/8482274-8619314-opening-and-fall-of-the-berlin-wall.en.html",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "gapYears": 4,
+          "minGapYears": 1,
+          "precisePair": true,
+          "futureDailyAppearances": {
+            "50": 7,
+            "1123": 7
+          },
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Two pop-history touchstones; many viewers assume the game is from the 1990s."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-5:whenabouts-22",
+        "sha256": "2a346984d7988d8cf5b974e988a3d8236afc0e8a5294ae18c3f911f24dbedab2",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/whenabouts-beforeafter-001.mp4",
+        "sha256": "88704d45c2ab19fa81da24917749d8714b45d681166ae28a7dcf28d478171985",
+        "bytes": 1258302,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/whenabouts-beforeafter-001.jpg",
+        "sha256": "50e84ee2c6f56294f5d92a850937fe16c47e7bbdbf5ef3e9bba2fe59d8e95cbd",
+        "bytes": 228218
+      },
+      "publication": {
+        "deepLink": "/whenabouts",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Super Mario Bros. was released: A) before or B) after the Berlin Wall fell?\n\nComment A or B.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#history #quiz #trivia #onthisday #scalargame",
+          "tiktok": "Super Mario Bros. was released: A) before or B) after the Berlin Wall fell?\n\nComment A or B.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#history #quiz #trivia #onthisday #scalargame",
+          "facebook": "Super Mario Bros. was released: A) before or B) after the Berlin Wall fell?\n\nComment A or B.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#history #quiz #trivia #onthisday #scalargame",
+          "threads": "Super Mario Bros. was released: A) before or B) after the Berlin Wall fell?\n\nComment A or B.\n\nPlay a new puzzle: {link}",
+          "x": "Super Mario Bros. was released: A) before or B) after the Berlin Wall fell? Comment A or B. {link}",
+          "bluesky": "Super Mario Bros. was released: A) before or B) after the Berlin Wall fell?\nComment A or B.\n{link}"
+        },
+        "youtube": {
+          "title": "Super Mario Bros. was released: before or after the Berlin Wall fell? #shorts",
+          "description": "Super Mario Bros. was released: A) before or B) after the Berlin Wall fell?\n\nComment A or B.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/whenabouts?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=whenabouts-beforeafter-001\n\n#history #quiz #trivia #onthisday #scalargame"
+        },
+        "altText": "Animated history quiz from Scalargame: an event card and a timeline with one dated anchor event (the Berlin Wall fell, 1989). Following a pause, the event slides to its place on the timeline and its date is shown.",
+        "hashtags": [
+          "#history",
+          "#quiz",
+          "#trivia",
+          "#onthisday",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Super Mario Bros. was released. Compared with when the Berlin Wall fell (1989), was it…",
+          "options": [
+            "Before",
+            "After"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Before  B) After — comment your letter",
+          "threads": "A) Before  B) After — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "whenabouts-beforeafter-002",
+      "questionId": "whenabouts:64:before-after:790",
+      "revision": 1,
+      "game": "whenabouts",
+      "format": "before-after",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "whenabouts-almanac-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Before or after?",
+        "question": "The first Star Wars film was released. Before or after Apple was founded?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Before"
+          },
+          {
+            "key": "B",
+            "label": "After"
+          }
+        ],
+        "answer": "After",
+        "answerAliases": [],
+        "explanation": "Apple: April 1, 1976. Star Wars: May 25, 1977, a year later."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Computer History Museum: Timeline of Computer History, 1977",
+            "url": "https://www.computerhistory.org/timeline/1977/",
+            "retrieved": "2026-09-26"
+          },
+          {
+            "title": "Computer History Museum: Timeline of Computer History, 1976",
+            "url": "https://www.computerhistory.org/timeline/1976/",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "gapYears": 1,
+          "minGapYears": 1,
+          "precisePair": true,
+          "futureDailyAppearances": {
+            "64": 5,
+            "790": 9
+          },
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Two famous 1970s origin stories that feel far apart."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-5:whenabouts-22",
+        "sha256": "2a346984d7988d8cf5b974e988a3d8236afc0e8a5294ae18c3f911f24dbedab2",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/whenabouts-beforeafter-002.mp4",
+        "sha256": "9d31b1596548b9d659de52fa18f0c10d9899e2a2c8a5861912e552348b9bfb82",
+        "bytes": 1226948,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/whenabouts-beforeafter-002.jpg",
+        "sha256": "37b4ac0211ec2ca7fca8d6d5e4344e192b7bade5d3d5c5911cbea7d233f01888",
+        "bytes": 232288
+      },
+      "publication": {
+        "deepLink": "/whenabouts",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "The first Star Wars film was released: A) before or B) after Apple was founded?\n\nComment A or B.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#history #quiz #trivia #onthisday #scalargame",
+          "tiktok": "The first Star Wars film was released: A) before or B) after Apple was founded?\n\nComment A or B.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#history #quiz #trivia #onthisday #scalargame",
+          "facebook": "The first Star Wars film was released: A) before or B) after Apple was founded?\n\nComment A or B.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#history #quiz #trivia #onthisday #scalargame",
+          "threads": "The first Star Wars film was released: A) before or B) after Apple was founded?\n\nComment A or B.\n\nPlay a new puzzle: {link}",
+          "x": "The first Star Wars film was released: A) before or B) after Apple was founded? Comment A or B. {link}",
+          "bluesky": "The first Star Wars film was released: A) before or B) after Apple was founded?\nComment A or B.\n{link}"
+        },
+        "youtube": {
+          "title": "The first Star Wars film was released: before or after Apple was founded? #shorts",
+          "description": "The first Star Wars film was released: A) before or B) after Apple was founded?\n\nComment A or B.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/whenabouts?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=whenabouts-beforeafter-002\n\n#history #quiz #trivia #onthisday #scalargame"
+        },
+        "altText": "Animated history quiz from Scalargame: an event card and a timeline with one dated anchor event (Apple was founded, 1976). Following a pause, the event slides to its place on the timeline and its date is shown.",
+        "hashtags": [
+          "#history",
+          "#quiz",
+          "#trivia",
+          "#onthisday",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "The first Star Wars film was released. Compared with when Apple was founded (1976), was it…",
+          "options": [
+            "Before",
+            "After"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Before  B) After — comment your letter",
+          "threads": "A) Before  B) After — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "whenabouts-beforeafter-003",
+      "questionId": "whenabouts:826:before-after:713",
+      "revision": 1,
+      "game": "whenabouts",
+      "format": "before-after",
+      "language": "en",
+      "difficulty": "moderate",
+      "styleId": "whenabouts-almanac-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Before or after?",
+        "question": "Pride and Prejudice was published. Before or after Beethoven’s Ninth Symphony premiered?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Before"
+          },
+          {
+            "key": "B",
+            "label": "After"
+          }
+        ],
+        "answer": "Before",
+        "answerAliases": [],
+        "explanation": "Pride and Prejudice: January 28, 1813. Beethoven’s Ninth: May 7, 1824, 11 years later."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Jane Austen’s House: First draft — First Impressions",
+            "url": "https://janeaustens.house/online-exhibition/the-making-of-pride-and-prejudice/the-making-of-pride-and-prejudice-2/",
+            "retrieved": "2026-09-26"
+          },
+          {
+            "title": "Los Angeles Philharmonic — Symphony No. 9 in D minor",
+            "url": "https://www.laphil.com/works/symphony-no-9-in-d-minor-op-125",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "gapYears": 11,
+          "minGapYears": 1,
+          "precisePair": true,
+          "futureDailyAppearances": {
+            "713": 5,
+            "826": 4
+          },
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Regency literature vs late Beethoven: both familiar, the order is not."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-5:whenabouts-22",
+        "sha256": "2a346984d7988d8cf5b974e988a3d8236afc0e8a5294ae18c3f911f24dbedab2",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/whenabouts-beforeafter-003.mp4",
+        "sha256": "f167242e9b53fc2f95b5f5e485208966d2338c4276636e5d5b95d344a4c90e49",
+        "bytes": 1295675,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/whenabouts-beforeafter-003.jpg",
+        "sha256": "b528a53b808d7d6cb9d3239cd6344e9e1d4f2d884c638d4715d532a6a6af6b4b",
+        "bytes": 243448
+      },
+      "publication": {
+        "deepLink": "/whenabouts",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Pride and Prejudice was published: A) before or B) after Beethoven’s Ninth Symphony premiered?\n\nComment A or B.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#history #quiz #trivia #onthisday #scalargame",
+          "tiktok": "Pride and Prejudice was published: A) before or B) after Beethoven’s Ninth Symphony premiered?\n\nComment A or B.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#history #quiz #trivia #onthisday #scalargame",
+          "facebook": "Pride and Prejudice was published: A) before or B) after Beethoven’s Ninth Symphony premiered?\n\nComment A or B.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#history #quiz #trivia #onthisday #scalargame",
+          "threads": "Pride and Prejudice was published: A) before or B) after Beethoven’s Ninth Symphony premiered?\n\nComment A or B.\n\nPlay a new puzzle: {link}",
+          "x": "Pride and Prejudice was published: A) before or B) after Beethoven’s Ninth Symphony premiered? Comment A or B. {link}",
+          "bluesky": "Pride and Prejudice was published: A) before or B) after Beethoven’s Ninth Symphony premiered?\nComment A or B.\n{link}"
+        },
+        "youtube": {
+          "title": "Pride and Prejudice was published: before or after Beethoven’s Ninth Symphony premiered? #shorts",
+          "description": "Pride and Prejudice was published: A) before or B) after Beethoven’s Ninth Symphony premiered?\n\nComment A or B.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/whenabouts?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=whenabouts-beforeafter-003\n\n#history #quiz #trivia #onthisday #scalargame"
+        },
+        "altText": "Animated history quiz from Scalargame: an event card and a timeline with one dated anchor event (Beethoven’s Ninth Symphony premiered, 1824). Following a pause, the event slides to its place on the timeline and its date is shown.",
+        "hashtags": [
+          "#history",
+          "#quiz",
+          "#trivia",
+          "#onthisday",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Pride and Prejudice was published. Compared with when Beethoven’s Ninth Symphony premiered (1824), was it…",
+          "options": [
+            "Before",
+            "After"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Before  B) After — comment your letter",
+          "threads": "A) Before  B) After — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "whenabouts-year-002",
+      "questionId": "whenabouts:537:guess-the-year",
+      "revision": 1,
+      "game": "whenabouts",
+      "format": "guess-the-year",
+      "language": "en",
+      "difficulty": "moderate",
+      "styleId": "whenabouts-almanac-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Guess the year.",
+        "question": "King John seals Magna Carta. What year?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "1215"
+          },
+          {
+            "key": "B",
+            "label": "1315"
+          },
+          {
+            "key": "C",
+            "label": "1415"
+          }
+        ],
+        "answer": "1215",
+        "answerAliases": [],
+        "explanation": "June 15, 1215. Magna Carta was written in Latin and authenticated with a seal."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "UK Parliament: The Making of Magna Carta",
+            "url": "https://www.parliament.uk/about/living-heritage/evolutionofparliament/2015-parliament-in-the-making/2015-historic-anniversaries/magna-carta/the-making-of-magna-carta-/",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "choiceSpacingYears": 100,
+          "dailyAppearances": [
+            "2026-06-15",
+            "2026-12-22",
+            "2027-04-04",
+            "2027-06-15",
+            "2027-08-10",
+            "2027-10-25",
+            "2027-12-25",
+            "2028-02-13",
+            "2028-06-15"
+          ],
+          "futureDailyAppearances": 8,
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Widely known name, less widely known century."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-5:whenabouts-22",
+        "sha256": "2a346984d7988d8cf5b974e988a3d8236afc0e8a5294ae18c3f911f24dbedab2",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/whenabouts-year-002.mp4",
+        "sha256": "857097dc3eb8c27455c37288f53f3c0d7be5673e4b56063bbc7f5eaf1e9c7331",
+        "bytes": 1345382,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/whenabouts-year-002.jpg",
+        "sha256": "d4c490409ad3c850c18db0a5c281451924b836202c4d92401843311213b3a973",
+        "bytes": 223215
+      },
+      "publication": {
+        "deepLink": "/whenabouts",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Guess the year: King John seals Magna Carta.\n\nA) 1215  B) 1315  C) 1415 — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#history #quiz #trivia #onthisday #scalargame",
+          "tiktok": "Guess the year: King John seals Magna Carta.\n\nA) 1215  B) 1315  C) 1415 — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#history #quiz #trivia #onthisday #scalargame",
+          "facebook": "Guess the year: King John seals Magna Carta.\n\nA) 1215  B) 1315  C) 1415 — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#history #quiz #trivia #onthisday #scalargame",
+          "threads": "Guess the year: King John seals Magna Carta.\n\nA) 1215  B) 1315  C) 1415 — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Guess the year: King John seals Magna Carta. A) 1215  B) 1315  C) 1415 — comment your letter. {link}",
+          "bluesky": "Guess the year: King John seals Magna Carta.\nA) 1215  B) 1315  C) 1415 — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Guess the year: King John seals Magna Carta #shorts",
+          "description": "Guess the year: King John seals Magna Carta.\n\nA) 1215  B) 1315  C) 1415 — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/whenabouts?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=whenabouts-year-002\n\n#history #quiz #trivia #onthisday #scalargame"
+        },
+        "altText": "Animated history quiz from Scalargame: an event card and three possible years on a timeline. Following a pause, a rolling year counter reveals the answer with a short reviewed fact.",
+        "hashtags": [
+          "#history",
+          "#quiz",
+          "#trivia",
+          "#onthisday",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "What year: King John seals Magna Carta?",
+          "options": [
+            "1215",
+            "1315",
+            "1415"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) 1215  B) 1315  C) 1415 — comment your letter",
+          "threads": "A) 1215  B) 1315  C) 1415 — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "whenabouts-year-003",
+      "questionId": "whenabouts:22:guess-the-year",
+      "revision": 1,
+      "game": "whenabouts",
+      "format": "guess-the-year",
+      "language": "en",
+      "difficulty": "challenging",
+      "styleId": "whenabouts-almanac-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Guess the year.",
+        "question": "Isaac Newton publishes the Principia. What year?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "1567"
+          },
+          {
+            "key": "B",
+            "label": "1627"
+          },
+          {
+            "key": "C",
+            "label": "1687"
+          }
+        ],
+        "answer": "1687",
+        "answerAliases": [],
+        "explanation": "July 5, 1687. Edmond Halley helped pay for Principia after the Royal Society spent heavily on a book about fish."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Royal Society: Fishy blunder and Principia",
+            "url": "https://royalsociety.org/news/2012/the-fishy-blunder-that-nearly-prevented-newtons-masterpiece-from-being-published/",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "choiceSpacingYears": 60,
+          "dailyAppearances": [
+            "2026-04-24",
+            "2026-06-09",
+            "2026-11-06",
+            "2026-12-19",
+            "2027-02-07",
+            "2028-07-07",
+            "2028-12-19",
+            "2029-02-08"
+          ],
+          "futureDailyAppearances": 6,
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Requires placing Newton within the scientific revolution, not just recognising him."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-5:whenabouts-22",
+        "sha256": "2a346984d7988d8cf5b974e988a3d8236afc0e8a5294ae18c3f911f24dbedab2",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/whenabouts-year-003.mp4",
+        "sha256": "ad86e389fc8441a20f943bdad1b124cf675cb847109cbd8fd6ec345f91064f97",
+        "bytes": 1412739,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/whenabouts-year-003.jpg",
+        "sha256": "b8f5d716461270cd18e5ff3b23f01ab90d514e02c1f5253610611e43e3d6b369",
+        "bytes": 230583
+      },
+      "publication": {
+        "deepLink": "/whenabouts",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Guess the year: Isaac Newton publishes the Principia.\n\nA) 1567  B) 1627  C) 1687 — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#history #quiz #trivia #onthisday #scalargame",
+          "tiktok": "Guess the year: Isaac Newton publishes the Principia.\n\nA) 1567  B) 1627  C) 1687 — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#history #quiz #trivia #onthisday #scalargame",
+          "facebook": "Guess the year: Isaac Newton publishes the Principia.\n\nA) 1567  B) 1627  C) 1687 — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#history #quiz #trivia #onthisday #scalargame",
+          "threads": "Guess the year: Isaac Newton publishes the Principia.\n\nA) 1567  B) 1627  C) 1687 — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Guess the year: Isaac Newton publishes the Principia. A) 1567  B) 1627  C) 1687 — comment your letter. {link}",
+          "bluesky": "Guess the year: Isaac Newton publishes the Principia.\nA) 1567  B) 1627  C) 1687 — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Guess the year: Isaac Newton publishes the Principia #shorts",
+          "description": "Guess the year: Isaac Newton publishes the Principia.\n\nA) 1567  B) 1627  C) 1687 — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/whenabouts?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=whenabouts-year-003\n\n#history #quiz #trivia #onthisday #scalargame"
+        },
+        "altText": "Animated history quiz from Scalargame: an event card and three possible years on a timeline. Following a pause, a rolling year counter reveals the answer with a short reviewed fact.",
+        "hashtags": [
+          "#history",
+          "#quiz",
+          "#trivia",
+          "#onthisday",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "What year: Isaac Newton publishes the Principia?",
+          "options": [
+            "1567",
+            "1627",
+            "1687"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) 1567  B) 1627  C) 1687 — comment your letter",
+          "threads": "A) 1567  B) 1627  C) 1687 — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    }
+  ]
+}

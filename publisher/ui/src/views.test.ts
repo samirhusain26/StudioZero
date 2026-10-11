@@ -1,0 +1,60 @@
+import { describe, expect, it } from 'vitest'
+import { episodeHash, guideHash, routeFromHash, screenOf, VIEWS, viewFromHash } from './views'
+
+describe('hash routes', () => {
+  it('has the five sections in tab order', () => {
+    expect(VIEWS.map((v) => v.label)).toEqual(['Home', 'Library', 'Schedule', 'Activity', 'Settings'])
+  })
+
+  it('parses section hashes, defaulting to Home', () => {
+    expect(viewFromHash('#/library')).toBe('library')
+    expect(viewFromHash('#/settings')).toBe('settings')
+    expect(viewFromHash('#/home')).toBe('home')
+    expect(viewFromHash('')).toBe('home')
+    expect(viewFromHash('#/nope')).toBe('home')
+    expect(routeFromHash('#main')).toEqual({ view: 'home' })
+  })
+
+  it('redirects every old hash to its new place', () => {
+    expect(routeFromHash('#/dashboard')).toEqual({ view: 'home', redirect: '#/home' })
+    expect(routeFromHash('#/history')).toEqual({ view: 'activity', tab: 'posts', redirect: '#/activity?tab=posts' })
+    expect(routeFromHash('#/activation')).toEqual({ view: 'settings', section: 'activation', redirect: '#/settings#activation' })
+    expect(routeFromHash('#/next-batch')).toEqual({ view: 'library', make: true, redirect: '#/library/make' })
+    // The redirect targets parse to the same routes without a further redirect.
+    for (const old of ['#/dashboard', '#/history', '#/activation', '#/next-batch']) {
+      const { redirect, ...route } = routeFromHash(old)
+      expect(routeFromHash(redirect ?? '')).toEqual(route)
+    }
+  })
+
+  it('parses sub-routes: make, activity posts tab, settings sections', () => {
+    expect(routeFromHash('#/library/make')).toEqual({ view: 'library', make: true })
+    expect(routeFromHash('#/schedule/queue')).toEqual({ view: 'schedule', queue: true })
+    expect(screenOf(routeFromHash('#/schedule/queue'))).toBe('queue')
+    expect(routeFromHash('#/activity?tab=posts')).toEqual({ view: 'activity', tab: 'posts' })
+    expect(routeFromHash('#/activity?tab=nope')).toEqual({ view: 'activity' })
+    expect(routeFromHash('#/activity?tab=system')).toEqual({ view: 'activity', tab: 'system' })
+    expect(routeFromHash('#/activity?tab=all')).toEqual({ view: 'activity' })
+    expect(routeFromHash('#/settings#update')).toEqual({ view: 'settings', section: 'update' })
+    expect(routeFromHash('#/settings#Bad<x>')).toEqual({ view: 'settings' })
+    expect(routeFromHash('#/home#platforms')).toEqual({ view: 'home', section: 'platforms' })
+    expect(screenOf(routeFromHash('#/library/make'))).toBe('make')
+    expect(screenOf(routeFromHash(episodeHash('a', 1)))).toBe('episode')
+    expect(screenOf(routeFromHash('#/settings#update'))).toBe('settings')
+  })
+
+  it('parses episode detail routes, round-tripping odd ids', () => {
+    expect(routeFromHash('#/library/episode/scalar-clues-001/2')).toEqual({ view: 'library', episode: { episodeId: 'scalar-clues-001', revision: 2 } })
+    const hash = episodeHash('manual:ab/c d', 1)
+    expect(hash).toBe('#/library/episode/manual%3Aab%2Fc%20d/1')
+    expect(routeFromHash(hash)).toEqual({ view: 'library', episode: { episodeId: 'manual:ab/c d', revision: 1 } })
+    expect(routeFromHash('#/library/episode/x/not-a-number')).toEqual({ view: 'library' })
+    expect(routeFromHash('#/library/episode/%E0%A4%A/1')).toEqual({ view: 'library' })
+  })
+
+  it('parses guide anchors', () => {
+    expect(routeFromHash(guideHash('update-the-pi'))).toEqual({ view: 'guide', anchor: 'update-the-pi' })
+    expect(routeFromHash('#/guide')).toEqual({ view: 'guide' })
+    expect(routeFromHash('#/guide/Bad<Anchor>')).toEqual({ view: 'guide' })
+  })
+})

@@ -1,0 +1,42 @@
+{
+  "name": "scalar-social-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Scalar Pi publishing management UI (static build in publisher/app/static, served by publisher/app/ui_server.py)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:static": "tsc -b && node scripts/build-static.mjs",
+    "check:static": "node scripts/build-static.mjs --check",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p .",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@playwright/test": "1.63.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^16.5.0",
+    "jsdom": "^29.1.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.4",
+    "vitest": "^4.1.5"
+  }
+}

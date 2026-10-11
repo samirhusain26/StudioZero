@@ -1,0 +1,21 @@
+[Unit]
+Description=Renew configured Threads token without publishing
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# Runs as root from the checkout: -I (no PYTHON* variables, no user site), -B and PYTHONDONTWRITEBYTECODE so
+# root never writes __pycache__ there (the self-update treats bytecode in the checkout as a local change).
+ExecStart=/usr/bin/python3 -I -B /opt/scalar-social/repo/publisher/app/refresh_threads.py
+Environment=PYTHONDONTWRITEBYTECODE=1
+LoadCredential=THREADS_ACCESS_TOKEN:/etc/scalar-social/credentials/THREADS_ACCESS_TOKEN
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/etc/scalar-social/credentials /var/lib/scalar-social
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=80M
+TimeoutStartSec=90

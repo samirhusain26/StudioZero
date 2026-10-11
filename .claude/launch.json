@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "scalargame-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "..", "run", "dev", "--", "--port", "5173", "--strictPort"],
+      "port": 5173
+    },
+    {
+      "name": "remotion-studio",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "studio", "run", "studio", "--", "--port", "3300", "--no-open"],
+      "port": 3300
+    },
+    {
+      "name": "audio-review",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8790", "--bind", "127.0.0.1", "--directory", "studio"],
+      "port": 8790
+    }
+  ]
+}

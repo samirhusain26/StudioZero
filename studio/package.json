@@ -1,0 +1,25 @@
+{
+  "name": "scalargame-studio",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "still": "remotion still src/index.ts",
+    "render": "remotion render src/index.ts"
+  },
+  "dependencies": {
+    "@fontsource/fraunces": "^5.2.0",
+    "@fontsource/geist-mono": "^5.2.0",
+    "@remotion/cli": "4.0.529",
+    "@remotion/fonts": "4.0.529",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.529"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "playwright-core": "^1.63.0",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.0"
+  }
+}

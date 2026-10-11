@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch for an owner schedule approval request (never publishes)
+
+[Path]
+PathExists=/var/lib/scalar-social/approval/request.json
+Unit=scalar-social-approve.service
+
+[Install]
+WantedBy=paths.target

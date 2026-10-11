@@ -1,0 +1,28 @@
+[Unit]
+Description=Read post performance from the platforms (read-only, never publishes)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=scalar-social
+Group=scalar-social
+WorkingDirectory=/opt/scalar-social
+ExecStart=/usr/bin/python3 /opt/scalar-social/repo/publisher/app/metrics.py collect --config /etc/scalar-social/config.json --state /var/lib/scalar-social
+Environment=PYTHONDONTWRITEBYTECODE=1
+# Missing files fail the unit: apply-units.sh (and enable-metrics.sh) create empty placeholders, which read as "not configured".
+LoadCredential=INSTAGRAM_ACCESS_TOKEN:/etc/scalar-social/credentials/INSTAGRAM_ACCESS_TOKEN
+LoadCredential=THREADS_ACCESS_TOKEN:/etc/scalar-social/credentials/THREADS_ACCESS_TOKEN
+LoadCredential=FACEBOOK_PAGE_TOKEN:/etc/scalar-social/credentials/FACEBOOK_PAGE_TOKEN
+LoadCredential=YOUTUBE_API_KEY:/etc/scalar-social/credentials/YOUTUBE_API_KEY
+# TikTok and X stats come from Buffer's Post.metrics (read-only GraphQL query), with the publisher's Buffer key.
+LoadCredential=BUFFER_API_KEY:/etc/scalar-social/credentials/BUFFER_API_KEY
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/scalar-social
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=120M
+TimeoutStartSec=300

@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly post performance read (clear of the :00/:15 publisher ticks and the 04:30 token renewals)
+
+[Timer]
+OnCalendar=*-*-* *:20:00
+Persistent=true
+RandomizedDelaySec=120
+Unit=scalar-social-metrics.service
+
+[Install]
+WantedBy=timers.target

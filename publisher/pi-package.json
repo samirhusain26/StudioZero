@@ -1,0 +1,8 @@
+{
+  "name": "scalar-social-pi",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "wrangler": "4.147.0"
+  }
+}

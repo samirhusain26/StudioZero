@@ -1,0 +1,26 @@
+{
+  "updated": "2026-10-09",
+  "order": [
+    "overview",
+    "make-a-batch",
+    "upload",
+    "review",
+    "schedule",
+    "next-batch",
+    "update",
+    "health",
+    "owner-only",
+    "glossary"
+  ],
+  "screens": {
+    "home": "how-it-works",
+    "library": "upload-a-batch",
+    "make": "next-batch",
+    "episode": "review-episodes",
+    "schedule": "schedule",
+    "queue": "approve-a-schedule",
+    "activity": "health",
+    "settings": "things-only-samir-can-do",
+    "guide": "how-it-works"
+  }
+}

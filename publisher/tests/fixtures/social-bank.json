@@ -1,0 +1,414 @@
+{
+  "fixture": "Trimmed from src/data/social-bank.json at c52e806 (legacy launch bank, deleted): header fields plus episodes[0:8]. bankHash omitted.",
+  "version": 1,
+  "generatedAt": "2026-10-06T01:25:09.469Z",
+  "safeLatest": "2026-10-01",
+  "episodes": [
+    {
+      "id": "ep01",
+      "series": "Guess the Country",
+      "game": "scalar",
+      "question": [
+        "Which country?",
+        "Americas",
+        "Landlocked",
+        "5 neighbours"
+      ],
+      "clues": [
+        {
+          "field": "continent",
+          "label": "Continent",
+          "value": "Americas",
+          "sticker": "Americas"
+        },
+        {
+          "field": "is_landlocked",
+          "label": "Landlocked?",
+          "value": true,
+          "sticker": "Landlocked"
+        },
+        {
+          "field": "border_countries_count",
+          "label": "Borders",
+          "value": 5,
+          "sticker": "5 neighbours"
+        }
+      ],
+      "answer": "Bolivia",
+      "answerId": "BOL",
+      "reveal": "Bolivia · Latin America And The Caribbean",
+      "deepLink": "/scalar",
+      "uniqueness": {
+        "candidateCount": 1,
+        "universe": 195,
+        "pairwiseCandidateCounts": [
+          2,
+          4,
+          10
+        ],
+        "allThreeNeeded": true
+      },
+      "provenance": {
+        "source": "src/scalar/assets/data/gameData.json",
+        "ids": [
+          "BOL"
+        ]
+      },
+      "choices": [
+        "Bolivia",
+        "China",
+        "India",
+        "United States"
+      ],
+      "verification": {
+        "status": "verified",
+        "sourceHash": "ffe5c9e21e42e6a3e967bbd9471c0a10f73d0cf68c0f3afb3ab5a56abf6a7671",
+        "verifiedAt": "2026-10-06T01:25:09.469Z",
+        "rule": "canonical source and pure answer checks"
+      }
+    },
+    {
+      "id": "ep02",
+      "series": "Guess the Country",
+      "game": "scalar",
+      "question": [
+        "Which country?",
+        "Asia",
+        "Landlocked",
+        "Federal Republic"
+      ],
+      "clues": [
+        {
+          "field": "continent",
+          "label": "Continent",
+          "value": "Asia",
+          "sticker": "Asia"
+        },
+        {
+          "field": "is_landlocked",
+          "label": "Landlocked?",
+          "value": true,
+          "sticker": "Landlocked"
+        },
+        {
+          "field": "government_type",
+          "label": "Govt. Type",
+          "value": "Federal Republic",
+          "sticker": "Federal Republic"
+        }
+      ],
+      "answer": "Nepal",
+      "answerId": "NPL",
+      "reveal": "Nepal · Southern Asia",
+      "deepLink": "/scalar",
+      "uniqueness": {
+        "candidateCount": 1,
+        "universe": 195,
+        "pairwiseCandidateCounts": [
+          12,
+          3,
+          4
+        ],
+        "allThreeNeeded": true
+      },
+      "provenance": {
+        "source": "src/scalar/assets/data/gameData.json",
+        "ids": [
+          "NPL"
+        ]
+      },
+      "choices": [
+        "China",
+        "India",
+        "Nepal",
+        "United States"
+      ],
+      "verification": {
+        "status": "verified",
+        "sourceHash": "ffe5c9e21e42e6a3e967bbd9471c0a10f73d0cf68c0f3afb3ab5a56abf6a7671",
+        "verifiedAt": "2026-10-06T01:25:09.469Z",
+        "rule": "canonical source and pure answer checks"
+      }
+    },
+    {
+      "id": "ep03",
+      "series": "Higher or Lower?",
+      "game": "continuum",
+      "question": [
+        "Which has more people?",
+        "Japan or Mexico?"
+      ],
+      "metric": "population",
+      "metricLabel": "Population",
+      "options": [
+        {
+          "id": "JPN",
+          "name": "Japan",
+          "value": 124516650,
+          "display": "124.52M"
+        },
+        {
+          "id": "MEX",
+          "name": "Mexico",
+          "value": 128455567,
+          "display": "128.46M"
+        }
+      ],
+      "answer": "Mexico",
+      "higher": "Mexico",
+      "lower": "Japan",
+      "reveal": "Japan 124.52M · Mexico 128.46M",
+      "deepLink": "/continuum",
+      "uniqueness": {
+        "tie": false,
+        "ratio": 1.0316
+      },
+      "provenance": {
+        "source": "src/scalar/assets/data/continuumGameData.json",
+        "ids": [
+          "JPN",
+          "MEX"
+        ]
+      },
+      "choices": [
+        "Japan",
+        "Mexico"
+      ],
+      "verification": {
+        "status": "verified",
+        "sourceHash": "ee6021a520f3c7dc32992d929ca87a961cf5a186700c67a5761a6f87c5ddbc97",
+        "verifiedAt": "2026-10-06T01:25:09.469Z",
+        "rule": "canonical source and pure answer checks"
+      }
+    },
+    {
+      "id": "ep04",
+      "series": "Higher or Lower?",
+      "game": "continuum",
+      "question": [
+        "Which is bigger?",
+        "Kazakhstan or Argentina?"
+      ],
+      "metric": "area",
+      "metricLabel": "Area (sq km)",
+      "options": [
+        {
+          "id": "KAZ",
+          "name": "Kazakhstan",
+          "value": 2724900,
+          "display": "2.72M km²"
+        },
+        {
+          "id": "ARG",
+          "name": "Argentina",
+          "value": 2780400,
+          "display": "2.78M km²"
+        }
+      ],
+      "answer": "Argentina",
+      "higher": "Argentina",
+      "lower": "Kazakhstan",
+      "reveal": "Kazakhstan 2.72M km² · Argentina 2.78M km²",
+      "deepLink": "/continuum",
+      "uniqueness": {
+        "tie": false,
+        "ratio": 1.0204
+      },
+      "provenance": {
+        "source": "src/scalar/assets/data/continuumGameData.json",
+        "ids": [
+          "KAZ",
+          "ARG"
+        ]
+      },
+      "choices": [
+        "Kazakhstan",
+        "Argentina"
+      ],
+      "verification": {
+        "status": "verified",
+        "sourceHash": "ee6021a520f3c7dc32992d929ca87a961cf5a186700c67a5761a6f87c5ddbc97",
+        "verifiedAt": "2026-10-06T01:25:09.469Z",
+        "rule": "canonical source and pure answer checks"
+      }
+    },
+    {
+      "id": "ep05",
+      "series": "What Year?",
+      "game": "whenabouts",
+      "question": [
+        "What year was this?",
+        "Colosseum Inaugurated"
+      ],
+      "event": {
+        "id": "978",
+        "title": "Colosseum Inaugurated",
+        "year": 80,
+        "playDate": "2026-06-17"
+      },
+      "answer": "80 CE",
+      "reveal": "80",
+      "deepLink": "/whenabouts",
+      "uniqueness": {
+        "singleYear": true,
+        "source": "event.year is a single signed integer"
+      },
+      "provenance": {
+        "source": "public/puzzles/2026-06.json",
+        "playDate": "2026-06-17",
+        "ids": [
+          "978"
+        ]
+      },
+      "choices": [
+        "60 CE",
+        "80 CE",
+        "100 CE"
+      ],
+      "verification": {
+        "status": "verified",
+        "sourceHash": "cb6a5824cf735871c619892e9d05a51165d5980aeff28dc1b41101ab55756852",
+        "verifiedAt": "2026-10-06T01:25:09.469Z",
+        "rule": "canonical source and pure answer checks"
+      }
+    },
+    {
+      "id": "ep06",
+      "series": "What Year?",
+      "game": "whenabouts",
+      "question": [
+        "What year was this?",
+        "Wright Brothers' First Flight"
+      ],
+      "event": {
+        "id": "935",
+        "title": "Wright Brothers' First Flight",
+        "year": 1903,
+        "playDate": "2026-05-08"
+      },
+      "answer": "1903",
+      "reveal": "Dec 17, 1903",
+      "deepLink": "/whenabouts",
+      "uniqueness": {
+        "singleYear": true,
+        "source": "event.year is a single signed integer"
+      },
+      "provenance": {
+        "source": "public/puzzles/2026-05.json",
+        "playDate": "2026-05-08",
+        "ids": [
+          "935"
+        ]
+      },
+      "choices": [
+        "1883",
+        "1903",
+        "1923"
+      ],
+      "verification": {
+        "status": "verified",
+        "sourceHash": "ab1e7af311700f09ef0d0bb91337363d693cacef9ee282f98c669de140093411",
+        "verifiedAt": "2026-10-06T01:25:09.469Z",
+        "rule": "canonical source and pure answer checks"
+      }
+    },
+    {
+      "id": "ep07",
+      "series": "Where Does It Go?",
+      "game": "tectonic",
+      "question": [
+        "Where would you place Mongolia?"
+      ],
+      "country": {
+        "id": "MNG",
+        "name": "Mongolia",
+        "continent": "Asia",
+        "subregion": "Eastern Asia",
+        "centroid": [
+          105.773,
+          47.997
+        ],
+        "centroidOrder": "[lon, lat]",
+        "bbox": [
+          87.817,
+          41.759,
+          119.894,
+          52.128
+        ]
+      },
+      "answer": "Mongolia · Eastern Asia",
+      "reveal": "Mongolia · Eastern Asia",
+      "deepLink": "/tectonic",
+      "uniqueness": {
+        "globeMatches": 1,
+        "universe": 194
+      },
+      "provenance": {
+        "source": "public/tectonic/globe/countries.json",
+        "ids": [
+          "MNG"
+        ]
+      },
+      "choices": [
+        "Southern Asia",
+        "Eastern Asia",
+        "South-Eastern Asia"
+      ],
+      "verification": {
+        "status": "verified",
+        "sourceHash": "da967833b2fef1b48d76d07f13e08d07b10e87e1d76488e06e8583e7257670be",
+        "verifiedAt": "2026-10-06T01:25:09.469Z",
+        "rule": "canonical source and pure answer checks"
+      }
+    },
+    {
+      "id": "ep08",
+      "series": "Where Does It Go?",
+      "game": "tectonic",
+      "question": [
+        "Where would you place Vietnam?"
+      ],
+      "country": {
+        "id": "VNM",
+        "name": "Vietnam",
+        "continent": "Asia",
+        "subregion": "South-Eastern Asia",
+        "centroid": [
+          105.849,
+          17.087
+        ],
+        "centroidOrder": "[lon, lat]",
+        "bbox": [
+          102.12,
+          8.59,
+          109.464,
+          23.366
+        ]
+      },
+      "answer": "Vietnam · South-Eastern Asia",
+      "reveal": "Vietnam · South-Eastern Asia",
+      "deepLink": "/tectonic",
+      "uniqueness": {
+        "globeMatches": 1,
+        "universe": 194
+      },
+      "provenance": {
+        "source": "public/tectonic/globe/countries.json",
+        "ids": [
+          "VNM"
+        ]
+      },
+      "choices": [
+        "Southern Asia",
+        "Eastern Asia",
+        "South-Eastern Asia"
+      ],
+      "verification": {
+        "status": "verified",
+        "sourceHash": "da967833b2fef1b48d76d07f13e08d07b10e87e1d76488e06e8583e7257670be",
+        "verifiedAt": "2026-10-06T01:25:09.469Z",
+        "rule": "canonical source and pure answer checks"
+      }
+    }
+  ]
+}

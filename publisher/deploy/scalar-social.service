@@ -1,0 +1,29 @@
+[Unit]
+Description=Scalar social publisher (fail closed)
+Wants=network-online.target
+After=network-online.target time-sync.target
+
+[Service]
+Type=oneshot
+User=scalar-social
+Group=scalar-social
+WorkingDirectory=/opt/scalar-social
+ExecStart=/usr/bin/python3 /opt/scalar-social/repo/publisher/app/monitored.py tick --config /etc/scalar-social/config.json --state /var/lib/scalar-social --manifest /var/lib/scalar-social/manifests/approved.json
+LoadCredential=BUFFER_API_KEY:/etc/scalar-social/credentials/BUFFER_API_KEY
+LoadCredential=CLOUDFLARE_API_TOKEN:/etc/scalar-social/credentials/CLOUDFLARE_API_TOKEN
+LoadCredential=HEALTHCHECKS_PING_URL:/etc/scalar-social/credentials/HEALTHCHECKS_PING_URL
+LoadCredential=THREADS_ACCESS_TOKEN:/etc/scalar-social/credentials/THREADS_ACCESS_TOKEN
+Environment=PATH=/opt/node22/bin:/usr/local/bin:/usr/bin:/bin
+Environment=NODE_OPTIONS=--max-old-space-size=180
+StateDirectory=scalar-social
+# 0711: systemd applies this mode to /var/lib/scalar-social. o+x (no listing) lets the self-update user reach the
+# 0644 runner.lock; every other file there keeps its own 0600/0700 mode.
+StateDirectoryMode=0711
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=300M
+TimeoutStartSec=600

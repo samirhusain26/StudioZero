@@ -1,0 +1,16 @@
+[Unit]
+Description=Install systemd units and pi-package from the updated checkout (root; never publishes or changes the pause)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# Root: it installs units into /etc/systemd/system and runs systemctl. It runs only the checkout's apply-units.sh,
+# which the self-update fast-forwarded to the GitHub main commit the owner confirmed in the UI, and refuses a dirty
+# checkout. It waits for the update and publisher runs, restarts the UI, records the commit in units-applied.json and
+# reports in units-apply.json (Settings > Update). Same rules as a run by hand: scalar-social.timer, PAUSED and
+# channels are never touched.
+ExecStart=/bin/bash /opt/scalar-social/repo/publisher/deploy/apply-units.sh --auto
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=PYTHONDONTWRITEBYTECODE=1
+TimeoutStartSec=45min

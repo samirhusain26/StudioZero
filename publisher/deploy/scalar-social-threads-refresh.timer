@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily renewal check for authorized long-lived Threads token
+
+[Timer]
+OnCalendar=*-*-* 04:30:00
+Persistent=true
+RandomizedDelaySec=300
+Unit=scalar-social-threads-refresh.service
+
+[Install]
+WantedBy=timers.target

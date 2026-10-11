@@ -1,0 +1,11 @@
+[Unit]
+Description=Monitor Scalar Pi independently of publishing pause
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+RandomizedDelaySec=20
+Unit=scalar-social-monitor.service
+
+[Install]
+WantedBy=timers.target

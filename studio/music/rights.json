@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "automatedComposition": "SocialEpisode",
+  "externalPhotos": "excluded",
+  "audio": "owner-approved Gemini teaser.m4a in new complete 30-second editions; chain fragments and original deployed catalogue remain silent",
+  "maps": "Natural Earth public domain; preserve attribution",
+  "fonts": [
+    "Fraunces (OFL)",
+    "Geist Mono (OFL)"
+  ],
+  "music": "owner authorized reuse on 2026-10-05; owner reports Gemini-generated and no attribution",
+  "legacyRenders": "not approved for automatic publishing",
+  "reviewed": true,
+  "approvedSources": [
+    {
+      "asset": "Bundled Natural Earth geometry",
+      "source": "https://www.naturalearthdata.com/about/terms-of-use/",
+      "license": "public domain",
+      "usage": "OrthoGlobe; credit preserved"
+    },
+    {
+      "asset": "Fraunces",
+      "source": "node_modules/@fontsource/fraunces/LICENSE",
+      "license": "SIL OFL 1.1"
+    },
+    {
+      "asset": "Geist Mono",
+      "source": "node_modules/@fontsource/geist-mono/LICENSE",
+      "license": "SIL OFL 1.1"
+    }
+  ],
+  "scope": "SocialEpisode: own text, motion kit, OFL fonts, Natural Earth vectors, optional owner-approved Gemini music; zero external photos",
+  "musicOwnerStatement": {
+    "tool": "Gemini",
+    "attributionRequired": false,
+    "useAuthorized": true,
+    "date": "2026-10-05",
+    "licenseIndependentlyVerified": false
+  },
+  "audioPreview": "Automated music mux acceptance 2026-10-06: AAC stereo 48kHz, 30 seconds, measured 0 ms offset. Pi installation and fresh batch delivery pending."
+}

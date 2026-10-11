@@ -1,0 +1,16 @@
+[Unit]
+Description=Watch for an owner "read post stats now" request from the UI (read-only, never publishes)
+
+[Path]
+PathExists=/var/lib/scalar-social/metrics/request.json
+Unit=scalar-social-metrics.service
+# metrics.py moves request.json to metrics/history/ before it reads anything, so a request triggers one run. A request
+# it cannot move (the metrics folder or the file not what it expects: only scalar-social or root could cause that) stays
+# in place; this stops the path unit after 20 triggers in 60 s (normal use is a few per minute at most) instead of
+# looping. Recover: remove /var/lib/scalar-social/metrics/request.json (and fix the folder), then
+# sudo systemctl reset-failed scalar-social-metrics.path && sudo systemctl restart scalar-social-metrics.path
+TriggerLimitIntervalSec=60
+TriggerLimitBurst=20
+
+[Install]
+WantedBy=paths.target

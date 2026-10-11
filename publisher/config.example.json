@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "paused": true,
+  "approval": null,
+  "timezone": "America/New_York",
+  "schedule": {
+    "time": "08:00",
+    "weekdays": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "maxLatenessMinutes": 120
+  },
+  "format": "comparison",
+  "queueDays": 7,
+  "bufferOrganizationId": null,
+  "media": {
+    "baseUrl": null,
+    "maxFileBytes": 24000000,
+    "retentionDays": 90,
+    "cloudflareAccountId": null,
+    "pagesProject": null
+  },
+  "channels": {
+    "facebook": {
+      "profileUrl": "https://www.facebook.com/profile.php?id=100000000000001",
+      "accountId": null,
+      "accountType": "personal profile",
+      "enabled": false,
+      "route": "disabled",
+      "identityVerified": false,
+      "publishingVerified": false,
+      "reason": "Supplied URL is a personal profile, not a Page; unsupported unattended Page API route",
+      "observedIdentity": "<owner name>"
+    },
+    "instagram": {
+      "profileUrl": "https://www.instagram.com/studiozeroflow/",
+      "accountId": "a00000000000000000000002",
+      "accountType": "Business",
+      "enabled": false,
+      "route": "buffer",
+      "identityVerified": false,
+      "publishingVerified": false,
+      "reason": "Refresh warning resolved in Buffer UI; API identity, scopes and public publishing test pending",
+      "observedIdentity": "studiozeroflow"
+    },
+    "threads": {
+      "profileUrl": "https://www.threads.com/@studiozeroflow",
+      "accountId": null,
+      "accountType": "unverified",
+      "enabled": false,
+      "route": "threads",
+      "identityVerified": false,
+      "publishingVerified": false,
+      "reason": "Public profile verified; direct Meta app, scopes, token and publishing tests pending",
+      "observedIdentity": "studiozeroflow",
+      "threadsFormat": "video"
+    },
+    "x": {
+      "profileUrl": "https://x.com/StudioZeroFlow",
+      "accountId": "a00000000000000000000001",
+      "accountType": "unverified",
+      "enabled": false,
+      "route": "buffer",
+      "identityVerified": false,
+      "publishingVerified": false,
+      "reason": "Connected in Buffer UI; API identity, scopes and public publishing test pending",
+      "observedIdentity": "Studio Zero / @StudioZeroFlow",
+      "observedAccountId": "1000000000000000001",
+      "providerAccountId": "1000000000000000001"
+    },
+    "youtube": {
+      "profileUrl": "https://www.youtube.com/@StudioZeroflow",
+      "accountId": "a00000000000000000000003",
+      "accountType": "unverified",
+      "enabled": false,
+      "route": "buffer",
+      "identityVerified": false,
+      "publishingVerified": false,
+      "reason": "Connected in Buffer Free UI; API key, media host and public publishing test still unverified",
+      "observedAccountId": "UCAAAAAAAAAAAAAAAAAAAAAA",
+      "providerAccountId": "UCAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "tiktok": {
+      "profileUrl": "https://www.tiktok.com/@studiozeroflow",
+      "accountId": null,
+      "accountType": "unverified",
+      "enabled": false,
+      "route": "disabled",
+      "identityVerified": false,
+      "publishingVerified": false,
+      "reason": "Reconnect in Buffer (third Free slot, Instagram posts directly), then connect-tiktok.sh and the test post: publisher/docs/TIKTOK.md",
+      "observedIdentity": "studiozeroflow (Movie recaps)",
+      "observedBufferChannelId": "a00000000000000000000004"
+    }
+  },
+  "identities": {
+    "bufferX": "a00000000000000000000001",
+    "bufferInstagram": "a00000000000000000000002",
+    "bufferYoutube": "a00000000000000000000003",
+    "xUserId": "1000000000000000001",
+    "youtubeChannelId": "UCAAAAAAAAAAAAAAAAAAAAAA",
+    "facebookPageId": "1000000000000002",
+    "facebookProfileUrl": "https://www.facebook.com/profile.php?id=100000000000002",
+    "threadsUserId": "1000000000000003",
+    "blueskyDid": "did:plc:aaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+}

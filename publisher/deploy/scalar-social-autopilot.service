@@ -1,0 +1,30 @@
+[Unit]
+Description=Autopilot: record posting tests, refill the schedule when under 7 days remain, follow the approved schedule
+Wants=network-online.target
+After=network-online.target time-sync.target
+
+[Service]
+Type=oneshot
+User=scalar-social
+Group=scalar-social
+WorkingDirectory=/opt/scalar-social
+# '+' runs these two steps as root with full privileges (User=/Group= and the sandboxing below do NOT apply to them;
+# cgroup limits and the unit timeout still do), which lets them rewrite /etc/scalar-social/config.json. -I -B for the
+# reasons given in scalar-social-approve.service. verify-channels only records a Buffer channel's posting test from
+# a confirmed post on its current account (never enables); it always exits 0.
+ExecStartPre=+/usr/bin/python3 -I -B /opt/scalar-social/repo/publisher/app/autopilot.py verify-channels --state /var/lib/scalar-social --config /etc/scalar-social/config.json
+# As scalar-social: when fewer than 7 days remain, writes the recommended draft and an approval request, which
+# scalar-social-approve.path picks up (deploy, verify, bind, activate --auto). Nothing while paused in the UI.
+ExecStart=/usr/bin/python3 /opt/scalar-social/repo/publisher/app/autopilot.py refill --state /var/lib/scalar-social --config /etc/scalar-social/config.json
+# Same checklist as the owner's activation; waits (exit 0) on any failure and never resumes a pause from the UI.
+ExecStartPost=+/usr/bin/python3 -I -B /opt/scalar-social/repo/publisher/app/activate.py --auto --state /var/lib/scalar-social --config /etc/scalar-social/config.json
+Environment=PYTHONDONTWRITEBYTECODE=1
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/scalar-social
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=200M
+TimeoutStartSec=300

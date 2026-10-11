@@ -1,0 +1,49 @@
+[Unit]
+Description=Check or apply a Pi update from GitHub (fetch, staged checks, runner lock, fast-forward; never publishes)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# A dedicated user, not scalar-social: no scalar-social process can ptrace, signal or reach into this one
+# (/proc/<pid>/cwd, /proc/<pid>/root need the same UID), and it alone owns and writes the checkout.
+User=scalar-social-update
+Group=scalar-social-update
+WorkingDirectory=/opt/scalar-social/repo
+# First step renames inbox/request.json to request.taken.json, so the path unit cannot loop. Results go to
+# /var/lib/scalar-social-update/status.json (0644, read by the UI); the UI restarts itself (exit 86) once the
+# checkout has switched and reports in inbox/ui.json.
+# Unit files and pi-package*.json are never applied here (this user cannot): after a completed update that changed
+# them it writes units-pending.json, and scalar-social-apply-units.path runs apply-units.sh --auto as root.
+# After a switch it waits (up to ~2.5 min) for the UI to serve the new commit and resets the checkout if it never does.
+# -I -B: no PYTHON* variables, user site or cwd on sys.path; no bytecode written.
+ExecStart=/usr/bin/python3 -I -B /opt/scalar-social/repo/publisher/app/updater.py run-request --state /var/lib/scalar-social-update --repo /opt/scalar-social/repo --runner-lock /var/lib/scalar-social/runner.lock
+# HOME is root-owned (0750 root:scalar-social-update), so no planted ~/.gitconfig, ~/.config/git or ~/.ssh is read.
+# updater.py also sets, for every git call: HOME=/etc/scalar-social-update, GIT_CONFIG_GLOBAL=/dev/null,
+# GIT_CONFIG_NOSYSTEM=1, hooks and fsmonitor off, GIT_SSH_COMMAND="ssh -F /etc/scalar-social-update/ssh_config"
+# (deploy key, github.com-scalar alias and pinned known_hosts all live there, root-owned). See SELF_UPDATE.md.
+Environment=HOME=/etc/scalar-social-update
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONDONTWRITEBYTECODE=1
+# The checkout must stay readable (never writable) for the scalar-social services that run and serve it.
+UMask=0022
+NoNewPrivileges=true
+ProtectSystem=strict
+# Only its own state folder (status.json, units-applied.json, inbox/) and the checkout. The publisher's
+# /var/lib/scalar-social is read-only here; its runner.lock (0644) is opened read-only for flock.
+ReadWritePaths=/var/lib/scalar-social-update /opt/scalar-social/repo
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=256M
+# updater.py never starts the switch with less than 5 min left (SIGTERM still rolls back and cleans up).
+TimeoutStartSec=60min

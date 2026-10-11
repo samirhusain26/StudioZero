@@ -1,78 +1,85 @@
-# =============================================================================
-# StudioZero .gitignore
-# =============================================================================
-
-# macOS
+node_modules
 .DS_Store
-**/.DS_Store
-
-# -----------------------------------------------------------------------------
-# Python
-# -----------------------------------------------------------------------------
-__pycache__/
+sqlite_mcp_server.db
+test-results/
+playwright-report/
 **/__pycache__/
-*.py[cod]
-**/*.py[cod]
-*$py.class
-*.egg-info/
-dist/
-build/
-.pytest_cache/
-.coverage
-.mypy_cache/
-.python-version
-.ipynb_checkpoints/
+*.tsbuildinfo
+# Backstops for the pre-rebuild layout: root out/ held OAuth/token screenshots.
+/out/
+/public/
 
-# Virtual Environments
+# Studio (Mac): local toolchains, scratch audio and every render/QA output stay out of Git
+# (some QA screenshots under studio/out/ show OAuth/token screens).
+studio/node_modules/
+studio/.venv/
+studio/.audio-work/
+studio/out/
+# The owner's six source tracks (rebuild plan L6): Mac only. The cut beds in studio/public/episodes/music are tracked.
+studio/music/sources/
+# Downloaded CC0 SFX packs (docs/AUDIO_CORPUS_PLAN.md): Mac only; licence records sit beside them.
+studio/sfx/sources/
+
+# Publisher UI: dev output and test artefacts. The Pi gets the committed bundle in publisher/app/static (L7).
+publisher/ui/node_modules/
+publisher/ui/dist/
+publisher/ui/test-results/
+publisher/ui/playwright-report/
+
+# Social credentials/config and durable runtime state stay outside Git.
+publisher/config.json
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
 .env
-.env.local
-.env.*.local
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-env.yaml
+.env.*
 
-# -----------------------------------------------------------------------------
-# IDEs & Tools
-# -----------------------------------------------------------------------------
+# Video library (contract/BATCH_CONTRACT.md): media, masters, review and finalize markers stay local.
+# Tracked: each batch.json and the frozen source snapshots in library/_sources/.
+library/*
+!library/*/
+library/*/*
+!library/*/batch.json
+!library/_sources/
+!library/_sources/**
+# Batch notes (rebuild plan L8): templates, briefs and retros are tracked; never inside a batch folder.
+!library/_templates/
+!library/_templates/**
+!library/_briefs/
+!library/_briefs/**
+!library/_retros/
+!library/_retros/**
+library/_dev/
+# Pi UI hand-off files (feedback-<batchId>.json) may hold answers and notes: Mac only.
+library/_inbox/
+
+# Agent worktrees (Claude Code isolation)
+.claude/worktrees/
+!.env.template
+# The owner's six Gemini-generated beds: redistribution terms unverified, so local only (still listed in beds.json).
+studio/public/episodes/music/scalar-24.m4a
+studio/public/episodes/music/continuum-20.m4a
+studio/public/episodes/music/continuum-22.m4a
+studio/public/episodes/music/whenabouts-22.m4a
+studio/public/episodes/music/tectonic-22.m4a
+studio/public/episodes/music/tectonic-24.m4a
+
+# Story engine (engines/story): local secrets, downloaded and unlicensed assets, outputs, model caches.
+*.py[cod]
+.venv/
+venv/
+env.yaml
+engines/story/assets/
+engines/story/output/
+engines/story/models/
+engines/story/logs/
+**/pipeline_cache.json
+*.log
+.pytest_cache/
+.mypy_cache/
+
+# Agent and tool artefacts
+.claude/settings.local.json
+.playwright-mcp/
 .idea/
 .vscode/
-*.swp
-*.swo
-.claude/settings.local.json
-.gemini/
-
-# -----------------------------------------------------------------------------
-# Project - Generated Content
-# -----------------------------------------------------------------------------
-# Pipeline outputs (temp files, final videos)
-output/
-
-# Downloaded/generated assets (stock videos, TTS audio)
-# Stock fallback clips and music beds stay local: no licence or source is recorded for them (removed from the tree 2026-10)
-assets/
-
-# Log files
-logs/
-**/*.log
-
-# Whisper models (downloaded on first run)
-models/
-
-# Pipeline cache files
-pipeline_cache.json
-
-# -----------------------------------------------------------------------------
-# Project - Sensitive Files
-# -----------------------------------------------------------------------------
-# Google Cloud service account credentials
-creds/
-
-# SQLite local database (tracking removed)
-sqlite_mcp_server.db
-
-# Playwright MCP logs and page snapshots
-.playwright-mcp/

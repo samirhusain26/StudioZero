@@ -1,0 +1,21 @@
+[Unit]
+Description=Scalar external health monitor (never publishes)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=scalar-social
+Group=scalar-social
+WorkingDirectory=/opt/scalar-social
+ExecStart=/usr/bin/python3 /opt/scalar-social/repo/publisher/app/operations.py check --require-heartbeat
+LoadCredential=HEALTHCHECKS_PING_URL:/etc/scalar-social/credentials/HEALTHCHECKS_PING_URL
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/scalar-social
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=80M
+TimeoutStartSec=60

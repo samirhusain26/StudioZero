@@ -1,0 +1,11 @@
+[Unit]
+Description=Check Scalar publishing queue every 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+RandomizedDelaySec=20
+Unit=scalar-social.service
+
+[Install]
+WantedBy=timers.target

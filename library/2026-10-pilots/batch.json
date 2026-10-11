@@ -1,0 +1,600 @@
+{
+  "schemaVersion": 1,
+  "batchId": "2026-10-pilots",
+  "createdAt": "2026-10-07T15:06:35Z",
+  "generator": {
+    "repoCommit": "7e7deb5e857831e76747f323f7c3e49dcccfdc45",
+    "dirty": true,
+    "assetKitVersion": "kit-1"
+  },
+  "sourceSnapshotHash": "0870dc615277f9bfa0909f160540f5aa3ebd23dff40d9b5022c4127bc5ef7629",
+  "styleRecipes": [
+    {
+      "styleId": "continuum-poster-1",
+      "game": "continuum",
+      "version": 1,
+      "summary": "Swiss data poster: cream #F7F3EC paper with a faint 90 px print grid and a pink/black spine bleeding off the left edge; black #111 type and 3–6 px rules, one hot-pink #F472B6 accent used as fills (with black text) for the subject and the answer. Montserrat 900 headlines, Montserrat 600–800 copy, IBM Plex Mono 700 figures. Head-to-head: two stacked white A/B cards with identical hatched empty tracks; at the reveal both bars grow together from one labelled zero line on one linear scale (axis 0 → nice round max), values count up to the exact text, winner turns pink with a check. Missing-slot: an ordinal ladder (equal rungs, “rank order · not to scale”) of two anchors with three dashed A/B/C insertion gaps; the pink target card drops into its gap on the downbeat, then values count up and thin bars grow from the ladder’s left edge, which becomes a labelled zero line. Ease-out entries ≤ 0.5 s, no camera moves, calm think window, source line always visible."
+    },
+    {
+      "styleId": "scalar-notebook-1",
+      "game": "scalar",
+      "version": 1,
+      "summary": "Field notebook on a graph-paper desk: paper #FAFAF9, charcoal #18181B ink, teal #14B8A6 accent, thermal green #22C55E / orange #F97316. ' +\n    'Fraunces 900 headlines and clue text, Geist Mono labels and numbers. Sharp-cornered white index cards (3 px ink border, hard 8 px offset shadow, ' +\n    'orange header rule, teal number tab) are dealt in from off-frame with a decelerating slide-and-settle; a tally card counts the countries that still fit ' +\n    '(195 → … → 1) on an honest zero-based bar. Reveal = a speckled green rubber stamp slammed onto the pile, then a ruled locator card ' +\n    '(orthographic, answer in teal, neighbours paper with ink outlines). Candidate checklists tick/cross per clue with thermal green/orange marks."
+    },
+    {
+      "styleId": "tectonic-ocean-1",
+      "game": "tectonic",
+      "version": 1,
+      "summary": "Low-poly ocean: deep navy #0B1F33 full-frame depth gradient with a faint static triangular facet mesh; maps sit in a rounded '\n    + 'card of lighter shallow-water navy. Neighbors are muted sand #E8D5B0, other land is dim slate #4A5966 and unlabelled, the answer is '\n    + 'warm orange #F2A154 with a subtle low-poly facet overlay. Nunito 900 for the question, 800 for map labels (white with navy halo). '\n    + 'Canonical globe rings in one orthographic projection centred on the target, cropped to the generator window. Neighbors drift in '\n    + 'radially (0.5 s ease-out); the gap is a dashed white outline pulsing softly; before the reveal a shadow gathers, then the answer piece '\n    + 'drops in with a spring and a soft drop shadow, the label pops, and the camera pulls back (span ×2.2, same centre, ease-in-out)."
+    },
+    {
+      "styleId": "whenabouts-almanac-1",
+      "game": "whenabouts",
+      "version": 1,
+      "summary": "Almanac: parchment #F4ECD8 with a soft vignette, laid-paper lines and a double-rule page frame; sepia ink #2B1D0E; '\n    + 'highlighter yellow #EAB308 as fill only, deep ochre #A16207 for accent text. Fraunces italic 900 headlines, Geist Mono for '\n    + 'years and labels. Typographic event card (double rule, vector fleurons, no photos). A horizontal ruler timeline pans in '\n    + 'unlabelled, then carries the A/B/C year marks (or the pinned anchor). Calm ease-out entries; anticipation wind-up; the '\n    + 'reveal is a year odometer rolling to the answer (or the “?” token gliding onto its side of the anchor at an honest distance), followed by a single '\n    + 'pan/zoom of the ruler and a yellow highlight on the correct mark."
+    }
+  ],
+  "episodes": [
+    {
+      "episodeId": "continuum-headtohead-001",
+      "questionId": "continuum:population:CAN-UGA:head-to-head",
+      "revision": 1,
+      "game": "continuum",
+      "format": "head-to-head",
+      "language": "en",
+      "difficulty": "moderate",
+      "styleId": "continuum-poster-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Which has more people?",
+        "question": "More people: Canada or Uganda?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Canada"
+          },
+          {
+            "key": "B",
+            "label": "Uganda"
+          }
+        ],
+        "answer": "Uganda",
+        "answerAliases": [],
+        "explanation": "Uganda: 51.4 million. Canada: 41.7 million. Size on the map is not population."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Canada (2025)",
+            "url": "https://api.worldbank.org/v2/country/CAN/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Uganda (2025)",
+            "url": "https://api.worldbank.org/v2/country/UGA/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "ratio": 1.234,
+          "gameDataAgrees": true,
+          "minRatio": 1.15,
+          "referenceYear": 2025,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Canada’s land area suggests a big population; the counter-intuitive answer needs a moment’s thought."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-2:continuum-20",
+        "sha256": "039993abd60fe5763dc51b067dc0148319dc3615052d0993e69c2b3e95f3a73d",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/continuum-headtohead-001.mp4",
+        "sha256": "61bf422f514e9cc86d2ee87161ffbe74a72b838705819a4bb03394a7c982d518",
+        "bytes": 1001671,
+        "durationSeconds": 20,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/continuum-headtohead-001.jpg",
+        "sha256": "547d1137ce013937e1c30d5499e151d7e36851c18cd6d173b773b4399149b903",
+        "bytes": 150853
+      },
+      "publication": {
+        "deepLink": "/continuum",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Which has more people?\n\nA) Canada  B) Uganda — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "tiktok": "Which has more people?\n\nA) Canada  B) Uganda — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "facebook": "Which has more people?\n\nA) Canada  B) Uganda — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #worldfacts #trivia #scalargame",
+          "threads": "Which has more people?\n\nA) Canada  B) Uganda — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Which has more people? A) Canada  B) Uganda — comment your letter. {link}",
+          "bluesky": "Which has more people?\nA) Canada  B) Uganda — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Which has more people: Canada or Uganda? #shorts",
+          "description": "Which has more people?\n\nA) Canada  B) Uganda — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/continuum?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=continuum-headtohead-001\n\n#geography #quiz #worldfacts #trivia #scalargame"
+        },
+        "altText": "Animated quiz from Scalargame comparing two countries by population. Following a pause, bar charts on one scale reveal the answer, with 2025 World Bank figures.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#worldfacts",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which has more people?",
+          "options": [
+            "Canada",
+            "Uganda"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Canada  B) Uganda — comment your letter",
+          "threads": "A) Canada  B) Uganda — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "scalar-clues-001",
+      "questionId": "scalar:MDG:clues",
+      "revision": 1,
+      "game": "scalar",
+      "format": "progressive-clues",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "scalar-notebook-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Three clues. One country.",
+        "question": "Which country?",
+        "clues": [
+          "No land borders",
+          "In Africa",
+          "More than 10 million people"
+        ],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Mauritius"
+          },
+          {
+            "key": "B",
+            "label": "Cape Verde"
+          },
+          {
+            "key": "C",
+            "label": "Madagascar"
+          }
+        ],
+        "answer": "Madagascar",
+        "answerAliases": [],
+        "explanation": "6 African countries have no land borders. Only Madagascar has more than 10 million people: 32.7 million."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "UN M49 standard country and area codes (continent grouping used by Scalar)",
+            "url": "https://unstats.un.org/unsd/methodology/m49/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Madagascar",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ma.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Madagascar (2025)",
+            "url": "https://api.worldbank.org/v2/country/MDG/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            39,
+            6,
+            1
+          ],
+          "universe": 195,
+          "numericMargin": 0.03,
+          "scalarDailyPickWindow": "2026-10-06+90d clear",
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Island + Africa points most viewers to one famous island; population confirms it."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-6:scalar-24",
+        "sha256": "b1305bdc8390a47a7cca4e1fd29f27dc9891141310f5de91deb5879938a83d91",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/scalar-clues-001.mp4",
+        "sha256": "fa6dc899a99867a24f41754bd042de7a84b1ea22d01c5b3cefff6427bde7d07e",
+        "bytes": 1682221,
+        "durationSeconds": 24,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/scalar-clues-001.jpg",
+        "sha256": "4b4d6d926ef517a8eb18991ec94b7e40860bec7874c9a4437ee7e01abca5dce6",
+        "bytes": 220451
+      },
+      "publication": {
+        "deepLink": "/scalar",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Three clues. One country.\n1. No land borders\n2. In Africa\n3. More than 10 million people\n\nA) Mauritius  B) Cape Verde  C) Madagascar — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #quiz #countries #trivia #scalargame",
+          "tiktok": "Three clues. One country.\n1. No land borders\n2. In Africa\n3. More than 10 million people\n\nA) Mauritius  B) Cape Verde  C) Madagascar — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #quiz #countries #trivia #scalargame",
+          "facebook": "Three clues. One country.\n1. No land borders\n2. In Africa\n3. More than 10 million people\n\nA) Mauritius  B) Cape Verde  C) Madagascar — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #quiz #countries #trivia #scalargame",
+          "threads": "Three clues. One country.\n1. No land borders\n2. In Africa\n3. More than 10 million people\n\nA) Mauritius  B) Cape Verde  C) Madagascar — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Three clues, one country: No land borders · In Africa · More than 10 million people. A) Mauritius  B) Cape Verde  C) Madagascar — comment your letter. {link}",
+          "bluesky": "Three clues, one country: No land borders · In Africa · More than 10 million people.\nA) Mauritius  B) Cape Verde  C) Madagascar — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Three clues, one country. Which is it? #shorts",
+          "description": "Three clues. One country.\n1. No land borders\n2. In Africa\n3. More than 10 million people\n\nA) Mauritius  B) Cape Verde  C) Madagascar — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/scalar?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=scalar-clues-001\n\n#geography #quiz #countries #trivia #scalargame"
+        },
+        "altText": "Animated geography quiz from Scalargame: three clues about a mystery country appear one by one on index cards, a counter shows how many countries still fit, then three answer choices. The answer is revealed and explained at the end.",
+        "hashtags": [
+          "#geography",
+          "#quiz",
+          "#countries",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fits all three clues?",
+          "options": [
+            "Mauritius",
+            "Cape Verde",
+            "Madagascar"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Mauritius  B) Cape Verde  C) Madagascar — comment your letter",
+          "threads": "A) Mauritius  B) Cape Verde  C) Madagascar — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "tectonic-missing-001",
+      "questionId": "tectonic:CHE:missing-country",
+      "revision": 1,
+      "game": "tectonic",
+      "format": "missing-country",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "tectonic-ocean-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "One country is missing.",
+        "question": "Which country fills the gap?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "Slovakia"
+          },
+          {
+            "key": "B",
+            "label": "Switzerland"
+          },
+          {
+            "key": "C",
+            "label": "Portugal"
+          }
+        ],
+        "answer": "Switzerland",
+        "answerAliases": [],
+        "explanation": "Switzerland fits between Austria, France, Germany, Italy and Liechtenstein."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-06"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Switzerland",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/sz.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "DEU",
+            "LIE",
+            "FRA",
+            "AUT",
+            "ITA"
+          ],
+          "gapEnclosedBy": 5,
+          "adjacencyAgreesWithGlobe": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "Central Europe is familiar and the gap is enclosed on every side."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-3:tectonic-22",
+        "sha256": "2bad525f978dd428dff413d6f3888f14b55e59af3d76a17fda74ce5eaab4340d",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/tectonic-missing-001.mp4",
+        "sha256": "cf5972b595fce7724083156b4ca03cd78b251525fc6f0e883d1f56397bcbc6c3",
+        "bytes": 2016413,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/tectonic-missing-001.jpg",
+        "sha256": "e6053290ad25863ba0fd4e51dad3014d7fd863b230ca455b41c634e0ea9122a1",
+        "bytes": 176907
+      },
+      "publication": {
+        "deepLink": "/tectonic",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "One country is missing from this map. Which one fills the gap?\n\nA) Slovakia  B) Switzerland  C) Portugal — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#geography #maps #quiz #trivia #scalargame",
+          "tiktok": "One country is missing from this map. Which one fills the gap?\n\nA) Slovakia  B) Switzerland  C) Portugal — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#geography #maps #quiz #trivia #scalargame",
+          "facebook": "One country is missing from this map. Which one fills the gap?\n\nA) Slovakia  B) Switzerland  C) Portugal — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#geography #maps #quiz #trivia #scalargame",
+          "threads": "One country is missing from this map. Which one fills the gap?\n\nA) Slovakia  B) Switzerland  C) Portugal — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "One country is missing from this map. Which one fills the gap? A) Slovakia  B) Switzerland  C) Portugal — comment your letter. {link}",
+          "bluesky": "One country is missing from this map. Which one fills the gap?\nA) Slovakia  B) Switzerland  C) Portugal — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "One country is missing from this map. Which one? #shorts",
+          "description": "One country is missing from this map. Which one fills the gap?\n\nA) Slovakia  B) Switzerland  C) Portugal — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/tectonic?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=tectonic-missing-001\n\n#geography #maps #quiz #trivia #scalargame"
+        },
+        "altText": "Animated map quiz from Scalargame: neighboring countries drift into place around an empty, outlined gap, then three answer choices. Following a pause, the missing country drops into place and the map zooms out.",
+        "hashtags": [
+          "#geography",
+          "#maps",
+          "#quiz",
+          "#trivia",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "Which country fills the gap?",
+          "options": [
+            "Slovakia",
+            "Switzerland",
+            "Portugal"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) Slovakia  B) Switzerland  C) Portugal — comment your letter",
+          "threads": "A) Slovakia  B) Switzerland  C) Portugal — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [
+          "Map data: Natural Earth"
+        ],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    },
+    {
+      "episodeId": "whenabouts-year-001",
+      "questionId": "whenabouts:932:guess-the-year",
+      "revision": 1,
+      "game": "whenabouts",
+      "format": "guess-the-year",
+      "language": "en",
+      "difficulty": "approachable",
+      "styleId": "whenabouts-almanac-1",
+      "experimentId": "baseline-2026-10",
+      "variantId": null,
+      "creative": {
+        "hook": "Guess the year.",
+        "question": "The Eiffel Tower opens. What year?",
+        "clues": [],
+        "choices": [
+          {
+            "key": "A",
+            "label": "1869"
+          },
+          {
+            "key": "B",
+            "label": "1889"
+          },
+          {
+            "key": "C",
+            "label": "1909"
+          }
+        ],
+        "answer": "1889",
+        "answerAliases": [],
+        "explanation": "March 31, 1889. The Eiffel Tower hosted scientific measurements and experiments from its opening year, 1889."
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Eiffel Tower: The Eiffel Tower and science",
+            "url": "https://www.toureiffel.paris/en/the-monument/eiffel-tower-and-science",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "choiceSpacingYears": 20,
+          "dailyAppearances": [
+            "2026-06-02",
+            "2026-08-05",
+            "2026-09-27",
+            "2026-11-16",
+            "2027-01-07",
+            "2027-03-02",
+            "2027-05-01",
+            "2027-05-31",
+            "2027-08-05",
+            "2027-09-18",
+            "2027-10-21",
+            "2027-12-12",
+            "2028-02-03",
+            "2028-03-25",
+            "2028-05-01",
+            "2028-06-03",
+            "2028-07-23",
+            "2028-09-15",
+            "2028-10-21",
+            "2028-12-12",
+            "2029-02-02",
+            "2029-03-28",
+            "2029-05-01"
+          ],
+          "futureDailyAppearances": 20,
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true,
+          "snapshotId": "2026-10-06-3921b9e",
+          "questionsHash": "5ab19d441ad8a8e23fadae1248de690447cd0f948cfe5f720fbd9b333d15d3d9",
+          "independentSourceCheck": {
+            "status": "pass",
+            "resolution": null,
+            "report": "library/2026-10-pilots/review/source-verification.json"
+          },
+          "rationale": "A world-famous landmark; twenty-year spacing rewards a rough sense of the era."
+        },
+        "reviewer": "owner (question pack approved at Checkpoint 1, 2026-10-07); independent web source check"
+      },
+      "music": {
+        "trackId": "owner-gemini-5:whenabouts-22",
+        "sha256": "2a346984d7988d8cf5b974e988a3d8236afc0e8a5294ae18c3f911f24dbedab2",
+        "license": "owner-supplied"
+      },
+      "video": {
+        "file": "videos/whenabouts-year-001.mp4",
+        "sha256": "14036524b548f5f91e207bdae88499b74a0205df9a977ad3ad34c42db0131830",
+        "bytes": 1383061,
+        "durationSeconds": 22,
+        "width": 1080,
+        "height": 1920,
+        "fps": "30/1",
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "cover": {
+        "file": "covers/whenabouts-year-001.jpg",
+        "sha256": "6cfe3ac29ea4cfba45f05a25504b2e11f18d7f6cfb726bf7d70a423213937189",
+        "bytes": 221479
+      },
+      "publication": {
+        "deepLink": "/whenabouts",
+        "utmCampaign": "social_library_v1",
+        "captions": {
+          "instagram": "Guess the year: The Eiffel Tower opens.\n\nA) 1869  B) 1889  C) 1909 — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n#history #quiz #trivia #onthisday #scalargame",
+          "tiktok": "Guess the year: The Eiffel Tower opens.\n\nA) 1869  B) 1889  C) 1909 — comment your letter.\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n#history #quiz #trivia #onthisday #scalargame",
+          "facebook": "Guess the year: The Eiffel Tower opens.\n\nA) 1869  B) 1889  C) 1909 — comment your letter.\n\nThe answer is at the end. Play a new puzzle: {link}\n\n#history #quiz #trivia #onthisday #scalargame",
+          "threads": "Guess the year: The Eiffel Tower opens.\n\nA) 1869  B) 1889  C) 1909 — comment your letter.\n\nPlay a new puzzle: {link}",
+          "x": "Guess the year: The Eiffel Tower opens. A) 1869  B) 1889  C) 1909 — comment your letter. {link}",
+          "bluesky": "Guess the year: The Eiffel Tower opens.\nA) 1869  B) 1889  C) 1909 — comment your letter.\n{link}"
+        },
+        "youtube": {
+          "title": "Guess the year: The Eiffel Tower opens #shorts",
+          "description": "Guess the year: The Eiffel Tower opens.\n\nA) 1869  B) 1889  C) 1909 — comment your letter.\n\nThe answer is revealed at the end. Play a new puzzle at https://www.scalargame.com/whenabouts?utm_source=youtube&utm_medium=organic_social&utm_campaign=social_library_v1&utm_content=whenabouts-year-001\n\n#history #quiz #trivia #onthisday #scalargame"
+        },
+        "altText": "Animated history quiz from Scalargame: an event card and three possible years on a timeline. Following a pause, a rolling year counter reveals the answer with a short reviewed fact.",
+        "hashtags": [
+          "#history",
+          "#quiz",
+          "#trivia",
+          "#onthisday",
+          "#scalargame"
+        ],
+        "poll": {
+          "question": "What year: The Eiffel Tower opens?",
+          "options": [
+            "1869",
+            "1889",
+            "1909"
+          ]
+        },
+        "firstComment": {
+          "instagram": "A) 1869  B) 1889  C) 1909 — comment your letter",
+          "threads": "A) 1869  B) 1889  C) 1909 — comment your letter",
+          "bluesky": null,
+          "x": null
+        },
+        "credits": [],
+        "answerReply": null
+      },
+      "eligibility": {
+        "status": "qa-passed",
+        "notBefore": null,
+        "reviewBy": "2027-01-03",
+        "expiresAt": null
+      }
+    }
+  ]
+}

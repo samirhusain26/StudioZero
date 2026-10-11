@@ -1,0 +1,41 @@
+[Unit]
+Description=Apply an approved Scalar schedule: validate, deploy media, verify, write manifest, bind hash, follow it (activate --auto)
+Wants=network-online.target
+After=network-online.target time-sync.target
+
+[Service]
+Type=oneshot
+User=scalar-social
+Group=scalar-social
+WorkingDirectory=/opt/scalar-social
+# Always consumes request.json (archived to approval/history/ with result.json), so the path unit cannot loop.
+# Exits non-zero for a failed approval, which skips ExecStartPost.
+ExecStart=/usr/bin/python3 /opt/scalar-social/repo/publisher/app/ui_approval.py apply --state /var/lib/scalar-social --config /etc/scalar-social/config.json
+# '+' runs this one step as root with full privileges: User=/Group=, NoNewPrivileges=, ProtectSystem=,
+# ReadWritePaths=, ProtectHome=, PrivateTmp= and the other sandboxing below do NOT apply to it (cgroup limits
+# such as MemoryMax= and the unit timeout still do). That is what lets it rewrite /etc/scalar-social/config.json.
+# It runs only after ExecStart exits 0. approval_bind changes only approval.manifestSha256 and approval.approvedAt
+# (mode/owner preserved, atomic replace). It treats everything under /var/lib/scalar-social as untrusted:
+# no symlinks, regular files only, size caps, every hash rechecked. It never touches paused, channels,
+# credentials or timers.
+ExecStartPost=+/usr/bin/python3 -I -B /opt/scalar-social/repo/publisher/app/approval_bind.py --state /var/lib/scalar-social --config /etc/scalar-social/config.json
+# Then, also as root: follow the newly bound schedule (activate.py --auto: the owner's activation checklist, ignoring
+# only the timer row). It enables exactly the approved scope and the publisher timer, waits (exit 0, nothing changed)
+# on any other failure, and never resumes a pause from the UI.
+ExecStartPost=+/usr/bin/python3 -I -B /opt/scalar-social/repo/publisher/app/activate.py --auto --state /var/lib/scalar-social --config /etc/scalar-social/config.json
+LoadCredential=CLOUDFLARE_API_TOKEN:/etc/scalar-social/credentials/CLOUDFLARE_API_TOKEN
+Environment=PATH=/opt/node22/bin:/usr/local/bin:/usr/bin:/bin
+Environment=NODE_OPTIONS=--max-old-space-size=180
+# The root ExecStartPost runs with -I -B: systemd sets HOME=/var/lib/scalar-social (from User=) even for '+'
+# steps, so without -I root would load a user site (.pth, usercustomize) a scalar-social process could plant
+# there; -B and this keep root from writing __pycache__ into the checkout.
+Environment=PYTHONDONTWRITEBYTECODE=1
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/scalar-social
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=300M
+TimeoutStartSec=600

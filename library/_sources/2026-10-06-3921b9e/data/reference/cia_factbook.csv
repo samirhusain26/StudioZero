@@ -1,0 +1,196 @@
+iso3,gec,capital,government_type,landlocked,border_isos,border_unmatched,timezone_count_stated,timezone_offsets
+AFG,af,Kabul,theocratic; the United States does not recognize the Taliban Government,true,UZB CHN TJK PAK TKM IRN,,,UTC+4
+AGO,ao,Luanda,presidential republic,false,ZMB COD NAM COG,,,UTC+1
+ALB,al,Tirana (Tirane),parliamentary republic,false,GRC MNE XKX MKD,,,UTC+1
+AND,an,Andorra la Vella,"parliamentary democracy (since March 1993) that retains its chiefs of state in the form of a co-principality; the two princes are the President of France and Bishop of Seu d'Urgell, Spain",true,FRA ESP,,,UTC+1
+ARE,ae,Abu Dhabi,federation of monarchies,false,SAU OMN,,,UTC+4
+ARG,ar,Buenos Aires,presidential republic,false,CHL BOL BRA URY PRY,,,UTC-3
+ARM,am,Yerevan,parliamentary democracy; note - constitutional changes adopted in December 2015 transformed the government to a parliamentary system,true,TUR GEO AZE IRN,,,UTC+4
+ATG,ac,Saint John's,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,,UTC-4
+AUS,as,Canberra,federal parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,6,UTC+11
+AUT,au,Vienna,federal parliamentary republic,true,DEU SVK CHE LIE SVN HUN CZE ITA,,,UTC+1
+AZE,aj,"Baku (Baki, Baky)",presidential republic,true,GEO TUR RUS ARM IRN,,,UTC+4
+BDI,by,"Gitega (political capital), Bujumbura (commercial capital)",presidential republic,true,RWA COD TZA,,,UTC+2
+BEL,be,Brussels,federal parliamentary democracy under a constitutional monarchy,false,FRA DEU NLD LUX,,,UTC+1
+BEN,bn,Porto-Novo (constitutional capital); Cotonou (seat of government),presidential republic,false,NER TGO NGA BFA,,,UTC+1
+BFA,uv,Ouagadougou,presidential republic,true,NER BEN TGO CIV GHA MLI,,,UTC0
+BGD,bg,Dhaka,parliamentary republic,false,IND MMR,,,UTC+6
+BGR,bu,Sofia,parliamentary republic,false,GRC MKD TUR ROU SRB,,,UTC+2
+BHR,ba,Manama,constitutional monarchy,false,,,,UTC+3
+BHS,bf,Nassau,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,,UTC-5
+BIH,bk,Sarajevo,parliamentary republic,false,HRV SRB MNE,,,UTC+1
+BLR,bo,Minsk,"presidential republic in name, although in fact a dictatorship",true,POL LVA RUS LTU UKR,,,UTC+3
+BLZ,bh,Belmopan,parliamentary democracy (National Assembly) under a constitutional monarchy; a Commonwealth realm,false,GTM MEX,,,UTC-6
+BOL,bl,La Paz (administrative capital); Sucre (constitutional [legislative and judicial] capital),presidential republic,true,CHL PER ARG BRA PRY,,,UTC-4
+BRA,br,Brasília,federal presidential republic,false,SUR COL PER VEN ARG BOL FRA PRY URY GUY,,4,UTC-3
+BRB,bb,Bridgetown,parliamentary republic; a Commonwealth realm,false,,,,UTC-4
+BRN,bx,Bandar Seri Begawan,absolute monarchy or sultanate,false,MYS,,,UTC+8
+BTN,bt,Thimphu,constitutional monarchy,true,IND CHN,,,UTC+6
+BWA,bc,Gaborone,parliamentary republic,true,ZAF NAM ZWE ZMB,,,UTC+2
+CAF,ct,Bangui,presidential republic,true,CMR SSD SDN TCD COD COG,,,UTC+1
+CAN,ca,Ottawa,federal parliamentary democracy (Parliament of Canada) under a constitutional monarchy; a Commonwealth realm; federal and state authorities and responsibilities regulated in constitution,false,USA DNK,,6,UTC-5
+CHE,sz,Bern,federal republic (formally a confederation),true,DEU LIE FRA AUT ITA,,,UTC+1
+CHL,ci,Santiago; note - Valparaiso is the seat of the national legislature,presidential republic,false,ARG BOL PER,,3,UTC-3 UTC-5
+CHN,ch,Beijing,communist party-led state,false,PRK MNG KAZ LAO IND AFG NPL MMR TJK KGZ VNM PAK BTN RUS,,,UTC+8
+CIV,iv,"Yamoussoukro (legislative capital), Abidjan (administrative and economic capital); note - the US Embassy is in Abidjan",presidential republic,false,MLI BFA GHA LBR GIN,,,UTC0
+CMR,cm,Yaounde,presidential republic,false,GAB CAF NGA TCD GNQ COG,,,UTC+1
+COD,cg,Kinshasa,semi-presidential republic,false,CAF TZA AGO BDI ZMB SSD UGA RWA COG,,2,UTC+1
+COG,cf,Brazzaville,presidential republic,false,GAB CAF CMR AGO COD,,,UTC+1
+COL,co,Bogotá,presidential republic,false,PAN PER VEN BRA ECU,,,UTC-5
+COM,cn,Moroni,federal presidential republic,false,,,,UTC+3
+CPV,cv,Praia,parliamentary republic,false,,,,UTC-1
+CRI,cs,San José,presidential republic,false,NIC PAN,,,UTC-6
+CUB,cu,Havana,communist state,false,,,,UTC-5
+CYP,cy,Nicosia (Lefkosia/Lefkosa),"Republic of Cyprus - presidential republic; self-declared ""Turkish Republic of Northern Cyprus"" (TRNC) - parliamentary republic with enhanced presidency",false,,,,UTC+2
+CZE,ez,Prague,parliamentary republic,true,POL DEU SVK AUT,,,UTC+1
+DEU,gm,Berlin,federal parliamentary republic,false,LUX DNK BEL POL CHE FRA NLD AUT CZE,,,UTC+1
+DJI,dj,Djibouti,presidential republic,false,SOM ERI ETH,,,UTC+3
+DMA,do,Roseau,parliamentary republic,false,,,,UTC-4
+DNK,da,Copenhagen,parliamentary constitutional monarchy,false,CAN DEU,,,UTC+1
+DOM,dr,Santo Domingo,presidential republic,false,HTI,,,UTC-4
+DZA,ag,Algiers,presidential republic,false,NER MAR TUN MRT MLI LBY,,,UTC+1
+ECU,ec,Quito,presidential republic,false,COL PER,,2,UTC-5 UTC-6
+EGY,eg,Cairo,presidential republic,false,PSE ISR SDN LBY,,,UTC+2
+ERI,er,Asmara,authoritarian,false,SDN ETH DJI,,,UTC+3
+ESP,sp,Madrid,parliamentary constitutional monarchy,false,MAR FRA AND PRT,,2,UTC+1 UTC0
+EST,en,Tallinn,parliamentary republic,false,LVA RUS,,,UTC+2
+ETH,et,Addis Ababa,federal parliamentary republic,true,KEN DJI SSD SDN SOM ERI,,,UTC+3
+FIN,fi,Helsinki,parliamentary republic,false,RUS SWE NOR,,,UTC+2
+FJI,fj,Suva (on Viti Levu),parliamentary republic,false,,,,UTC+12
+FRA,fr,Paris,semi-presidential republic,false,LUX DEU BEL CHE AND ESP MCO ITA,,,UTC+1 UTC+3 UTC+4 UTC-3 UTC-4
+FSM,fm,Palikir,federal republic in free association with the US,false,,,2,UTC+11
+GAB,gb,Libreville,presidential republic,false,CMR GNQ COG,,,UTC+1
+GBR,uk,London,parliamentary constitutional monarchy; a Commonwealth realm,false,IRL,,,UTC0
+GEO,gg,Tbilisi,semi-presidential republic,false,RUS ARM AZE TUR,,,UTC+4
+GHA,gh,Accra,presidential republic,false,TGO CIV BFA,,,UTC0
+GIN,gv,Conakry,presidential republic,false,CIV SLE GNB LBR SEN MLI,,,UTC0
+GMB,ga,Banjul,presidential republic,false,SEN,,,UTC0
+GNB,pu,Bissau,semi-presidential republic,false,GIN SEN,,,UTC0
+GNQ,ek,"Malabo; note - Malabo is on the island of Bioko; some months of the year, the government operates out of Bata on the mainland region.",presidential republic,false,GAB CMR,,,UTC+1
+GRC,gr,Athens,parliamentary republic,false,MKD TUR BGR ALB,,,UTC+2
+GRD,gj,Saint George's,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,,UTC-4
+GTM,gt,Guatemala City,presidential republic,false,SLV HND MEX BLZ,,,UTC-6
+GUY,gy,Georgetown,parliamentary republic,false,SUR BRA VEN,,,UTC-4
+HND,ho,Tegucigalpa,presidential republic,false,SLV GTM NIC,,,UTC-6
+HRV,hr,Zagreb,parliamentary republic,false,SVN MNE BIH HUN SRB,,,UTC+1
+HTI,ha,Port-au-Prince,semi-presidential republic,false,DOM,,,UTC-5
+HUN,hu,Budapest,parliamentary republic,true,HRV SVK SVN AUT ROU SRB UKR,,,UTC+1
+IDN,id,Jakarta,presidential republic,false,PNG TLS MYS,,3,UTC+7
+IND,in,New Delhi,federal parliamentary republic,false,NPL CHN MMR PAK BTN BGD,,,UTC+5
+IRL,ei,Dublin,parliamentary republic,false,GBR,,,UTC0
+IRN,ir,Tehran,theocratic republic,false,IRQ AFG AZE PAK TUR TKM ARM,,,UTC+3
+IRQ,iz,Baghdad,federal parliamentary republic,false,JOR KWT SAU TUR IRN SYR,,,UTC+3
+ISL,ic,Reykjavik,unitary parliamentary republic,false,,,,UTC0
+ISR,is,Jerusalem,parliamentary democracy,false,JOR PSE EGY LBN SYR,,,UTC+2
+ITA,it,Rome,parliamentary republic,false,VAT CHE SVN FRA AUT SMR,,,UTC+1
+JAM,jm,Kingston,parliamentary democracy (Parliament) under a constitutional monarchy; a Commonwealth realm,false,,,,UTC-5
+JOR,jo,Amman,parliamentary constitutional monarchy,false,IRQ SAU ISR PSE SYR,,,UTC+3
+JPN,ja,Tokyo,parliamentary constitutional monarchy,false,,,,UTC+9
+KAZ,kz,Astana,presidential republic,true,UZB CHN KGZ TKM RUS,,2,UTC+5
+KEN,ke,Nairobi,presidential republic,false,TZA SSD UGA SOM ETH,,,UTC+3
+KGZ,kg,Bishkek,parliamentary republic,true,CHN UZB KAZ TJK,,,UTC+6
+KHM,cb,Phnom Penh,parliamentary constitutional monarchy,false,THA LAO VNM,,,UTC+7
+KIR,kr,Tarawa,presidential republic,false,,,3,UTC+12 UTC+13 UTC+14
+KNA,sc,Basseterre,federal parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,,UTC-4
+KOR,ks,Seoul,presidential republic,false,PRK,,,UTC+9
+KWT,ku,Kuwait City,constitutional monarchy (emirate),false,IRQ SAU,,,UTC+3
+LAO,la,Vientiane (Viangchan),communist party-led state,true,KHM CHN MMR VNM THA,,,UTC+7
+LBN,le,Beirut,parliamentary democratic republic,false,ISR SYR,,,UTC+2
+LBR,li,Monrovia,presidential republic,false,GIN SLE CIV,,,UTC0
+LBY,ly,Tripoli (Tarabulus),in transition,false,TUN EGY SDN TCD NER DZA,,,UTC+2
+LCA,st,Castries,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,,UTC-4
+LIE,ls,Vaduz,constitutional monarchy,true,CHE AUT,,,UTC+1
+LKA,ce,Colombo (commercial capital); Sri Jayewardenepura Kotte (legislative capital),presidential republic,false,,,,UTC+5
+LSO,lt,Maseru,parliamentary constitutional monarchy,true,ZAF,,,UTC+2
+LTU,lh,Vilnius,semi-presidential republic,false,POL LVA BLR RUS,,,UTC+2
+LUX,lu,Luxembourg,constitutional monarchy,true,FRA DEU BEL,,,UTC+1
+LVA,lg,Riga,parliamentary republic,false,EST RUS BLR LTU,,,UTC+2
+MAR,mo,Rabat,parliamentary constitutional monarchy,false,DZA MRT ESP,,,UTC+1
+MCO,mn,Monaco,constitutional monarchy,false,FRA,,,UTC+1
+MDA,md,Chisinau in Romanian (Kishinev in Russian),parliamentary republic,true,UKR ROU,,,UTC+2
+MDG,ma,Antananarivo,semi-presidential republic,false,,,,UTC+3
+MDV,mv,Malé,presidential republic,false,,,,UTC+5
+MEX,mx,Mexico City (Ciudad de Mexico),federal presidential republic,false,GTM USA BLZ,,4,UTC-6
+MHL,rm,Majuro,mixed presidential-parliamentary system in free association with the US,false,,,,UTC+12
+MKD,mk,Skopje,parliamentary republic,true,GRC BGR ALB SRB XKX,,,UTC+1
+MLI,ml,Bamako,semi-presidential republic,true,NER CIV BFA SEN MRT GIN DZA,,,UTC0
+MLT,mt,Valletta,parliamentary republic,false,,,,UTC+1
+MMR,bm,"Rangoon (aka Yangon, continues to be recognized as the primary Burmese capital by the US Government); Nay Pyi Taw is the administrative capital",military regime,false,LAO IND CHN THA BGD,,,UTC+6
+MNE,mj,Podgorica,parliamentary republic,false,HRV ALB BIH SRB XKX,,,UTC+1
+MNG,mg,Ulaanbaatar,semi-presidential republic,true,CHN RUS,,2,UTC+8
+MOZ,mz,Maputo,presidential republic,false,TZA SWZ ZAF MWI ZWE ZMB,,,UTC+2
+MRT,mr,Nouakchott,presidential republic,false,MLI DZA MAR SEN,,,UTC0
+MUS,mp,Port Louis,parliamentary republic,false,,,,UTC+4
+MWI,mi,Lilongwe,presidential republic,true,MOZ TZA ZMB,,,UTC+2
+MYS,my,Kuala Lumpur,federal parliamentary constitutional monarchy,false,IDN THA BRN,,,UTC+8
+NAM,wa,Windhoek,presidential republic,false,ZAF BWA AGO ZMB,,,UTC+2
+NER,ng,Niamey,"formerly, semi-presidential republic",true,BEN BFA NGA TCD MLI DZA LBY,,,UTC+1
+NGA,ni,Abuja,federal presidential republic,false,NER BEN CMR TCD,,,UTC+1
+NIC,nu,Managua,presidential republic,false,CRI HND,,,UTC-6
+NLD,nl,Amsterdam,parliamentary constitutional monarchy; part of the Kingdom of the Netherlands,false,DEU BEL,,,UTC+1 UTC-4
+NOR,no,Oslo,parliamentary constitutional monarchy,false,RUS SWE FIN,,,UTC+1
+NPL,np,Kathmandu,federal parliamentary republic,true,IND CHN,,,UTC+5
+NRU,nr,no official capital; government offices in the Yaren District,parliamentary republic,false,,,,UTC+12
+NZL,nz,Wellington,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,2,UTC+12 UTC+12:45
+OMN,mu,Muscat,absolute monarchy,false,YEM ARE SAU,,,UTC+4
+PAK,pk,Islamabad,federal parliamentary republic,false,IND AFG CHN IRN,,,UTC+5
+PAN,pm,Panama City,presidential republic,false,CRI COL,,,UTC-5
+PER,pe,Lima,presidential republic,false,COL CHL BOL BRA ECU,,,UTC-5
+PHL,rp,Manila,presidential republic,false,,,,UTC+8
+PLW,ps,Ngerulmud,presidential republic in free association with the US,false,,,,UTC+9
+PNG,pp,Port Moresby,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,IDN,,2,UTC+10 UTC+11
+POL,pl,Warsaw,parliamentary republic,false,DEU SVK CZE RUS BLR LTU UKR,,,UTC+1
+PRK,kn,Pyongyang,"dictatorship, single-party communist state",false,KOR CHN RUS,,,UTC+9
+PRT,po,Lisbon,semi-presidential republic,false,ESP,,2,UTC-1 UTC0
+PRY,pa,Asunción,presidential republic,true,ARG BOL BRA,,,UTC-3
+PSE,we+gz,,,false,JOR EGY ISR,,,
+QAT,qa,Doha,absolute monarchy,false,SAU,,,UTC+3
+ROU,ro,Bucharest,semi-presidential republic,false,BGR MDA HUN SRB UKR,,,UTC+2
+RUS,rs,Moscow,semi-presidential federation,false,EST MNG PRK GEO KAZ POL CHN AZE FIN NOR LVA BLR LTU UKR,,11,UTC+3
+RWA,rw,Kigali,presidential republic,true,COD TZA BDI UGA,,,UTC+2
+SAU,sa,Riyadh,absolute monarchy,false,JOR KWT ARE OMN IRQ YEM QAT,,,UTC+3
+SDN,su,Khartoum,presidential republic,false,CAF SSD EGY TCD ERI ETH LBY,,,UTC+3
+SEN,sg,Dakar,presidential republic,false,MLI GMB GNB MRT GIN,,,UTC0
+SGP,sn,Singapore,parliamentary republic,false,,,,UTC+8
+SLB,bp,Honiara,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,,UTC+11
+SLE,sl,Freetown,presidential republic,false,GIN LBR,,,UTC0
+SLV,es,San Salvador,presidential republic,false,GTM HND,,,UTC-6
+SMR,sm,San Marino (city),parliamentary republic,true,ITA,,,UTC+1
+SOM,so,Mogadishu,federal parliamentary republic,false,ETH KEN DJI,,,UTC+3
+SRB,ri,Belgrade (Beograd),parliamentary republic,true,HRV BGR MNE BIH MKD HUN ROU XKX,,,UTC+1
+SSD,od,Juba,presidential republic,true,CAF KEN UGA SDN COD ETH,,,UTC+2
+STP,tp,Sao Tome,semi-presidential republic,false,,,,UTC0
+SUR,ns,Paramaribo,presidential republic,false,FRA BRA GUY,,,UTC-3
+SVK,lo,Bratislava,parliamentary republic,true,POL HUN AUT CZE UKR,,,UTC+1
+SVN,si,Ljubljana,parliamentary republic,false,HUN HRV ITA AUT,,,UTC+1
+SWE,sw,Stockholm,parliamentary constitutional monarchy,false,NOR FIN,,,UTC+1
+SWZ,wz,Mbabane (administrative capital); Lobamba (royal and legislative capital),absolute monarchy,true,MOZ ZAF,,,UTC+2
+SYC,se,Victoria,presidential republic,false,,,,UTC+4
+SYR,sy,Damascus,transitional presidential republic,false,JOR IRQ TUR ISR LBN,,,UTC+3
+TCD,cd,N'Djamena,presidential republic,true,CAF CMR SDN NGA NER LBY,,,UTC+1
+TGO,to,Lome,presidential republic,false,BEN GHA BFA,,,UTC0
+THA,th,Bangkok,constitutional monarchy,false,KHM MMR LAO MYS,,,UTC+7
+TJK,ti,Dushanbe,presidential republic,true,KGZ AFG CHN UZB,,,UTC+5
+TKM,tx,Ashgabat (Ashkhabad),presidential republic; authoritarian,true,AFG UZB KAZ IRN,,,UTC+5
+TLS,tt,Dili,semi-presidential republic,false,IDN,,,UTC+9
+TON,tn,Nuku'alofa,constitutional monarchy,false,,,,UTC+13
+TTO,td,Port of Spain,parliamentary republic,false,,,,UTC-4
+TUN,ts,Tunis,parliamentary republic,false,DZA LBY,,,UTC+1
+TUR,tu,Ankara,presidential republic,false,GRC IRQ GEO BGR AZE ARM IRN SYR,,,UTC+3
+TUV,tv,Funafuti,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,,UTC+12
+TZA,tz,Dodoma,presidential republic,false,KEN BDI RWA UGA COD MWI MOZ ZMB,,,UTC+3
+UGA,ug,Kampala,presidential republic,true,TZA KEN COD SSD RWA,,,UTC+3
+UKR,up,Kyiv (Kiev is the transliteration from Russian),semi-presidential republic,false,SVK POL MDA HUN ROU RUS BLR,,,UTC+2
+URY,uy,Montevideo,presidential republic,false,ARG BRA,,,UTC-3
+USA,us,"Washington, D.C.",constitutional federal republic,false,CAN MEX,,6,UTC-5
+UZB,uz,Tashkent (Toshkent),presidential republic; highly authoritarian,true,KAZ AFG TJK KGZ TKM,,,UTC+5
+VAT,vt,Vatican City,"ecclesiastical elective monarchy; self-described as an ""absolute monarchy""",true,ITA,,,UTC+1
+VCT,vc,Kingstown,parliamentary democracy under a constitutional monarchy; a Commonwealth realm,false,,,,UTC-4
+VEN,ve,Caracas,federal presidential republic,false,COL BRA GUY,,,UTC-4
+VNM,vm,Hanoi (Ha Noi),communist party-led state,false,KHM CHN LAO,,,UTC+7
+VUT,nh,Port-Vila (on Efate),parliamentary republic,false,,,,UTC+11
+WSM,ws,Apia,parliamentary republic,false,,,,UTC+13
+YEM,ym,Sanaa,in transition,false,SAU OMN,,,UTC+3
+ZAF,sf,Pretoria (administrative capital); Cape Town (legislative capital); Bloemfontein (judicial capital),parliamentary republic,false,NAM SWZ LSO BWA MOZ ZWE,,,UTC+2
+ZMB,za,Lusaka,presidential republic,true,MWI NAM AGO TZA COD BWA MOZ ZWE,,,UTC+2
+ZWE,zi,Harare,presidential republic,true,MOZ BWA ZAF ZMB,,,UTC+2

@@ -1,0 +1,102 @@
+import type { Route, Screen } from '../views'
+import { GUIDE } from './guide'
+
+/**
+ * Per-screen "What to do here" help (REBUILD_CONTRACTS.md §4). Each entry links to a fixed guide
+ * anchor; a test checks every anchor exists in the bundled guide.
+ */
+export interface ScreenHelpEntry {
+  /** Guide anchor for "More in the Guide →". */
+  anchor: string
+  /** 2–4 short lines. */
+  lines: string[]
+}
+
+export const SCREEN_HELP = {
+  home: {
+    anchor: 'how-it-works',
+    lines: [
+      'Your loop: Make → Upload → Review → Schedule → Post → Learn, then the next batch.',
+      'The highlighted step is the one thing to do now. Tap any step for its status.',
+      'Platforms show three separate marks: a passed test does not mean publishing is on.',
+      'The autopilot schedules and posts approved videos by itself. Pause is in Settings.',
+    ],
+  },
+  library: {
+    anchor: 'upload-a-batch',
+    lines: [
+      'Upload: drop the finalized batch folder from the Mac anywhere on this page, or choose it.',
+      'Review: To review lists what waits for you. Tap an episode to watch it, approve it and leave feedback.',
+      'Approving does not schedule anything; that happens in Schedule.',
+    ],
+  },
+  episode: {
+    anchor: 'review-episodes',
+    lines: [
+      'Watch the video and read the captions. The answer stays hidden until you press Reveal answer.',
+      'Approve, or tap Feedback to tag what to keep or fix; feedback goes into the next batch.',
+      'Next goes to the following episode of the list you came from.',
+    ],
+  },
+  schedule: {
+    anchor: 'schedule',
+    lines: [
+      'Pick a start date and tap Generate draft: the recommended plan is one post per platform per day.',
+      'Customize opens every field, already filled with that plan.',
+      'Check each job’s time, platform and exact text; edit or remove entries to make a new draft.',
+      'Nothing posts until a draft is approved. The autopilot also adds the next draft when under a week is left.',
+    ],
+  },
+  approval: {
+    anchor: 'approve-a-schedule',
+    lines: [
+      'Approve is enabled when nothing blocks the draft.',
+      'Approving deploys and checks the media, then publishing starts automatically (not while paused).',
+    ],
+  },
+  make: {
+    anchor: 'make-a-batch',
+    lines: [
+      'Videos are made on the Mac by Claude; this page walks you through it, top to bottom.',
+      'Download feedback.json and copy the prompt, then follow the checkpoints on the Mac.',
+      'Upload the finalized folder in step 4. After posting, add the retro in step 5.',
+    ],
+  },
+  update: {
+    anchor: 'update-the-pi',
+    lines: [
+      'Check for updates asks the Pi to look at GitHub; nothing changes until you confirm.',
+      'Read “What’s new” and any warnings, then review the full commit id and confirm Update.',
+      'The page reloads by itself when the Pi runs the new version.',
+    ],
+  },
+  activity: {
+    anchor: 'health',
+    lines: [
+      'Everything the Pi did, newest first. Chips pick what to show: Posts is the posting history.',
+      'Search by question id, job id or platform; more filters and CSV/JSON export are under ⋯.',
+      'Open an entry with a job to see its events. Uncertain jobs are never posted again from here.',
+    ],
+  },
+  activation: {
+    anchor: 'activation',
+    lines: [
+      'The autopilot runs this checklist itself after each approval and twice a day.',
+      'A FAIL item holds it until fixed. Resuming after a pause is an owner command on the Pi.',
+    ],
+  },
+} as const satisfies Record<string, ScreenHelpEntry>
+
+export type ScreenHelpId = keyof typeof SCREEN_HELP
+
+/** Settings sections with a more specific guide section than the page's. */
+export const SETTINGS_SECTION_ANCHORS: Record<string, string> = {
+  activation: 'activation',
+  update: 'update-the-pi',
+  system: 'health',
+}
+
+/** The guide anchor the header help icon opens: the screen map in content/guide/meta.json. */
+export function helpAnchor(route: Route, screen: Screen): string {
+  return (route.section && SETTINGS_SECTION_ANCHORS[route.section]) || GUIDE.meta.screens[screen] || 'how-it-works'
+}
