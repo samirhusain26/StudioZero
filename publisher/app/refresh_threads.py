@@ -1,13 +1,16 @@
 """Renew an already authorized long-lived Threads token; disabled until configured.
 
-No app secret is needed for refresh. Values stay in private credential files and
-Authorization headers. This never publishes or widens OAuth permissions.
+No app secret is needed for refresh. Values stay in private credential files; the refresh call
+carries the token as the access_token query parameter (the endpoint ignores an Authorization
+header), the profile check sends it as a header. Nothing logs URLs. This never publishes or
+widens OAuth permissions.
 """
 import datetime as dt
 import json
 from pathlib import Path
 import os
 import time
+import urllib.parse
 import urllib.request
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # root runs this with python3 -I, which omits the script folder
@@ -20,8 +23,8 @@ def refresh(config, current, opener=urllib.request.urlopen, profile_request=requ
     channel = config['channels']['threads']
     if not channel.get('identityVerified') or not channel.get('accountId'):
         raise ValueError('Threads identity not configured')
-    req = urllib.request.Request('https://graph.threads.net/refresh_access_token?grant_type=th_refresh_token',
-                                 headers={'Authorization': 'Bearer '+current})
+    query = urllib.parse.urlencode({'grant_type': 'th_refresh_token', 'access_token': current})
+    req = urllib.request.Request('https://graph.threads.net/refresh_access_token?' + query)
     with opener(req, timeout=30) as response:
         result = json.load(response)
     value = result.get('access_token')

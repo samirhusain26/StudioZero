@@ -5,6 +5,7 @@ import os
 import sys
 import tempfile
 import unittest
+import urllib.parse
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'publisher/app'))
 from credential_entry import clear_superseded_failure
@@ -21,6 +22,18 @@ class RefreshTests(unittest.TestCase):
         self.assertEqual(refresh(self.config(), 'fixture', opener, profile), ('test-only', 5184000))
         with self.assertRaises(ValueError):
             refresh(self.config(), 'fixture', opener, lambda *a: {'id': 'wrong', 'username': 'studiozeroflow'})
+
+    def test_refresh_sends_the_token_as_the_access_token_parameter(self):
+        # graph.threads.net/refresh_access_token answers 'The parameter access_token is required' to a header.
+        seen = []
+        def opener(req, timeout):
+            seen.append(req)
+            return io.BytesIO(json.dumps({'access_token': 'test-only', 'expires_in': 5184000}).encode())
+        refresh(self.config(), 'fixture-token', opener, lambda *a: {'id': '42', 'username': 'studiozeroflow'})
+        url = urllib.parse.urlsplit(seen[0].full_url)
+        self.assertEqual((url.scheme, url.hostname, url.path), ('https', 'graph.threads.net', '/refresh_access_token'))
+        self.assertEqual(urllib.parse.parse_qs(url.query), {'grant_type': ['th_refresh_token'], 'access_token': ['fixture-token']})
+        self.assertIsNone(seen[0].get_header('Authorization'))
 
     def test_disabled_identity_cannot_refresh(self):
         config = self.config()
