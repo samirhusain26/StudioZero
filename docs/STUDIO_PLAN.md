@@ -229,14 +229,14 @@ Never committed: credentials, tokens, passcodes, deploy keys, `.env*`, `env.yaml
 - [x] Retire duplicates (§3.5) in StudioZero (d82f37e)
 - [x] `src/` → `engines/story/` (ac49364); audited import commit (38254f4; publisher/contract trees equal the Pi's)
 - [ ] `studio/` → `engines/motion/`: **after the cutover** (contract/library_contract.py falls back to `studio/node_modules/.bin/remotion` for ffprobe on the Mac; that path fix ships with the move as the first update through the new origin)
-- [ ] Move ignored local data (§3.3); recreate venvs
-- [ ] Swap folders (`StudioZero-old-2026-10` kept); marketing leaves `scalargame/`
-- [ ] Game repo: drop `/marketing/` ignores, add the Marketing section to CLAUDE/AGENTS, commit only that; **ask before pushing** (deploys production)
+- [x] Move ignored local data (§3.3) by rename (finalized batch media, `_dev`, toolchains, music/SFX sources, story assets/output/.env); venvs: story and motion after the move
+- [x] Swap folders: `StudioZero` = new repo, `StudioZero-old-2026-10` kept; marketing checkout moved to `scalargame-marketing-old-2026-10` (private archive working copy)
+- [x] Game repo: cf46e1d drops the `/marketing/` ignores (exact revert of 8830163's config lines) and adds the Marketing section to CLAUDE/AGENTS; **not pushed** (needs owner OK; local lint/Vitest not run: the game repo has no node_modules on this Mac, CI runs them)
 - [ ] CHECKPOINT 2: import tree, safety-check output, cutover script
 - [ ] GitHub (each with owner OK): archive old repo; deploy key to StudioZero; branch protection on `main`
 - [ ] Pi cutover; verification
 - [ ] All suites green; `check.mjs` reproduces `5ab19d44…`; regression diff clean; safety check green; local = GitHub = Pi
-- [ ] CLAUDE/AGENTS rewritten; memory moved; `~/CLAUDE.md` projects table update proposed
+- [~] CLAUDE/AGENTS rewritten; memory copied to the StudioZero memory folder (pointer left in the old one); `~/CLAUDE.md` projects table update proposed at CHECKPOINT 2
 
 ### Phase 2 — layout, manifests, packager · Phase 3 — Studio tab, agent, proxy, prompt builder · Phase 4 — contract v2 + publisher · Phase 5 — Originals back online
 As in the brief; not started.
@@ -268,3 +268,4 @@ As in the brief; not started.
 - **New repo** built in `~/Personal/code_projects/StudioZero-next` (clone of StudioZero): legacy-final b6e4962 → d82f37e retire → ac49364 engines/story → 38254f4 import → studio docs. The import leaves out the historical prompts with private paths and the six Gemini beds (local, ignored); root docs redacted (tailnet name, ssh key path, sudo note, links to removed records).
 - **Accepted, for owner confirmation at CHECKPOINT 2**: the Pi's short LAN name/login user `scout` stays in historical notes (`docs/REBUILD_PLAN.md`) and one-off deploy scripts; tailnet names, IPs and IDs do not.
 - **Safety check**: `tools/public_safety_check.py` (+ the private hash list) reports 0 findings for the whole tree; probes for each rule and a real ID from the private history are caught.
+- **Verified in the new folder** (with the real local data): both finalized batches validate (one pre-existing `dirty_generator` warning recorded in them); `node studio/pipeline/check.mjs` reproduces `questionsHash 5ab19d44…` and `git diff --exit-code` is clean; publisher 453 + contract tests green; UI typecheck/lint/259 Vitest/check:static green; motion `tsc` green; the safety check passes on every commit that a push would publish (the two legacy commits only carry files already public at dc12780).
