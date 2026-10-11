@@ -27,8 +27,9 @@ from src.project_manager import (
 # ── Retry endpoint request model ─────────────────────────────────────────────
 
 class RetrySceneRequest(BaseModel):
-    action: str  # "retry" | "edit" | "skip"
+    action: str  # "retry" | "edit" | "skip" | "change_model"
     new_prompt: str = ""  # only used when action == "edit"
+    model_id: str = ""  # only used when action == "change_model"
 
 logger = logging.getLogger(__name__)
 
@@ -429,6 +430,17 @@ async def api_retry_scene(project_id: str, req: RetrySceneRequest):
             _P(skip_marker).touch()
             logger.info(f"[server] Skip marker written for scene {failed_scene.get('scene_id')}")
 
+    elif req.action == "change_model":
+        if not req.model_id:
+            raise HTTPException(400, "model_id is required for action=change_model")
+        from src.video_models import get_model as _gm
+        try:
+            _gm(req.model_id)
+        except KeyError as e:
+            raise HTTPException(400, str(e))
+        await api_set_active_model({"model_id": req.model_id})
+        logger.info(f"[server] Model changed to {req.model_id} for scene retry")
+
     # Clear the failure state and restart the pipeline (it will resume from state)
     p.status = "running"
     p.step_data.pop("failed_scene", None)
@@ -606,6 +618,62 @@ class SettingsPayload(BaseModel):
     credentials: dict = {}
     models: dict = {}
     integrations: dict = {}
+    video_generation: dict = {}
+
+
+# ── Video Model Settings ───────────────────────────────────────────────────
+
+@app.get("/api/settings/video-models")
+async def api_get_video_models():
+    """Return the full video model registry grouped by tier."""
+    from src.video_models import VIDEO_MODEL_REGISTRY, estimate_episode_cost
+    tiers = {"cheapest": [], "recommended": [], "high_fidelity": []}
+    for m in VIDEO_MODEL_REGISTRY.values():
+        entry = m.model_dump()
+        entry["estimated_episode_cost"] = estimate_episode_cost(m.model_id)
+        tiers[m.tier].append(entry)
+    return tiers
+
+
+@app.get("/api/settings/active-model")
+async def api_get_active_model():
+    """Return the currently selected video generation model and tier."""
+    Config.ensure_directories()
+    if Config.SETTINGS_FILE.exists():
+        data = json.loads(Config.SETTINGS_FILE.read_text(encoding="utf-8"))
+    else:
+        data = {}
+    vg = data.get("video_generation", {})
+    return {
+        "model_id": vg.get("active_model", "veo-3.1-fast"),
+        "tier": vg.get("active_tier", "recommended"),
+        "max_budget": vg.get("max_budget", 10.0),
+        "auto_downgrade": vg.get("auto_downgrade", True),
+    }
+
+
+@app.post("/api/settings/active-model")
+async def api_set_active_model(payload: dict):
+    """Persist the active video model selection."""
+    Config.ensure_directories()
+    existing: dict = {}
+    if Config.SETTINGS_FILE.exists():
+        existing = json.loads(Config.SETTINGS_FILE.read_text(encoding="utf-8"))
+
+    vg = existing.get("video_generation", {})
+    if "model_id" in payload:
+        vg["active_model"] = payload["model_id"]
+    if "tier" in payload:
+        vg["active_tier"] = payload["tier"]
+    if "max_budget" in payload:
+        vg["max_budget"] = float(payload["max_budget"])
+    if "auto_downgrade" in payload:
+        vg["auto_downgrade"] = bool(payload["auto_downgrade"])
+    existing["video_generation"] = vg
+
+    Config.SETTINGS_FILE.write_text(json.dumps(existing, indent=2), encoding="utf-8")
+    Config.reload_settings()
+    return {"ok": True}
 
 
 @app.get("/api/settings")
@@ -621,7 +689,7 @@ async def api_get_settings():
     masked_creds = {k: "********" if v else "" for k, v in data.get("credentials", {}).items()}
     # Also expose which env-var keys are set but not in file
     for key in ("GEMINI_API_KEY", "GROQ_API_KEY", "TMDB_API_KEY", "PEXELS_API_KEY",
-                "VERTEX_PROJECT_ID", "VERTEX_LOCATION"):
+                "VERTEX_PROJECT_ID", "VERTEX_LOCATION", "FAL_KEY"):
         if key not in masked_creds and os.getenv(key):
             masked_creds[key] = "(from .env)"
 
@@ -663,7 +731,12 @@ async def api_save_settings(payload: SettingsPayload):
         elif k in existing_int:
             new_int[k] = existing_int[k]
 
-    merged = {"credentials": new_creds, "models": new_models, "integrations": new_int}
+    # Preserve video_generation settings (managed by the video model panel)
+    video_gen = existing.get("video_generation", {})
+    if payload.video_generation:
+        video_gen.update(payload.video_generation)
+
+    merged = {"credentials": new_creds, "models": new_models, "integrations": new_int, "video_generation": video_gen}
     Config.SETTINGS_FILE.write_text(json.dumps(merged, indent=2), encoding="utf-8")
     return {"ok": True}
 
