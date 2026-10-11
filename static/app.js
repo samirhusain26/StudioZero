@@ -243,6 +243,7 @@ function renderMovieSourceFields() {
 function renderAnimationForm() {
   $('#setup-form').innerHTML = `
     <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 fade-in">
+
       <div class="flex items-center justify-between mb-1">
         <label class="block text-sm font-medium text-gray-400">Project Name</label>
         <button onclick="generateRandomIdea()" id="btn-random"
@@ -261,7 +262,13 @@ function renderAnimationForm() {
       <label class="block text-sm font-medium text-gray-400 mb-1">Number of Episodes</label>
       <input id="s-episodes" type="number" value="1" min="1" max="10"
         class="w-24 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white mb-1 focus:outline-none focus:border-indigo-500" />
-      <p class="text-xs text-gray-500 mb-4">Each episode = 4-8 Veo scenes generated sequentially.</p>
+      <p class="text-xs text-gray-500 mb-4">Each episode = 4-8 scenes generated sequentially.</p>
+
+      <div id="setup-tier-badge" class="flex items-center gap-2 mb-1">
+        <span class="text-xs text-gray-500">Quality:</span>
+        <span id="setup-tier-label" class="text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-500">Loading...</span>
+        <a onclick="router.go('settings')" class="text-xs text-indigo-500 hover:text-indigo-400 cursor-pointer ml-1">Change</a>
+      </div>
 
       <div id="s-error" class="text-red-400 text-sm mb-3 hidden"></div>
       <div class="flex gap-3 mt-4">
@@ -272,6 +279,25 @@ function renderAnimationForm() {
       </div>
     </div>
   `;
+  // Load active tier badge
+  loadSetupTierBadge();
+}
+
+async function loadSetupTierBadge() {
+  const label = document.getElementById('setup-tier-label');
+  if (!label) return;
+  try {
+    const am = await api('GET', '/api/settings/active-model');
+    const tier = am.tier || 'recommended';
+    const meta = TIER_META[tier];
+    const cls = TIER_CLASSES[tier];
+    if (meta && cls) {
+      label.className = `text-xs px-2 py-0.5 rounded ${cls.bg} ${cls.text}`;
+      label.textContent = meta.label;
+    }
+  } catch {
+    label.textContent = 'Balanced';
+  }
 }
 
 async function generateRandomIdea() {
@@ -364,6 +390,7 @@ async function renderPipeline(projectId) {
     <div class="flex gap-3 mb-2 items-center flex-wrap">
       <button onclick="router.go('dashboard')" class="text-gray-500 hover:text-white text-sm">← Back</button>
       <h2 class="text-xl font-semibold flex-1 min-w-0 truncate">${esc(project.name)}</h2>
+      <span id="active-tier-badge" class="text-xs px-2 py-0.5 rounded"></span>
       <span id="status-badge" class="text-xs px-2 py-0.5 rounded flex-shrink-0 ${statusClass(project.status)}">${project.status}</span>
       ${project.status === 'running' ? '<span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse flex-shrink-0 inline-block"></span>' : ''}
       <span id="last-activity" class="text-xs text-gray-600 flex-shrink-0"></span>
@@ -409,7 +436,7 @@ async function renderPipeline(projectId) {
         </div>
       </div>
 
-      <!-- Right column: project info -->
+      <!-- Right column: project info + budget -->
       <div class="w-72 flex-shrink-0 space-y-3">
         <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
           <div class="px-4 py-2 border-b border-gray-800 text-xs text-gray-500 font-medium">Project Info</div>
@@ -417,6 +444,13 @@ async function renderPipeline(projectId) {
             ${_buildMetaPanel(project, pipelineState)}
           </div>
         </div>
+        ${isAnimSeries ? `
+        <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-800 text-xs text-gray-500 font-medium">Budget</div>
+          <div id="budget-panel" class="p-4 space-y-2 text-xs">
+            ${_buildBudgetPanel(project)}
+          </div>
+        </div>` : ''}
         <a onclick="router.go('finals')" href="#"
           class="block text-center text-xs text-indigo-500 hover:text-indigo-400 transition py-1">
           View Finals Library →
@@ -431,7 +465,11 @@ async function renderPipeline(projectId) {
   // Render controls for current status
   renderControls(project, projectId);
 
-  // No longer restoring media sidebar — replaced by project info panel
+  // Show active quality tier badge
+  loadTierBadge();
+
+  // Sync budget panel with settings (updates limit if scene_generator hasn't run yet)
+  if (isAnimSeries) _syncBudgetLimit();
 
   // Restore scene-failed dialog if applicable
   if (project.status === 'scene_failed' && project.step_data?.failed_scene) {
@@ -528,6 +566,88 @@ function _buildMetaPanel(project, pipelineState) {
   }
 
   return rows.join('');
+}
+
+function _buildBudgetPanel(project) {
+  let maxBudget = 10;
+  let spent = 0;
+  let modelName = '';
+  let sceneCount = 0;
+
+  // Extract cost data from step_data (scene_generator results)
+  for (const val of Object.values(project.step_data || {})) {
+    if (val && typeof val === 'object') {
+      if (val.budget) {
+        maxBudget = val.budget.max_budget || maxBudget;
+        spent = Math.max(spent, val.budget.cumulative_spend || 0);
+      }
+      if (val.model_name) modelName = val.model_name;
+      if (val.generation_count) sceneCount = Math.max(sceneCount, val.generation_count);
+    }
+  }
+
+  const pct = maxBudget > 0 ? Math.min(100, (spent / maxBudget) * 100) : 0;
+  const remaining = Math.max(0, maxBudget - spent);
+  const barColor = pct > 80 ? 'bg-red-500' : pct > 50 ? 'bg-yellow-500' : 'bg-indigo-500';
+
+  return `
+    <div class="flex justify-between items-baseline">
+      <span class="text-gray-500">Spent</span>
+      <span id="budget-spent" class="text-white font-mono">$${spent.toFixed(2)}</span>
+    </div>
+    <div class="flex justify-between items-baseline">
+      <span class="text-gray-500">Limit</span>
+      <span id="budget-limit" class="text-gray-400 font-mono">$${maxBudget.toFixed(2)}</span>
+    </div>
+    <div class="w-full bg-gray-800 rounded-full h-1.5 mt-1">
+      <div id="budget-bar" class="h-1.5 rounded-full ${barColor} transition-all" style="width: ${pct.toFixed(1)}%"></div>
+    </div>
+    <div class="flex justify-between items-baseline text-gray-600">
+      <span id="budget-pct">${pct.toFixed(0)}%</span>
+      <span id="budget-remaining">$${remaining.toFixed(2)} remaining</span>
+    </div>
+    ${sceneCount > 0 ? `<div id="budget-model" class="text-gray-600 mt-1">${sceneCount} scene${sceneCount !== 1 ? 's' : ''} via ${esc(modelName)}</div>` : '<div id="budget-model" class="text-gray-600 mt-1"></div>'}
+  `;
+}
+
+function _updateBudgetLive(data) {
+  const budget = data.budget || {};
+  const spent = budget.cumulative_spend || 0;
+  const max = budget.max_budget || 10;
+  const remaining = budget.remaining || 0;
+  const pct = budget.utilization_pct || 0;
+  const barColor = pct > 80 ? 'bg-red-500' : pct > 50 ? 'bg-yellow-500' : 'bg-indigo-500';
+
+  const el = (id) => document.getElementById(id);
+  const spentEl = el('budget-spent');
+  if (spentEl) spentEl.textContent = `$${spent.toFixed(2)}`;
+  const limitEl = el('budget-limit');
+  if (limitEl) limitEl.textContent = `$${max.toFixed(2)}`;
+  const barEl = el('budget-bar');
+  if (barEl) { barEl.style.width = `${Math.min(100, pct).toFixed(1)}%`; barEl.className = `h-1.5 rounded-full transition-all ${barColor}`; }
+  const pctEl = el('budget-pct');
+  if (pctEl) pctEl.textContent = `${pct.toFixed(0)}%`;
+  const remEl = el('budget-remaining');
+  if (remEl) remEl.textContent = `$${remaining.toFixed(2)} remaining`;
+  const modelEl = el('budget-model');
+  if (modelEl && data.model_name) {
+    const sc = data.scene_id != null ? `Scene ${data.scene_id}: $${(data.scene_cost || 0).toFixed(2)}` : '';
+    modelEl.textContent = `${sc}${sc ? ' — ' : ''}${data.model_name}`;
+  }
+}
+
+async function _syncBudgetLimit() {
+  try {
+    const am = await api('GET', '/api/settings/active-model');
+    const limitEl = document.getElementById('budget-limit');
+    if (limitEl) limitEl.textContent = `$${(am.max_budget || 10).toFixed(2)}`;
+    // Also update remaining if spent is still $0
+    const spentEl = document.getElementById('budget-spent');
+    const remEl = document.getElementById('budget-remaining');
+    if (spentEl && remEl && spentEl.textContent === '$0.00') {
+      remEl.textContent = `$${(am.max_budget || 10).toFixed(2)} remaining`;
+    }
+  } catch {}
 }
 
 function fmtDuration(ms) {
@@ -761,7 +881,10 @@ function renderControls(project, projectId) {
   const controls = document.getElementById('controls');
   if (!controls) return;
 
-  if (['created', 'paused', 'error', 'scene_failed'].includes(project.status)) {
+  if (project.status === 'scene_failed') {
+    // Don't show Continue button — the scene failed dialog provides specific actions
+    controls.innerHTML = '';
+  } else if (['created', 'paused', 'error'].includes(project.status)) {
     controls.innerHTML = `
       <button onclick="startPipeline('${projectId}')"
         class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
@@ -778,6 +901,22 @@ function renderControls(project, projectId) {
       </button>
     `;
   }
+}
+
+async function loadTierBadge() {
+  const badge = document.getElementById('active-tier-badge');
+  if (!badge) return;
+  try {
+    const am = await api('GET', '/api/settings/active-model');
+    const tier = am.tier || 'recommended';
+    const meta = TIER_META[tier];
+    const cls = TIER_CLASSES[tier];
+    if (meta && cls) {
+      badge.className = `text-xs px-2 py-0.5 rounded ${cls.bg} ${cls.text}`;
+      badge.textContent = meta.label;
+      badge.title = `Quality: ${meta.label} — ${meta.desc}`;
+    }
+  } catch {}
 }
 
 function runningControlsHTML(projectId) {
@@ -915,15 +1054,7 @@ function handleWsMessage(msg, projectId) {
       if (_activityTimer) { clearInterval(_activityTimer); _activityTimer = null; }
       appendLog(`[${ts()}] Scene ${msg.data?.scene_id} failed — action required.`, 'error');
       showSceneFailedDialog(msg, projectId);
-      {
-        const controls = document.getElementById('controls');
-        if (controls) controls.innerHTML = `
-          <button onclick="startPipeline('${projectId}')"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-            Continue Pipeline
-          </button>
-        `;
-      }
+      // No Continue button here — the dialog has retry/edit/change_model/skip actions
       break;
 
     case 'error':
@@ -946,6 +1077,10 @@ function handleWsMessage(msg, projectId) {
     case 'veo_polling':
       updateVeoBadge(msg.scene_id, msg.elapsed);
       updateVeoLogIndicator(msg.scene_id, msg.elapsed);
+      break;
+
+    case 'cost_update':
+      _updateBudgetLive(msg);
       break;
 
     case 'info':
@@ -1042,6 +1177,7 @@ function showSceneFailedDialog(msg, projectId) {
   const sceneId = data.scene_id ?? '?';
   const epNum   = data.episode_number ?? '?';
   const prompt  = data.veo_prompt || '';
+  const errorDetail = data.error_detail || '';
   const dialogId = `scene-fail-dialog-${sceneId}`;
 
   const logEl = document.getElementById('log-panel');
@@ -1052,11 +1188,21 @@ function showSceneFailedDialog(msg, projectId) {
   div.className = 'mt-3 border border-red-800 rounded-lg p-4 bg-gray-950 fade-in';
   div.innerHTML = `
     <p class="text-red-400 font-semibold mb-1 text-sm">Episode ${epNum}, Scene ${sceneId} — action required</p>
+    ${errorDetail ? `
+      <div class="mb-3 p-2 bg-red-950 border border-red-900 rounded text-xs text-red-300 font-mono whitespace-pre-wrap">${esc(errorDetail)}</div>
+    ` : ''}
     <div class="mb-3">
-      <label class="block text-xs text-gray-500 mb-1">Veo Prompt (${prompt.trim().split(/\s+/).length} words)</label>
+      <label class="block text-xs text-gray-500 mb-1">Prompt (${prompt.trim().split(/\s+/).length} words — editable)</label>
       <textarea id="scene-prompt-edit-${sceneId}" rows="5"
         class="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-200 font-mono focus:outline-none focus:border-indigo-500"
       >${esc(prompt)}</textarea>
+    </div>
+    <div class="mb-3">
+      <label class="block text-xs text-gray-500 mb-1">Switch video model</label>
+      <select id="scene-model-select-${sceneId}"
+        class="bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-xs text-gray-200 w-full focus:outline-none focus:border-indigo-500">
+        <option value="">Loading models…</option>
+      </select>
     </div>
     <p id="scene-edit-err-${sceneId}" class="text-red-400 text-xs mb-2 hidden"></p>
     <div class="flex gap-2 flex-wrap">
@@ -1067,6 +1213,10 @@ function showSceneFailedDialog(msg, projectId) {
       <button onclick="retryScene('${projectId}', ${JSON.stringify(sceneId)}, 'edit')"
         class="bg-yellow-600 hover:bg-yellow-700 text-white text-xs px-3 py-1.5 rounded transition">
         Save edits &amp; retry
+      </button>
+      <button onclick="retryScene('${projectId}', ${JSON.stringify(sceneId)}, 'change_model')"
+        class="bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-1.5 rounded transition">
+        Change model &amp; retry
       </button>
       <button onclick="retryScene('${projectId}', ${JSON.stringify(sceneId)}, 'skip')"
         class="bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded transition">
@@ -1079,6 +1229,37 @@ function showSceneFailedDialog(msg, projectId) {
 
   const controls = document.getElementById('controls');
   if (controls) controls.innerHTML = '';
+
+  // Populate model dropdown asynchronously
+  _loadSceneModelOptions(sceneId);
+}
+
+async function _loadSceneModelOptions(sceneId) {
+  try {
+    const [models, active] = await Promise.all([
+      api('GET', '/api/settings/video-models'),
+      api('GET', '/api/settings/active-model'),
+    ]);
+    const select = document.getElementById(`scene-model-select-${sceneId}`);
+    if (!select) return;
+
+    let html = '';
+    for (const [tier, tierModels] of Object.entries(models)) {
+      const meta = TIER_META[tier];
+      if (!meta || !tierModels.length) continue;
+      html += `<optgroup label="${meta.label}">`;
+      for (const m of tierModels) {
+        const sel = m.model_id === active.model_id ? ' selected' : '';
+        const cost = m.estimated_episode_cost != null ? ` (~$${m.estimated_episode_cost}/ep)` : '';
+        html += `<option value="${m.model_id}"${sel}>${m.display_name}${cost}</option>`;
+      }
+      html += '</optgroup>';
+    }
+    select.innerHTML = html;
+  } catch {
+    const select = document.getElementById(`scene-model-select-${sceneId}`);
+    if (select) select.innerHTML = '<option value="">Failed to load models</option>';
+  }
 }
 
 async function retryScene(projectId, sceneId, action) {
@@ -1092,18 +1273,33 @@ async function retryScene(projectId, sceneId, action) {
     return;
   }
 
+  let modelId = '';
+  if (action === 'change_model') {
+    modelId = document.getElementById(`scene-model-select-${sceneId}`)?.value || '';
+    if (!modelId) {
+      const errEl = document.getElementById(`scene-edit-err-${sceneId}`);
+      if (errEl) { errEl.textContent = 'Select a model first.'; errEl.classList.remove('hidden'); }
+      return;
+    }
+  }
+
   const dialogEl = document.getElementById(`scene-fail-dialog-${sceneId}`);
   if (dialogEl) dialogEl.innerHTML = `<p class="text-yellow-400 text-sm">Sending: ${action}…</p>`;
 
   try {
-    await api('POST', `/api/projects/${projectId}/retry-scene`, { action, new_prompt: newPrompt });
-    appendLog(`[${ts()}] Scene ${sceneId}: ${action} submitted — resuming…`, 'step');
+    await api('POST', `/api/projects/${projectId}/retry-scene`, {
+      action,
+      new_prompt: newPrompt,
+      model_id: modelId,
+    });
+    const label = action === 'change_model' ? `change_model (${modelId})` : action;
+    appendLog(`[${ts()}] Scene ${sceneId}: ${label} submitted — resuming…`, 'step');
     connectWs(projectId);
     startActivityTimer();
-    // Restore pause button
     const controls = document.getElementById('controls');
     if (controls) controls.innerHTML = runningControlsHTML(projectId);
   } catch (e) {
+    if (dialogEl) dialogEl.innerHTML = `<p class="text-red-400 text-sm">Action failed: ${esc(e.message)}</p>`;
     appendLog(`Failed to send retry action: ${e.message}`, 'error');
   }
 }
@@ -1562,32 +1758,67 @@ function esc(str) {
 
 const LLM_MODELS = [
   { value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash-Lite (fastest / cheapest)' },
-  { value: 'gemini-2.5-flash',      label: 'Gemini 2.5 Flash (best price-performance) ★ default' },
+  { value: 'gemini-2.5-flash',      label: 'Gemini 2.5 Flash (best price-performance)' },
   { value: 'gemini-2.5-pro',        label: 'Gemini 2.5 Pro (most capable)' },
   { value: 'gemini-3.1-pro-preview',label: 'Gemini 3.1 Pro Preview (latest)' },
 ];
 
 const IMAGE_MODELS = [
-  { value: 'gemini-2.5-flash-image',        label: 'Gemini 2.5 Flash Image / Nano Banana (fastest / cheapest) ★ default' },
-  { value: 'gemini-3.1-flash-image-preview', label: 'Gemini 3.1 Flash Image / Nano Banana 2 (high efficiency)' },
-  { value: 'gemini-3-pro-image-preview',    label: 'Gemini 3 Pro Image / Nano Banana Pro (studio quality)' },
-];
-
-const VIDEO_MODELS = [
-  { value: 'veo-3.1-lite-generate-preview', label: 'Veo 3.1 Lite (lowest cost) ★ default' },
-  { value: 'veo-3.1-generate-preview',      label: 'Veo 3.1 (full cinematic quality + native audio)' },
+  { value: 'gemini-2.5-flash-image',        label: 'Gemini 2.5 Flash Image (fastest / cheapest)' },
+  { value: 'gemini-3.1-flash-image-preview', label: 'Gemini 3.1 Flash Image (high efficiency)' },
+  { value: 'gemini-3-pro-image-preview',    label: 'Gemini 3 Pro Image (studio quality)' },
 ];
 
 const TTS_MODELS = [
-  { value: 'gemini-2.5-flash-preview-tts', label: 'Gemini 2.5 Flash TTS (fast / cheap) ★ default' },
+  { value: 'gemini-2.5-flash-preview-tts', label: 'Gemini 2.5 Flash TTS (fast / cheap)' },
   { value: 'gemini-2.5-pro-preview-tts',   label: 'Gemini 2.5 Pro TTS (higher fidelity)' },
 ];
+
+const TIER_META = {
+  cheapest:      { label: 'Budget',    icon: '$',   color: 'emerald', desc: 'Minimize cost. Best for drafts and batch runs.' },
+  recommended:   { label: 'Balanced',  icon: '★',  color: 'indigo',  desc: 'Best quality per dollar. Recommended for production.' },
+  high_fidelity: { label: 'Premium',   icon: '◆', color: 'amber',   desc: 'Maximum fidelity. For final renders and hero content.' },
+};
+
+// Hardcoded Tailwind class maps — CDN can't generate dynamic classes
+const TIER_CLASSES = {
+  cheapest:      { border: 'border-emerald-500', bg: 'bg-emerald-950', text: 'text-emerald-400', dot: 'bg-emerald-500' },
+  recommended:   { border: 'border-indigo-500',  bg: 'bg-indigo-950',  text: 'text-indigo-400',  dot: 'bg-indigo-500' },
+  high_fidelity: { border: 'border-amber-500',   bg: 'bg-amber-950',   text: 'text-amber-400',   dot: 'bg-amber-500' },
+};
+
+// Quality presets — one click sets all model choices
+const QUALITY_PRESETS = {
+  cheapest: {
+    llm_model:    'gemini-2.5-flash-lite',
+    image_model:  'gemini-2.5-flash-image',
+    tts_model:    'gemini-2.5-flash-preview-tts',
+    video_model:  'wan-2.5',
+    video_tier:   'cheapest',
+  },
+  recommended: {
+    llm_model:    'gemini-2.5-flash',
+    image_model:  'gemini-2.5-flash-image',
+    tts_model:    'gemini-2.5-flash-preview-tts',
+    video_model:  'seedance-2.0-fast',
+    video_tier:   'recommended',
+  },
+  high_fidelity: {
+    llm_model:    'gemini-2.5-pro',
+    image_model:  'gemini-3-pro-image-preview',
+    tts_model:    'gemini-2.5-pro-preview-tts',
+    video_model:  'veo-3.1',
+    video_tier:   'high_fidelity',
+  },
+};
 
 function selectOpts(models, current) {
   return models.map(m =>
     `<option value="${esc(m.value)}" ${m.value === current ? 'selected' : ''}>${esc(m.label)}</option>`
   ).join('');
 }
+
+let _settingsTab = 'models';
 
 async function renderSettings() {
   $('#header-subtitle').textContent = 'Settings';
@@ -1596,65 +1827,200 @@ async function renderSettings() {
   let data = { credentials: {}, models: {} };
   try { data = await api('GET', '/api/settings'); } catch {}
 
+  let videoModels = {};
+  let activeModel = { model_id: 'veo-3.1-fast', tier: 'recommended', max_budget: 10, auto_downgrade: true };
+  try { videoModels = await api('GET', '/api/settings/video-models'); } catch {}
+  try { activeModel = await api('GET', '/api/settings/active-model'); } catch {}
+
+  // Detect current preset (if all values match a preset exactly)
   const c = data.credentials || {};
   const m = data.models || {};
+  _activeTier = activeModel.tier || 'recommended';
+  _activeModelId = activeModel.model_id || 'veo-3.1-fast';
+  _videoModelsCache = videoModels;
+  let _detectedPreset = detectCurrentPreset(m, activeModel);
 
   main().innerHTML = `
-    <div class="max-w-2xl mx-auto space-y-6">
+    <div class="max-w-2xl mx-auto space-y-5">
 
-      <!-- Credentials -->
-      <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-1">API Credentials</h2>
-        <p class="text-xs text-gray-500 mb-4">Saved to <code>output/settings.json</code> (overrides .env). Leave blank to keep existing.</p>
-
-        ${[
-          ['GEMINI_API_KEY',    'Gemini API Key',           'https://aistudio.google.com/apikey'],
-          ['GROQ_API_KEY',      'Groq API Key (optional)',  'https://console.groq.com/keys'],
-          ['TMDB_API_KEY',      'TMDB API Key (movie mode)','https://www.themoviedb.org/settings/api'],
-          ['PEXELS_API_KEY',    'Pexels API Key (movie mode)','https://www.pexels.com/api/'],
-          ['VERTEX_PROJECT_ID', 'Vertex AI Project ID',     ''],
-          ['VERTEX_LOCATION',   'Vertex AI Location',       ''],
-        ].map(([key, label, link]) => `
-          <div class="mb-3">
-            <label class="block text-sm font-medium text-gray-400 mb-1">
-              ${esc(label)}${link ? ` <a href="${link}" target="_blank" class="text-indigo-500 text-xs ml-1">Get key →</a>` : ''}
-            </label>
-            <input id="cred-${key}" type="password" autocomplete="off"
-              placeholder="${esc(c[key] || '')}"
-              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500"
-              value="" />
+      <!-- Quality Preset Quick-Select -->
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-lg font-semibold">Quality Preset</h2>
+            <p class="text-xs text-gray-500 mt-0.5">One click sets all models — LLM, image, video, and TTS.</p>
           </div>
-        `).join('')}
-      </div>
-
-      <!-- Integrations -->
-      <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-1">Integrations</h2>
-        <p class="text-xs text-gray-500 mb-4">External service connections for batch processing.</p>
-
-        <div class="mb-3">
-          <label class="block text-sm font-medium text-gray-400 mb-1">Google Sheet URL (Movie Recap Batch)</label>
-          <input id="int-BATCH_SHEET_URL" type="text" autocomplete="off"
-            placeholder="${esc(data.integrations?.BATCH_SHEET_URL || '')}"
-            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500"
-            value="" />
-          <div class="mt-2 px-3 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg">
-            <p class="text-xs text-gray-500 leading-relaxed">
-              Your sheet needs a <strong class="text-gray-400">movie_title</strong> (or Movie Name) column and a
-              <strong class="text-gray-400">Status</strong> column in row 1.
-              Set Status to <strong class="text-gray-400">pending</strong> for each movie you want processed.
-              The pipeline updates Status to Done/Failed and fills in output columns automatically.
-              Requires a Google service account with editor access
-              (configured via <code class="text-gray-400">GOOGLE_SERVICE_ACCOUNT_FILE</code> in .env).
-            </p>
-          </div>
+          <span id="preset-badge" class="text-xs px-2 py-0.5 rounded ${_detectedPreset ? TIER_CLASSES[_detectedPreset].bg + ' ' + TIER_CLASSES[_detectedPreset].text : 'bg-gray-800 text-gray-500'}">${_detectedPreset ? TIER_META[_detectedPreset].label : 'Custom'}</span>
+        </div>
+        <div class="grid grid-cols-3 gap-3" id="preset-cards">
+          ${Object.entries(TIER_META).map(([tier, meta]) => {
+            const cls = TIER_CLASSES[tier];
+            const isActive = _detectedPreset === tier;
+            return `
+            <button onclick="applyPreset('${tier}')"
+              id="preset-btn-${tier}"
+              class="p-4 rounded-xl border-2 text-left transition cursor-pointer
+                     ${isActive ? cls.border + ' ' + cls.bg : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'}">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-lg">${meta.icon}</span>
+                <span class="font-semibold text-sm ${isActive ? cls.text : 'text-white'}">${meta.label}</span>
+              </div>
+              <div class="text-xs text-gray-400 leading-relaxed">${meta.desc}</div>
+            </button>`;
+          }).join('')}
         </div>
       </div>
 
-      <!-- Model selection -->
+      <!-- Tab Navigation -->
+      <div class="flex gap-1 bg-gray-900 border border-gray-800 rounded-lg p-1">
+        ${['models', 'credentials', 'integrations'].map(tab => `
+          <button onclick="switchSettingsTab('${tab}')" id="stab-${tab}"
+            class="stab flex-1 px-4 py-2 rounded-md text-sm font-medium transition
+                   ${_settingsTab === tab ? 'bg-gray-800 text-white' : 'text-gray-500 hover:text-gray-300'}">
+            ${tab === 'models' ? 'Models' : tab === 'credentials' ? 'API Keys' : 'Integrations'}
+          </button>
+        `).join('')}
+      </div>
+
+      <!-- Tab Content -->
+      <div id="settings-tab-content">
+        ${renderSettingsTabContent(m, c, data.integrations || {}, videoModels, activeModel)}
+      </div>
+
+      <!-- Save -->
+      <div id="settings-msg" class="text-sm hidden"></div>
+      <div class="flex gap-3">
+        <button onclick="router.go('dashboard')"
+          class="px-4 py-2 rounded-lg text-sm border border-gray-700 text-gray-400 hover:text-white transition">Cancel</button>
+        <button onclick="saveSettings()"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition">Save Settings</button>
+      </div>
+    </div>
+  `;
+}
+
+function detectCurrentPreset(models, activeModel) {
+  for (const [tier, preset] of Object.entries(QUALITY_PRESETS)) {
+    if ((models.llm_model || 'gemini-2.5-flash') === preset.llm_model &&
+        (models.image_model || 'gemini-2.5-flash-image') === preset.image_model &&
+        (models.tts_model || 'gemini-2.5-flash-preview-tts') === preset.tts_model &&
+        activeModel.model_id === preset.video_model &&
+        activeModel.tier === preset.video_tier) {
+      return tier;
+    }
+  }
+  return null;
+}
+
+function switchSettingsTab(tab) {
+  _settingsTab = tab;
+  document.querySelectorAll('.stab').forEach(btn => {
+    btn.className = `stab flex-1 px-4 py-2 rounded-md text-sm font-medium transition ${btn.id === 'stab-' + tab ? 'bg-gray-800 text-white' : 'text-gray-500 hover:text-gray-300'}`;
+  });
+  // Re-read current form values before switching
+  const current = _readCurrentFormValues();
+  document.getElementById('settings-tab-content').innerHTML =
+    renderSettingsTabContent(current.models, current.credentials, current.integrations, _videoModelsCache, { model_id: _activeModelId, tier: _activeTier, max_budget: current.max_budget, auto_downgrade: current.auto_downgrade });
+}
+
+function _readCurrentFormValues() {
+  const models = {};
+  const el_llm = document.getElementById('model-llm');
+  const el_img = document.getElementById('model-image');
+  const el_tts = document.getElementById('model-tts');
+  if (el_llm) models.llm_model = el_llm.value;
+  if (el_img) models.image_model = el_img.value;
+  if (el_tts) models.tts_model = el_tts.value;
+
+  const credentials = {};
+  for (const k of ['GEMINI_API_KEY','GROQ_API_KEY','TMDB_API_KEY','PEXELS_API_KEY','FAL_KEY','VERTEX_PROJECT_ID','VERTEX_LOCATION']) {
+    const el = document.getElementById(`cred-${k}`);
+    if (el) credentials[k] = el.placeholder; // keep placeholder for display
+  }
+
+  const integrations = {};
+  const sheetEl = document.getElementById('int-BATCH_SHEET_URL');
+  if (sheetEl) integrations.BATCH_SHEET_URL = sheetEl.placeholder || sheetEl.value;
+
+  const budgetEl = document.getElementById('vg-max-budget');
+  const autoEl = document.getElementById('vg-auto-downgrade');
+  return {
+    models,
+    credentials,
+    integrations,
+    max_budget: budgetEl ? parseFloat(budgetEl.value) : 10,
+    auto_downgrade: autoEl ? autoEl.checked : true,
+  };
+}
+
+function renderSettingsTabContent(models, creds, integrations, videoModels, activeModel) {
+  if (_settingsTab === 'credentials') {
+    return renderCredentialsTab(creds);
+  }
+  if (_settingsTab === 'integrations') {
+    return renderIntegrationsTab(integrations);
+  }
+  return renderModelsTab(models, videoModels, activeModel);
+}
+
+function renderCredentialsTab(c) {
+  return `
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 fade-in">
+      <p class="text-xs text-gray-500 mb-4">Saved to <code class="text-gray-400">output/settings.json</code> (overrides .env). Leave blank to keep existing.</p>
+      ${[
+        ['GEMINI_API_KEY',    'Gemini API Key',           'https://aistudio.google.com/apikey'],
+        ['GROQ_API_KEY',      'Groq API Key (optional)',  'https://console.groq.com/keys'],
+        ['TMDB_API_KEY',      'TMDB API Key (movie mode)','https://www.themoviedb.org/settings/api'],
+        ['PEXELS_API_KEY',    'Pexels API Key (movie mode)','https://www.pexels.com/api/'],
+        ['FAL_KEY',           'fal.ai API Key (multi-model video)', 'https://fal.ai/dashboard/keys'],
+        ['VERTEX_PROJECT_ID', 'Vertex AI Project ID',     ''],
+        ['VERTEX_LOCATION',   'Vertex AI Location',       ''],
+      ].map(([key, label, link]) => `
+        <div class="mb-3">
+          <label class="block text-sm font-medium text-gray-400 mb-1">
+            ${esc(label)}${link ? ` <a href="${link}" target="_blank" class="text-indigo-500 text-xs ml-1">Get key →</a>` : ''}
+          </label>
+          <input id="cred-${key}" type="password" autocomplete="off"
+            placeholder="${esc(c[key] || '')}"
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500"
+            value="" />
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderIntegrationsTab(integrations) {
+  return `
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 fade-in">
+      <div class="mb-3">
+        <label class="block text-sm font-medium text-gray-400 mb-1">Google Sheet URL (Movie Recap Batch)</label>
+        <input id="int-BATCH_SHEET_URL" type="text" autocomplete="off"
+          placeholder="${esc(integrations.BATCH_SHEET_URL || '')}"
+          class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500"
+          value="" />
+        <div class="mt-2 px-3 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg">
+          <p class="text-xs text-gray-500 leading-relaxed">
+            Your sheet needs a <strong class="text-gray-400">movie_title</strong> (or Movie Name) column and a
+            <strong class="text-gray-400">Status</strong> column in row 1.
+            Set Status to <strong class="text-gray-400">pending</strong> for each movie you want processed.
+            Requires a Google service account with editor access
+            (configured via <code class="text-gray-400">GOOGLE_SERVICE_ACCOUNT_FILE</code> in .env).
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderModelsTab(models, videoModels, activeModel) {
+  const m = models || {};
+  return `
+    <div class="space-y-5 fade-in">
+
+      <!-- LLM / Image / TTS -->
       <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-1">Model Selection</h2>
-        <p class="text-xs text-gray-500 mb-4">Choose which Gemini model to use at each pipeline stage.</p>
+        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Pipeline Models</h3>
 
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-400 mb-1">LLM (Writing / Direction / Casting)</label>
@@ -1672,14 +2038,6 @@ async function renderSettings() {
           </select>
         </div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-400 mb-1">Video Generation (Veo — scene clips)</label>
-          <select id="model-video"
-            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500">
-            ${selectOpts(VIDEO_MODELS, m.video_model || 'veo-3.1-lite-generate-preview')}
-          </select>
-        </div>
-
         <div class="mb-2">
           <label class="block text-sm font-medium text-gray-400 mb-1">Text-to-Speech (Voice lines)</label>
           <select id="model-tts"
@@ -1689,41 +2047,251 @@ async function renderSettings() {
         </div>
       </div>
 
-      <!-- Save -->
-      <div id="settings-msg" class="text-sm hidden"></div>
-      <div class="flex gap-3">
-        <button onclick="router.go('dashboard')"
-          class="px-4 py-2 rounded-lg text-sm border border-gray-700 text-gray-400 hover:text-white transition">Cancel</button>
-        <button onclick="saveSettings()"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition">Save Settings</button>
+      <!-- Video Generation — tier + model picker -->
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-1">Video Generation</h3>
+        <p class="text-xs text-gray-500 mb-4">Choose the AI model for animation clips. Affects cost, quality, and speed.</p>
+
+        <div class="grid grid-cols-3 gap-3 mb-4" id="tier-cards">
+          ${Object.entries(TIER_META).map(([tier, meta]) => {
+            const cls = TIER_CLASSES[tier];
+            const isActive = _activeTier === tier;
+            return `
+            <button onclick="selectVideoTier('${tier}')"
+              id="tier-btn-${tier}"
+              class="p-3 rounded-lg border-2 text-left transition cursor-pointer
+                     ${isActive ? cls.border + ' ' + cls.bg : 'border-gray-700 bg-gray-800 hover:border-gray-600'}">
+              <div class="font-semibold text-sm ${isActive ? cls.text : 'text-white'}">${meta.label}</div>
+            </button>`;
+          }).join('')}
+        </div>
+
+        <div id="tier-models" class="mb-4">
+          ${renderTierModels(videoModels, activeModel)}
+        </div>
+
+        <div class="flex items-center gap-4 mb-3">
+          <label class="text-sm text-gray-400">Max budget per project: $</label>
+          <input id="vg-max-budget" type="number" step="0.50" min="1" max="100"
+            value="${activeModel.max_budget || 10}"
+            class="w-24 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-indigo-500" />
+        </div>
+        <div class="flex items-center gap-2">
+          <input id="vg-auto-downgrade" type="checkbox" ${activeModel.auto_downgrade !== false ? 'checked' : ''}
+            class="rounded border-gray-600 bg-gray-800 text-indigo-600 focus:ring-indigo-500" />
+          <label for="vg-auto-downgrade" class="text-sm text-gray-400">Auto-downgrade model when budget exceeded</label>
+        </div>
+
+        <div id="cost-estimate" class="mt-4 p-3 bg-gray-800 rounded-lg text-sm text-gray-300">
+          ${renderCostEstimate(videoModels, _activeModelId)}
+        </div>
       </div>
     </div>
   `;
 }
 
+// ── Video model tier helpers ─────────────────────────────────────────────────
+
+// Module-level state for video model panel
+let _videoModelsCache = {};
+let _activeTier = 'recommended';
+let _activeModelId = 'veo-3.1-fast';
+
+function renderTierModels(videoModels, activeModel) {
+  _videoModelsCache = videoModels;
+  _activeTier = activeModel.tier || 'recommended';
+  _activeModelId = activeModel.model_id || 'veo-3.1-fast';
+
+  const models = videoModels[_activeTier] || [];
+  if (!models.length) return '<p class="text-xs text-gray-500">No models in this tier.</p>';
+
+  return `<div class="space-y-2">${models.map(m => `
+    <label class="flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition
+                  ${m.model_id === _activeModelId ? 'border-indigo-500 bg-indigo-950/30' : 'border-gray-700 bg-gray-800 hover:border-gray-600'}">
+      <input type="radio" name="video-model" value="${esc(m.model_id)}"
+        ${m.model_id === _activeModelId ? 'checked' : ''}
+        onchange="selectVideoModel('${esc(m.model_id)}')"
+        class="mt-0.5 text-indigo-600 focus:ring-indigo-500 bg-gray-700 border-gray-600" />
+      <div class="flex-1 min-w-0">
+        <div class="font-medium text-sm text-white">${esc(m.display_name)}</div>
+        <div class="text-xs text-gray-400 mt-0.5">${esc(m.description)}</div>
+        <div class="flex flex-wrap gap-3 mt-1.5 text-xs text-gray-500">
+          <span>${m.cost_per_second != null ? '$' + m.cost_per_second.toFixed(3) + '/sec' : 'Token-based'}</span>
+          <span>${esc(m.max_resolution)}</span>
+          <span>${m.max_duration_sec}s max</span>
+          ${m.has_audio ? '<span class="text-green-500">Audio</span>' : '<span class="text-gray-600">No audio</span>'}
+          ${m.has_reference_images ? '<span class="text-blue-400">Ref images</span>' : ''}
+        </div>
+      </div>
+      <div class="text-xs text-gray-500 whitespace-nowrap">~$${(m.estimated_episode_cost || 0).toFixed(2)}/ep</div>
+    </label>
+  `).join('')}</div>`;
+}
+
+function renderCostEstimate(videoModels, modelId) {
+  const allModels = [].concat(...Object.values(videoModels));
+  const model = allModels.find(m => m.model_id === modelId);
+  if (!model) return 'Select a model to see cost estimates.';
+  const cost = model.estimated_episode_cost || 0;
+  return `Estimated cost per episode (6 shots x 8s): <strong class="text-white">$${cost.toFixed(2)}</strong>
+    <span class="text-gray-500 ml-2">using ${esc(model.display_name)}</span>`;
+}
+
+function selectVideoTier(tier) {
+  _activeTier = tier;
+  // Update tier card styles using hardcoded class maps
+  for (const [t] of Object.entries(TIER_META)) {
+    const btn = document.getElementById(`tier-btn-${t}`);
+    if (!btn) continue;
+    const cls = TIER_CLASSES[t];
+    if (t === tier) {
+      btn.className = `p-3 rounded-lg border-2 text-left transition cursor-pointer ${cls.border} ${cls.bg}`;
+      btn.querySelector('div').className = `font-semibold text-sm ${cls.text}`;
+    } else {
+      btn.className = 'p-3 rounded-lg border-2 text-left transition cursor-pointer border-gray-700 bg-gray-800 hover:border-gray-600';
+      btn.querySelector('div').className = 'font-semibold text-sm text-white';
+    }
+  }
+  // Re-render model list for this tier
+  const models = _videoModelsCache[tier] || [];
+  if (models.length && !models.find(m => m.model_id === _activeModelId)) {
+    _activeModelId = models[0].model_id;
+  }
+  document.getElementById('tier-models').innerHTML = renderTierModels(_videoModelsCache, { tier, model_id: _activeModelId });
+  document.getElementById('cost-estimate').innerHTML = renderCostEstimate(_videoModelsCache, _activeModelId);
+  updatePresetBadge();
+}
+
+function selectVideoModel(modelId) {
+  _activeModelId = modelId;
+  document.getElementById('cost-estimate').innerHTML = renderCostEstimate(_videoModelsCache, modelId);
+  updatePresetBadge();
+}
+
+// ── Quality Preset Application ──────────────────────────────────────────────
+
+function applyPreset(tier) {
+  const preset = QUALITY_PRESETS[tier];
+  if (!preset) return;
+
+  // Update dropdowns if they exist on the current tab
+  const llmEl = document.getElementById('model-llm');
+  const imgEl = document.getElementById('model-image');
+  const ttsEl = document.getElementById('model-tts');
+  if (llmEl) llmEl.value = preset.llm_model;
+  if (imgEl) imgEl.value = preset.image_model;
+  if (ttsEl) ttsEl.value = preset.tts_model;
+
+  // Update video tier + model
+  _activeTier = preset.video_tier;
+  _activeModelId = preset.video_model;
+
+  // If we're on the models tab, refresh the tier cards and model list
+  const tierCards = document.getElementById('tier-cards');
+  if (tierCards) {
+    selectVideoTier(preset.video_tier);
+    // Force the correct model radio within the tier
+    const radio = document.querySelector(`input[name="video-model"][value="${preset.video_model}"]`);
+    if (radio) {
+      radio.checked = true;
+      selectVideoModel(preset.video_model);
+    }
+  }
+
+  // Update preset card styles
+  updatePresetCards(tier);
+  updatePresetBadge(tier);
+}
+
+function updatePresetCards(activeTier) {
+  for (const [t] of Object.entries(TIER_META)) {
+    const btn = document.getElementById(`preset-btn-${t}`);
+    if (!btn) continue;
+    const cls = TIER_CLASSES[t];
+    if (t === activeTier) {
+      btn.className = `p-4 rounded-xl border-2 text-left transition cursor-pointer ${cls.border} ${cls.bg}`;
+      const label = btn.querySelector('span:nth-child(2)');
+      if (label) label.className = `font-semibold text-sm ${cls.text}`;
+    } else {
+      btn.className = 'p-4 rounded-xl border-2 text-left transition cursor-pointer border-gray-700 bg-gray-800/50 hover:border-gray-600';
+      const label = btn.querySelector('span:nth-child(2)');
+      if (label) label.className = 'font-semibold text-sm text-white';
+    }
+  }
+}
+
+function updatePresetBadge(forceTier) {
+  const badge = document.getElementById('preset-badge');
+  if (!badge) return;
+  const tier = forceTier || _detectCurrentPresetFromDOM();
+  if (tier) {
+    const cls = TIER_CLASSES[tier];
+    badge.className = `text-xs px-2 py-0.5 rounded ${cls.bg} ${cls.text}`;
+    badge.textContent = TIER_META[tier].label;
+    updatePresetCards(tier);
+  } else {
+    badge.className = 'text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-500';
+    badge.textContent = 'Custom';
+    updatePresetCards(null);
+  }
+}
+
+function _detectCurrentPresetFromDOM() {
+  const llm = document.getElementById('model-llm')?.value || 'gemini-2.5-flash';
+  const img = document.getElementById('model-image')?.value || 'gemini-2.5-flash-image';
+  const tts = document.getElementById('model-tts')?.value || 'gemini-2.5-flash-preview-tts';
+  for (const [tier, preset] of Object.entries(QUALITY_PRESETS)) {
+    if (llm === preset.llm_model && img === preset.image_model &&
+        tts === preset.tts_model && _activeModelId === preset.video_model &&
+        _activeTier === preset.video_tier) {
+      return tier;
+    }
+  }
+  return null;
+}
+
 async function saveSettings() {
-  const cred_keys = ['GEMINI_API_KEY','GROQ_API_KEY','TMDB_API_KEY','PEXELS_API_KEY','VERTEX_PROJECT_ID','VERTEX_LOCATION'];
+  // Collect credentials (only from credentials tab — may not be rendered)
+  const cred_keys = ['GEMINI_API_KEY','GROQ_API_KEY','TMDB_API_KEY','PEXELS_API_KEY','FAL_KEY','VERTEX_PROJECT_ID','VERTEX_LOCATION'];
   const credentials = {};
   for (const k of cred_keys) {
     const el = document.getElementById(`cred-${k}`);
     if (el && el.value.trim()) credentials[k] = el.value.trim();
   }
 
+  // Collect integrations (only from integrations tab)
   const integrations = {};
   const sheetUrl = document.getElementById('int-BATCH_SHEET_URL');
   if (sheetUrl && sheetUrl.value.trim()) integrations.BATCH_SHEET_URL = sheetUrl.value.trim();
 
+  // Collect models (only from models tab — fall back to preset-driven state)
   const models = {
-    llm_model:   document.getElementById('model-llm').value,
-    image_model: document.getElementById('model-image').value,
-    video_model: document.getElementById('model-video').value,
-    tts_model:   document.getElementById('model-tts').value,
+    llm_model:   document.getElementById('model-llm')?.value || QUALITY_PRESETS[_activeTier]?.llm_model || 'gemini-2.5-flash',
+    image_model: document.getElementById('model-image')?.value || QUALITY_PRESETS[_activeTier]?.image_model || 'gemini-2.5-flash-image',
+    tts_model:   document.getElementById('model-tts')?.value || QUALITY_PRESETS[_activeTier]?.tts_model || 'gemini-2.5-flash-preview-tts',
   };
+
+  const video_generation = {
+    active_model: _activeModelId,
+    active_tier: _activeTier,
+    max_budget: parseFloat(document.getElementById('vg-max-budget')?.value || '10'),
+    auto_downgrade: document.getElementById('vg-auto-downgrade')?.checked ?? true,
+  };
+
+  // Save video model selection via dedicated endpoint
+  try {
+    await api('POST', '/api/settings/active-model', video_generation);
+  } catch (e) {
+    // Will be caught by main save below
+  }
 
   const msgEl = document.getElementById('settings-msg');
   try {
-    await api('PUT', '/api/settings', { credentials, models, integrations });
-    msgEl.textContent = 'Settings saved. Restart the server to apply credential changes.';
+    await api('PUT', '/api/settings', { credentials, models, integrations, video_generation });
+    const hasNewCreds = Object.keys(credentials).length > 0;
+    msgEl.textContent = hasNewCreds
+      ? 'Settings saved. Restart the server to apply new API key changes.'
+      : 'Settings saved. Changes apply to the next pipeline run.';
     msgEl.className = 'text-sm text-green-400';
     msgEl.classList.remove('hidden');
   } catch (e) {

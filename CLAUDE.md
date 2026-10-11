@@ -5,6 +5,7 @@
 - **Direct CLI Wizard**: `python -m src.cli`
 - **FastAPI Dashboard**: `uvicorn src.server:app --port 8910 --reload`
 - **Batch Processor**: `python -m src.batch_runner`
+- **Model Comparison**: `python -m src.tools.model_compare --prompt "..." --models kling-2.5-turbo-pro,seedance-2.0-fast`
 - **Dependencies**: `pip install -r requirements.txt`
 - **Type Checking**: `mypy .` (if configured)
 - **Linting**: `ruff check .` (if configured)
@@ -13,10 +14,11 @@
 1. **Stock Footage**: Narrative recap using LLM script + Gemini TTS + Pexels video + sidechain ducking.
    - Sub-routes: **User Entry** (manual) or **Sheet Automated** (Google Sheets).
    - Features: `validate_input` logic for garbage detection and random story fallback.
-2. **Animation**: 7-step modular series pipeline using Vertex AI Veo 3.1.
+2. **Animation**: 8-step modular series pipeline with multi-model video generation.
    - Pre-Production (once): Writer → Screenwriter → Casting → World Builder.
-   - Production (per episode): Director → Scene Generator → Editor.
+   - Production (per episode): Director → Set Designer → Scene Generator → Editor.
    - Persistence: State stored in `pipeline_state.json` per project.
+   - **Video Models**: Supports 11 models across 3 tiers (Budget/Recommended/Premium) via Gemini API (Veo 3.1 Lite/Fast/Standard) and fal.ai (Kling, Seedance, Wan, Sora). Model selection in Settings panel. Budget guard auto-downgrades when cost limits are reached.
 
 ## Code Style & Standards
 - **Naming**: `snake_case` for variables/functions, `PascalCase` for classes.
@@ -32,9 +34,13 @@
 - `src/server.py`: FastAPI backend with WebSocket streaming.
 - `src/narrative.py`: Primary LLM logic including random story generation.
 - `src/pipeline.py`: Stock footage orchestration.
-- `src/animation_pipeline.py`: 7-step animation orchestrator.
+- `src/animation_pipeline.py`: 8-step animation orchestrator.
 - `src/pipeline_state.py`: Crash-resilient state persistence.
-- `src/steps/`: Modular steps for the animation series (writer, screenwriter, casting, world_builder, director, scene_generator, editor).
+- `src/steps/`: Modular steps for the animation series (writer, screenwriter, casting, world_builder, director, set_designer, scene_generator, editor).
 - `src/project_manager.py`: Project CRUD for the web dashboard.
-- `src/veo_client.py`: Vertex AI Veo 3.1 integration (2 RPM rate limit).
+- `src/veo_client.py`: Gemini API Veo integration (legacy direct caller). Wrapped by `video_client.py`.
+- `src/video_models.py`: Central registry of all 11 supported video generation models (Gemini API + fal.ai).
+- `src/video_client.py`: Unified client routing to Gemini API, fal.ai, or Vertex AI. Handles retries, cost tracking, model fallback.
+- `src/budget_guard.py`: Per-project budget enforcement with auto-downgrade to cheaper models.
+- `src/tools/model_compare.py`: CLI utility to compare video outputs across models. Generates HTML report.
 - `src/config_mappings.py`: Music/voice/mood lookup tables.

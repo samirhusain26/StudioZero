@@ -75,3 +75,6 @@ creds/
 
 # SQLite local database (tracking removed)
 sqlite_mcp_server.db
+
+# Playwright MCP logs and page snapshots
+.playwright-mcp/

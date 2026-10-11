@@ -64,6 +64,7 @@ PRE_PRODUCTION_STEPS = [
 # ── Production steps (run once per episode, sequentially) ───────────────────
 EPISODE_STEPS = [
     "director",         # Episode scenes + refs → final Veo prompts per shot
+    "set_designer",     # Director shots + character/world refs → scene starting images
     "scene_generator",  # Veo prompt per shot → MP4 clip (sequential, rate-limited)
     "editor",           # Clips → assembled episode MP4
 ]

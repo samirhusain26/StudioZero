@@ -38,7 +38,7 @@ A single narrative beat in a movie recap.
 
 ## 2. Animation Series Models (`src/steps/`)
 
-Used by the **7-Step Animation Pipeline** to generate multi-episode series content.
+Used by the **8-Step Animation Pipeline** to generate multi-episode series content.
 
 ### Writer Output (`src/steps/writer.py`)
 
@@ -154,15 +154,70 @@ Expanded from `CharacterSeed` with additional production details.
 | `camera_angle` | `str` | Camera angle direction. |
 | `shot_type` | `str` | Shot type (close-up, wide, etc.). |
 | `camera_movement` | `str` | Camera movement direction. |
-| `veo_prompt` | `str` | Final Veo 3.1 prompt (60-100 words). |
+| `veo_prompt` | `str` | Final video generation prompt (60-100 words). |
 | `dialogue` | `str` | Dialogue for the shot. |
 | `voice_profile` | `str` | Voice direction. |
+| `model_hint` | `str` | Prompt style used: veo, kling, seedance, wan, sora. |
 
 ---
 
-## 3. Pipeline State Models (`src/pipeline_state.py`)
+## 3. Video Model Configuration (`src/video_models.py`)
 
-These models manage the persistent state of the **7-Step Animation Pipeline**.
+Central registry of all supported video generation models.
+
+### `VideoModelConfig`
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `model_id` | `str` | Unique model identifier (e.g. "kling-2.5-turbo-pro"). |
+| `provider` | `Literal["fal.ai", "vertex_ai"]` | API provider. |
+| `display_name` | `str` | Human-readable name. |
+| `endpoint_t2v` | `str` | Text-to-video endpoint identifier. |
+| `endpoint_i2v` | `Optional[str]` | Image-to-video endpoint. |
+| `endpoint_ref2v` | `Optional[str]` | Reference-to-video endpoint. |
+| `cost_per_second` | `Optional[float]` | USD per second of video (None if token-based). |
+| `max_resolution` | `str` | Maximum output resolution (e.g. "1080p", "4K"). |
+| `max_duration_sec` | `int` | Maximum clip duration in seconds. |
+| `has_audio` | `bool` | Whether the model supports native audio generation. |
+| `has_reference_images` | `bool` | Whether the model accepts reference images for consistency. |
+| `tier` | `Literal["cheapest", "recommended", "high_fidelity"]` | Pricing tier. |
+| `description` | `str` | Short description for UI display. |
+
+### Registered Models (11 total)
+
+| Tier | Model ID | Provider | Max Res | Audio | Ref Images | Cost/sec |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Budget | `veo-3.1-lite` | Gemini API | 1080p | Yes | No | $0.05 |
+| Budget | `wan-2.5` | fal.ai | 480p | No | No | $0.05 |
+| Budget | `kling-2.5-turbo-pro` | fal.ai | 1080p | No | No | $0.07 |
+| Budget | `wan-2.2` | fal.ai | 720p | No | No | $0.10 |
+| Recommended | `veo-3.1-fast` | Gemini API | 1080p | Yes | Yes (3) | $0.10 |
+| Recommended | `seedance-1.5-pro-fast` | fal.ai | 1080p | Yes | Yes | $0.052 |
+| Recommended | `seedance-2.0-fast` | fal.ai | 720p | Yes | Yes | token |
+| Premium | `veo-3.1` | Gemini API | 4K | Yes | Yes (3) | $0.40 |
+| Premium | `kling-3.0-pro` | fal.ai | 1080p | Yes | Yes | $0.224 |
+| Premium | `seedance-2.0` | fal.ai | 720p | Yes | Yes | token |
+| Premium | `sora-2-pro` | fal.ai | 1080p | Yes | No | $0.30 |
+
+---
+
+## 4. Budget Guard (`src/budget_guard.py`)
+
+### `BudgetGuard`
+Tracks cumulative spend and enforces per-project budget caps.
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `max_budget` | `float` | Maximum spend in USD (default: 10.0). |
+| `auto_downgrade` | `bool` | Auto-switch to cheaper models when budget is tight. |
+
+Raises `BudgetExceeded` if no affordable model is available.
+
+---
+
+## 5. Pipeline State Models (`src/pipeline_state.py`)
+
+These models manage the persistent state of the **8-Step Animation Pipeline**.
 
 ### `PipelineState`
 
@@ -171,6 +226,7 @@ These models manage the persistent state of the **7-Step Animation Pipeline**.
 | `project_title` | `str` | Name of the series. |
 | `created_at` | `str` | ISO timestamp of project creation. |
 | `series_steps` | `Dict[str, StepStatus]` | Status of pre-production steps (writer, screenwriter, casting, world_builder). |
+
 | `episodes` | `Dict[int, EpisodeState]` | Map of episode numbers to their states. |
 
 ### `StepStatus`
@@ -189,11 +245,11 @@ These models manage the persistent state of the **7-Step Animation Pipeline**.
 | Field | Type | Description |
 | :--- | :--- | :--- |
 | `episode_number` | `int` | Episode index. |
-| `steps` | `Dict[str, StepStatus]` | Status of production steps (director, scene_generator, editor). |
+| `steps` | `Dict[str, StepStatus]` | Status of production steps (director, set_designer, scene_generator, editor). |
 
 ---
 
-## 4. Operational Models (`src/pipeline.py`)
+## 6. Operational Models (`src/pipeline.py`)
 
 ### `PipelineStatus`
 Yielded by all pipeline generators for UI progress tracking.
@@ -220,7 +276,7 @@ Per-scene asset bundle for the Stock Footage route.
 
 ---
 
-## 5. Web Dashboard Models (`src/server.py`, `src/project_manager.py`)
+## 7. Web Dashboard Models (`src/server.py`, `src/project_manager.py`)
 
 ### `Project`
 

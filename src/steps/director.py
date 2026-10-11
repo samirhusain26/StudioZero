@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 # ── Pydantic Models ──────────────────────────────────────────────────────────
 
 class DirectorShot(BaseModel):
-    """Final production-ready Veo prompt for a single scene."""
+    """Final production-ready prompt for a single scene."""
     scene_id: int = Field(..., ge=1)
     primary_character_id: str
     location_id: str
@@ -53,13 +53,17 @@ class DirectorShot(BaseModel):
     veo_prompt: str = Field(
         ...,
         description=(
-            "Focused Veo 3.1 generation prompt. 60–100 words. "
+            "Focused video generation prompt. 60–100 words. "
             "Character key appearance (1–2 sentences), environment (1 sentence), "
             "lighting, camera, action, mood. End with '9:16 vertical, cinematic, 3D Pixar-style animation.'"
         )
     )
-    dialogue: str = Field(..., description="Character's spoken dialogue for Veo lip-sync")
-    voice_profile: str = Field(..., description="Voice profile passed to Veo audio generation")
+    dialogue: str = Field(..., description="Character's spoken dialogue for lip-sync")
+    voice_profile: str = Field(..., description="Voice profile for audio generation")
+    model_hint: str = Field(
+        default="veo",
+        description="Which prompt style was used: veo, kling, seedance, wan, sora"
+    )
 
 
 class DirectorShots(BaseModel):
@@ -70,22 +74,80 @@ class DirectorShots(BaseModel):
 
 # ── System Prompt ────────────────────────────────────────────────────────────
 
-_SYSTEM_PROMPT = """You are a film director preparing the final production brief for AI video generation.
+def _get_model_hint() -> str:
+    """Determine which model family is active for prompt style adaptation."""
+    model_id = Config.ACTIVE_VIDEO_MODEL
+    if "kling" in model_id:
+        return "kling"
+    elif "seedance" in model_id:
+        return "seedance"
+    elif "wan" in model_id:
+        return "wan"
+    elif "sora" in model_id:
+        return "sora"
+    return "veo"
+
+
+def _build_system_prompt(model_hint: str) -> str:
+    """Build the director system prompt, adapted for the active video model."""
+
+    # Model-specific prompt guidance
+    model_guidance = {
+        "veo": (
+            "You are directing for Veo 3.1 (Google). "
+            "Use detailed scene descriptions with specific camera directions. "
+            "Veo excels at lip-sync and audio — describe dialogue delivery clearly. "
+            "End each veo_prompt with: '9:16 vertical, cinematic, 3D Pixar-style animation.'"
+        ),
+        "kling": (
+            "You are directing for Kling (Kuaishou). "
+            "Emphasize motion descriptors and physical action — Kling excels at motion fluidity. "
+            "Describe specific body movements, gestures, and physical interactions in detail. "
+            "End each veo_prompt with: '9:16 vertical, cinematic, 3D Pixar-style animation.'"
+        ),
+        "seedance": (
+            "You are directing for Seedance (ByteDance). "
+            "Use cinematic shot types and camera movements — Seedance has director-level camera control. "
+            "You can use multi-shot language (e.g. 'the camera starts wide then pushes in to close-up'). "
+            "End each veo_prompt with: '9:16 vertical, cinematic, 3D Pixar-style animation.'"
+        ),
+        "wan": (
+            "You are directing for Wan (Alibaba). "
+            "Use cinema-grade aesthetic keywords for lighting and color grading. "
+            "Reference film stock looks (e.g. 'Kodak Vision3 warmth') and lighting setups. "
+            "End each veo_prompt with: '9:16 vertical, cinematic, 3D Pixar-style animation.'"
+        ),
+        "sora": (
+            "You are directing for Sora (OpenAI). "
+            "Use natural language descriptions — Sora has strong physics understanding. "
+            "Describe the scene as you would narrate it to someone. Include spatial relationships. "
+            "End each veo_prompt with: '9:16 vertical, cinematic, 3D Pixar-style animation.'"
+        ),
+    }
+
+    guidance = model_guidance.get(model_hint, model_guidance["veo"])
+
+    return f"""You are a film director preparing the final production brief for AI video generation.
 
 ## YOUR TASK:
-For each scene in the episode, craft a focused, production-ready Veo 3.1 generation prompt.
+For each scene in the episode, craft a focused, production-ready generation prompt.
 
-## VEO PROMPT RULES:
+## MODEL CONTEXT:
+{guidance}
+
+Set model_hint to "{model_hint}" for all shots.
+
+## PROMPT RULES:
 Each veo_prompt MUST be concise (60–100 words max). Include:
 1. Character appearance: 1–2 sentences covering shape, colour, and ONE signature detail (e.g. trench coat, barcode sticker)
 2. Environment: 1 sentence — dominant colours, key prop, and mood
 3. Lighting: one phrase (e.g. "harsh neon-green overhead LED")
 4. Camera: angle, shot type, and movement in one line
 5. Action + emotion: what the character physically does and feels right now
-6. End with: "9:16 vertical, cinematic, 3D Pixar-style animation."
+6. End with the animation style tag as specified above.
 
 DO NOT paste full character bios or world descriptions verbatim — distil them to the key visual facts.
-Short, vivid, specific prompts outperform long ones with Veo.
+Short, vivid, specific prompts outperform long ones.
 
 ## CAMERA VARIETY:
 - Scene 1: dramatic hook (low angle, dutch tilt, or wide)
@@ -134,6 +196,9 @@ def run(ctx: StepContext) -> StepResult:
         f"{[w.location_id for w in world_layouts]}"
     )
 
+    model_hint = _get_model_hint()
+    logger.info(f"[director] Active video model: {Config.ACTIVE_VIDEO_MODEL} — prompt style: {model_hint}")
+
     schema = DirectorShots.model_json_schema()
 
     # Build character reference block
@@ -176,7 +241,8 @@ def run(ctx: StepContext) -> StepResult:
         f"Output ONLY valid JSON matching this schema:\n{json.dumps(schema, indent=2)}"
     )
 
-    combined_prompt = f"{_SYSTEM_PROMPT}\n\n---\n\n{user_prompt}"
+    system_prompt = _build_system_prompt(model_hint)
+    combined_prompt = f"{system_prompt}\n\n---\n\n{user_prompt}"
 
     response = ctx.gemini_client.models.generate_content(
         model=Config.GEMINI_MODEL_NAME,

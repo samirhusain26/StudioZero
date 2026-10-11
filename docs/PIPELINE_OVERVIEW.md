@@ -1,6 +1,6 @@
 # StudioZero: Pipeline Overview Documentation
 
-This document provides a comprehensive breakdown of the StudioZero video generation architecture. It covers the two primary production routes: **Stock Footage** and **Animation Series (7-Step modular)**.
+This document provides a comprehensive breakdown of the StudioZero video generation architecture. It covers the two primary production routes: **Stock Footage** and **Animation Series (8-Step modular)**.
 
 ---
 
@@ -42,7 +42,7 @@ This route is designed for rapid generation of high-energy narrative videos usin
 
 ## 3. Animation Series Route
 
-A production-grade, 7-step modular framework for multi-episode series with character and world consistency.
+A production-grade, 8-step modular framework for multi-episode series with character and world consistency.
 
 #### Phase 1: Pre-Production (Runs once per project)
 1.  **Writer**: Takes the user's brief and expands it into a full story, character seeds, and episode outlines.
@@ -51,9 +51,18 @@ A production-grade, 7-step modular framework for multi-episode series with chara
 4.  **World Builder**: Establishes the series bible, setting, and location layout references.
 
 #### Phase 2: Production (Runs per episode)
-5.  **Director**: Combines episode scenes with character/world references to engineer final, optimized prompts for the video model.
-6.  **Scene Generator**: Renders high-fidelity video clips using **Vertex AI Veo 3.1**. Includes a "retry gate" for failed scenes.
-7.  **Editor**: Assembles clips, syncs dialogue/music, and burns in Hormozi-style karaoke subtitles.
+5.  **Director**: Combines episode scenes with character/world references to engineer final, optimized prompts for the active video model. Adapts prompt style per model family (Veo, Kling, Seedance, Wan, Sora).
+6.  **Set Designer**: Composites character references into world environments using Gemini Imagen, producing scene-appropriate starting frames. Images are cached by character+location and reused across episodes.
+7.  **Scene Generator**: Renders video clips via the active model (11 models supported across fal.ai and Vertex AI). Includes budget guard enforcement, model fallback, and a "retry gate" for failed scenes.
+8.  **Editor**: Assembles clips, syncs dialogue/music, and burns in Hormozi-style karaoke subtitles.
+
+### Multi-Model Video Generation
+The Scene Generator supports 11 models across 3 tiers:
+*   **Budget**: Veo 3.1 Lite (Gemini API), Wan 2.5, Kling 2.5 Turbo Pro, Wan 2.2
+*   **Recommended**: Veo 3.1 Fast (Gemini API), Seedance 2.0 Fast, Seedance 1.5 Pro Fast
+*   **Premium**: Veo 3.1 (Gemini API), Kling 3.0 Pro, Seedance 2.0, Sora 2 Pro
+
+Model selection is configurable in the Settings panel. The `BudgetGuard` enforces per-project spending limits and auto-downgrades to cheaper models when the budget is exceeded.
 
 ### Persistence & Crash Recovery
 The Animation Series route uses `src/pipeline_state.py` to track the completion of every step in `pipeline_state.json`. This allows the pipeline to resume from the exact point of failure, which is critical for long-running video generation tasks.

@@ -23,6 +23,7 @@ def _load_settings_file() -> dict:
 _settings = _load_settings_file()
 _creds = _settings.get("credentials", {})
 _models = _settings.get("models", {})
+_video_gen = _settings.get("video_generation", {})
 
 
 def _get(key: str, default: str = "") -> str:
@@ -60,10 +61,19 @@ class Config:
     VEO_MODEL = _models.get("video_model") or os.getenv("VEO_MODEL", "veo-3.1-lite-generate-preview")
     TTS_MODEL = _models.get("tts_model") or os.getenv("TTS_MODEL", "gemini-2.5-flash-preview-tts")
 
+    # fal.ai API key (for multi-model video generation)
+    FAL_KEY = _get("FAL_KEY")
+
     # Google Cloud Vertex AI (for Veo 3.1 animated pipeline)
     VERTEX_PROJECT_ID = _get("VERTEX_PROJECT_ID")
     VERTEX_LOCATION = _get("VERTEX_LOCATION") or "us-central1"
     VERTEX_VEO_MODEL = os.getenv("VERTEX_VEO_MODEL", "veo-3.1")
+
+    # Video generation model selection (from settings.json video_generation section)
+    ACTIVE_VIDEO_MODEL = _video_gen.get("active_model") or os.getenv("ACTIVE_VIDEO_MODEL", "veo-3.1-fast")
+    ACTIVE_VIDEO_TIER = _video_gen.get("active_tier") or os.getenv("ACTIVE_VIDEO_TIER", "recommended")
+    VIDEO_MAX_BUDGET = float(_video_gen.get("max_budget", os.getenv("VIDEO_MAX_BUDGET", "10.0")))
+    VIDEO_AUTO_DOWNGRADE = _video_gen.get("auto_downgrade", True)
 
     # Google service account credentials for Drive and Sheets
     DRIVE_APPLICATION_CREDENTIALS = os.getenv("DRIVE_APPLICATION_CREDENTIALS")
@@ -136,6 +146,19 @@ class Config:
                 "-------------------------------------------------------------------\n"
             )
             raise ValueError(error_message)
+
+    @classmethod
+    def reload_settings(cls):
+        """Reload settings from disk so API-driven changes take effect immediately."""
+        settings = _load_settings_file()
+        creds = settings.get("credentials", {})
+        vg = settings.get("video_generation", {})
+        models = settings.get("models", {})
+        # Refresh video generation settings
+        cls.ACTIVE_VIDEO_MODEL = vg.get("active_model") or os.getenv("ACTIVE_VIDEO_MODEL", "veo-3.1-fast")
+        cls.ACTIVE_VIDEO_TIER = vg.get("active_tier") or os.getenv("ACTIVE_VIDEO_TIER", "recommended")
+        cls.VIDEO_MAX_BUDGET = float(vg.get("max_budget", os.getenv("VIDEO_MAX_BUDGET", "10.0")))
+        cls.VIDEO_AUTO_DOWNGRADE = vg.get("auto_downgrade", True)
 
     @classmethod
     def ensure_directories(cls):

@@ -24,22 +24,25 @@ This pipeline focuses on speed and narrative clarity using stock media.
 
 ---
 
-## 2. Route B: Animation Pipeline (Modular 7-Step)
+## 2. Route B: Animation Pipeline (Modular 8-Step)
 
 A robust, step-based workflow for multi-episode series with character and world consistency.
 
 ### Orchestration & State
 *   **Orchestrator**: `src/animation_pipeline.py`.
 *   **Persistence**: `src/pipeline_state.py` manages `pipeline_state.json`, storing completion flags and artifact paths for every step.
+*   **Video Routing**: `src/video_client.py` (UnifiedVideoClient) routes to fal.ai or Vertex AI based on the active model from `src/video_models.py`.
+*   **Budget**: `src/budget_guard.py` enforces per-project cost caps with auto-downgrade.
 
 ### Detailed Steps:
 1.  **Writer**: Takes the brief and expands it into a full story, character seeds, and episode outlines.
 2.  **Screenwriter**: Converts the story into detailed scene breakdowns for all episodes.
 3.  **Casting**: Generates character blueprints and visual reference images using Gemini Image Gen.
 4.  **World Builder**: Establishes the series bible, setting, and location layout references.
-5.  **Director**: Combines episode scenes with character/world references to engineer final Veo prompts.
-6.  **Scene Generator**: Renders high-fidelity video clips via **Vertex AI Veo 3.1**.
-7.  **Editor**: Final FFmpeg assembly with audio mixing and Hormozi-style karaoke subtitles.
+5.  **Director**: Combines episode scenes with character/world references to engineer final video generation prompts. Adapts prompt style per model family (veo, kling, seedance, wan, sora).
+6.  **Set Designer**: Composites character reference images into world environments using Gemini Imagen, producing scene-appropriate starting frames. Cached by `{character_id}_{location_id}` and reused across episodes.
+7.  **Scene Generator**: Renders video clips via the active model (11 models across fal.ai and Vertex AI). Uses `UnifiedVideoClient` with `BudgetGuard` enforcement and tier-based model fallback.
+8.  **Editor**: Final FFmpeg assembly with audio mixing and Hormozi-style karaoke subtitles.
 
 ---
 
@@ -47,11 +50,11 @@ A robust, step-based workflow for multi-episode series with character and world 
 
 | Feature | Stock Footage Route | Animation Route |
 | :--- | :--- | :--- |
-| **Video Engine** | Pexels API (Stock) | Vertex AI Veo 3.1 |
+| **Video Engine** | Pexels API (Stock) | 11 models via Gemini API + fal.ai |
 | **Voice Engine** | Gemini TTS | Gemini TTS |
 | **Subtitle Format** | Hormozi-style ASS | Hormozi-style ASS |
 | **Audio Mix** | Sidechain Ducking | Sidechain Ducking |
-| **Resilience** | Input Validation + Random Story | 7-Step State Persistence + Retry Gate |
+| **Resilience** | Input Validation + Random Story | 8-Step State Persistence + Retry Gate + Budget Guard |
 | **UI Support** | CLI / Batch / Web | CLI / Web |
 
 ---
@@ -61,3 +64,8 @@ A robust, step-based workflow for multi-episode series with character and world 
 The dashboard uses **FastAPI** with **WebSockets** for real-time log streaming.
 *   **Project Manager**: `src/project_manager.py` handles CRUD for projects.
 *   **WebSocket streaming**: Progress is yielded via the `PipelineStatus` generator and pushed to the client in real-time.
+*   **Video Model Settings**: `/api/settings/video-models` returns the full model registry; `/api/settings/active-model` manages the selected model and budget.
+*   **Scene Retry**: `/api/projects/{id}/retry-scene` handles retry/edit/skip after scene failures.
+*   **Pipeline Control**: `/api/projects/{id}/pause` pauses active runs; `/api/projects/{id}/state` returns raw pipeline state.
+*   **Step Artifacts**: `/api/projects/{id}/step-artifacts` returns artifact URLs for completed steps.
+*   **Finals Library**: `/api/finals` lists all rendered MP4s from `output/final/`.

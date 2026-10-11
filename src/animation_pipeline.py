@@ -10,8 +10,9 @@ Pipeline phases:
 
   Production (runs per episode, strictly sequential):
     5. director        — Episode scenes + refs → final Veo prompts per shot
-    6. scene_generator — Veo prompt per shot → MP4 clip (rate-limited, sequential)
-    7. editor          — Clips → assembled episode MP4
+    6. set_designer    — Director shots + character/world refs → scene starting images
+    7. scene_generator — Veo prompt per shot → MP4 clip (rate-limited, sequential)
+    8. editor          — Clips → assembled episode MP4
 
 State is persisted after every step for crash recovery and resume.
 On Veo scene failure, the pipeline yields a status with retry_gate=True and
@@ -227,6 +228,7 @@ def run_animation_pipeline(
                         "episode_number": ep_num,
                         "scene_id": e.scene_id,
                         "veo_prompt": e.veo_prompt,
+                        "error_detail": e.original_error,
                         "project_dir": str(project_dir),
                         "override_file": str(
                             project_dir / "episodes" / f"episode_{ep_num}"
