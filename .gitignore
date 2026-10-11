@@ -10,15 +10,15 @@ playwright-report/
 /public/
 
 # Studio (Mac): local toolchains, scratch audio and every render/QA output stay out of Git
-# (some QA screenshots under studio/out/ show OAuth/token screens).
-studio/node_modules/
-studio/.venv/
-studio/.audio-work/
-studio/out/
-# The owner's six source tracks (rebuild plan L6): Mac only. The cut beds in studio/public/episodes/music are tracked.
-studio/music/sources/
+# (some QA screenshots under engines/motion/out/ show OAuth/token screens).
+engines/motion/node_modules/
+engines/motion/.venv/
+engines/motion/.audio-work/
+engines/motion/out/
+# The owner's six source tracks (rebuild plan L6): Mac only. The cut beds in engines/motion/public/episodes/music are tracked.
+engines/motion/music/sources/
 # Downloaded CC0 SFX packs (docs/AUDIO_CORPUS_PLAN.md): Mac only; licence records sit beside them.
-studio/sfx/sources/
+engines/motion/sfx/sources/
 
 # Publisher UI: dev output and test artefacts. The Pi gets the committed bundle in publisher/app/static (L7).
 publisher/ui/node_modules/
@@ -57,12 +57,12 @@ library/_inbox/
 .claude/worktrees/
 !.env.template
 # The owner's six Gemini-generated beds: redistribution terms unverified, so local only (still listed in beds.json).
-studio/public/episodes/music/scalar-24.m4a
-studio/public/episodes/music/continuum-20.m4a
-studio/public/episodes/music/continuum-22.m4a
-studio/public/episodes/music/whenabouts-22.m4a
-studio/public/episodes/music/tectonic-22.m4a
-studio/public/episodes/music/tectonic-24.m4a
+engines/motion/public/episodes/music/scalar-24.m4a
+engines/motion/public/episodes/music/continuum-20.m4a
+engines/motion/public/episodes/music/continuum-22.m4a
+engines/motion/public/episodes/music/whenabouts-22.m4a
+engines/motion/public/episodes/music/tectonic-22.m4a
+engines/motion/public/episodes/music/tectonic-24.m4a
 
 # Story engine (engines/story): local secrets, downloaded and unlicensed assets, outputs, model caches.
 *.py[cod]

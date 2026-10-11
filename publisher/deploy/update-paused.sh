@@ -25,10 +25,10 @@ install -m 644 "$SOURCE"/publisher/app/*.py "$SOURCE"/contract/library_contract.
 install_units "$SOURCE"/publisher/deploy/scalar-social*.service "$SOURCE"/publisher/deploy/scalar-social*.timer
 install -d -m 700 -o root -g root /etc/scalar-social/credentials
 if [ ! -f /var/lib/scalar-social/catalog.json ]; then
-  install -m 600 -o scalar-social -g scalar-social "$SOURCE/studio/out/social-site/catalog.json" /var/lib/scalar-social/catalog.json
+  install -m 600 -o scalar-social -g scalar-social "$SOURCE/engines/motion/out/social-site/catalog.json" /var/lib/scalar-social/catalog.json
 fi
 install -d -m 700 -o scalar-social -g scalar-social /var/lib/scalar-social/site /var/lib/scalar-social/site/clips
-for clip in "$SOURCE"/studio/out/social-site/clips/*.mp4; do
+for clip in "$SOURCE"/engines/motion/out/social-site/clips/*.mp4; do
   install -m 600 -o scalar-social -g scalar-social "$clip" /var/lib/scalar-social/site/clips/
 done
 runuser -u scalar-social -- touch /var/lib/scalar-social/PAUSED

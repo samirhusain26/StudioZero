@@ -1,6 +1,6 @@
 # Video batch contract (Mac generation → Pi publishing)
 
-Status: v1 specification, agreed 6 October 2026. This is the only interface between the video generation pipeline (scalargame repo: `docs/growth/VIDEO_GENERATION_PIPELINE.md`; this repo: [studio/pipeline](../studio/pipeline/README.md)) and the publishing pipeline ([PUBLISHING_PIPELINE_PLAN.md](../publisher/docs/PUBLISHING_PIPELINE_PLAN.md)). Either side can change internally. Changing this file needs owner approval, a `schemaVersion` bump if the change is incompatible, and an update to the validator and its tests.
+Status: v1 specification, agreed 6 October 2026. This is the only interface between the video generation pipeline (scalargame repo: `docs/growth/VIDEO_GENERATION_PIPELINE.md`; this repo: [engines/motion/pipeline](../studio/pipeline/README.md)) and the publishing pipeline ([PUBLISHING_PIPELINE_PLAN.md](../publisher/docs/PUBLISHING_PIPELINE_PLAN.md)). Either side can change internally. Changing this file needs owner approval, a `schemaVersion` bump if the change is incompatible, and an update to the validator and its tests.
 
 Validator (owned by the publishing build, stdlib Python, runs on Mac and Pi):
 

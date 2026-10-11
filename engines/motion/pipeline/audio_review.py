@@ -1,6 +1,6 @@
 """Write the owner's audition sheet for the calm audio corpus: out/audio-review/index.html (docs/AUDIO_CORPUS_PLAN.md).
 
-    .venv/bin/python pipeline/audio_review.py            (from studio/; run pipeline/music_catalog.py first)
+    .venv/bin/python pipeline/audio_review.py            (from engines/motion/; run pipeline/music_catalog.py first)
 
 Music comes from music/catalog.json (best quiz fit first, players start 30 s in), grouped by suggested game. SFX are every calm-fitting file under
 sfx/sources/ (Kenney CC0 packs + tools/make_calm_sfx.py), grouped by a guessed role. Choices persist in the browser;
@@ -10,7 +10,7 @@ Players reference the local files by relative path, so the sheet only works from
 import html, json, re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]  # studio/
+ROOT = Path(__file__).resolve().parents[1]  # engines/motion/
 OUT = ROOT / 'out/audio-review/index.html'
 SFX = ROOT / 'sfx/sources'
 # Kenney families that do not fit the calm look (sci-fi, harsh, error, footsteps)

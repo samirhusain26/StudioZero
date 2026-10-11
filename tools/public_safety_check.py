@@ -39,9 +39,7 @@ FORBIDDEN_PATHS = [
 MEDIA = re.compile(r'\.(mp4|mov|mkv|webm|mp3|wav|m4a|aac|ogg|oga|flac|png|jpe?g|gif|webp|psd)$', re.I)
 # Media that may be tracked: path prefix -> how its licence is recorded.
 MEDIA_ALLOWED = {
-    'studio/public/sfx/': 'procedural (tools/make_sfx.py)',
     'engines/motion/public/sfx/': 'procedural (tools/make_sfx.py)',
-    'studio/public/episodes/music/': 'beds.json',
     'engines/motion/public/episodes/music/': 'beds.json',
     'publisher/profile-assets/': 'own brand artwork',
 }
@@ -77,7 +75,7 @@ CONTENT = [
 # Rules that do not apply to a path (value: rule names), each with its reason.
 EXCEPTIONS = [
     (r'^library/_sources/', {'long numeric account ID', 'IP address', 'Buffer/Mongo-style ID'}),   # frozen game data
-    (r'(^|/)(beds|catalog)\.json$|^studio/music/|^engines/motion/music/', {'long numeric account ID', 'IP address'}),  # audio measurements
+    (r'(^|/)(beds|catalog)\.json$|^engines/motion/music/|^engines/motion/music/', {'long numeric account ID', 'IP address'}),  # audio measurements
     (r'(^|/)package-lock\.json$|^publisher/pi-package-lock\.json$', {'Buffer/Mongo-style ID', 'long numeric account ID', 'IP address'}),
     (r'^publisher/app/static/', {'Buffer/Mongo-style ID', 'long numeric account ID', 'IP address'}),  # minified bundle
     (r'^publisher/tests/', {'IP address', 'long numeric account ID'}),   # fixtures (100.64.x tailnet ranges, fake IDs)

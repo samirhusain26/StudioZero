@@ -1,6 +1,6 @@
 """Synthesize the video SFX set into public/sfx/ (44.1 kHz, 16-bit WAV, peak -3 dBFS).
 
-Run (from studio/): .venv/bin/python tools/make_sfx.py
+Run (from engines/motion/): .venv/bin/python tools/make_sfx.py
 Everything is procedural (no samples), so it is ours to use.
 """
 import os

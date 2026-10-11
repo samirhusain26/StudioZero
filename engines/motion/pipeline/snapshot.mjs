@@ -1,5 +1,5 @@
 // Freeze the canonical game sources for a library batch.
-//   node studio/pipeline/snapshot.mjs [--game=<scalargame dir>] [--ref=HEAD]   (default: lib.mjs GAME_DIR)
+//   node engines/motion/pipeline/snapshot.mjs [--game=<scalargame dir>] [--ref=HEAD]   (default: lib.mjs GAME_DIR)
 // Reads committed files with `git show <ref>:<path>` so uncommitted game-repo edits never leak in,
 // writes them under library/_sources/<snapshotId>/ with a manifest, and prints the snapshot hash.
 // Re-running against the same commit reproduces the same bytes and hash.

@@ -6,7 +6,7 @@
 
 StudioZero is the studio behind the @studiozeroflow social accounts. Three nouns:
 
-- **Engine**: how a video is made (toolchain, render, media QA; no posting, no project rules). `motion` = the Remotion project in `studio/` (moves to `engines/motion/` after the Pi cutover); `story` = `engines/story/`, the Python package with the routes `recap` (stock footage) and `series` (AI animation).
+- **Engine**: how a video is made (toolchain, render, media QA; no posting, no project rules). `motion` = the Remotion project in `engines/motion/`; `story` = `engines/story/`, the Python package with the routes `recap` (stock footage) and `series` (AI animation).
 - **Project**: why and for whom (sources, fact and rights rules, voice, call to action, link policy, budget, mix share). `originals` (P0, the story engine's recaps and shorts) and `scalargame` (P1, quiz videos for scalargame.com).
 - **Channel**: where. The @studiozeroflow accounts, owned by the publisher only.
 
@@ -23,7 +23,7 @@ docs/                            STUDIO_PLAN (running plan), PUBLIC_SAFETY, plan
                                  prompts/ (the consolidation brief), marketing plans: REBUILD_PLAN, REBUILD_CONTRACTS,
                                  PI_UI_REDESIGN_PLAN, AUTOPILOT_PLAN, AUDIO_CORPUS_PLAN, MARKETING_VIDEO_PLAN, UPLOAD_PLAN (historical)
 tools/public_safety_check.py     run before every push (stdlib)
-studio/                          motion engine, Mac only. Its own Node project (package.json, tsconfig, remotion.config.ts)
+engines/motion/                  motion engine, Mac only. Its own Node project (package.json, tsconfig, remotion.config.ts)
   src/                           index.ts, Root.tsx (one composition: LibraryEpisode), fonts.ts, kit/sfx.tsx
   src/episodes/                  episode kit-1: LibraryEpisode, timing, kit/, styles/, templates/<game>/, types, sample-props.json
   public/                        sfx/ (procedural WAVs), episodes/fonts (OFL), episodes/music (cut beds + beds.json)
@@ -53,11 +53,11 @@ library/                         <batchId>/ (only batch.json tracked), _sources/
 
 ## Mac, Pi, shared
 
-- **Mac (studio/)**: question generation and checking, music beds, rendering, QA, `batch.json`, review sheet, finalize. Needs `studio/node_modules` (`npm ci`) and `studio/.venv` (numpy, scipy, librosa, soundfile, pyloudnorm, Pillow).
+- **Mac (engines/motion/)**: question generation and checking, music beds, rendering, QA, `batch.json`, review sheet, finalize. Needs `engines/motion/node_modules` (`npm ci`) and `engines/motion/.venv` (numpy, scipy, librosa, soundfile, pyloudnorm, Pillow).
 - **Mac (engines/story/)**: `python -m src.cli` from `engines/story` (venv from `requirements.txt`, keys in `engines/story/.env`). Paid generation (Gemini, Veo, fal.ai) only with the owner's explicit OK for that run, with a cost estimate. There is no mocked smoke path yet (Phase 2).
 - **Pi (publisher/)**: runs from a git checkout at `/opt/scalar-social/repo` (partial + sparse: `publisher/`, `contract/`), updated from the UI (Settings → Update; design in `publisher/docs/SELF_UPDATE.md`). State in `/var/lib/scalar-social`, config and credentials in `/etc/scalar-social` (the channel ID pins under `identities` in `config.json`, the UI's tailnet origin in `ui.env`), UI on `127.0.0.1:8765` behind Tailscale Serve. Python is stdlib only. No npm build on the Pi: it serves the committed `publisher/app/static`. Unit or `pi-package*.json` changes are applied automatically after a completed update (`apply-units.sh --auto`). The Mac reaches the Pi as `ssh scalar-pi` (an alias in the owner's ssh config); agents (Claude, Codex) may use it without asking. Publishing runs on autopilot (`docs/AUTOPILOT_PLAN.md`): `scalar-social-autopilot.timer` (05:15, 17:15 Pi time) refills the schedule when fewer than 7 days remain and activates it. A pause in the UI (`/var/lib/scalar-social/PAUSED`) stops it. Runtime names stay `scalar-social`.
 - **Shared (contract/)**: the `ui_*` modules add `<repo>/contract` to `sys.path`.
-- **Game data**: `studio/pipeline/lib.mjs` `GAME_DIR` = `$SCALARGAME_DIR`, else `../scalargame` next to this repo (whichever has `src/games/registry.ts`). Only `snapshot.mjs` reads the game repo (committed files only); everything else reads `library/_sources/<snapshot>/`.
+- **Game data**: `engines/motion/pipeline/lib.mjs` `GAME_DIR` = `$SCALARGAME_DIR`, else `../scalargame` next to this repo (whichever has `src/games/registry.ts`). Only `snapshot.mjs` reads the game repo (committed files only); everything else reads `library/_sources/<snapshot>/`.
 
 ## Commands (from the repo root unless noted)
 
@@ -69,7 +69,7 @@ python3 tools/public_safety_check.py
 python3 -m unittest discover -s publisher/tests -p 'test_*.py'
 python3 -m unittest discover -s contract/tests -p 'test_*.py'
 (cd publisher/ui && npm run typecheck && npm run lint && npm test && npm run build)
-(cd studio && ./node_modules/.bin/tsc --noEmit)
+(cd engines/motion && ./node_modules/.bin/tsc --noEmit)
 
 # UI bundle for the Pi: rebuild after any publisher/ui change, and check before committing
 (cd publisher/ui && npm run build:static)
@@ -79,24 +79,24 @@ python3 -m unittest discover -s contract/tests -p 'test_*.py'
 python3 contract/library_contract.py validate library/<batchId>
 python3 contract/library_contract.py finalize library/<batchId>    # only after owner approval
 
-# Scalargame pipeline (details: studio/pipeline/README.md)
-node studio/pipeline/snapshot.mjs --id=<YYYY-MM-DD-commit>
-node studio/pipeline/candidates.mjs --snapshot=<id> --today=<date>
-node studio/pipeline/check.mjs                      # no --set: the 2026-10 regression (questionsHash 5ab19d44…), byte-identical output
-node studio/pipeline/episodes.mjs --batch=<batchId>
-node studio/pipeline/render.mjs --batch=<batchId>   # resumable; --only=a,b; --rerender
-node studio/pipeline/batch.mjs --batch=<batchId>    # --dry checks captions → library/_dev/batch-dry.json
-node studio/pipeline/review.mjs --batch=<batchId>
+# Scalargame pipeline (details: engines/motion/pipeline/README.md)
+node engines/motion/pipeline/snapshot.mjs --id=<YYYY-MM-DD-commit>
+node engines/motion/pipeline/candidates.mjs --snapshot=<id> --today=<date>
+node engines/motion/pipeline/check.mjs                      # no --set: the 2026-10 regression (questionsHash 5ab19d44…), byte-identical output
+node engines/motion/pipeline/episodes.mjs --batch=<batchId>
+node engines/motion/pipeline/render.mjs --batch=<batchId>   # resumable; --only=a,b; --rerender
+node engines/motion/pipeline/batch.mjs --batch=<batchId>    # --dry checks captions → library/_dev/batch-dry.json
+node engines/motion/pipeline/review.mjs --batch=<batchId>
 
 # Pi: after pushing main, bring the Pi to the same commit (check → UPDATE TO <sha> → apply, as Settings → Update)
 publisher/deploy/sync-pi.sh
 
-# Calm audio corpus (docs/AUDIO_CORPUS_PLAN.md; from studio/)
+# Calm audio corpus (docs/AUDIO_CORPUS_PLAN.md; from engines/motion/)
 .venv/bin/python pipeline/music_catalog.py
 .venv/bin/python pipeline/music_beds.py --picks
 .venv/bin/python pipeline/audio_review.py
 
-# Render (from studio/)
+# Render (from engines/motion/)
 ./render/render.sh LibraryEpisode <out.mp4>         # needs LIBRARY_PROPS_FILE=<props.json>
 ./node_modules/.bin/remotion still src/index.ts LibraryEpisode out.png --props=<props.json> --frame=<n>
 npm run studio                                       # Remotion Studio (.claude/launch.json "remotion-studio")
@@ -105,11 +105,11 @@ npm run studio                                       # Remotion Studio (.claude/
 python -m src.cli                                    # interactive: recap (title) or series (brief, episodes)
 ```
 
-Gotchas: run Remotion from `studio/` (it resolves `public/` from the working directory's project). Use `./node_modules/.bin/remotion`, not `npx remotion` (the shell hook intercepts it). System ffmpeg is broken: use `remotion ffmpeg` / `remotion ffprobe` (the contract validator falls back to it). Ship MP4s only through `render/render.sh`. Keep `studio/src/fonts.ts` (Fraunces 700 for Whenabouts). `render.mjs` stamps a `codeHash` over the kit paths (paths included), so any move or edit there marks earlier jobs `staleKit`. The shell hook (rtk) rewrites `git`, `grep`, `find` and `diff` output in agent shells: use `/usr/bin/git` etc. when exact output matters.
+Gotchas: run Remotion from `engines/motion/` (it resolves `public/` from the working directory's project). Use `./node_modules/.bin/remotion`, not `npx remotion` (the shell hook intercepts it). System ffmpeg is broken: use `remotion ffmpeg` / `remotion ffprobe` (the contract validator falls back to it). Ship MP4s only through `render/render.sh`. Keep `engines/motion/src/fonts.ts` (Fraunces 700 for Whenabouts). `render.mjs` stamps a `codeHash` over the kit paths (paths included), so any move or edit there marks earlier jobs `staleKit`. The shell hook (rtk) rewrites `git`, `grep`, `find` and `diff` output in agent shells: use `/usr/bin/git` etc. when exact output matters.
 
 ## Skill and guide
 
-- **`/video-batch`** (`.claude/skills/video-batch/SKILL.md`): Scalargame's batch playbook: `brief <batchId>` runs brief → write → check → pack (Checkpoint 1) → pilots (Checkpoint 2) → render → review → package (Checkpoint 3) → finalize (owner approval only) → retro; `status <batchId>` is read-only; `retro <batchId>` writes `library/_retros/<batchId>.md`. Counts, games, formats and styles come from the brief via the set's `CONFIG` (`studio/pipeline/README.md`); the safety rules are fixed.
+- **`/video-batch`** (`.claude/skills/video-batch/SKILL.md`): Scalargame's batch playbook: `brief <batchId>` runs brief → write → check → pack (Checkpoint 1) → pilots (Checkpoint 2) → render → review → package (Checkpoint 3) → finalize (owner approval only) → retro; `status <batchId>` is read-only; `retro <batchId>` writes `library/_retros/<batchId>.md`. Counts, games, formats and styles come from the brief via the set's `CONFIG` (`engines/motion/pipeline/README.md`); the safety rules are fixed.
 - **`fact-checker` agent** (`.claude/agents/fact-checker.md`): independent live-source verification; writes only `library/<batchId>/review/source-verification.json` for an unfinalized batch.
 - **Notes**: `library/_templates/{BRIEF,RETRO}.md`; briefs `library/_briefs/<batchId>.md`; retros `library/_retros/<batchId>.md`; the Pi's `feedback-<batchId>.json` goes in `library/_inbox/` (ignored).
 - **Owner guide**: `publisher/ui/content/guide/*.md` + `meta.json` (anchors fixed by `docs/REBUILD_CONTRACTS.md` §4), bundled into the UI (Pi UI → Guide); rebuild `publisher/app/static` after editing. `OWNER_GUIDE.md` is the short Mac-side pointer.

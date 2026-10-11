@@ -1,5 +1,5 @@
 // Write library/<batch>/batch.json exactly per contract/BATCH_CONTRACT.md (schemaVersion 1) from validated jobs.
-//   node studio/pipeline/batch.mjs --batch=<batchId> [--set=questions-<set> | --set=<path/to/set.mjs>] [--dir=<batch dir>] [--dry]
+//   node engines/motion/pipeline/batch.mjs --batch=<batchId> [--set=questions-<set> | --set=<path/to/set.mjs>] [--dir=<batch dir>] [--dry]
 // experimentId, variantId, reviewer text and the fact-check file come from the set's CONFIG; default set
 // questions-2026-10 (the frozen regression set). Every episode needs an independent source check result, and a
 // concern/fail needs a written resolution.

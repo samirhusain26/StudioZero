@@ -1,6 +1,6 @@
 """Measure every candidate music source and write music/catalog.json (docs/AUDIO_CORPUS_PLAN.md).
 
-    .venv/bin/python pipeline/music_catalog.py            (from studio/)
+    .venv/bin/python pipeline/music_catalog.py            (from engines/motion/)
 
 Sources are the downloaded CC0/royalty-free originals under music/sources/<source>/<pack>/ (Mac only, ignored), each
 source folder with a LICENSE.txt. Per track: hash, duration, tempo and tempo steadiness (librosa beat track), loudness
@@ -15,7 +15,7 @@ import hashlib, json, re, sys
 from pathlib import Path
 import numpy as np, soundfile as sf, pyloudnorm as pyln, librosa
 
-ROOT = Path(__file__).resolve().parents[1]  # studio/
+ROOT = Path(__file__).resolve().parents[1]  # engines/motion/
 SOURCES = ROOT / 'music/sources'
 OUT = ROOT / 'music/catalog.json'
 SR = 22050

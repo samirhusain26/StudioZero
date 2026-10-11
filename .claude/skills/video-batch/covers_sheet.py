@@ -1,6 +1,6 @@
 """Covers sheet for a batch review (PIL; Remotion's ffmpeg has no `tile` filter).
 
-  studio/.venv/bin/python .claude/skills/video-batch/covers_sheet.py library/<batchId> library/<batchId>/review/covers.png
+  engines/motion/.venv/bin/python .claude/skills/video-batch/covers_sheet.py library/<batchId> library/<batchId>/review/covers.png
 
 Reads <batch>/covers/*.jpg (read-only) and writes one labelled grid, five covers per row.
 """

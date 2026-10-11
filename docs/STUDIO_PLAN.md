@@ -1,6 +1,6 @@
 # StudioZero studio plan (running record)
 
-Status: **Phase 1 in progress — before CHECKPOINT 2** (2026-10-11). Private repo prepared and shipped to the Pi; new tree built locally; nothing pushed to the public repo yet. See §12.
+Status: **Phase 1 done apart from owner follow-ups** (2026-10-11): StudioZero is public on GitHub, the Pi updates from it, the layout move is shipped. Next: owner follow-ups (§13), then Phase 2. See §12.
 
 Resume rule: read this file, then the section for the current phase. Locked owner decisions (§1) are not re-argued. The original brief is `docs/prompts/STUDIOZERO_CONSOLIDATION.md` in the marketing repo (untracked there; it moves here in Phase 1).
 
@@ -224,18 +224,19 @@ Never committed: credentials, tokens, passcodes, deploy keys, `.env*`, `env.yaml
 
 ### Phase 1 — consolidation (no behaviour change)
 - [x] Old StudioZero: hygiene (§3.1), WIP to a branch, merged, tagged `legacy-final` (b6e4962)
-- [~] Reinstall motion toolchains: `studio/node_modules` done (`tsc` green); `.venv` after the move to `engines/motion`
+- [x] Motion toolchains reinstalled: `node_modules` (lockfile) and `.venv` (python3.12; numpy, scipy, librosa, soundfile, pyloudnorm, Pillow). Story engine venv: not created (whisper/torch; on first story run)
 - [x] I-prep in the marketing repo, shipped: 2a97346 (identity pins → Pi config) and 213dc9e (tailnet origin → `ui.env`, docs/guide redacted, ops records removed, updater accepts StudioZero, `migrate-origin.sh`); Pi on 213dc9e; **publisher/ + contract/ frozen**
 - [x] Retire duplicates (§3.5) in StudioZero (d82f37e)
 - [x] `src/` → `engines/story/` (ac49364); audited import commit (38254f4; publisher/contract trees equal the Pi's)
-- [ ] `studio/` → `engines/motion/`: **after the cutover** (contract/library_contract.py falls back to `studio/node_modules/.bin/remotion` for ffprobe on the Mac; that path fix ships with the move as the first update through the new origin)
+- [x] `studio/` → `engines/motion/`, shipped through the new origin after the cutover (contract/library_contract.py falls back to `studio/node_modules/.bin/remotion` for ffprobe on the Mac; that path fix ships with the move as the first update through the new origin)
 - [x] Move ignored local data (§3.3) by rename (finalized batch media, `_dev`, toolchains, music/SFX sources, story assets/output/.env); venvs: story and motion after the move
 - [x] Swap folders: `StudioZero` = new repo, `StudioZero-old-2026-10` kept; marketing checkout moved to `scalargame-marketing-old-2026-10` (private archive working copy)
 - [x] Game repo: cf46e1d drops the `/marketing/` ignores (exact revert of 8830163's config lines) and adds the Marketing section to CLAUDE/AGENTS; **not pushed** (needs owner OK; local lint/Vitest not run: the game repo has no node_modules on this Mac, CI runs them)
-- [ ] CHECKPOINT 2: import tree, safety-check output, cutover script
-- [ ] GitHub (each with owner OK): archive old repo; deploy key to StudioZero; branch protection on `main`
-- [ ] Pi cutover; verification
-- [ ] All suites green; `check.mjs` reproduces `5ab19d44…`; regression diff clean; safety check green; local = GitHub = Pi
+- [x] CHECKPOINT 2 (owner: push + protect, game repo push, fix the Pi and cut over now, accept the `scout` name)
+- [x] Branch protection on StudioZero `main` (no force-push/deletion, admins included); `legacy-final` tag pushed
+- [ ] Owner OK pending: move the deploy key to StudioZero (read-only); archive `scalargame-marketing-plan`; remove the Pi's rollback copy
+- [x] Pi cutover 2026-10-11 23:03Z (`migrate-origin.sh`): dry run green, swap, check green, units/PAUSED/config/schedule unchanged; first normal update through StudioZero (17894f6) delivered
+- [x] All suites green; `check.mjs` reproduces `5ab19d44…`; regression diff clean; safety check green; local = GitHub = Pi
 - [~] CLAUDE/AGENTS rewritten; memory copied to the StudioZero memory folder (pointer left in the old one); `~/CLAUDE.md` projects table update proposed at CHECKPOINT 2
 
 ### Phase 2 — layout, manifests, packager · Phase 3 — Studio tab, agent, proxy, prompt builder · Phase 4 — contract v2 + publisher · Phase 5 — Originals back online
@@ -269,3 +270,15 @@ As in the brief; not started.
 - **Accepted, for owner confirmation at CHECKPOINT 2**: the Pi's short LAN name/login user `scout` stays in historical notes (`docs/REBUILD_PLAN.md`) and one-off deploy scripts; tailnet names, IPs and IDs do not.
 - **Safety check**: `tools/public_safety_check.py` (+ the private hash list) reports 0 findings for the whole tree; probes for each rule and a real ID from the private history are caught.
 - **Verified in the new folder** (with the real local data): both finalized batches validate (one pre-existing `dirty_generator` warning recorded in them); `node studio/pipeline/check.mjs` reproduces `questionsHash 5ab19d44…` and `git diff --exit-code` is clean; publisher 453 + contract tests green; UI typecheck/lint/259 Vitest/check:static green; motion `tsc` green; the safety check passes on every commit that a push would publish (the two legacy commits only carry files already public at dc12780).
+- **CHECKPOINT 2 answered** (owner): push + branch protection; push the game repo; "fix the Pi issue and start the transition now"; accept `scout` in historical notes.
+- **Pushed**: StudioZero main a653c42 (+ tag `legacy-final`, branch protection); game repo cf46e1d (Vercel deploy success).
+- **Pi issues fixed** (2026-10-11): YouTube job 64d0… resolved `--not-published` (no Buffer post, no YouTube upload after 10-06; it had held the YouTube queue since 10-10); Instagram comment 0550… resolved `--confirmed` (seen on the public reel; the API comments edge returns no own comments, so every daily first comment will stick: publisher fix pending, §13); today's reel 7a42… passes every receipt check and confirms on its own; Threads renewal fixed in 17894f6 (the refresh endpoint needs `access_token` as a query parameter) and renewed (expires 2026-12-10), failure marker cleared.
+- **Cutover**: `migrate-origin.sh` dry run then real run 2026-10-11 23:03Z; independent checks green (origin StudioZero, partial+sparse, clean, ownership, UI health, timers, not paused, units-applied at HEAD). Rollback copy `/opt/scalar-social/repo.pre-studiozero-20261011T224347Z` kept until the deploy key moves.
+- **Layout**: `studio/` → `engines/motion/` with the contract's ffprobe fallback path; regression byte-identical, both batches validate, Remotion still renders.
+
+## 13. Owner follow-ups
+
+1. Move the Pi's deploy key from `scalargame-marketing-plan` to StudioZero (read-only), then archive (never delete) `scalargame-marketing-plan`; afterwards the Pi's rollback copy can go.
+2. Confirm deletion of `~/Personal/code_projects/StudioZero-old-2026-10` and `~/Personal/code_projects/scalargame-marketing-old-2026-10` (both fully backed up in `~/Personal/backups/2026-10-studiozero/`).
+3. Proposed `~/CLAUDE.md` projects-table row for StudioZero (not applied).
+4. Publisher fix (Phase 2): Instagram first comments cannot auto-confirm (the comments edge does not list the account's own comments).

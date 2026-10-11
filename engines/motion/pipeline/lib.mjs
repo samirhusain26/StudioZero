@@ -4,8 +4,8 @@ import {existsSync, readFileSync, readdirSync} from 'node:fs';
 import {resolve, basename} from 'node:path';
 import {createHash} from 'node:crypto';
 
-export const ROOT = resolve(import.meta.dirname, '../..');      // repo root (library/, contract/)
-export const STUDIO = resolve(ROOT, 'studio');                  // Remotion project (src/, public/, node_modules/, .venv/)
+export const ROOT = resolve(import.meta.dirname, '../../..');   // repo root (library/, contract/)
+export const STUDIO = resolve(ROOT, 'engines/motion');          // Remotion project (src/, public/, node_modules/, .venv/)
 // The scalargame repo: $SCALARGAME_DIR, else the parent (repo at scalargame/marketing) or the sibling ../scalargame.
 export const GAME_DIR = process.env.SCALARGAME_DIR ? resolve(process.env.SCALARGAME_DIR)
   : [resolve(ROOT, '..'), resolve(ROOT, '../scalargame')].find(d => existsSync(resolve(d, 'src/games/registry.ts')));
@@ -60,11 +60,11 @@ export const FORMAT_SHORT = {'progressive-clues': 'clues', 'candidate-eliminatio
   'guess-the-year': 'year', 'before-after': 'beforeafter', 'missing-country': 'missing', 'neighbor-clues': 'neighbors'};
 export const DIFFICULTIES = ['approachable', 'moderate', 'challenging'];
 export const BATCH_ID = /^\d{4}-\d{2}-[a-z0-9-]+$/;
-/** `--set`/`--questions` → set module path: a bare name is studio/pipeline/<name>.mjs; a path (with /) is relative to the repo root. */
+/** `--set`/`--questions` → set module path: a bare name is engines/motion/pipeline/<name>.mjs; a path (with /) is relative to the repo root. */
 export const setPath = arg => arg.includes('/') ? resolve(ROOT, arg.endsWith('.mjs') ? arg : `${arg}.mjs`) : resolve(import.meta.dirname, arg.endsWith('.mjs') ? arg : `${arg}.mjs`);
 
 /**
- * Load a curated question set and its per-batch CONFIG (see studio/pipeline/README.md, "Per-batch config").
+ * Load a curated question set and its per-batch CONFIG (see engines/motion/pipeline/README.md, "Per-batch config").
  * The checked set lives at <CONFIG.outDir ?? library/_sources/<SNAPSHOT>>/<set>.json; pack.mjs reads the candidates
  * from CONFIG.candidates ?? <same folder>/candidates.json.
  */
@@ -73,7 +73,7 @@ export async function loadSet(arg) {
   const mod = await import(file);
   const name = basename(file, '.mjs');
   const C = mod.CONFIG;
-  if (!C) throw new Error(`${name}: no CONFIG export (per-batch config, see studio/pipeline/README.md)`);
+  if (!C) throw new Error(`${name}: no CONFIG export (per-batch config, see engines/motion/pipeline/README.md)`);
   for (const k of ['batches', 'scope', 'styles', 'beds', 'episodes', 'experimentId', 'reviewer'])
     if (C[k] === undefined) throw new Error(`${name}: CONFIG.${k} is required`);
   for (const b of C.batches) if (!BATCH_ID.test(b)) throw new Error(`${name}: bad batch ID ${b}`);

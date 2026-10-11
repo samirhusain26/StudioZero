@@ -4,7 +4,7 @@ The studio behind the **@studiozeroflow** social accounts: it makes short vertic
 
 | Folder | Runs on | What |
 |---|---|---|
-| [studio/](studio/pipeline/README.md) | Mac | Motion engine (Remotion) and the Scalargame pipeline: frozen game data → checked questions → rendered, QA'd videos → `batch.json`. Moves to `engines/motion/` after the Pi cutover |
+| [engines/motion/](engines/motion/pipeline/README.md) | Mac | Motion engine (Remotion) and the Scalargame pipeline: frozen game data → checked questions → rendered, QA'd videos → `batch.json` |
 | [engines/story/](engines/story/README.md) | Mac | Story engine (Python): `recap` (stock footage, TTS, captions) and `series` (multi-model AI animation with a budget guard) |
 | [publisher/](publisher/docs/PI_UI.md) | Pi | Publishing runtime, private management UI (source in `publisher/ui`, committed build in `publisher/app/static`), installers and units |
 | [contract/](contract/BATCH_CONTRACT.md) | both | Batch contract and its validator `library_contract.py` |

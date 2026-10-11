@@ -4,10 +4,10 @@ The source code is MIT-licensed (see `LICENSE`, including what it does not cover
 
 | Asset | Where | Licence | Record |
 |---|---|---|---|
-| Music beds (90 calm beds) | `studio/public/episodes/music/*.m4a` | CC0 1.0: HoliznaCC0 and other OpenGameArt artists | one entry per bed in `studio/public/episodes/music/beds.json` (track, source file, licence); corpus notes in `studio/music/TRACKS.md`, `studio/music/catalog.json` |
-| Sound effects | `studio/public/sfx/*.wav` | made procedurally by `studio/tools/make_sfx.py` (no samples) | the generator itself |
-| Fonts: Fraunces, Geist Mono, IBM Plex Mono, Montserrat, Nunito | `studio/public/episodes/fonts/` | SIL Open Font License 1.1 | `studio/public/episodes/fonts/licenses/` |
-| Map geometry | game data in `library/_sources/` and the episode kit | Natural Earth, public domain ("Made with Natural Earth") | `studio/music/rights.json` (approved sources) |
+| Music beds (90 calm beds) | `engines/motion/public/episodes/music/*.m4a` | CC0 1.0: HoliznaCC0 and other OpenGameArt artists | one entry per bed in `engines/motion/public/episodes/music/beds.json` (track, source file, licence); corpus notes in `engines/motion/music/TRACKS.md`, `engines/motion/music/catalog.json` |
+| Sound effects | `engines/motion/public/sfx/*.wav` | made procedurally by `engines/motion/tools/make_sfx.py` (no samples) | the generator itself |
+| Fonts: Fraunces, Geist Mono, IBM Plex Mono, Montserrat, Nunito | `engines/motion/public/episodes/fonts/` | SIL Open Font License 1.1 | `engines/motion/public/episodes/fonts/licenses/` |
+| Map geometry | game data in `library/_sources/` and the episode kit | Natural Earth, public domain ("Made with Natural Earth") | `engines/motion/music/rights.json` (approved sources) |
 | Country reference data | `library/_sources/*/data/reference/` | World Bank Open Data (CC BY 4.0: attribution required) and CIA World Factbook (public domain) | `data/reference/README.md` in each snapshot |
 | Game data and puzzles | `library/_sources/` | scalargame.com (the owner's game), frozen snapshots of committed files | each snapshot's `manifest.json` |
 

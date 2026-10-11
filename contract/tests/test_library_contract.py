@@ -359,10 +359,10 @@ class FolderTests(unittest.TestCase):
         self.assertFalse(lc.validate(folder, now=NOW).ok)
 
 
-@unittest.skipUnless(shutil.which('ffprobe') or Path('/usr/bin/ffprobe').exists() or (ROOT/'studio/node_modules/.bin/remotion').exists(), 'no ffprobe')
+@unittest.skipUnless(shutil.which('ffprobe') or Path('/usr/bin/ffprobe').exists() or (ROOT/'engines/motion/node_modules/.bin/remotion').exists(), 'no ffprobe')
 class RealProbeTests(unittest.TestCase):
     def test_measures_existing_social_clip(self):
-        clips = sorted((ROOT/'studio/out/social-site/clips').glob('*-self-*.mp4'))
+        clips = sorted((ROOT/'engines/motion/out/social-site/clips').glob('*-self-*.mp4'))
         if not clips:
             self.skipTest('no rendered clip')
         try:

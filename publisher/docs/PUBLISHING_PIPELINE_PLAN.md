@@ -179,7 +179,7 @@ Worth carrying over as patterns (rewritten to this project's stdlib/Remotion con
 - `src/pipeline_state.py`: per-step started/completed/failed checkpoints with error text → per-episode status in the Mac packager and the Pi import report.
 - `src/tools/model_compare.py` HTML report → static review sheet in `library/<batchId>/review/` (covers, key frames, metadata, validator results) for the Mac pilot/QA review before upload.
 - `src/marketing.py` hashtag maps → optional per-game hashtag sets in the caption templates. Its LLM caption generation may only be used on the Mac to propose alternatives that are reviewed like any other copy.
-- `src/renderer.py` audio mixing (sidechain ducking, ffmpeg capability checks) → reference only if music + SFX mixing needs it in `studio/render/render.sh`; no loudness/ducking runs on the Pi.
+- `src/renderer.py` audio mixing (sidechain ducking, ffmpeg capability checks) → reference only if music + SFX mixing needs it in `engines/motion/render/render.sh`; no loudness/ducking runs on the Pi.
 
 Not reused: Google Sheets/Drive job intake (direct Mac → Pi upload chosen), budget guard (no paid generation), FastAPI/WebSocket dashboard (Pi backend stays stdlib).
 

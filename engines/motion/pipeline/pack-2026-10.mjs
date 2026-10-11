@@ -9,11 +9,11 @@ export const PACK_2026_10 = {
   sourceCheckNote: ' All five concerns are resolved in this pack (see each card); one replacement question was verified by the main session.',
   notes: ({doc, cand, esc}) => `
 <h2>Checkpoint 1 decisions (6 Oct 2026)</h2>
-<div class="ask"><b>Answered:</b> burn A/B/C choices + “Comment your letter” into the videos · music: Scalar 6, Continuum 2, Whenabouts 5, Tectonic 3 (beds built: <code>studio/public/episodes/music/beds.json</code>) · style recipes: all four recommended · Whenabouts: “Do not worry about spoilers” (the strict ended-Daily rule is waived; the Whenabouts set was rebuilt from the full event pool and re-verified) · the monthly <code>com.scalar.social.replenish</code> job is unloaded, plist parked in <code>~/Library/LaunchAgents/disabled/</code>.<br><b>Still open:</b> approval of these questions; the contract spoiler-gate change below (publishing side).</div>
+<div class="ask"><b>Answered:</b> burn A/B/C choices + “Comment your letter” into the videos · music: Scalar 6, Continuum 2, Whenabouts 5, Tectonic 3 (beds built: <code>engines/motion/public/episodes/music/beds.json</code>) · style recipes: all four recommended · Whenabouts: “Do not worry about spoilers” (the strict ended-Daily rule is waived; the Whenabouts set was rebuilt from the full event pool and re-verified) · the monthly <code>com.scalar.social.replenish</code> job is unloaded, plist parked in <code>~/Library/LaunchAgents/disabled/</code>.<br><b>Still open:</b> approval of these questions; the contract spoiler-gate change below (publishing side).</div>
 <h2>Original questions (for reference)</h2>
 <div class="ask"><h4>1 · Burn A/B/C choices and a “comment your letter” prompt into the videos?</h4>
 Recommended: <b>yes</b>. Choices appear only after the last clue (never with the first clue), stay on screen through the thinking window, and the prompt “Comment your letter” sits under them during the think window only. This makes muted viewing a complete quiz and matches the caption/poll plan. Alternative: choices in captions only, videos stay open-answer.</div>
-<div class="ask"><h4>2 · Music</h4>Owner-supplied tracks in <code>studio/music/sources/</code> (all 120 BPM, Gemini-generated, reuse authorized by you on 28 Sep and 5 Oct; no independent licence verification). Track 4 “Guess It, Place It” is sung, so it is excluded by the instrumental rule.<br>
+<div class="ask"><h4>2 · Music</h4>Owner-supplied tracks in <code>engines/motion/music/sources/</code> (all 120 BPM, Gemini-generated, reuse authorized by you on 28 Sep and 5 Oct; no independent licence verification). Track 4 “Guess It, Place It” is sung, so it is excluded by the instrumental rule.<br>
 Recommended mapping: <b>Scalar → 6</b> “Skipping Downstairs” (pluck, light) · <b>Continuum → 2</b> “Midday Market Rush” (funk) · <b>Whenabouts → 5</b> “Golden Question” (game show, clock ticks) · <b>Tectonic → 3</b> “The Pocket Heist” (electro-pop with a riser/drop for the snap). Track 1 “Big Prize Reveal” as alternate. Each bed is cut on the beat grid so the reveal lands on a downbeat, quieter under the thinking window, −14 LUFS / −1 dBTP.</div>
 <div class="ask"><h4>3 · Style recipe for each game (batch 2026-10)</h4>
 <table><tr><th>Game</th><th>Recommended</th><th>Alternative</th></tr>
@@ -47,7 +47,7 @@ Reversible with <code>mv</code> back + <code>launchctl bootstrap gui/$(id -u) ~/
 <p>Muted completeness: every cue is visual (clue counter, think bar, stamps, labels). SFX are purposeful and quiet: card/piece placement, one think-start tone, a reveal hit on the downbeat; no ticking countdown. Covers are spoiler-free stills of the question state (no answer, no recognisable answer outline).</p>
 
 <h2>Proposed asset kit (kit-1)</h2>
-<pre>studio/src/episodes/
+<pre>engines/motion/src/episodes/
   LibraryEpisode.tsx         one composition; props = resolved episode + style recipe + audio cue sheet
   Cover.tsx                  spoiler-free cover still
   kit/manifest.json          asset IDs, versions, hashes, sources and licences (fonts OFL, geometry Natural Earth, music owner-supplied)
@@ -62,8 +62,8 @@ Reversible with <code>mv</code> back + <code>launchctl bootstrap gui/$(id -u) ~/
   kit/time/                  Ruler timeline (BCE/CE, no year zero), Odometer
   styles/&lt;styleId&gt;.ts        one recipe per game per batch (palette, type, layout, motion, reveal)
   templates/                 the eight format templates
-studio/public/episodes/fonts, music/ (cut beds; TRACKS.md in studio/music/)
-studio/pipeline/     snapshot → candidates → check → pack → episodes (immutable inputs) → render (per-episode resumable jobs via studio/render/render.sh) → batch (batch.json + captions) → review sheet
+engines/motion/public/episodes/fonts, music/ (cut beds; TRACKS.md in engines/motion/music/)
+engines/motion/pipeline/     snapshot → candidates → check → pack → episodes (immutable inputs) → render (per-episode resumable jobs via engines/motion/render/render.sh) → batch (batch.json + captions) → review sheet
 library/&lt;batchId&gt;/           videos/, covers/, batch.json, review/ (jobs, frames, probe, validator output)</pre>
 <p>Captions, YouTube title/description, alt text, hashtags, poll and first comments are deterministic templates filled from each episode's metadata, spoiler-free, with <code>{link}</code> only on Facebook, Threads, X and Bluesky. <code>answerReply</code> stays null.</p>
 

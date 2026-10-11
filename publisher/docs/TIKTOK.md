@@ -8,7 +8,7 @@ documents this hobby project does not have.
 
 ## What the code does
 
-- **Captions**: every batch already carries a TikTok caption (`studio/pipeline/batch.mjs`: same text as Instagram
+- **Captions**: every batch already carries a TikTok caption (`engines/motion/pipeline/batch.mjs`: same text as Instagram
   without "link in bio", five hashtags). The scheduler leaves out any video whose TikTok caption has more than five
   hashtags, Buffer's TikTok limit.
 - **Scheduling**: TikTok is gated like every other channel (connection, verified identity, passed posting test). Cap:

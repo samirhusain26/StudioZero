@@ -417,7 +417,7 @@ class LegacyTests(Base):
         self.assertTrue(self.register()['problems'])
 
     def test_real_catalogue_builds_valid_episodes(self):
-        path = ROOT/'studio/out/social-site/catalog.json'
+        path = ROOT/'engines/motion/out/social-site/catalog.json'
         if not path.exists():
             self.skipTest('no local legacy catalogue')
         m = lc.measure(probe_json(duration=30.0, pix='yuvj420p'))

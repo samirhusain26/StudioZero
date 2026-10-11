@@ -30,8 +30,8 @@
 ## Creative
 
 - **Styles:** <reuse scalar-notebook-1, continuum-poster-1, whenabouts-almanac-1, tectonic-ocean-1 / new recipe per game: describe>
-- **Music beds:** <reuse current beds (studio/public/episodes/music/beds.json) / changes>
-- **Timing:** <unchanged (studio/src/episodes/timing.ts) / changes; the thinking window stays ≥ 6 s>
+- **Music beds:** <reuse current beds (engines/motion/public/episodes/music/beds.json) / changes>
+- **Timing:** <unchanged (engines/motion/src/episodes/timing.ts) / changes; the thinking window stays ≥ 6 s>
 - **Hooks, CTA, captions:** <unchanged / changes>
 - **Variants:** <none / style variants of the same questionId (variantId)>
 

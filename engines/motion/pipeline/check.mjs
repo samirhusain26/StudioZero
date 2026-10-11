@@ -1,6 +1,6 @@
 // Deterministically check the curated question set against the frozen snapshot and resolve it into
 // immutable episode inputs.
-//   node studio/pipeline/check.mjs [--questions=questions-<set>.mjs | --set=<path/to/set.mjs>]
+//   node engines/motion/pipeline/check.mjs [--questions=questions-<set>.mjs | --set=<path/to/set.mjs>]
 // Default set: questions-2026-10 (the frozen regression set; its output must stay byte-identical).
 // Batch rules (scope, difficulty mix, pilots, episode IDs) come from the set's CONFIG export.
 // Exits non-zero (and writes nothing) if any question fails. Output:

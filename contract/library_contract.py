@@ -517,7 +517,7 @@ def ffprobe_command():
         return override.split()
     if Path('/usr/bin/ffprobe').exists():
         return ['/usr/bin/ffprobe']
-    remotion = Path(__file__).resolve().parents[1] / 'studio/node_modules/.bin/remotion'
+    remotion = Path(__file__).resolve().parents[1] / 'engines/motion/node_modules/.bin/remotion'
     if remotion.exists():
         return [str(remotion), 'ffprobe']
     found = shutil.which('ffprobe')

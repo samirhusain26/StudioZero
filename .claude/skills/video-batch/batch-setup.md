@@ -1,6 +1,6 @@
 # Per-batch pipeline setup
 
-The stage scripts hold no batch-specific values. Everything a batch needs lives in its question set module, `studio/pipeline/questions-<set>.mjs` (one set per batch, e.g. `questions-2026-11-b02`): `SNAPSHOT`, `TODAY`, `WHENABOUTS_FRESHNESS`, `QUESTIONS` and a `CONFIG` export. Full key reference: `studio/pipeline/README.md` → "Per-batch config". Copy the shape of `questions-2026-10.mjs` (minus its `pack` prose) or of the rehearsal set `library/_dev/dryrun2-work/questions-2026-10-dryrun2.mjs`.
+The stage scripts hold no batch-specific values. Everything a batch needs lives in its question set module, `engines/motion/pipeline/questions-<set>.mjs` (one set per batch, e.g. `questions-2026-11-b02`): `SNAPSHOT`, `TODAY`, `WHENABOUTS_FRESHNESS`, `QUESTIONS` and a `CONFIG` export. Full key reference: `engines/motion/pipeline/README.md` → "Per-batch config". Copy the shape of `questions-2026-10.mjs` (minus its `pack` prose) or of the rehearsal set `library/_dev/dryrun2-work/questions-2026-10-dryrun2.mjs`.
 
 ```js
 export const SNAPSHOT = '<snapshotId>';
@@ -22,7 +22,7 @@ export const CONFIG = {
 export const QUESTIONS = [ /* curated from candidates */ ];
 ```
 
-`beds: 'calm'` gives each new episode the least recently used track (library-wide) among its game's calm beds of the right length, so music rotates across episodes and batches; a frozen episode keeps its bed. The 2026-10 Gemini beds (`scalar-24`, `continuum-20`, …) are retired: use them only if the brief asks. Only `styles`/`beds` that exist (`studio/src/episodes/styles/<id>.ts`, `studio/public/episodes/music/beds.json`) work; new ones are template/music work with a pilot. New formats need a contract change first (`contract/BATCH_CONTRACT.md`, owner approval, validator and tests). Template work follows `library/_dev/TEMPLATE_BRIEF.md` (its paths predate the move: `src/library` is now `studio/src/episodes`).
+`beds: 'calm'` gives each new episode the least recently used track (library-wide) among its game's calm beds of the right length, so music rotates across episodes and batches; a frozen episode keeps its bed. The 2026-10 Gemini beds (`scalar-24`, `continuum-20`, …) are retired: use them only if the brief asks. Only `styles`/`beds` that exist (`engines/motion/src/episodes/styles/<id>.ts`, `engines/motion/public/episodes/music/beds.json`) work; new ones are template/music work with a pilot. New formats need a contract change first (`contract/BATCH_CONTRACT.md`, owner approval, validator and tests). Template work follows `library/_dev/TEMPLATE_BRIEF.md` (its paths predate the move: `src/library` is now `engines/motion/src/episodes`).
 
 ## Episode IDs
 
@@ -38,7 +38,7 @@ python3 -c "import json,glob; e=[x for f in sorted(glob.glob('library/*/batch.js
 `candidates.mjs` refuses to replace a snapshot's existing `candidates.json` with different content (it is tracked evidence). When the brief reuses a snapshot with a new `--today`, write the candidates next to it under a new name and point the set at it:
 
 ```bash
-node studio/pipeline/candidates.mjs --snapshot=<id> --today=<date> --out=library/_sources/<id>/candidates-<set>.json
+node engines/motion/pipeline/candidates.mjs --snapshot=<id> --today=<date> --out=library/_sources/<id>/candidates-<set>.json
 # CONFIG.candidates = 'library/_sources/<id>/candidates-<set>.json'
 ```
 
@@ -47,9 +47,9 @@ Adding new files (`candidates-<set>.json`, `questions-<set>.json`) to a snapshot
 ## Regression check (run after any pipeline change)
 
 ```bash
-node studio/pipeline/check.mjs                       # default set questions-2026-10 → questionsHash 5ab19d441ad8a8e2…
+node engines/motion/pipeline/check.mjs                       # default set questions-2026-10 → questionsHash 5ab19d441ad8a8e2…
 git status --porcelain library/_sources              # must print nothing
-(cd studio && ./node_modules/.bin/tsc --noEmit)
+(cd engines/motion && ./node_modules/.bin/tsc --noEmit)
 ```
 
 Show Samir any pipeline diff at Checkpoint 0 or 1. Code changes need his OK and are committed only when he asks.

@@ -32,7 +32,7 @@ def main():
         config.update(paused=False,format='chained')
         for platform in ('x','instagram','youtube'):
             config['channels'][platform].update(enabled=True,accountId='simulated-'+platform)
-        catalog=json.loads((ROOT/'studio/out/social-site/catalog.json').read_text())
+        catalog=json.loads((ROOT/'engines/motion/out/social-site/catalog.json').read_text())
         catalog['rightsReviewed']=True # Simulation fixture only; never changes reviewed live catalogue.
         path=state/'catalog.json';path.write_text(json.dumps(catalog))
         config['approval']={'catalogSha256':hashlib.sha256(path.read_bytes()).hexdigest()}
@@ -62,7 +62,7 @@ def main():
                 'uncertainYouTubePublishAttempts':1,'pausePreventedCalls':True,
                 'jobs':[dict(r) for r in ledger.db.execute('SELECT platform,episode,slot,status FROM jobs ORDER BY slot,platform')],
                 'simulatedAdapterOperations':adapter.calls}
-        out=ROOT/'studio/out/social-qa/dry-run.json';out.parent.mkdir(exist_ok=True);out.write_text(json.dumps(report,indent=2)+'\n')
+        out=ROOT/'engines/motion/out/social-qa/dry-run.json';out.parent.mkdir(exist_ok=True);out.write_text(json.dumps(report,indent=2)+'\n')
         print(json.dumps({k:v for k,v in report.items() if k not in ('jobs','simulatedAdapterOperations')}))
         ledger.db.close()
 

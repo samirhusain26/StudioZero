@@ -2,7 +2,7 @@
 
 > **Retired 2026-10-09:** the owner found these Gemini beds annoying. New batches use rotating calm CC0 beds (`beds: 'calm'`; `music/catalog.json`, `docs/AUDIO_CORPUS_PLAN.md`). The beds below stay only for the finalized 2026-10 batches and the frozen regression set.
 
-> Rebuild Phase 1 (8 October 2026): the six sources now live in `studio/music/sources/` (Mac only, ignored). The launch-set beds below (`hero*`, `playalong`, `teaser` .m4a), `src/theme.ts` and the legacy `add_music.py` were deleted; the backup tarball holds them. Current library beds: `studio/public/episodes/music/beds.json` (`studio/pipeline/music_beds.py`).
+> Rebuild Phase 1 (8 October 2026): the six sources now live in `engines/motion/music/sources/` (Mac only, ignored). The launch-set beds below (`hero*`, `playalong`, `teaser` .m4a), `src/theme.ts` and the legacy `add_music.py` were deleted; the backup tarball holds them. Current library beds: `engines/motion/public/episodes/music/beds.json` (`engines/motion/pipeline/music_beds.py`).
 
 Measured 2026-09-28 (librosa beat track + linear fit, 44.1 kHz). Every source is **120.00 BPM** (fits 119.98–120.01, no drift), so no time-stretch; `BPM = 120` in `src/theme.ts` stays.
 Downbeat = waveform attack start (the beat tracker marks onset peaks 20–35 ms late; corrected by eye).
@@ -21,7 +21,7 @@ Cuts: `.audio-work/build_music.py` (splices 5 ms before a downbeat, 10 ms equal-
 
 No file looks mislabeled: the embedded titles/genres and the measured structures fit the six prompts in order.
 
-## Cut beds (studio/public/episodes/music/)
+## Cut beds (engines/motion/public/episodes/music/)
 
 | File | Source | Segments (source s) | Length | Key hits in output | LUFS / TP |
 |---|---|---|---|---|---|

@@ -10,13 +10,13 @@
     {
       "name": "remotion-studio",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "studio", "run", "studio", "--", "--port", "3300", "--no-open"],
+      "runtimeArgs": ["--prefix", "engines/motion", "run", "studio", "--", "--port", "3300", "--no-open"],
       "port": 3300
     },
     {
       "name": "audio-review",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8790", "--bind", "127.0.0.1", "--directory", "studio"],
+      "runtimeArgs": ["-m", "http.server", "8790", "--bind", "127.0.0.1", "--directory", "engines/motion"],
       "port": 8790
     }
   ]

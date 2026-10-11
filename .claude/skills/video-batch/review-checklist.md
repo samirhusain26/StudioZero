@@ -1,11 +1,11 @@
 # Review stage: frames, stills, sheets
 
-All review output goes in `library/<batchId>/review/` (never uploaded) while the batch is **not** finalized. Run Remotion from `studio/`.
+All review output goes in `library/<batchId>/review/` (never uploaded) while the batch is **not** finalized. Run Remotion from `engines/motion/`.
 
 ## 1. Review sheet
 
 ```bash
-node studio/pipeline/review.mjs --batch=<batchId>     # → review/index.html, frames/<episodeId>/*.png, validator.json
+node engines/motion/pipeline/review.mjs --batch=<batchId>     # → review/index.html, frames/<episodeId>/*.png, validator.json
 ```
 
 Run it after `batch.mjs` has written `batch.json` (SKILL step 7); it refuses a finalized batch. Rehearsals add `--dir=library/_dev/<id>`.
@@ -32,8 +32,8 @@ Timings are in each `props.json` → `timing` (seconds). For a safe-area overlay
 Remotion's bundled ffmpeg has no `tile` filter. Use PIL:
 
 ```bash
-studio/.venv/bin/python studio/render/contact.py library/<batchId>/review/<episodeId>-sheet.png library/<batchId>/review/frames/<episodeId>/*.png   # one row; ignore its old red zones
-studio/.venv/bin/python .claude/skills/video-batch/covers_sheet.py library/<batchId> library/<batchId>/review/covers.png
+engines/motion/.venv/bin/python engines/motion/render/contact.py library/<batchId>/review/<episodeId>-sheet.png library/<batchId>/review/frames/<episodeId>/*.png   # one row; ignore its old red zones
+engines/motion/.venv/bin/python .claude/skills/video-batch/covers_sheet.py library/<batchId> library/<batchId>/review/covers.png
 ```
 
 ## 4. Frame checklist (every episode)

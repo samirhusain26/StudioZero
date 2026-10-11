@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Final render (paths relative to studio/): ./render/render.sh <CompositionId> [out.mp4]
+# Final render (paths relative to engines/motion/): ./render/render.sh <CompositionId> [out.mp4]
 # Remotion's own AAC step leaves the encoder priming in the stream with no edit list (~43 ms late audio,
 # enough to smear beat hits), so we render muted video + sample-exact WAV and mux with fdk-AAC,
 # whose mp4 muxing writes the priming edit list. Then check sync against the WAV.

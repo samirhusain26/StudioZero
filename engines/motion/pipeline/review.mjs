@@ -1,5 +1,5 @@
 // Build the static review sheet for a batch: key frames, contact sheets, phone-size player, metadata, QA, validator.
-//   node studio/pipeline/review.mjs --batch=<batchId> [--dir=<batch dir>] [--no-frames]
+//   node engines/motion/pipeline/review.mjs --batch=<batchId> [--dir=<batch dir>] [--no-frames]
 // Writes library/<batch>/review/index.html (+ frames/<episodeId>/*.png, contact/<episodeId>.png, validator.json).
 import {readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';

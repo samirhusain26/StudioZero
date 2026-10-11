@@ -44,7 +44,7 @@ Run the tests, and rebuild the Pi's UI bundle if anything under `publisher/ui/` 
 python3 -m unittest discover -s publisher/tests -p 'test_*.py'
 python3 -m unittest discover -s contract/tests -p 'test_*.py'
 (cd publisher/ui && npm run typecheck && npm run lint && npm test && npm run build:static && npm run check:static)
-(cd studio && ./node_modules/.bin/tsc --noEmit)
+(cd engines/motion && ./node_modules/.bin/tsc --noEmit)
 ```
 
 Then commit and push (Claude does this only when you ask), and update the Pi: Pi UI → Settings › Update → review the full SHA and confirm.

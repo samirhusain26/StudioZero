@@ -21,7 +21,7 @@ On the Mac (repo `~/Personal/code_projects/scalargame/marketing`, its own git re
 
 | Path | What |
 |---|---|
-| `studio/` | Video maker: Remotion templates, the generation pipeline (`studio/pipeline/`), rendering (`studio/render/render.sh`) |
+| `engines/motion/` | Video maker: Remotion templates, the generation pipeline (`engines/motion/pipeline/`), rendering (`engines/motion/render/render.sh`) |
 | `library/<batchId>/` | One batch: `batch.json`, `videos/`, `covers/`, `review/` (review never leaves the Mac), `READY_FOR_UPLOAD` once finalized |
 | `library/_briefs/<batchId>.md` | The brief for each batch |
 | `library/_retros/<batchId>.md` | The retro for each batch |

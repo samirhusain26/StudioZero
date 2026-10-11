@@ -1,5 +1,5 @@
 // Build the Checkpoint 1 question pack (HTML) from the checked question set.
-//   node studio/pipeline/pack.mjs --set=<questions-set> [--batch=<batchId>] [--dir=<batch dir>] [--out=<file.html>]
+//   node engines/motion/pipeline/pack.mjs --set=<questions-set> [--batch=<batchId>] [--dir=<batch dir>] [--out=<file.html>]
 // Defaults: --set questions-2026-10 (the frozen regression set), --batch = first of CONFIG.batches,
 // --out <batch dir>/review/question-pack.html. Prose comes from CONFIG.pack (optional) with generic defaults.
 // Refuses to write into a finalized batch (READY_FOR_UPLOAD).

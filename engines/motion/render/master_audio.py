@@ -1,8 +1,8 @@
 """Master a rendered episode mix: gain to -14 LUFS integrated, lookahead limiter so true peak <= -1 dBTP.
 
-    .venv/bin/python render/master_audio.py in.wav out.wav   (from studio/)
+    .venv/bin/python render/master_audio.py in.wav out.wav   (from engines/motion/)
 
-Same limiter as the music beds (studio/pipeline/music_beds.py). Sample-aligned: output length == input length,
+Same limiter as the music beds (engines/motion/pipeline/music_beds.py). Sample-aligned: output length == input length,
 so the sync check against the mastered WAV stays exact. Prints the measured result as JSON.
 """
 import json, sys

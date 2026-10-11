@@ -31,7 +31,7 @@ import ui_library  # noqa: E402
 from runner import Ledger  # noqa: E402
 
 BASE_URL = 'https://scalar-social-media.pages.dev'
-REMOTION = ROOT/'studio/node_modules/.bin/remotion'
+REMOTION = ROOT/'engines/motion/node_modules/.bin/remotion'
 EXTRA = (  # game, n, difficulty, question, choices, answer
     ('continuum', 2, 'moderate', 'Which is larger by area?', ['Chad', 'Peru', 'Mongolia'], 'Mongolia'),
     ('whenabouts', 3, 'challenging', 'Which year?', ['1961', '1969', '1972'], '1969'),

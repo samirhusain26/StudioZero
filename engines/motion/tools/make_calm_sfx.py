@@ -1,6 +1,6 @@
 """Synthesize the calm SFX candidates into sfx/sources/procedural/ (44.1 kHz, 16-bit stereo WAV, peak -6 dBFS).
 
-Run (from studio/): .venv/bin/python tools/make_calm_sfx.py
+Run (from engines/motion/): .venv/bin/python tools/make_calm_sfx.py
 Everything is procedural (no samples), so it is ours to use. Candidates only (docs/AUDIO_CORPUS_PLAN.md): approved
 sounds get promoted to public/sfx later. Softer than tools/make_sfx.py: modal marimba/wood/kalimba bars, FM glass
 bells, filtered-noise paper and air, all through a short stereo room. Notes stay in C major pentatonic so any two

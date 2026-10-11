@@ -1,6 +1,6 @@
 """Cut the library music beds on bar lines so each reveal lands on a downbeat.
 
-    .venv/bin/python pipeline/music_beds.py [bed ...]   (from studio/)
+    .venv/bin/python pipeline/music_beds.py [bed ...]   (from engines/motion/)
 
 Same method as the launch beds (.audio-work/build_music.py, see music/TRACKS.md): 120.00 BPM, bar = 2.000 s,
 splices PRE before a downbeat with an XF equal-power crossfade, -14 LUFS integrated, lookahead limiter (true peak
@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np, soundfile as sf, pyloudnorm as pyln, librosa
 from scipy.ndimage import minimum_filter1d, uniform_filter1d
 
-ROOT = Path(__file__).resolve().parents[1]  # studio/
+ROOT = Path(__file__).resolve().parents[1]  # engines/motion/
 OUT = ROOT / 'public/episodes/music'
 SR = 44100
 PRE, XF = 0.005, 0.010

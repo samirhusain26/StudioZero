@@ -1,4 +1,4 @@
-// Library quiz episodes (kit-1). Props are produced by studio/pipeline/episodes.mjs from the
+// Library quiz episodes (kit-1). Props are produced by engines/motion/pipeline/episodes.mjs from the
 // checked question set and are immutable per render job: templates must render from props alone.
 import type {SfxName} from '../kit/sfx';
 

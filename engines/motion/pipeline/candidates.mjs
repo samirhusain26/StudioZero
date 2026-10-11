@@ -1,5 +1,5 @@
 // Enumerate checked candidate questions for all eight formats from a frozen snapshot.
-//   node studio/pipeline/candidates.mjs --snapshot=<snapshotId> [--today=YYYY-MM-DD] [--out=<file.json>]
+//   node engines/motion/pipeline/candidates.mjs --snapshot=<snapshotId> [--today=YYYY-MM-DD] [--out=<file.json>]
 // Writes library/_sources/<snapshot>/candidates.json (or --out). It refuses to replace an existing, different
 // candidates.json in a snapshot folder (tracked evidence): use --out, e.g. CONFIG.outDir of a set. Every candidate carries the deterministic
 // checks it passed; editorial selection happens in questions-<batch>.mjs, which re-runs these checks.

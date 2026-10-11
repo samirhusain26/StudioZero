@@ -1,5 +1,5 @@
 // Resumable per-episode render jobs for a library batch.
-//   node studio/pipeline/render.mjs --batch=<batchId> [--dir=<batch dir>] [--only=id1,id2] [--rerender]
+//   node engines/motion/pipeline/render.mjs --batch=<batchId> [--dir=<batch dir>] [--only=id1,id2] [--rerender]
 // Each job (library/<batch>/review/jobs/<episodeId>/) has an immutable input.json + props.json (episodes.mjs) and a
 // status.json with every attempt. A job is marked `validated` only after its MP4 and cover pass every check; only then
 // are they copied to videos/<id>.mp4 and covers/<id>.jpg. Failed or partial work stays in the job folder.

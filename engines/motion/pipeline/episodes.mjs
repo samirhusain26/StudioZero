@@ -1,6 +1,6 @@
 // Freeze immutable per-episode render inputs for a batch.
-//   node studio/pipeline/episodes.mjs --batch=<batchId> [--set=questions-<set> | --set=<path/to/set.mjs>] [--dir=<batch dir>]
-//   node studio/pipeline/episodes.mjs --fixtures          # dev props for every question (incl. spares)
+//   node engines/motion/pipeline/episodes.mjs --batch=<batchId> [--set=questions-<set> | --set=<path/to/set.mjs>] [--dir=<batch dir>]
+//   node engines/motion/pipeline/episodes.mjs --fixtures          # dev props for every question (incl. spares)
 // Writes <batch dir>/review/jobs/<episodeId>/input.json (+ props.json). An existing input is never changed: if the
 // content would differ the run stops (a correction needs a new revision). Episode IDs, styles and music beds come
 // from the set's CONFIG (episodes, styles, beds); default set questions-2026-10 (the frozen regression set).

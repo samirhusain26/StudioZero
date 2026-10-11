@@ -9,7 +9,7 @@ export const TODAY = '2026-10-06';
 // Owner, Checkpoint 1: "Do not worry about spoilers". Future Whenabouts Daily appearances are recorded, not blocking.
 export const WHENABOUTS_FRESHNESS = 'waived';
 
-// Per-batch config (studio/pipeline/README.md, "Per-batch config"). These are the values the 2026-10 batches were
+// Per-batch config (engines/motion/pipeline/README.md, "Per-batch config"). These are the values the 2026-10 batches were
 // made with; check/pack/episodes/batch reproduce them byte for byte.
 export const CONFIG = {
   batches: ['2026-10-pilots', '2026-10-b01'],
