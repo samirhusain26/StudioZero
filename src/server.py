@@ -101,50 +101,11 @@ async def api_delete_project(project_id: str):
     return {"ok": True}
 
 
-# ── Sheet-based project creation ──────────────────────────────────────
+# ── Sheet-based project creation (retired October 2026) ───────────
 
 @app.post("/api/projects/from-sheet")
 async def api_create_from_sheet():
-    """Create a project from the next pending row in Google Sheet."""
-    # Resolve sheet URL from settings.json, then env var
-    sheet_url = None
-    if Config.SETTINGS_FILE.exists():
-        data = json.loads(Config.SETTINGS_FILE.read_text(encoding="utf-8"))
-        sheet_url = data.get("integrations", {}).get("BATCH_SHEET_URL")
-    if not sheet_url:
-        sheet_url = Config.BATCH_SHEET_URL
-    if not sheet_url:
-        raise HTTPException(400, "No Google Sheet URL configured. Set it in Settings → Integrations.")
-
-    try:
-        from src.cloud_services import get_pending_jobs
-        pending = get_pending_jobs(sheet_url)
-    except Exception as e:
-        raise HTTPException(500, f"Failed to fetch from Google Sheet: {e}")
-
-    if not pending:
-        raise HTTPException(404, "No pending movies in the sheet. Set a row's Status to 'Pending'.")
-
-    job = pending[0]
-    # Support common column name variants
-    movie_name = (
-        job.get("movie_title") or job.get("Movie Name") or
-        job.get("Movie Title") or job.get("movie_name") or ""
-    ).strip()
-    if not movie_name:
-        raise HTTPException(400, f"First pending row has no movie name. Found columns: {list(job.keys())}")
-
-    row_index = job.get("_row_index")
-    params = {}
-    if row_index:
-        params["sheet_row_index"] = row_index
-        params["sheet_url"] = sheet_url
-
-    try:
-        p = create_project(movie_name, "movie", params)
-        return p.model_dump()
-    except ValueError as e:
-        raise HTTPException(400, str(e))
+    raise HTTPException(410, "Google Sheets batch creation was retired. Create a recap from a title instead.")
 
 
 # ── Random idea generator ─────────────────────────────────────────────
@@ -350,18 +311,6 @@ def _execute_pipeline(project: Project, queue: asyncio.Queue, loop):
                     p.status = "error"
                     p.error = status.message
                     update_project(p)
-                    # Update sheet row on error
-                    sheet_url = p.params.get("sheet_url")
-                    row_idx = p.params.get("sheet_row_index")
-                    if sheet_url and row_idx:
-                        try:
-                            from src.cloud_services import update_row
-                            update_row(sheet_url, row_idx, {
-                                "Status": "Failed",
-                                "Error": status.message,
-                            })
-                        except Exception:
-                            pass
                 _put({"type": "error", "message": status.message})
                 return  # stop consuming — pipeline has halted
 
@@ -378,18 +327,6 @@ def _execute_pipeline(project: Project, queue: asyncio.Queue, loop):
                     p.step_data["final_video"] = e.value
             update_project(p)
 
-            # Update Google Sheet row if this was a sheet-sourced movie
-            sheet_url = p.params.get("sheet_url")
-            row_idx = p.params.get("sheet_row_index")
-            if sheet_url and row_idx:
-                try:
-                    from src.cloud_services import update_row
-                    update_row(sheet_url, row_idx, {
-                        "Status": "Done",
-                        "Output Path": p.step_data.get("final_video", ""),
-                    })
-                except Exception as sheet_err:
-                    logger.warning(f"Failed to update sheet row: {sheet_err}")
 
         _put({"type": "completed", "data": p.step_data if p else {}})
     finally:

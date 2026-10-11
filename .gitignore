@@ -42,7 +42,7 @@ env.yaml
 .vscode/
 *.swp
 *.swo
-.claude/
+.claude/settings.local.json
 .gemini/
 
 # -----------------------------------------------------------------------------
@@ -52,10 +52,8 @@ env.yaml
 output/
 
 # Downloaded/generated assets (stock videos, TTS audio)
-# We ignore the assets directory but explicitly track music and basevideos
-assets/*
-!assets/music/
-!assets/basevideos/
+# Stock fallback clips and music beds stay local: no licence or source is recorded for them (removed from the tree 2026-10)
+assets/
 
 # Log files
 logs/

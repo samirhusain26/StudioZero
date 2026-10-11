@@ -11,7 +11,6 @@ from google import genai
 from src.config import Config
 from src.headless import RunConfig, run_single
 from src.narrative import validate_input, generate_random_story_idea
-from src.batch_runner import main as run_batch
 
 logger = logging.getLogger(__name__)
 
@@ -222,37 +221,22 @@ def _handle_scene_failure(status) -> str:
 
 def _run_stock_wizard():
     _section("Stock Footage Route")
-    print("1. Sheet Automated (Fetch from Google Sheet)")
-    print("2. User Entry (Manual Movie/Story Name)")
+    # The Google Sheets batch route was retired in October 2026; recaps start from a typed title.
+    movie_name = input("\nEnter the movie name or story idea: ").strip()
 
-    sub_choice = input("\nEnter sub-choice (1 or 2): ").strip()
+    client = genai.Client(api_key=Config.GEMINI_API_KEY)
 
-    if sub_choice == "1":
-        print("\nStarting Sheet Automated processing...")
-        logging.basicConfig(level=logging.INFO)
-        run_batch()
-        return 0
+    print(f"Validating input: '{movie_name}'...")
+    validation = validate_input(movie_name, client)
 
-    elif sub_choice == "2":
-        movie_name = input("\nEnter the movie name or story idea: ").strip()
+    final_idea = movie_name
+    if not validation.get("is_valid"):
+        print("Input unrecognizable. Generating a random story idea...")
+        final_idea = generate_random_story_idea(client)
+        print(f"Generated Story Idea: {final_idea}")
 
-        client = genai.Client(api_key=Config.GEMINI_API_KEY)
-
-        print(f"Validating input: '{movie_name}'...")
-        validation = validate_input(movie_name, client)
-
-        final_idea = movie_name
-        if not validation.get("is_valid"):
-            print("Input unrecognizable. Generating a random story idea...")
-            final_idea = generate_random_story_idea(client)
-            print(f"Generated Story Idea: {final_idea}")
-
-        cfg = RunConfig(movie=final_idea, mode="movie", verbose=True)
-        return run_single(cfg)
-
-    else:
-        print("Invalid choice.")
-        return 1
+    cfg = RunConfig(movie=final_idea, mode="movie", verbose=True)
+    return run_single(cfg)
 
 
 # ── Main wizard ───────────────────────────────────────────────────────────────

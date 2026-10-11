@@ -138,15 +138,6 @@ class UnifiedVideoClient:
                     voice_profile=voice_profile or "",
                     on_poll=on_poll,
                 )
-            elif self._model.provider == "vertex_ai":
-                result_path = self._generate_vertex(
-                    prompt=prompt,
-                    output_path=str(output_path),
-                    image_path=image_path,
-                    dialogue=dialogue or "",
-                    voice_profile=voice_profile or "",
-                    on_poll=on_poll,
-                )
             else:
                 result_path = self._generate_fal(
                     prompt=prompt,
@@ -435,34 +426,6 @@ class UnifiedVideoClient:
             f"[video_client] Gemini API video saved: {out} ({out.stat().st_size // 1024} KB)"
         )
         return str(out)
-
-    # ── Vertex AI provider (delegates to existing veo_client.py) ────────────
-
-    def _generate_vertex(
-        self,
-        prompt: str,
-        output_path: str,
-        image_path: Optional[str] = None,
-        dialogue: str = "",
-        voice_profile: str = "",
-        on_poll: Optional[Callable[[int], None]] = None,
-    ) -> str:
-        """Delegate to the existing VeoClient for Vertex AI generation."""
-        from src.veo_client import generate_veo_scene
-
-        if not image_path:
-            raise VideoGenerationError(
-                "Vertex AI Veo requires a character reference image (image_path)"
-            )
-
-        return generate_veo_scene(
-            image_path=image_path,
-            visual_description=prompt,
-            dialogue=dialogue,
-            voice_profile=voice_profile,
-            output_path=output_path,
-            on_poll=on_poll,
-        )
 
     # ── Provider availability ──────────────────────────────────────────────
 
