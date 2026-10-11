@@ -4,7 +4,7 @@
     {
       "name": "scalargame-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "..", "run", "dev", "--", "--port", "5173", "--strictPort"],
+      "runtimeArgs": ["--prefix", "../scalargame", "run", "dev", "--", "--port", "5173", "--strictPort"],
       "port": 5173
     },
     {

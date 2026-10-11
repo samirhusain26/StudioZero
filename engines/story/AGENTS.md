@@ -1,5 +1,7 @@
 # StudioZero Agent Guide
 
+> Part of the StudioZero studio: this is the **story engine** (`engines/story`). Run every command from this folder. Retired in October 2026: the Google Sheets batch runner, Drive/iCloud upload, Groq captions, the app launcher, Cloud Run, StudioZero.app and the legacy Vertex client. Studio rules (public repository, no paid generation without the owner's OK): `../../AGENTS.md`.
+
 StudioZero is a Python pipeline for producing vertical social video through stock-footage and multi-step animation routes.
 
 ## Read first

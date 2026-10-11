@@ -1,5 +1,7 @@
 # StudioZero
 
+> Part of the StudioZero studio: this is the **story engine** (`engines/story`). Run every command from this folder. Retired in October 2026: the Google Sheets batch runner, Drive/iCloud upload, Groq captions, the app launcher, Cloud Run, StudioZero.app and the legacy Vertex client. Studio rules (public repository, no paid generation without the owner's OK): `../../AGENTS.md`.
+
 AI-powered video generation pipeline that creates short, vertical (9:16) social media videos. It autonomously handles everything from script generation and voiceovers to visual asset selection and final rendering.
 
 ## Core Operational Routes
@@ -8,7 +10,6 @@ StudioZero is organized into two primary production routes:
 
 1.  **Stock Footage Route**: 
     *   **User Entry**: Input a movie name or story idea. If the input is unrecognizable, the system automatically generates a creative random story.
-    *   **Sheet Automated**: Fetches multiple jobs from a Google Sheet for high-volume automated production.
     *   **Output**: Narrative recaps with AI voiceover, stock footage (Pexels), and Hormozi-style captions.
 
 2.  **Animation Series Route**:
@@ -32,7 +33,7 @@ Requires: Google Gemini (LLM/TTS/Vision + Veo video generation), Groq (Fallback)
 
 ### 3. Run the Application
 ```bash
-python -m src.app
+python -m src.cli
 ```
 You will be prompted to choose between:
 *   **CLI Wizard**: The recommended interactive terminal interface for both production routes.
@@ -46,7 +47,6 @@ Detailed guides and technical references:
 - [**PIPELINE_OVERVIEW.md**](docs/PIPELINE_OVERVIEW.md) — Deep dive into Stock Footage vs. Animation routes.
 - [**TECHNICAL_REFERENCE.md**](docs/TECHNICAL_REFERENCE.md) — Technical breakdown of the rendering engine and 8-step logic.
 - [**PROJECT_STRUCTURE.md**](docs/PROJECT_STRUCTURE.md) — Codebase map and technical stack.
-- [**BATCH_PROCESSING.md**](docs/BATCH_PROCESSING.md) — Guide for Google Sheets automation.
 - [**MODELS_REFERENCE.md**](docs/MODELS_REFERENCE.md) — Pydantic schema and data model documentation.
 
 ## Key Features

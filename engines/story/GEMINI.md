@@ -1,5 +1,7 @@
 # StudioZero: AI Video Generation Pipeline
 
+> Part of the StudioZero studio: this is the **story engine** (`engines/story`). Run every command from this folder. Retired in October 2026: the Google Sheets batch runner, Drive/iCloud upload, Groq captions, the app launcher, Cloud Run, StudioZero.app and the legacy Vertex client. Studio rules (public repository, no paid generation without the owner's OK): `../../AGENTS.md`.
+
 StudioZero is an automated system for creating vertical (9:16) social media videos. It features two core production routes:
 - **Stock Footage Route**: Narrative recaps using LLM scripts, Gemini TTS, Pexels stock footage, and FFmpeg rendering with audio ducking. Includes "Sheet Automated" and "User Entry" modes.
 - **Animation Series Route**: A production-grade 8-step modular pipeline for multi-episode series with consistent characters, persistent state tracking, and multi-model video generation (11 models across 3 tiers via fal.ai and Vertex AI).
@@ -16,8 +18,7 @@ StudioZero is an automated system for creating vertical (9:16) social media vide
 ## Core Workflows
 
 ### Execution
-- **Main Entry**: `python -m src.app` (Select CLI Wizard or Web Dashboard).
-- **Batch Processing**: Managed via "Stock Footage -> Sheet Automated" in the CLI wizard or `src/batch_runner.py` directly.
+- **Main Entry**: `python -m src.cli` (from engines/story).
 - **Web Dashboard**: Access the FastAPI dashboard by choosing Option 2 in the main entry point.
 
 ### Development & Extension
@@ -27,7 +28,6 @@ StudioZero is an automated system for creating vertical (9:16) social media vide
 
 ## Architectural Map
 
-- `src/app.py`: Main entry point with interface selection.
 - `src/cli.py`: The interactive CLI wizard implementing the two-route flow.
 - `src/server.py`: FastAPI backend for the web dashboard.
 - `src/pipeline.py`: Orchestration engine for the Stock Footage route.
