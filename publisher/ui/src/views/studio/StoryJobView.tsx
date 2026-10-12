@@ -540,7 +540,7 @@ function ArtifactItem({ id, file }: { id: string; file: StoryArtifact }) {
       {file.kind === 'image' ? <img className="story-image" src={url} alt={file.path} loading="lazy" /> : null}
       {file.kind === 'video' ? <video className="player" src={url} controls preload="metadata" playsInline /> : null}
       {file.kind === 'json' && file.json !== null ? <JsonView value={file.json} depth={0} /> : null}
-      {file.kind === 'text' || file.kind === 'file' || (file.kind === 'json' && file.json === null) ? (
+      {file.kind === 'text' || (file.kind === 'json' && file.json === null) ? (
         <a href={url} target="_blank" rel="noopener noreferrer">
           Open
         </a>

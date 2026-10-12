@@ -34,7 +34,7 @@ from pathlib import Path
 from typing import Any, Callable, Deque, Dict, Iterator, List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel, Field
 
 from src.budget_guard import SpendLedger
@@ -52,6 +52,10 @@ EVENTS_MAX = 2000
 EVENT_TEXT_MAX = 2000
 SHOTS_PER_EPISODE = 6  # estimate for episodes whose director step has not run yet (video_models.estimate_episode_cost)
 PROJECT_ID = r"[A-Za-z0-9_-]{1,120}"
+PRIVATE_FILES = {"spend_ledger.json", "project.json", "pipeline_state.json"}
+FILE_TYPES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".mp4": "video/mp4",
+              ".json": "application/json", ".txt": "text/plain; charset=utf-8"}
+TEXT_FILE_MAX = 2_000_000
 STEP_NAMES = ("writer", "screenwriter", "casting", "world_builder", "director", "set_designer", "scene_generator", "editor")
 PRESETS = {  # F20: one click sets the LLM, image, TTS and video tier
     "budget": {"llm_model": "gemini-2.5-flash-lite", "image_model": "gemini-2.5-flash-image", "tts_model": "gemini-2.5-flash-preview-tts", "tier": "cheapest"},
@@ -192,11 +196,20 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
     }
     jobs: Dict[str, Job] = state["jobs"]
 
-    def auth(request: Request) -> None:
+    def authorized(request: Request) -> bool:
         expected = state["token"]
         supplied = request.headers.get("authorization", "")
-        if not expected or not hmac.compare_digest(supplied.encode(), f"Bearer {expected}".encode()):
+        return bool(expected) and hmac.compare_digest(supplied.encode(), f"Bearer {expected}".encode())
+
+    def auth(request: Request) -> None:
+        if not authorized(request):
             raise HTTPException(401, "Not authorized.")
+
+    @app.middleware("http")
+    async def auth_first(request: Request, call_next):  # before routing and body parsing (security review F8)
+        if not authorized(request):
+            return JSONResponse({"error": "Not authorized."}, status_code=401)
+        return await call_next(request)
 
     def job(project_id: str) -> Job:
         if project_id not in jobs:
@@ -406,6 +419,8 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
         if body.route == "series" and not body.brief.strip():
             raise HTTPException(422, "A series needs a brief.")
         params = {"project_title": body.name, "brief": body.brief, "num_episodes": body.episodes} if body.route == "series" else {}
+        if not re.fullmatch(PROJECT_ID, Config.safe_title(body.name)):  # an id the API can reach again (review F2)
+            raise HTTPException(422, "Use letters A–Z, digits, spaces, hyphens or underscores in the name.")
         try:
             p = create_project(body.name, ROUTES[body.route], params)
         except ValueError as e:
@@ -527,7 +542,7 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
         files = []
         for raw in node.get("artifact_paths", []) or []:
             path = _inside(base, p.id, raw)
-            if path is not None and path.is_file():
+            if path is not None and path.is_file() and path.name.lower() not in PRIVATE_FILES:
                 rel = path.relative_to(base).as_posix()
                 files.append({"path": rel, "bytes": path.stat().st_size, "kind": _kind(path),
                               "json": _json_preview(path) if path.suffix == ".json" else None})
@@ -538,9 +553,14 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
         p = project_or_404(project_id)
         base = project_dir(p).resolve()
         target = (base / file_path).resolve()
-        if not target.is_relative_to(base) or not target.is_file() or target.name in ("spend_ledger.json",):
+        # Only the artifact kinds the Studio shows, never the job's own state files (security review F1, F4; names compared lower-cased).
+        if not target.is_relative_to(base) or not target.is_file() or target.name.lower() in PRIVATE_FILES or _kind(target) == "file":  # APFS ignores case
             raise HTTPException(404, "File not found.")
-        return FileResponse(target)  # Starlette answers Range requests
+        if target.suffix.lower() in (".json", ".txt"):
+            if target.stat().st_size > TEXT_FILE_MAX:
+                raise HTTPException(404, "File not found.")
+            return Response(_redact(target.read_text(encoding="utf-8", errors="replace")), media_type=FILE_TYPES[target.suffix.lower()])
+        return FileResponse(target, media_type=FILE_TYPES[target.suffix.lower()])  # Starlette answers Range requests
 
     @app.get("/studio/renders")
     def renders(_: None = Depends(auth)) -> dict:
@@ -696,7 +716,7 @@ def _json_preview(path: Path) -> Any:
     try:
         if path.stat().st_size > 512_000:
             return None
-        return json.loads(path.read_text())
+        return json.loads(_redact(path.read_text()))
     except (OSError, ValueError):
         return None
 

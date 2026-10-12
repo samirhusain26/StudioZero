@@ -12,6 +12,7 @@ import argparse
 import os
 from pathlib import Path
 import secrets
+import shlex
 import subprocess
 import sys
 
@@ -49,7 +50,7 @@ def main(argv=None) -> int:
         if not args.url or not args.addr:
             parser.error("--send-to-pi needs --url and --addr")
         with open(PATH, "rb") as token:
-            result = subprocess.run(["ssh", "-o", "BatchMode=yes", args.pi, f"sudo {PI_SCRIPT} --url {args.url} --addr {args.addr}"],
+            result = subprocess.run(["ssh", "-o", "BatchMode=yes", args.pi, f"sudo {PI_SCRIPT} --url {shlex.quote(args.url)} --addr {shlex.quote(args.addr)}"],
                                     stdin=token, capture_output=True, text=True)
         print((result.stdout or result.stderr).strip())
         return result.returncode

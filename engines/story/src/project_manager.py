@@ -7,7 +7,9 @@ that tracks mode, parameters, current pipeline step, and timestamps.
 
 import json
 import logging
+import os
 import shutil
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -126,4 +128,7 @@ def get_project_dir(project_id: str) -> Path:
 def _save(project: Project):
     pf = _project_file(project.id)
     pf.parent.mkdir(parents=True, exist_ok=True)
-    pf.write_text(project.model_dump_json(indent=2))
+    # Atomic: the worker agent reads project.json while a run thread updates it.
+    tmp = pf.with_name(f".{pf.name}.{threading.get_ident()}.tmp")
+    tmp.write_text(project.model_dump_json(indent=2))
+    os.replace(tmp, pf)

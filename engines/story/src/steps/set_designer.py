@@ -19,7 +19,7 @@ from typing import List, Optional
 from google.genai import types
 
 from src.config import Config
-from src.steps import StepContext, StepResult
+from src.steps import StepContext, StepResult, slug_part
 from src.steps.director import load_director_shots
 
 logger = logging.getLogger(__name__)
@@ -120,7 +120,7 @@ def run(ctx: StepContext) -> StepResult:
     )
 
     for shot in shots.shots:
-        cache_key = f"{shot.primary_character_id}_{shot.location_id}"
+        cache_key = f"{slug_part(shot.primary_character_id)}_{slug_part(shot.location_id)}"
         cache_path = scene_starts_dir / f"{cache_key}.png"
 
         # Skip duplicate character+location combos within this episode

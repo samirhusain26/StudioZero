@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field
 
 from src.config import Config
 from src.narrative import generate_character_blueprint
-from src.steps import StepContext, StepResult
+from src.steps import StepContext, StepResult, slug_part
 from src.steps.writer import load_story
 from src.steps.screenwriter import load_all_episodes
 
@@ -135,8 +135,8 @@ def run(ctx: StepContext) -> StepResult:
     artifact_paths: List[str] = []
 
     for location_slug, scene_contexts in location_scenes.items():
-        layout_path = ctx.worlds_dir / f"{location_slug}_layout.json"
-        img_path = ctx.worlds_dir / f"{location_slug}_reference.png"
+        layout_path = ctx.worlds_dir / f"{slug_part(location_slug)}_layout.json"
+        img_path = ctx.worlds_dir / f"{slug_part(location_slug)}_reference.png"
 
         # ── Layout JSON ─────────────────────────────────────────────────────
         if layout_path.exists():
@@ -187,7 +187,7 @@ def run(ctx: StepContext) -> StepResult:
 
 def load_world_layout(worlds_dir: Path, location_id: str) -> WorldLayout:
     """Load a persisted world layout from disk."""
-    path = worlds_dir / f"{location_id}_layout.json"
+    path = worlds_dir / f"{slug_part(location_id)}_layout.json"
     return WorldLayout.model_validate_json(path.read_text(encoding="utf-8"))
 
 

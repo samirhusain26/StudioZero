@@ -163,7 +163,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 status = 411
                 return self.reply(411, {'error': 'Content-Length required.'})
             length = self.headers.get('Content-Length') or '0'
-            if not (length.isascii() and length.isdigit()) or int(length) > REQUEST_CAP:
+            if not re.fullmatch(r'\d{1,15}', length) or int(length) > REQUEST_CAP:
                 status = 413
                 return self.reply(413, {'error': 'Request too large.'})
             body = self.rfile.read(int(length)) if int(length) else None
@@ -202,7 +202,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 return 502
             cap = MEDIA_CAP if media else JSON_CAP
             declared = response.getheader('Content-Length')
-            if declared is not None and (not declared.isdigit() or int(declared) > cap):
+            if declared is not None and (not re.fullmatch(r'\d{1,15}', declared) or int(declared) > cap):
                 self.reply(502, {'error': 'The story worker sent too much data.'})
                 return 502
             self.send_response(status)

@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field
 
 from src.config import Config
 from src.narrative import generate_character_blueprint
-from src.steps import StepContext, StepResult
+from src.steps import StepContext, StepResult, slug_part
 from src.steps.writer import load_story, CharacterSeed
 from src.steps.screenwriter import load_all_episodes
 
@@ -123,8 +123,8 @@ def run(ctx: StepContext) -> StepResult:
     artifact_paths: List[str] = []
 
     for seed in active_seeds:
-        sheet_path = ctx.characters_dir / f"{seed.character_id}_sheet.json"
-        img_path = ctx.characters_dir / f"{seed.character_id}_reference.png"
+        sheet_path = ctx.characters_dir / f"{slug_part(seed.character_id)}_sheet.json"
+        img_path = ctx.characters_dir / f"{slug_part(seed.character_id)}_reference.png"
 
         # ── Character sheet ─────────────────────────────────────────────────
         if sheet_path.exists():
@@ -174,7 +174,7 @@ def run(ctx: StepContext) -> StepResult:
 
 def load_character_sheet(characters_dir: Path, character_id: str) -> CharacterSheet:
     """Load a persisted character sheet from disk."""
-    path = characters_dir / f"{character_id}_sheet.json"
+    path = characters_dir / f"{slug_part(character_id)}_sheet.json"
     return CharacterSheet.model_validate_json(path.read_text(encoding="utf-8"))
 
 

@@ -59,7 +59,12 @@ MEDIA_TTL = 3600
 STUDIO_SOCKET = '/run/scalar-social-studio/proxy.sock'  # scalar-social-studio-proxy.service (studio_proxy.py)
 STUDIO_BODY_CAP = 256_000
 STUDIO_TIMEOUT = 60
-STUDIO_HEADERS = ('Content-Type', 'Content-Length', 'Content-Range', 'Accept-Ranges', 'ETag', 'Last-Modified')
+STUDIO_HEADERS = ('Content-Length', 'Content-Range', 'Accept-Ranges', 'ETag', 'Last-Modified')
+# The worker never chooses how this origin serves its bytes (security review F1): JSON routes are JSON, worker files
+# get a type from this list by suffix or are downloads, and every studio response is a sandboxed, script-less document.
+STUDIO_FILE_TYPES = {'.mp4': 'video/mp4', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png',
+                     '.json': 'application/json', '.txt': 'text/plain; charset=utf-8'}
+STUDIO_CSP = "sandbox; default-src 'none'; frame-ancestors 'none'"
 # Studio › Export (in-browser rendering): the mastered mix is fetched from a blob: URL, the encoders run in blob:
 # workers and the AAC fallback encoder is WebAssembly ('wasm-unsafe-eval' allows compiling Wasm, not JS eval).
 # Nothing may connect anywhere but this origin (Remotion's usage ping to its own site stays blocked).
@@ -76,6 +81,15 @@ APP_DIR = Path(__file__).resolve().parent  # /opt/scalar-social/repo/publisher/a
 ACTIVATE_COMMAND = f'sudo python3 -I -B {APP_DIR}/activate.py --apply --confirm-zero-spend'
 CHECK_COMMAND = f'sudo python3 -I -B {APP_DIR}/activate.py --check'
 
+
+
+def studio_content_type(path):
+    """(Content-Type, attachment?) for a forwarded studio path: files by suffix from STUDIO_FILE_TYPES, else a download."""
+    if re.match(r'/studio/projects/[^/]+/files/', path) or re.match(r'/studio/renders/[^/]+/[^/]+$', path):
+        suffix = os.path.splitext(path)[1].lower()
+        known = STUDIO_FILE_TYPES.get(suffix)
+        return (known, False) if known else ('application/octet-stream', True)
+    return 'application/json; charset=utf-8', False
 
 class ApiError(Exception):
     """Non-2xx reply with body ApiError {error, nextAction, problems?} (types.ts)."""
@@ -389,9 +403,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if self.headers.get('Origin') not in self.app.allowed_origins:
             raise ApiError(403, 'Request did not come from this site.', 'Open the UI from its own address and try again.')
 
-    def headers_common(self, api=True):
+    def headers_common(self, api=True, csp=None):
         for key, value in SECURITY_HEADERS.items():
-            self.send_header(key, value)
+            self.send_header(key, csp if csp and key == 'Content-Security-Policy' else value)
         if api:
             self.send_header('Cache-Control', 'no-store')
 
@@ -447,7 +461,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         value = self.headers.get('Content-Length')
         if value is None:
             raise ApiError(411, 'Content-Length required.', 'Choose the file again.')
-        if not (value.isascii() and value.isdigit()):
+        if not re.fullmatch(r'\d{1,15}', value):
             self.close_connection = True
             raise ApiError(400, 'Content-Length must be a whole number of bytes.', 'Reload the page and try again.')
         length = int(value)
@@ -561,10 +575,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 value = response.getheader(name)
                 if value is not None:
                     self.send_header(name, value)
+            content_type, attachment = studio_content_type(path)
+            self.send_header('Content-Type', content_type)
+            if attachment:
+                self.send_header('Content-Disposition', 'attachment')
             if response.getheader('Content-Length') is None:
                 self.close_connection = True
                 self.send_header('Connection', 'close')
-            self.headers_common()
+            self.headers_common(csp=STUDIO_CSP)
             self.end_headers()
             while method != 'HEAD':
                 chunk = response.read(65536)

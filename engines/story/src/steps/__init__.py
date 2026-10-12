@@ -6,6 +6,7 @@ Steps are organized into pre-production (run once for the whole project)
 and production (run per episode).
 """
 
+import re
 import threading
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -50,6 +51,17 @@ class StepContext:
         d = self.project_dir / "worlds"
         d.mkdir(parents=True, exist_ok=True)
         return d
+
+
+_SLUG = re.compile(r"[A-Za-z0-9_-]{1,64}")
+
+
+def slug_part(value: str) -> str:
+    """A model-written id (character_id, location_slug/location_id) used in a file name: plain slugs only, so a
+    prompt-injected brief can never write outside the project folder (Phase 3 security review F3)."""
+    if not isinstance(value, str) or not _SLUG.fullmatch(value):
+        raise ValueError(f"Refusing an unsafe id from the model: {str(value)[:80]!r}")
+    return value
 
 
 class StepCancelled(Exception):

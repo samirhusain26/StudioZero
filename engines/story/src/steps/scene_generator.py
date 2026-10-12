@@ -36,7 +36,7 @@ from src.config import Config
 from src.video_models import get_model, estimate_cost
 from src.video_client import UnifiedVideoClient
 from src.budget_guard import BudgetGuard, BudgetExceeded, SpendLedger
-from src.steps import StepContext, StepResult
+from src.steps import StepContext, StepResult, slug_part
 from src.steps.director import load_director_shots
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ class SceneGenerationError(Exception):
 def _get_scene_start_image(ctx: StepContext, character_id: str, location_id: str) -> Optional[Path]:
     """Look up the cached scene starting image for a character+location combo."""
     scene_starts_dir = ctx.project_dir / "scene_starts"
-    cache_path = scene_starts_dir / f"{character_id}_{location_id}.png"
+    cache_path = scene_starts_dir / f"{slug_part(character_id)}_{slug_part(location_id)}.png"
     if cache_path.exists() and cache_path.stat().st_size > 0:
         return cache_path
     return None
@@ -208,7 +208,7 @@ def run(ctx: StepContext) -> StepResult:
             )
         else:
             # Fall back to character reference if no scene start was generated
-            ref_image = ctx.characters_dir / f"{shot.primary_character_id}_reference.png"
+            ref_image = ctx.characters_dir / f"{slug_part(shot.primary_character_id)}_reference.png"
             logger.warning(
                 f"[scene_generator] No scene start image for "
                 f"'{shot.primary_character_id}' @ '{shot.location_id}' "

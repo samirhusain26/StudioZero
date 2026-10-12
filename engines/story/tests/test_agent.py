@@ -258,6 +258,34 @@ class SceneAndFileTests(AgentTestCase):
             self.assertEqual(self.call("GET", f"/studio/projects/{bad}").status_code, 404)
         self.assertEqual(self.call("GET", f"/studio/renders/..~secret/video.mp4").status_code, 404)
 
+    def test_files_route_serves_only_artifact_kinds_with_fixed_types_and_no_host_paths(self):
+        # Security review F1/F4: no HTML or script from the worker, no job state files, no laptop paths.
+        pid = self.series()
+        base = Config.PROJECTS_DIR / pid
+        (base / "x.html").write_text("<script src='x.js'></script>")
+        (base / "x.js").write_text("alert(1)")
+        (base / "x.svg").write_text("<svg/>")
+        (base / "shots.json").write_text(json.dumps({"path": f"{Path.home()}/somewhere/a.png"}))
+        for name in ("x.html", "x.js", "x.svg", "project.json", "pipeline_state.json", "Project.JSON", "PIPELINE_STATE.json"):
+            self.assertEqual(self.call("GET", f"/studio/projects/{pid}/files/{name}").status_code, 404, name)
+        r = self.call("GET", f"/studio/projects/{pid}/files/shots.json")
+        self.assertEqual(r.headers["content-type"], "application/json")
+        self.assertEqual(r.json(), {"path": "~/somewhere/a.png"})
+
+    def test_names_must_give_a_reachable_id_and_auth_comes_before_parsing(self):
+        r = self.call("POST", "/studio/projects", json={"route": "recap", "name": "Café ünï"})
+        self.assertEqual(r.status_code, 422)
+        self.assertEqual(self.call("GET", "/studio/projects").json()["projects"], [])
+        r = self.client.post("/studio/projects", content=b"{not json", headers={"Content-Type": "application/json"})
+        self.assertEqual((r.status_code, r.json()), (401, {"error": "Not authorized."}))
+
+    def test_model_ids_never_become_paths_outside_the_project(self):
+        from src.steps import slug_part
+        self.assertEqual(slug_part("commander_wrench"), "commander_wrench")
+        for bad in ("../../x", "a/b", "", "a" * 65, "x.y", None):
+            with self.assertRaises(ValueError):
+                slug_part(bad)
+
     def test_delete_needs_the_id(self):
         pid = self.series()
         self.assertEqual(self.call("DELETE", f"/studio/projects/{pid}", json={"confirm": "x"}).status_code, 422)

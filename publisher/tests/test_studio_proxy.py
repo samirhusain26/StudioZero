@@ -144,6 +144,10 @@ class ProxyTests(ProxyCase):
         self.via_socket('GET', '/studio/projects/x', headers={'Range': 'bytes=0-1'})
         self.assertIsNone(FakeWorker.seen[-1]['range'])
 
+    def test_absurd_content_length_from_a_client_is_refused(self):
+        status, _, _ = self.via_socket('POST', '/studio/projects', body=b'{}', headers={'Content-Length': '9' * 5000})
+        self.assertEqual(status, 413)
+
     def test_caps_and_worker_errors(self):
         status, _, _ = self.via_socket('POST', '/studio/projects', body=b'x' * 10, headers={'Content-Length': str(studio_proxy.REQUEST_CAP + 1)})
         self.assertEqual(status, 413)
@@ -224,6 +228,23 @@ class UiForwardingTests(ServerTestCase):
         self.assertEqual((status, data), (206, BIG[:100]))
         self.assertEqual(headers['Cache-Control'], 'no-store')
         self.assertNotIn(PASSCODE, json.dumps(FakeWorker.seen, default=str))
+
+    def test_absurd_content_lengths_are_refused(self):
+        status, _, _ = self.request('POST', '/api/studio/projects', b'{}', headers={'Content-Length': '9' * 5000})
+        self.assertIn(status, (400, 413))
+
+    def test_the_worker_never_chooses_how_this_origin_serves_its_bytes(self):
+        # A worker file that would be HTML or script on this origin is a sandboxed download (security review F1).
+        for name in ('x.html', 'x.js', 'x.svg', 'noext'):
+            status, headers, _ = self.request('GET', f'/api/studio/projects/x/files/{name}')
+            self.assertEqual((status, headers['Content-Type'], headers.get('Content-Disposition')), (200, 'application/octet-stream', 'attachment'), name)
+            self.assertIn("sandbox; default-src 'none'", headers.get('Content-Security-Policy', ''))
+        status, headers, _ = self.request('GET', '/api/studio/projects/x/files/clips/scene_1.MP4')
+        self.assertEqual(headers['Content-Type'], 'video/mp4')
+        status, headers, _ = self.request('GET', '/api/studio/projects/x/files/characters/a.png')
+        self.assertEqual(headers['Content-Type'], 'image/png')
+        status, headers, _ = self.request('GET', '/api/studio/health')
+        self.assertEqual(headers['Content-Type'], 'application/json; charset=utf-8')
 
     def test_offline_paths(self):
         status, body = self.json('GET', '/api/studio/projects/x/nope')

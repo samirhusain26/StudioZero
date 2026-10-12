@@ -43,6 +43,14 @@ test.describe('Story jobs (live worker)', () => {
     }
     await shot('artifacts')
     await page.keyboard.press('Escape')
+    // Clips too (the studio responses are sandboxed documents; that must not stop <video> from playing them).
+    const clips = page.getByTestId('story-step').getByRole('button', { name: 'Scene generator' })
+    if ((await clips.count()) > 0) {
+      await clips.first().click()
+      const video = page.getByRole('dialog').locator('video').first()
+      await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState >= 1 && v.duration > 0), { timeout: 15_000 }).toBe(true)
+      await page.keyboard.press('Escape')
+    }
     await shot('job')
 
     await page.goto('/#/studio/jobs')
