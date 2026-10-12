@@ -6,7 +6,7 @@ Studio is where batches are made, for every project: **Originals** (the studio's
 - **Make a batch** builds the prompt for Claude Code from the studio catalog: only formats, styles and music the engines can make are offered. Pick the project with the chips at the top. Every prompt ends with the same safety lines (no finalize or upload without your approval, facts only from frozen sources, credits for every asset, paid generation only within budget after you confirm a cost estimate). See [Next batch](#next-batch).
 - **Engines**: Motion (Scalargame's quiz videos) runs in the browser of the device you use; Story (Originals) runs on the laptop worker, and paid services and their keys stay there. See [Story jobs](#story-jobs).
 
-Originals batches use contract v2, which this Pi validates only after the Phase 4 update; until then Make a batch builds the prompt and the checklist, and the upload step says it is not available yet.
+New batches use contract v2 for both projects: each episode records its project, engine, renderer (Mac `render.sh` or browser export), models and cost, every credited asset and its AI disclosure, and every caption carries the attribution its sources require (for example the TMDB notice). The Pi validates the same rules and uploads go through Library › Add batch as before. Batches made before 12 October 2026 stay contract v1 and stay valid.
 
 ## New format, style or project
 

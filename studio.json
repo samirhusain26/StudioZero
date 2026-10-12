@@ -48,5 +48,5 @@
     {"id": "youtube", "name": "YouTube Shorts", "profileUrl": "https://www.youtube.com/@StudioZeroflow", "captionLimit": 5000, "titleLimit": 100, "firstComment": false, "linkInText": true},
     {"id": "tiktok", "name": "TikTok", "profileUrl": "https://www.tiktok.com/@studiozeroflow", "captionLimit": 2200, "firstComment": false, "linkInText": false}
   ],
-  "notes": "Channel routes, account IDs and credentials live only in the Pi config (/etc/scalar-social); this file holds public facts. Contract v1 is current; v2 (docs/STUDIO_PLAN.md §5) lands in Phase 4."
+  "notes": "Channel routes, account IDs and credentials live only in the Pi config (/etc/scalar-social); this file holds public facts. New batches use contract v2 (contract/BATCH_CONTRACT.md); v1 batches stay valid."
 }

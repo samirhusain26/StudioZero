@@ -15,7 +15,7 @@ import { useApi } from '../../hooks/useApi'
 import { DESKTOP, useMediaQuery } from '../../hooks/useMediaQuery'
 import { canApprove, listEpisodes, position, readListState } from '../../lib/libraryList'
 import { metricsSummary } from '../../lib/postMetrics'
-import { checkText, correctChoiceKey, httpsUrl, num, readEpisode, rec, str, strings } from '../../lib/episodeView'
+import { checkText, correctChoiceKey, engineText, httpsUrl, num, readEpisode, rec, str, strings, type Rec } from '../../lib/episodeView'
 import { formatBytes, formatDuration, formatFps, platformName, shortHash, titleCase } from '../../lib/format'
 import { EPISODE_STATUS, ledgerStatus } from '../../lib/labels'
 import { deviceTimeZone } from '../../lib/time'
@@ -56,7 +56,7 @@ export function EpisodeDetailView({ episodeId, revision }: { episodeId: string; 
                   href={episodeHash(e.episodeId, e.revision)}
                   aria-current={e.episodeId === episodeId && e.revision === revision ? 'page' : undefined}
                 >
-                  <span>{e.episode.creative?.question || e.episodeId}</span>
+                  <span>{readEpisode(e.episode as unknown as Rec).question || e.episodeId}</span>
                   <StatusBadge tone={EPISODE_STATUS[e.status].tone} label={e.statusLabel || EPISODE_STATUS[e.status].label} />
                 </a>
               </li>
@@ -157,7 +157,9 @@ export function EpisodeDetailContent({
           {view.question || view.hook || episodeId}
         </h2>
         <p className="muted">
-          {[view.game, view.difficulty].filter(Boolean).map((v) => titleCase(v as string)).join(' · ')}
+          {[entry?.project, view.game !== entry?.project ? view.game : null, view.difficulty].filter(Boolean).map((v) => titleCase(v as string)).join(' · ')}
+          {view.format ? ` · ${view.format}` : ''}
+          {entry ? ` · ${engineText(entry)}` : ''}
           {duration ? ` · ${formatDuration(duration)}` : ''} · rev {revision} · batch {detail.batchId} · {episodeId}
         </p>
         {view.hook && view.question && view.hook !== view.question ? <p className="exact-text">{view.hook}</p> : null}
@@ -370,6 +372,8 @@ export function EpisodeDetailContent({
           )}
         </details>
 
+        {entry ? <MadeWith entry={entry} /> : null}
+
         {entry ? (
           <details className="disclosure">
             <summary>Platform eligibility</summary>
@@ -506,5 +510,57 @@ function NoteMeta({ label, note, zone }: { label: string; note: BatchNote | null
         'not uploaded (add it in Library → Batches → Notes)'
       )}
     </p>
+  )
+}
+
+/** How the episode was made: engine, renderer, models, cost, AI disclosure and every credited asset (contract v2). */
+function MadeWith({ entry }: { entry: LibraryEpisode }) {
+  const d = entry.disclosure
+  return (
+    <details className="disclosure" data-testid="made-with">
+      <summary>Made with</summary>
+      <dl className="facts">
+        <dt>Project</dt>
+        <dd>{titleCase(entry.project)}</dd>
+        <dt>Engine</dt>
+        <dd>{engineText(entry)}</dd>
+        <dt>Renderer</dt>
+        <dd>{entry.renderer === 'web' ? 'Browser export (Studio)' : entry.renderer === 'render.sh' ? 'Mac (render.sh)' : 'Not recorded'}</dd>
+        {entry.models.length ? (
+          <>
+            <dt>Models</dt>
+            <dd>{entry.models.map((m) => `${m.role}: ${m.id}`).join(' · ')}</dd>
+          </>
+        ) : null}
+        <dt>Cost</dt>
+        <dd>{entry.costUsd === null ? 'Not recorded' : `$${entry.costUsd.toFixed(2)}`}</dd>
+        <dt>AI content</dt>
+        <dd>
+          {d === null
+            ? 'Not declared (contract v1): no AI label is applied'
+            : d.aiGenerated
+              ? `Yes (${d.aiKinds.join(', ')})${d.realisticSynthetic ? ', realistic synthetic' : ''}: AI labels are applied where the platform supports them`
+              : 'No'}
+          {d?.note ? <span className="block muted">{d.note}</span> : null}
+        </dd>
+      </dl>
+      {entry.credits.length ? (
+        <ul className="compact-list" data-testid="credits">
+          {entry.credits.map((c, i) => {
+            const url = httpsUrl(c.sourceUrl)
+            return (
+              <li key={`${i}-${c.title}`}>
+                <span className="muted">{c.kind}</span> {url ? <a href={url} target="_blank" rel="noopener noreferrer">{c.title}</a> : c.title}
+                {c.creator ? ` · ${c.creator}` : ''}
+                {c.license ? ` · ${c.license}` : ''}
+                {c.attribution ? <span className="block muted">{c.attribution}</span> : null}
+              </li>
+            )
+          })}
+        </ul>
+      ) : (
+        <p className="muted">No credits recorded.</p>
+      )}
+    </details>
   )
 }

@@ -43,6 +43,7 @@ describe('Make a batch', () => {
       funnel: [
         {
           episode: 'scalar-clues-001',
+          labels: null,
           publishedDates: ['2026-10-05'],
           views: 1500,
           engaged: null,
@@ -57,7 +58,7 @@ describe('Make a batch', () => {
     render(<MakeBatchContent catalog={catalog} info={info} fromCommit={null} onChanged={vi.fn()} />)
     const how = screen.getByText('How the posts did').closest('details') as HTMLElement
     const sections = [...how.querySelectorAll('h3')].map((h) => h.textContent)
-    expect(sections).toEqual(['Post stats', 'Per video', 'Accounts, last 7 days', 'Performance'])
+    expect(sections).toEqual(['Post stats', 'By project', 'Per video', 'Accounts, last 7 days', 'Performance'])
     expect(await within(how).findByRole('button', { name: 'Hourly reads', pressed: false })).toHaveAttribute('aria-pressed', 'false')
     expect(within(how).getByRole('rowheader', { name: /scalar-clues-001/ })).toBeInTheDocument()
     expect(document.querySelectorAll('.btn-primary')).toHaveLength(1)

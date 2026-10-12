@@ -427,7 +427,7 @@ export interface PauseResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Library — batch.json episode (contract v1, BATCH_CONTRACT.md)
+// Library — batch.json episode (contract v1 and v2, BATCH_CONTRACT.md)
 // ---------------------------------------------------------------------------
 
 export interface Choice {
@@ -533,6 +533,52 @@ export interface ContractEpisode {
   cover: { file: string; sha256: Sha256; bytes: number }
   publication: Publication
   eligibility: EpisodeEligibility
+}
+
+export type CreditLicense =
+  | 'CC0-1.0' | 'CC-BY-4.0' | 'CC-BY-SA-4.0' | 'OFL-1.1' | 'Pexels' | 'Pixabay' | 'TMDB' | 'Wikipedia-CC-BY-SA' | 'owner' | 'generated' | 'public-domain'
+
+export interface Credit {
+  kind: string
+  title: string
+  creator: string | null
+  sourceUrl: string | null
+  /** v1 credits (normalized on the Pi) carry the v1 licence text or null. */
+  license: CreditLicense | string | null
+  attribution: string | null
+  sha256: Sha256 | null
+}
+
+export interface Disclosure {
+  aiGenerated: boolean
+  aiKinds: string[]
+  realisticSynthetic: boolean
+  note: string
+}
+
+export type Engine = 'motion' | 'story'
+/** Who rendered a motion episode: the Mac's render.sh or the Studio's browser export (null: not recorded). */
+export type Renderer = 'render.sh' | 'web'
+
+/** One episode exactly as in a contract v2 batch.json. projectData is checked by the project's module. */
+export interface ContractEpisodeV2 {
+  episodeId: string
+  contentId: string
+  revision: number
+  format: Format
+  language: string
+  render: { engine: Engine; route: 'recap' | 'series' | null; renderer: Renderer | null; kitVersion: string; renderSha256: Sha256; models: { role: string; id: string }[]; costUsd: number }
+  experimentId: string | null
+  variantId: string | null
+  tags: string[]
+  video: ContractEpisode['video']
+  cover: ContractEpisode['cover']
+  link: { url: string; utmCampaign: string } | null
+  publication: Omit<Publication, 'deepLink' | 'utmCampaign' | 'credits'>
+  credits: Credit[]
+  disclosure: Disclosure
+  eligibility: EpisodeEligibility
+  projectData: Record<string, unknown>
 }
 
 /** batch.json top level (the UI only reads batchId/episodes before POSTing raw bytes). */
@@ -660,8 +706,23 @@ export interface LibraryEpisode {
   variants: string[]
   /** Accounts where this questionId already posted. */
   postedOn: PostedRecord[]
-  /** Full contract metadata (captions, creative, eligibility dates). */
-  episode: ContractEpisode
+  /** Full contract metadata (captions, creative, eligibility dates); read it with lib/episodeView.readEpisode. */
+  episode: ContractEpisode | ContractEpisodeV2
+  /** Contract version of the batch the episode came from. */
+  schemaVersion: 1 | 2
+  /** Project (v1 episodes are Scalargame's). */
+  project: string
+  engine: Engine
+  route: 'recap' | 'series' | null
+  /** null: not recorded (every v1 episode). */
+  renderer: Renderer | null
+  models: { role: string; id: string }[]
+  /** Paid-API spend for this episode; null for v1. */
+  costUsd: number | null
+  credits: Credit[]
+  /** null: not declared (v1). */
+  disclosure: Disclosure | null
+  tags: string[]
 }
 
 export interface LibraryResponse {
@@ -1376,8 +1437,17 @@ export interface FunnelPlatform {
 }
 /** Platforms whose non-null values went into each total. */
 export interface FunnelCounted { views: string[]; engaged: string[]; answered: string[]; avgWatchSeconds: string[]; followsThatDay: string[] }
+export interface FunnelLabels {
+  project: string
+  engine: Engine
+  route: 'recap' | 'series' | null
+  format: Format | null
+  renderer: Renderer | null
+  group: string
+}
 export interface EpisodeFunnel {
-  episode: string                     // ledger episode key
+  episode: string                     // ledger episode key (contentId)
+  labels: FunnelLabels | null         // from the library's newest revision of this content; null when not in the library
   publishedDates: string[]            // local YYYY-MM-DD (config timezone), ascending, unique
   views: number | null
   engaged: number | null

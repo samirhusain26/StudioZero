@@ -115,7 +115,7 @@
    "priority": "P1",
    "order": 1,
    "summary": "Short quiz videos for scalargame.com: one question from a frozen snapshot of the game's data, a thinking pause, the reveal and a reviewed fact.",
-   "contractSchemaVersion": 1,
+   "contractSchemaVersion": 2,
    "formats": [
     {
      "id": "progressive-clues",

@@ -60,9 +60,18 @@ export interface EpisodeView {
   eligibility: Rec | null
 }
 
-export function readEpisode(episode: Rec): EpisodeView {
-  const creative = rec(episode.creative) ?? {}
-  const evidence = rec(episode.evidence) ?? {}
+/**
+ * Contract v2 keeps the project's fields in projectData: Scalargame's quiz fields (game, difficulty, styleId,
+ * creative, evidence, music), Originals' subject, sources, checks and reviewer. Read both versions alike.
+ */
+export function readEpisode(raw: Rec): EpisodeView {
+  const v2 = typeof raw.contentId === 'string'
+  const data = v2 ? (rec(raw.projectData) ?? {}) : {}
+  const episode: Rec = v2 ? { ...raw, ...data, questionId: raw.contentId } : raw
+  const subject = rec(data.subject)
+  const creative = rec(episode.creative) ?? (subject ? { hook: str(subject.title), question: str(subject.title) } : {})
+  const evidence =
+    rec(episode.evidence) ?? (v2 && !rec(data.evidence) ? { sources: data.sources, checks: data.checks, reviewer: data.reviewer } : {})
   const music = rec(episode.music)
   const choices = Array.isArray(creative.choices)
     ? creative.choices.flatMap((c) => {
@@ -140,4 +149,11 @@ export function httpsUrl(url: string | null): string | null {
   } catch {
     return null
   }
+}
+
+/** "motion · render.sh", "motion · browser export", "story · recap"; the renderer is not recorded for v1 episodes. */
+export function engineText(e: { engine: string; route: string | null; renderer: string | null }): string {
+  if (e.engine === 'story') return e.route ? `story · ${e.route}` : 'story'
+  if (e.renderer === 'web') return `${e.engine} · browser export`
+  return e.renderer ? `${e.engine} · ${e.renderer}` : e.engine
 }

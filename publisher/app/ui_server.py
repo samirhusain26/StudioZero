@@ -945,9 +945,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
         zone = self.zone(self.app.config())
         today = self.now().astimezone(zone).date()
         confirmed = self.ledger("SELECT * FROM jobs WHERE status='confirmed'")
+        funnel = metrics.funnel(self.app.state, confirmed, zone)
+        with self.app.index() as db:
+            labels = ui_library.content_labels(db, [r['episode'] for r in funnel])
         return ui_views.next_batch(next_id, items, brief, retro, ui_views.ledger_posts(rows, metrics=stats),
-                                   metrics.account_summary(self.app.state, today),
-                                   metrics.funnel(self.app.state, confirmed, zone))
+                                   metrics.account_summary(self.app.state, today), funnel, labels)
 
     # --- post stats controls: this process only writes files in STATE/metrics/; scalar-social-metrics.{timer,path} read ---
     def metrics_status(self):

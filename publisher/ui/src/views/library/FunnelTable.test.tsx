@@ -8,6 +8,7 @@ const none: FunnelPlatform = { status: null, views: null, engaged: null, answere
 
 const funnelRow = (over: Partial<EpisodeFunnel> = {}): EpisodeFunnel => ({
   episode: 'scalar-clues-001',
+  labels: null,
   publishedDates: ['2026-10-05'],
   views: 1530,
   engaged: 84,

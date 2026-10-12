@@ -65,15 +65,15 @@ test.describe('First-time owner journey', () => {
     await expect(page.getByTestId('draft-preview')).toBeVisible({ timeout: 30_000 })
     await page.getByRole('button', { name: 'Go to approval ↓' }).click()
     const panel = page.getByTestId('approval-panel')
-    const phrase = (await panel.locator('code.phrase').textContent())?.trim() ?? ''
-    await panel.getByLabel(/to confirm/).fill(phrase)
+    // One tap approves (no typed phrase since 2026-10-09).
+    await expect(panel.getByText('Ready to approve.')).toBeVisible()
     await expect(panel.getByRole('button', { name: 'Approve schedule' })).toBeEnabled()
     if (process.env.SCALAR_UI_ALLOW_APPROVE === '1') await panel.getByRole('button', { name: 'Approve schedule' }).click()
 
     // Post: the owner's activation command, from Settings.
     await page.goto('/#/settings#activation')
     await expect(page.getByRole('heading', { level: 2, name: 'Activation' })).toBeVisible()
-    await expect(page.getByText('Activate (owner, sudo)')).toBeVisible()
+    await expect(page.getByText('First activation (owner, sudo; done once on 2026-10-09)')).toBeVisible()
     await expect(page.getByRole('button', { name: /resume|unpause/i })).toHaveCount(0)
   })
 })

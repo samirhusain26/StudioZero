@@ -33,10 +33,14 @@ function mixText(project: CatalogProject): string {
   return project.mix.target === null ? `${share} · target share not set (your decision)` : `${share} · target ${Math.round(project.mix.target * 100)}%`
 }
 
-/**
- * One summary per project in catalog order. Runway: batches on contract v1 are Scalargame's (contract v2 draft
- * §5.4), so until per-project batches arrive (Phase 4) the approved queue counts for the v1 project only.
- */
+/** Last scheduled local day of a project: its games' groups (Scalargame), else the group named after the project. */
+function projectRunway(project: CatalogProject, runway: Runway | null): string | null {
+  if (!runway) return null
+  const groups = project.games?.length ? project.games.map((g) => g.id) : [project.id]
+  return groups.map((g) => runway.lastDayByGroup[g]).filter((d): d is string => Boolean(d)).sort().at(-1) ?? null
+}
+
+/** One summary per project in catalog order, each with its own runway from the approved queue. */
 export function projectSummaries(catalog: Catalog, runway: Runway | null | undefined): ProjectSummary[] {
   return projectsInOrder(catalog).map((p) => {
     const engines = [...new Set(p.formats.map((f) => engineOf(catalog, f.engine)?.name ?? f.engine))]
@@ -49,7 +53,7 @@ export function projectSummaries(catalog: Catalog, runway: Runway | null | undef
       engines,
       budget: budgetText(p),
       mix: mixText(p),
-      scheduledThrough: runway === undefined ? undefined : p.contractSchemaVersion === 1 ? (runway?.lastDay ?? null) : null,
+      scheduledThrough: runway === undefined ? undefined : projectRunway(p, runway),
       contract: `contract v${p.contractSchemaVersion}`,
     }
   })

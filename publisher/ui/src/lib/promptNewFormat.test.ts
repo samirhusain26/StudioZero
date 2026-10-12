@@ -70,7 +70,7 @@ describe('prompt builder mode 2', () => {
     const prompt = buildNewFormatPrompt(catalog, plan, NOW)
     expect(prompt).toContain('projects/word-lab/project.json')
     expect(prompt).toContain('both are my decisions')
-    expect(prompt).toContain('do not change the contract')
+    expect(prompt).toContain('ask me before adding one (a contract change)')
   })
 
   it('refuses what the catalog cannot back', () => {

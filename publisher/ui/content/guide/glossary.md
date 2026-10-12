@@ -3,10 +3,15 @@
 | Term | Meaning |
 |---|---|
 | Batch | A set of finished videos made together, with one `batch.json`. ID `YYYY-MM-bNN`, e.g. `2026-10-b01` |
-| Episode | One video. ID `<game>-<format>-<nnn>`, e.g. `scalar-clues-001`; never reused |
-| questionId | The question behind an episode, e.g. `scalar:MDG:clues`. The same question is never posted twice on one account |
+| Episode | One video. ID `<prefix>-<format>-<nnn>`, e.g. `scalar-clues-001` or `originals-recap-001`; never reused |
+| Content ID (questionId) | What an episode is about, e.g. `scalar:MDG:clues` or `originals:movie-recap:the-film-1999`. The same content is never posted twice on one account; each project has its own prefixes, so projects never collide |
+| Project | Why and for whom a video is made: Originals (the studio's own recaps and shorts) or Scalargame (quiz videos) |
+| Engine / renderer | How it was made: Motion (quiz templates; rendered by the Mac's `render.sh` or in the browser) or Story (recaps and animated series on the laptop worker) |
+| Credits and attribution | Every asset in a video is credited with its licence; licences that require it (CC BY, Wikipedia, TMDB) put their attribution text in every caption that posts |
+| AI disclosure | What in a video is AI-made. The Pi sets the platform's own AI label where its API has one (Instagram, TikTok, X; YouTube for realistic content) and records "not supported" elsewhere |
+| Content mix | Each project's target share of scheduled posts. Until you set targets, drafts use the game round-robin order |
 | Revision | Version number of an episode. A correction is a higher revision with new files and needs new approval |
-| Format | One of the eight quiz types: progressive-clues, candidate-elimination, head-to-head, missing-slot, guess-the-year, before-after, missing-country, neighbor-clues |
+| Format | A project's kind of episode: Scalargame's eight quiz types (progressive-clues, candidate-elimination, head-to-head, missing-slot, guess-the-year, before-after, missing-country, neighbor-clues); Originals' movie-recap, story-recap and animated-short |
 | Brief | What a batch should contain; `library/_briefs/<batchId>.md` |
 | Retro | What a batch taught us; `library/_retros/<batchId>.md` |
 | Batch notes | The brief and retro uploaded to the Pi with a batch; never published |

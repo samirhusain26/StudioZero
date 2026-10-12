@@ -146,7 +146,7 @@ function entry(over: Partial<LibraryEpisode> = {}): LibraryEpisode {
     difficulty: 'moderate', status: 'reviewable', statusLabel: 'Ready for review', metadataSha256: 'c'.repeat(64), videoSha256: 'a'.repeat(64),
     coverSha256: 'b'.repeat(64), videoUrl: '/api/media/videos/x.mp4?t=1', coverUrl: null, media: null, videoRemovedAt: null,
     platforms: Object.fromEntries(PLATFORMS.map((p) => [p, { eligible: true, reason: null }])) as LibraryEpisode['platforms'], problems: [], approvals: [], currentApproval: null, inManifest: false, deletable: true,
-    legacy: false, variants: [], postedOn: [], episode: d.episode as unknown as LibraryEpisode['episode'], ...over,
+    legacy: false, variants: [], postedOn: [], schemaVersion: 1, project: 'scalargame', engine: 'motion', route: null, renderer: null, models: [], costUsd: null, credits: [], disclosure: null, tags: [], episode: d.episode as unknown as LibraryEpisode['episode'], ...over,
   }
 }
 

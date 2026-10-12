@@ -9,6 +9,7 @@ export function libEpisode(n: number, over: Partial<LibraryEpisode> = {}): Libra
     coverSha256: 'b'.repeat(64), videoUrl: `/api/media/videos/${'a'.repeat(64)}.mp4?t=1`, coverUrl: null, media: null, videoRemovedAt: null,
     platforms: Object.fromEntries(PLATFORMS.map((p) => [p, { eligible: true, reason: null }])) as LibraryEpisode['platforms'],
     problems: [], approvals: [], currentApproval: null, inManifest: false, deletable: true, legacy: false, variants: [], postedOn: [],
+    schemaVersion: 1, project: 'scalargame', engine: 'motion', route: null, renderer: null, models: [], costUsd: null, credits: [], disclosure: null, tags: [],
     episode: { creative: { hook: `Hook ${n}`, question: `Question ${n}?`, clues: [], choices: null, answer: 'X', answerAliases: [], explanation: '' } } as unknown as LibraryEpisode['episode'],
     ...over,
   }

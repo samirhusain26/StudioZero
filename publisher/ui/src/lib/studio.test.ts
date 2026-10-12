@@ -3,7 +3,10 @@ import { realCatalog } from '../test/catalog'
 import type { Runway } from './runway'
 import { projectSummaries } from './studio'
 
-const runway: Runway = { today: '2026-10-12', platforms: [], firstGap: '2026-10-20', firstGapPlatforms: [], lastDay: '2026-10-25' }
+const runway: Runway = {
+  today: '2026-10-12', platforms: [], firstGap: '2026-10-20', firstGapPlatforms: [], lastDay: '2026-10-25',
+  lastDayByGroup: { scalar: '2026-10-25', tectonic: '2026-10-24' },
+}
 
 describe('projectSummaries', () => {
   it('lists projects in order with budgets and mix stated, never invented', () => {
@@ -33,5 +36,11 @@ describe('projectSummaries', () => {
     if (p) p.mix.target = 0.6
     expect(projectSummaries(catalog, undefined)[1]).toMatchObject({ mix: '100% of scheduled posts now · target 60%', scheduledThrough: undefined })
     expect(projectSummaries(catalog, null)[1]?.scheduledThrough).toBeNull()
+  })
+
+  it('counts each project by its own scheduled posts', () => {
+    const both = { ...runway, lastDayByGroup: { ...runway.lastDayByGroup, originals: '2026-10-30' } }
+    const [originals, scalargame] = projectSummaries(realCatalog(), both)
+    expect([originals?.scheduledThrough, scalargame?.scheduledThrough]).toEqual(['2026-10-30', '2026-10-25'])
   })
 })

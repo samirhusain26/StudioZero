@@ -2,6 +2,7 @@ import type { LibraryEpisode, MeasuredMedia, Platform, PlatformEligibility } fro
 import { PLATFORMS } from '../../api/types'
 import { StatusBadge } from '../../components/StatusBadge'
 import { formatBytes, formatDuration, formatFps, platformName, titleCase } from '../../lib/format'
+import { engineText, readEpisode, type Rec } from '../../lib/episodeView'
 import { EPISODE_STATUS } from '../../lib/labels'
 import { episodeHash } from '../../views'
 
@@ -55,9 +56,18 @@ export function EligibilityList({ platforms }: { platforms: Record<Platform, Pla
 /** One episode in the Library list: cover, question, three facts and its status. Tap anywhere to review it. */
 export function EpisodeCard({ episode }: { episode: LibraryEpisode }) {
   const status = EPISODE_STATUS[episode.status]
-  const creative = episode.episode.creative
-  const question = creative?.question || creative?.hook || episode.questionId
-  const facts = [titleCase(episode.game), episode.difficulty ? titleCase(episode.difficulty) : null, `rev ${episode.revision}`].filter(Boolean).join(' · ')
+  const view = readEpisode(episode.episode as unknown as Rec)
+  const question = view.question || view.hook || episode.questionId
+  const facts = [
+    titleCase(episode.project),
+    episode.game !== episode.project ? titleCase(episode.game) : null,
+    episode.format,
+    episode.difficulty ? titleCase(episode.difficulty) : null,
+    engineText(episode),
+    `rev ${episode.revision}`,
+  ]
+    .filter(Boolean)
+    .join(' · ')
   return (
     <a className="card episode-card" href={episodeHash(episode.episodeId, episode.revision)} data-testid="episode-card">
       {episode.coverUrl ? (

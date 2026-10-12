@@ -314,10 +314,17 @@ class FunnelTests(MetricsServerCase):
 
     def test_episode_funnel_defaults(self):
         self.assertEqual(ui_views.episode_funnel({'episode': 'e', 'platforms': {'x': 'bad', 'bluesky': {}}}), {
-            'episode': 'e', 'publishedDates': [], 'views': None, 'engaged': None, 'answered': None, 'avgWatchSeconds': None,
+            'episode': 'e', 'publishedDates': [], 'labels': None, 'views': None, 'engaged': None, 'answered': None, 'avgWatchSeconds': None,
             'followsThatDay': None, 'counted': {k: [] for k in ui_views.FUNNEL_VALUES},
             'platforms': {'bluesky': {'status': None, 'views': None, 'engaged': None, 'answered': None, 'avgWatchSeconds': None,
                                       'followsThatDay': None, 'followsSource': None}}})
+
+    def test_episode_funnel_labels(self):
+        labels = {'e': {'project': 'originals', 'engine': 'story', 'route': 'recap', 'format': 'movie-recap', 'renderer': None,
+                        'group': 'originals', 'extra': 'dropped'}}
+        row = ui_views.episode_funnel({'episode': 'e'}, labels)
+        self.assertEqual(row['labels'], {k: labels['e'][k] for k in ui_views.LABEL_KEYS})
+        assert_shape(self, row['labels'], 'FunnelLabels')
 
     @unittest.skipUnless(hasattr(metrics, 'funnel'), 'metrics.funnel not written yet')
     def test_real_funnel(self):

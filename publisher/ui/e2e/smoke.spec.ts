@@ -65,7 +65,7 @@ test.describe('Scalar publishing UI smoke', () => {
     await expect(page.getByRole('button', { name: 'Copy prompt for Claude' })).toBeEnabled()
     await checkLayout(page, 'make')
     await page.getByRole('group', { name: 'Project' }).getByRole('link', { name: 'Originals' }).click()
-    await expect(page.getByText(/cannot be uploaded yet/)).toBeVisible()
+    await expect(page.getByText(/Upload the finalized batch folder in Library › Add batch/)).toBeVisible()
     await checkLayout(page, 'make originals')
 
     // Library: chips instead of selects; one tap on a card opens its review screen with a playable video.
@@ -151,16 +151,12 @@ test.describe('Scalar publishing UI smoke', () => {
     }, byHand)
     expect(handSha.slice(0, 8)).toBe(presetSha)
 
-    // Typed confirmation enables Approve.
+    // One tap approves (no typed phrase since 2026-10-09): the button follows the gate, nothing is typed.
     const panel = page.getByTestId('approval-panel')
     const approve = panel.getByRole('button', { name: 'Approve schedule' })
-    await expect(approve).toBeDisabled()
-    const phrase = (await panel.locator('code.phrase').textContent())?.trim() ?? ''
-    expect(phrase).toMatch(/^APPROVE [0-9a-f]{8}$/)
-    await panel.getByLabel(/to confirm/).fill(phrase.toLowerCase())
-    await expect(approve).toBeDisabled()
-    await panel.getByLabel(/to confirm/).fill(phrase)
-    await expect(approve).toBeEnabled()
+    await expect(panel.getByLabel(/to confirm/)).toHaveCount(0)
+    if (await panel.getByText('Ready to approve.').isVisible()) await expect(approve).toBeEnabled()
+    else await expect(approve).toBeDisabled()
     if (process.env.SCALAR_UI_ALLOW_APPROVE === '1') {
       await approve.click()
       await expect(panel.getByText(/Request pending|Manifest ready|Bound|Validated|Failed/)).toBeVisible({ timeout: 30_000 })

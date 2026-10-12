@@ -478,6 +478,10 @@ def library_episode(raw, batch_id, posted):
     return {
         'episodeId': raw['episodeId'], 'revision': raw['revision'], 'batchId': batch_id, 'questionId': raw['questionId'],
         'game': raw['game'], 'format': raw.get('format'), 'difficulty': raw.get('difficulty'),
+        'schemaVersion': raw.get('schemaVersion', 1), 'project': raw.get('project', 'scalargame'),
+        'engine': raw.get('engine', 'motion'), 'route': raw.get('route'), 'renderer': raw.get('renderer'),
+        'models': list(raw.get('models') or []), 'costUsd': raw.get('costUsd'), 'credits': list(raw.get('credits') or []),
+        'disclosure': raw.get('disclosure'), 'tags': list(raw.get('tags') or []),
         'status': status, 'statusLabel': EPISODE_LABELS.get(status, status),
         'metadataSha256': raw['metadataSha256'], 'videoSha256': raw['videoSha256'], 'coverSha256': raw.get('coverSha256'),
         'videoUrl': raw.get('videoUrl'), 'coverUrl': raw.get('coverUrl'), 'media': measured,
@@ -692,11 +696,17 @@ def episode_detail(raw, posts):
 FUNNEL_VALUES = ('views', 'engaged', 'answered', 'avgWatchSeconds', 'followsThatDay')
 
 
-def episode_funnel(row):
-    """EpisodeFunnel from one metrics.funnel() row; only contract fields pass."""
+LABEL_KEYS = ('project', 'engine', 'route', 'format', 'renderer', 'group')
+
+
+def episode_funnel(row, labels=None):
+    """EpisodeFunnel from one metrics.funnel() row; only contract fields pass. `labels` (ui_library.content_labels)
+    adds project, engine, route, format, renderer and group for Learn's grouping; null when the library has no record."""
     counted = row.get('counted') if isinstance(row.get('counted'), dict) else {}
     platforms = row.get('platforms') if isinstance(row.get('platforms'), dict) else {}
+    label = (labels or {}).get(row.get('episode'))
     return {'episode': row.get('episode'), 'publishedDates': list(row.get('publishedDates') or []),
+            'labels': {k: label.get(k) for k in LABEL_KEYS} if isinstance(label, dict) else None,
             **{k: row.get(k) for k in FUNNEL_VALUES},
             'counted': {k: list(counted.get(k) or []) for k in FUNNEL_VALUES},
             'platforms': {p: {'status': v.get('status'), **{k: v.get(k) for k in FUNNEL_VALUES},
@@ -704,12 +714,12 @@ def episode_funnel(row):
                           for p, v in platforms.items() if isinstance(v, dict)}}
 
 
-def next_batch(next_batch_id, open_items, last_brief, last_retro, performance, accounts=(), funnel=()):
+def next_batch(next_batch_id, open_items, last_brief, last_retro, performance, accounts=(), funnel=(), labels=None):
     performance = sorted(performance, key=lambda p: (p['at'] or '', p['platform']), reverse=True)[:PERFORMANCE_MAX]
     return {'nextBatchId': next_batch_id, 'openFeedback': [feedback_item(f) for f in open_items],
             'lastBrief': batch_note(last_brief), 'lastRetro': batch_note(last_retro),
             'performance': performance, 'accounts': list(accounts),
-            'funnel': [episode_funnel(r) for r in funnel if isinstance(r, dict)], 'tags': list(FEEDBACK_TAGS)}
+            'funnel': [episode_funnel(r, labels) for r in funnel if isinstance(r, dict)], 'tags': list(FEEDBACK_TAGS)}
 
 
 # ---------- post stats controls (STATE/metrics/) ----------

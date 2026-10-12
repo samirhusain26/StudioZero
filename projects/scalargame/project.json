@@ -5,7 +5,7 @@
   "priority": "P1",
   "order": 1,
   "summary": "Short quiz videos for scalargame.com: one question from a frozen snapshot of the game's data, a thinking pause, the reveal and a reviewed fact.",
-  "contract": {"schemaVersion": 1, "contentNamespaces": ["scalar", "continuum", "whenabouts", "tectonic"]},
+  "contract": {"schemaVersion": 2, "contentNamespaces": ["scalar", "continuum", "whenabouts", "tectonic"], "note": "v2 from 2026-10-12; the finalized 2026-10 batches stay v1 (valid forever)."},
   "sources": [
     {
       "kind": "game-repo",

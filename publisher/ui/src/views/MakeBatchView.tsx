@@ -29,7 +29,7 @@ import { deviceTimeZone } from '../lib/time'
 import { episodeHash, guideHash } from '../views'
 import { AddBatchFlow } from './library/AddBatchFlow'
 import { BatchNotesPanel } from './library/BatchNotesPanel'
-import { FunnelTable } from './library/FunnelTable'
+import { FunnelGroups, FunnelTable } from './library/FunnelTable'
 import { PostStatsPanel } from './library/PostStatsPanel'
 import { MakeStep as Step } from '../components/MakeStep'
 import { PlanMakeContent } from './studio/PlanMakeContent'
@@ -279,6 +279,7 @@ export function MakeBatchContent({
             <details className="disclosure">
               <summary>How the posts did</summary>
               <PostStatsPanel zone={zone} onRead={onChanged} />
+              {info.funnel.length ? <FunnelGroups funnel={info.funnel} /> : null}
               <FunnelTable funnel={info.funnel} />
               <h3 className="h4">Accounts, last 7 days</h3>
               {info.accounts.length ? (

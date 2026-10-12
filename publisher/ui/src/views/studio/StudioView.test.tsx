@@ -32,7 +32,7 @@ describe('Studio', () => {
     const chips = await screen.findByRole('group', { name: 'Project' })
     expect(within(chips).getByRole('link', { name: 'Originals' })).toHaveAttribute('aria-current', 'page')
     expect(within(chips).getByRole('link', { name: 'Scalargame' })).toHaveAttribute('href', '#/studio/make?project=scalargame')
-    expect(screen.getByText(/cannot be uploaded yet/)).toBeInTheDocument()
+    expect(screen.getByText(/Upload the finalized batch folder in Library › Add batch/)).toBeInTheDocument()
   })
 
   it('Originals: subjects make the prompt; checks are kept per batch id in this browser', async () => {

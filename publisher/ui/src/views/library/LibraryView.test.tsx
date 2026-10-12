@@ -32,7 +32,7 @@ describe('Library list', () => {
     await user.click(within(screen.getByRole('group', { name: 'Show' })).getByRole('button', { name: 'Approved' }))
     expect(screen.queryByRole('group', { name: 'Library actions' })).toBeNull()
     expect(screen.getAllByTestId('episode-card')).toHaveLength(1)
-    expect(JSON.parse(sessionStorage.getItem('scalar-library-list') ?? '{}')).toEqual({ batchId: '', filter: 'approved' })
+    expect(JSON.parse(sessionStorage.getItem('scalar-library-list') ?? '{}')).toEqual({ batchId: '', project: '', filter: 'approved' })
   })
 
   it('empty states point back to Make a batch', async () => {

@@ -9,12 +9,14 @@ import { ScreenHelp } from '../../components/ScreenHelp'
 import { StatusBadge } from '../../components/StatusBadge'
 import { useApi } from '../../hooks/useApi'
 import { dragHasFiles, entriesFromDataTransfer } from '../../lib/dropFolder'
+import { titleCase } from '../../lib/format'
 import {
   approvableShown,
   batchChips,
   filterCounts,
   LIBRARY_FILTERS,
   listEpisodes,
+  projectChips,
   readListState,
   writeListState,
   type LibraryListState,
@@ -110,14 +112,16 @@ export function LibraryView() {
 export function LibraryBrowser({ data, onChanged }: { data: LibraryResponse; onChanged: () => void }) {
   const [state, setStateRaw] = useState<LibraryListState>(() => {
     const saved = readListState()
-    return data.batches.some((b) => b.batchId === saved.batchId) ? saved : { ...saved, batchId: '' }
+    const project = data.episodes.some((e) => e.project === saved.project) ? saved.project : ''
+    return data.batches.some((b) => b.batchId === saved.batchId) ? { ...saved, project } : { ...saved, project, batchId: '' }
   })
   const setState = (next: LibraryListState) => {
     setStateRaw(next)
     writeListState(next)
   }
   const shown = useMemo(() => listEpisodes(data, state), [data, state])
-  const counts = filterCounts(data, state.batchId)
+  const counts = filterCounts(data, state.batchId, state.project)
+  const projects = projectChips(data)
   const approvable = approvableShown(shown)
   const actions = useContentActions(onChanged)
   const batch = data.batches.find((b) => b.batchId === state.batchId)
@@ -133,6 +137,18 @@ export function LibraryBrowser({ data, onChanged }: { data: LibraryResponse; onC
           {batchChips(data).map((b) => (
             <Chip key={b.batchId} pressed={state.batchId === b.batchId} onClick={() => setState({ ...state, batchId: b.batchId })}>
               {b.label} · {b.count}
+            </Chip>
+          ))}
+        </div>
+      ) : null}
+      {projects.length > 1 ? (
+        <div className="chip-row scroll" role="group" aria-label="Project">
+          <Chip pressed={state.project === ''} onClick={() => setState({ ...state, project: '' })}>
+            All projects
+          </Chip>
+          {projects.map((p) => (
+            <Chip key={p.project} pressed={state.project === p.project} onClick={() => setState({ ...state, project: p.project })}>
+              {titleCase(p.project)} · {p.count}
             </Chip>
           ))}
         </div>

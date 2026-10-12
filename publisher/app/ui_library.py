@@ -939,6 +939,20 @@ def library_view(index, state, media_url, today=None):
     return batches
 
 
+def content_labels(index, content_ids):
+    """{contentId: {project, engine, route, format, renderer, group}} from the newest imported revision of each
+    content id (Learn groups the per-video funnel by these). Ids the library does not hold are left out."""
+    out = {}
+    for content in sorted(set(content_ids)):
+        row = index.execute('SELECT metadata FROM episodes WHERE question_id=? ORDER BY imported_at DESC, revision DESC LIMIT 1',
+                            (content,)).fetchone()
+        if row is None:
+            continue
+        view = lc.episode_view(json.loads(row['metadata']))
+        out[content] = {k: view[k] for k in ('project', 'engine', 'route', 'format', 'renderer', 'group')}
+    return out
+
+
 def schedulable_videos(index, today):
     """Approved video records for the generator (DESIGN.md "Approved video record")."""
     today = _date(today)

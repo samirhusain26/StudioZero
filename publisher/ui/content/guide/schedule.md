@@ -5,7 +5,9 @@ A schedule decides which approved videos go to which platform and when. It is bu
 1. Schedule → New draft shows the recommended plan: one post per platform per day for 21 days, at a fixed time per platform; blocked platforms are left out. Pick the start date (and the timezone if needed).
 2. Press Generate draft. To change days, times, maximum per day, minimum gap, stagger or companion posts, open **Customize** first: every field is there, already filled with the plan. The same inputs and library always give the same draft, whichever way you filled them in.
 3. Check every job: local time with timezone and UTC, platform, video, the exact caption, title, poll and comment, warnings, exclusions (for example a question already posted on that account) and "N of M requested slots fillable".
-4. Edit or remove entries; each change makes a new draft.
+4. Edit or remove entries; each change makes a new draft. An edited caption must keep any attribution the episode requires (for example the TMDB notice); otherwise the draft is blocked.
+
+**Content order.** Without mix targets the draft takes videos game by game (scalar → continuum → whenabouts → tectonic) with difficulties interleaved. Once you set a target share for each project (in its `project.json` on the Mac, then an update), the recommended plan and the autopilot fill slots by project share instead (each project still in its own game order), and the draft lists new posts per project. A project with share 0 is left out.
 5. [Approve the schedule](#approve-a-schedule).
 
 After that the [autopilot](#autopilot) keeps the schedule filled by itself; you only generate a draft by hand to change the plan.
@@ -31,7 +33,7 @@ Changing an approved schedule (cancel or edit a job that has not been sent) crea
 Since 2026-10-09 publishing runs by itself. Twice a day (05:15 and 17:15 on the Pi) the autopilot:
 
 1. records the posting test of a Buffer channel whose identity is verified once it has a confirmed post (it never enables a channel by itself);
-2. when fewer than 7 days are left in the approved schedule, generates the recommended draft (every verified platform, one post a day for 21 days from tomorrow, first comment and answer reply) and approves it, exactly as the Approve button does;
+2. when fewer than 7 days are left in the approved schedule, generates the recommended draft (every verified platform, one post a day for 21 days from tomorrow, first comment and answer reply; by project share once mix targets are set) and approves it, exactly as the Approve button does;
 3. runs the activation checklist and, if everything except the timer item passes, enables exactly the approved channels and the publisher timer. Any other FAIL item holds it, with nothing changed, until the next run.
 
 It does nothing while publishing is paused, while another approval is being processed, when the draft is blocked, or when no approved video is left (make the next batch). Its runs appear in Activity as "Autopilot (schedule refill)". Uploading, reviewing and finalizing batches stay with you.

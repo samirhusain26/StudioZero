@@ -2,7 +2,7 @@
 
 Studio › **Make a batch** turns what you learned into the next batch. It is the Mac step shown on the Pi, as five numbered steps; each says whether it happens here on the Pi or on the Mac. Home's loop points here when the last batch is getting old, nothing is scheduled soon, or there is feedback to carry over.
 
-1. **Carry feedback over (Pi).** Read the open feedback (Show notes; notes may name answers), the last retro and brief (each behind its own Show button) and how the posts did. Press Download feedback.json and move `feedback-<batchId>.json` into `~/Personal/code_projects/StudioZero/library/_inbox/` on the Mac (that folder is not in git).
+1. **Carry feedback over (Pi).** Read the open feedback (Show notes; notes may name answers), the last retro and brief (each behind its own Show button) and how the posts did (per video, and added up by project, engine, format or renderer). Press Download feedback.json and move `feedback-<batchId>.json` into `~/Personal/code_projects/StudioZero/library/_inbox/` on the Mac (that folder is not in git).
 2. **Write the brief (Pi).** Choose the episodes per format, the difficulty mix, the style per game, the music (the calm rotation or one bed) and whether pilots come first; every option comes from the studio catalog, so nothing offered is something the engine cannot make. Save choices you reuse as a preset (kept only in this browser). The brief is prefilled from these choices and the feedback; Show brief to edit it by hand (Reset to template follows the choices again). Press Copy prompt for Claude. It copies exactly:
 
 ```text

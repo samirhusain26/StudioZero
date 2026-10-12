@@ -14,7 +14,7 @@ For each episode:
 
 1. Watch it once with sound and once muted. Everything must make sense muted.
 2. Check the question is fair, the reveal is clear and the explanation is right.
-3. Read the captions: none may give the answer away.
+3. Read the captions: none may give the answer away. Open **Made with** to check the project, engine and renderer, the credits (every asset with its licence) and the AI disclosure; the Pi applies the platforms' AI labels from it.
 4. Leave [feedback](#feedback) if anything should change next time.
 5. [Approve](#approve-content) it, or leave it unapproved, then press Next for the following one.
 

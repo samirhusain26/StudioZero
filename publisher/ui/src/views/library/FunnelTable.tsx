@@ -1,7 +1,7 @@
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import type { EpisodeFunnel } from '../../api/types'
 import { platformName } from '../../lib/format'
-import { countedText, countText, followsSourceText, funnelPlatforms, platformReadText, watchText } from '../../lib/funnel'
+import { countedText, countText, followsSourceText, funnelPlatforms, GROUP_KEYS, groupFunnel, platformReadText, watchText, type GroupKey } from '../../lib/funnel'
 
 /** "—" for a missing number, with words for screen readers; null is "no data", never zero. */
 function Cell({ text }: { text: string | null }) {
@@ -11,6 +11,66 @@ function Cell({ text }: { text: string | null }) {
       <span aria-hidden="true">—</span>
       <span className="sr-only">no data</span>
     </>
+  )
+}
+
+/** Learn: the per-video funnel added up by project, engine, format or renderer. */
+export function FunnelGroups({ funnel }: { funnel: EpisodeFunnel[] }) {
+  const id = useId()
+  const [key, setKey] = useState<GroupKey>('project')
+  const groups = groupFunnel(funnel, key)
+  return (
+    <section className="stack" aria-labelledby={`${id}-h`} data-testid="funnel-groups">
+      <h3 id={`${id}-h`} className="h4">
+        By {GROUP_KEYS.find((g) => g.id === key)?.label.toLowerCase()}
+      </h3>
+      <div className="field">
+        <label htmlFor={`${id}-by`}>Group by</label>
+        <select id={`${id}-by`} value={key} onChange={(e) => setKey(e.target.value as GroupKey)}>
+          {GROUP_KEYS.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="table-wrap">
+        <table className="funnel-table">
+          <caption className="sr-only">Posted videos, views, engaged, answered and engaged rate per group</caption>
+          <thead>
+            <tr>
+              <th scope="col">{GROUP_KEYS.find((g) => g.id === key)?.label}</th>
+              <th scope="col">Videos</th>
+              <th scope="col">Views</th>
+              <th scope="col">Engaged</th>
+              <th scope="col">Answered</th>
+              <th scope="col">Engaged per view</th>
+            </tr>
+          </thead>
+          <tbody>
+            {groups.map((g) => (
+              <tr key={g.key}>
+                <th scope="row">{g.key}</th>
+                <td>{g.videos}</td>
+                <td>
+                  <Cell text={countText(g.views)} />
+                </td>
+                <td>
+                  <Cell text={countText(g.engaged)} />
+                </td>
+                <td>
+                  <Cell text={countText(g.answered)} />
+                </td>
+                <td>
+                  <Cell text={g.engagedRate === null ? null : `${g.engagedRate}%`} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="hint">Renderer is recorded from contract v2 on; earlier batches show “Not recorded”.</p>
+    </section>
   )
 }
 
@@ -63,6 +123,7 @@ function FunnelRows({ row }: { row: EpisodeFunnel }) {
       <tr className="funnel-main">
         <th scope="row">
           <code>{row.episode}</code>
+          {row.labels ? <div className="hint">{[row.labels.project, row.labels.format, row.labels.renderer === 'web' ? 'browser export' : row.labels.renderer].filter(Boolean).join(' · ')}</div> : null}
           {row.publishedDates.length ? <div className="hint">Posted {row.publishedDates.join(', ')}</div> : null}
         </th>
         <td>

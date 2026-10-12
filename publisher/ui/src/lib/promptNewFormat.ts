@@ -185,7 +185,7 @@ export function buildNewFormatPrompt(catalog: Catalog, plan: NewFormatPlan, now:
     'Steps:',
     ...(plan.kind === 'project'
       ? [
-          `0. Project: add projects/${projectId}/project.json (formats, sources, link and call-to-action policy, caption defaults, required checks) and list it in studio.json. Budget monthlyUsd 0 with per-run approval and mix target null: both are my decisions. Its batches need contract v2 (Phase 4); do not change the contract.`,
+          `0. Project: add projects/${projectId}/project.json (formats, sources, link and call-to-action policy, caption defaults, required checks) and list it in studio.json. Budget monthlyUsd 0 with per-run approval and mix target null: both are my decisions. Its batches use contract v2 and need a project module in contract/projects/; ask me before adding one (a contract change).`,
         ]
       : []),
     ...(engine?.id === 'story' ? storySteps(plan, projectId, pilot) : motionSteps(projectId, id, pilot)),

@@ -16,10 +16,12 @@ export type LibraryFilterId = (typeof LIBRARY_FILTERS)[number]['id']
 export interface LibraryListState {
   /** '' = all batches. */
   batchId: string
+  /** '' = every project. */
+  project: string
   filter: LibraryFilterId
 }
 
-export const DEFAULT_LIST: LibraryListState = { batchId: '', filter: 'review' }
+export const DEFAULT_LIST: LibraryListState = { batchId: '', project: '', filter: 'review' }
 export const LIST_KEY = 'scalar-library-list'
 
 /** Waiting for a decision: ready for review, or withdrawn (may be approved again). */
@@ -43,12 +45,12 @@ export function listEpisodes(
   return data.episodes.filter(
     (e) =>
       (keep && e.episodeId === keep.episodeId && e.revision === keep.revision) ||
-      ((!state.batchId || e.batchId === state.batchId) && matchesFilter(e, state.filter)),
+      ((!state.batchId || e.batchId === state.batchId) && (!state.project || e.project === state.project) && matchesFilter(e, state.filter)),
   )
 }
 
-export function filterCounts(data: Pick<LibraryResponse, 'episodes'>, batchId: string): Record<LibraryFilterId, number> {
-  const inBatch = data.episodes.filter((e) => !batchId || e.batchId === batchId)
+export function filterCounts(data: Pick<LibraryResponse, 'episodes'>, batchId: string, project = ''): Record<LibraryFilterId, number> {
+  const inBatch = data.episodes.filter((e) => (!batchId || e.batchId === batchId) && (!project || e.project === project))
   return { review: inBatch.filter(needsReview).length, approved: inBatch.filter((e) => e.status === 'approved').length, all: inBatch.length }
 }
 
@@ -57,6 +59,13 @@ export function batchChips(data: Pick<LibraryResponse, 'batches'>): { batchId: s
   return [...data.batches]
     .sort((a, b) => (b.importedAt ?? '').localeCompare(a.importedAt ?? '') || b.batchId.localeCompare(a.batchId))
     .map((b) => ({ batchId: b.batchId, label: b.batchId.startsWith('legacy-') ? 'legacy' : b.batchId, count: b.episodeCount }))
+}
+
+/** Project chips with episode counts, by name; shown only when the library holds more than one project. */
+export function projectChips(data: Pick<LibraryResponse, 'episodes'>): { project: string; count: number }[] {
+  const counts = new Map<string, number>()
+  for (const e of data.episodes) counts.set(e.project, (counts.get(e.project) ?? 0) + 1)
+  return [...counts].sort(([a], [b]) => a.localeCompare(b)).map(([project, count]) => ({ project, count }))
 }
 
 /** Shown episodes that "Approve all shown" would approve. */
@@ -91,7 +100,7 @@ export function readListState(storage: Storage | null = safeSession()): LibraryL
   try {
     const data = JSON.parse(storage?.getItem(LIST_KEY) ?? 'null') as Partial<LibraryListState> | null
     const filter = LIBRARY_FILTERS.some((f) => f.id === data?.filter) ? (data?.filter as LibraryFilterId) : DEFAULT_LIST.filter
-    return { batchId: typeof data?.batchId === 'string' ? data.batchId : '', filter }
+    return { batchId: typeof data?.batchId === 'string' ? data.batchId : '', project: typeof data?.project === 'string' ? data.project : '', filter }
   } catch {
     return DEFAULT_LIST
   }

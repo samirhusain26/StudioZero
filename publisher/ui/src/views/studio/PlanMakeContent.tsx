@@ -104,8 +104,8 @@ export function PlanMakeContent({ catalog, project, now }: { catalog: Catalog; p
         </Step>
         <Step n={3} title="Upload it" where="Pi">
           <p>
-            {project.name} batches use contract v{project.contractSchemaVersion}. This Pi validates contract v1 only until the Phase 4 update, so{' '}
-            {project.name} batches cannot be uploaded yet.
+            {project.name} batches use contract v{project.contractSchemaVersion}. Upload the finalized batch folder in Library › Add batch; the Pi
+            validates it with the same contract and its {project.name} rules, then you review and approve each episode.
           </p>
         </Step>
       </div>

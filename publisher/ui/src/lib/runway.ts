@@ -26,6 +26,8 @@ export interface Runway {
   firstGapPlatforms: Platform[]
   /** Last local day with any live post. */
   lastDay: string | null
+  /** Last local day with a live post, per scheduling group (a Scalargame game, or the project id for others). */
+  lastDayByGroup: Record<string, string>
 }
 
 export function addDays(dateKey: string, days: number): string {
@@ -69,7 +71,13 @@ export function computeRunway(schedule: ScheduleResponse, episodes: readonly Lib
   const ends = platforms.map((p) => (p.scheduledThrough && p.scheduledThrough >= today ? p.scheduledThrough : addDays(today, -1)))
   const earliest = [...ends].sort()[0] ?? null
   const liveDays = schedule.jobs.filter(live).map((j) => localDateKey(j.slotUtc, zone)).sort()
+  const lastDayByGroup: Record<string, string> = {}
+  for (const j of schedule.jobs.filter(live)) {
+    const day = localDateKey(j.slotUtc, zone)
+    if (j.game && day > (lastDayByGroup[j.game] ?? '')) lastDayByGroup[j.game] = day
+  }
   return {
+    lastDayByGroup,
     today,
     platforms,
     firstGap: earliest ? addDays(earliest, 1) : null,
