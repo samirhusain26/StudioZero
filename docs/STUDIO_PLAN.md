@@ -21,6 +21,7 @@ Private (never committed; on the owner's Mac only): the hash list for the safety
 5. One UI: a sixth Pi UI section **Studio** (revises D1 of `PI_UI_REDESIGN_PLAN.md`); Studio = the Make step of Make → Upload → Review → Schedule → Post → Learn.
 6. Re-pointing the Pi to the new repo is approved, using the Pi's own scripts; never hand-edit `/opt/scalar-social/repo`.
 7. Pi runtime names stay `scalar-social`; only the UI product name changes.
+8. **Device compute (2026-10-12):** the Pi Zero 2 W (512 MB) only serves the Studio UI, stores the library, approves, schedules and publishes. Making runs on the device that opens the UI: motion episodes preview (Remotion Player) and export (Remotion client-side rendering, WebCodecs) in the browser, then upload to the Pi through the existing upload → validate → approve flow; the Python story engine runs as a worker agent on the owner's laptop. No spike first (owner: proceed). `render.sh` on the Mac stays available as the house-master path. New UI dependencies `@remotion/player`, `@remotion/web-renderer`, `@remotion/media` (pinned to the motion engine's Remotion version) approved with this plan.
 
 ## 2. Target architecture (summary)
 
@@ -188,6 +189,8 @@ Principles: v1 stays valid forever (dispatch on `schemaVersion`; the v1 code pat
 ---
 
 ## 6. Catalog, Studio agent, proxy (Phase 2–3 design notes)
+
+(Revised by decision 8: motion making moves into the browser; the worker agent below is for the Python story engine, and paid API calls stay in that worker, so keys never reach a phone or the Pi UI. Phase 3 prompt: `docs/prompts/PHASE3_SESSION.md`.)
 
 - **Catalog source: a generated, committed `publisher/catalog.json`** (written by `tools/export-catalog.mjs` from `studio.json`, `projects/*/project.json`, the motion engine's template/style/bed registries and the story engine's route/model registry; a `--check` mode fails when stale, run with `check:static`). The Pi serves it at `/api/catalog`; the prompt builder and Studio tab read it; Pi Python reads it for mix-policy defaults and link policy. Why: the Pi's sparse checkout has only `publisher/` and `contract/`, so this needs no sparse-path change; it works with the Mac asleep; the UI needs no rebuild when only the catalog changes; and the engines' own registries generate it, so the builder never offers something an engine cannot render. `GAMES`/`FORMATS` in `publisher/ui/src/api/types.ts` and `ui_views.GAMES` become catalog-derived.
 - **Pi proxy needs its own unit.** The UI unit has `IPAddressAllow=localhost`, `IPAddressDeny=any`, `MemoryMax=96M` (no outbound network by design). Proposal: `scalar-social-studio-proxy.service` (stdlib) allowed to reach only the Mac's tailnet address (set in a Pi-local drop-in, never in git), listening on a unix socket; `ui_server` forwards `/api/studio/*` to it after its normal passcode/session checks. Route allowlist, size caps, timeouts, Range streaming in chunks, "Mac studio offline" response. The bearer token for the Mac agent reaches the proxy via `LoadCredential`.
