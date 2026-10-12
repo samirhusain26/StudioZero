@@ -8,6 +8,12 @@ Studio is where batches are made, for every project: **Originals** (the studio's
 
 Originals batches use contract v2, which this Pi validates only after the Phase 4 update; until then Make a batch builds the prompt and the checklist, and the upload step says it is not available yet.
 
+## New format, style or project
+
+Studio › **New format, style or project** (prompt builder mode 2) writes the prompt for Claude Code when you want something the engines cannot make yet: a new kind of episode for a project, a new look for a game, or a new project. Choose the engine (and, for Story, the route), name it, describe the topic, pick the visual elements, the structure (hook, body, thinking timer, reveal, call to action), the length and the audio mood, and add constraints. Only engines, routes, games and formats from the studio catalog are offered; a name that already exists is refused.
+
+Claude builds it on the Mac and makes **one pilot**, then stops for your review: a motion pilot comes as a job bundle you open in Studio › Export to watch in the Player (the new template reaches the Pi only after you OK the push), a story pilot appears in Story renders (a paid pilot runs only after you confirm its cost estimate). A new project starts with no budget and no mix target: both stay your decisions. The draft is kept in this browser.
+
 ## Export in the browser
 
 Studio › **Export** makes a Scalargame batch's videos on the device you are using, with the same templates as the Mac (Chrome or Safari 26 and newer; a laptop is best for a whole batch, a phone can do one episode at a time).

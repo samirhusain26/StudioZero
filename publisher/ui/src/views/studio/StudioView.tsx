@@ -52,6 +52,13 @@ export function StudioView() {
         </section>
       ))}
       {catalog.data ? (
+        <p>
+          <a className="btn" href="#/studio/new">
+            New format, style or project →
+          </a>
+        </p>
+      ) : null}
+      {catalog.data ? (
         <section className="card stack" aria-labelledby="studio-engines">
           <h2 id="studio-engines">Engines</h2>
           <ul className="row-list">

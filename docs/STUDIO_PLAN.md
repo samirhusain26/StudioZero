@@ -261,7 +261,7 @@ Never committed: credentials, tokens, passcodes, deploy keys, `.env*`, `env.yaml
 - [x] Motion in the browser: Pi asset streaming + sparse widening (686c53c), kit in the UI, `@remotion/media` audio (437170d), Player preview, `renderMediaOnWeb` export, browser QA, IndexedDB resume, `render.json` with `job.renderer: "web"`, shared packager cores (1291a0b), upload through the existing flow (9bb1ddb, 8407d65)
 - [x] Story worker agent (`engines/story/src/agent.py`), Pi proxy (`publisher/app/studio_proxy.py`, `scalar-social-studio-proxy.service`), Story jobs pages; B1, B2, B5 fixed in the agent
 - [x] Old dashboard parity (written check below); `server.py` and `static/` retired
-- [ ] Prompt builder mode 2
+- [x] Prompt builder mode 2 (`#/studio/new`: new format, style or project → Claude Code prompt for the template + one pilot, previewed in Studio › Export's Player or Story renders)
 - [ ] build/check static, Pi memory and latency, security review and fixes, guide pages
 - [ ] Plan status, memory, `docs/prompts/PHASE4_SESSION.md`
 

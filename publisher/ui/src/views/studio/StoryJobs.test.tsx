@@ -224,3 +224,36 @@ describe('Story jobs', () => {
     expect(await screen.findByText('Saved. The next run uses these settings.')).toBeInTheDocument()
   })
 })
+
+describe('New format, style or project', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    window.localStorage.clear()
+  })
+
+  it('offers only catalog options, refuses an existing name and copies a prompt ending with the safety lines', async () => {
+    const { NewFormatForm } = await import('./NewFormatView')
+    const { realCatalog } = await import('../../test/catalog')
+    const { SAFETY_LINES } = await import('../../lib/promptSafety')
+    window.localStorage.clear()
+    const user = userEvent.setup()
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
+    render(<NewFormatForm catalog={realCatalog()} now={new Date('2026-11-03T10:00:00Z')} />)
+    await user.selectOptions(screen.getByLabelText('Project'), 'scalargame')
+    await user.selectOptions(screen.getByLabelText('Engine'), 'motion')
+    await user.type(screen.getByLabelText('Format name'), 'Progressive Clues')
+    await user.type(screen.getByLabelText('Topic'), 'Borders.')
+    await user.click(screen.getByRole('button', { name: 'Copy prompt for Claude' }))
+    expect(screen.getByText('“progressive-clues” already exists in the catalog; pick another name.')).toBeInTheDocument()
+    expect(writeText).not.toHaveBeenCalled()
+    await user.clear(screen.getByLabelText('Format name'))
+    await user.type(screen.getByLabelText('Format name'), 'Border Run')
+    await user.click(screen.getByRole('checkbox', { name: 'map zooms' }))
+    await user.click(screen.getByRole('button', { name: 'Copy prompt for Claude' }))
+    const prompt = writeText.mock.calls[0]?.[0] ?? ''
+    expect(prompt).toMatch(/^New format “Border Run” \(id border-run\) for project scalargame/)
+    expect(prompt).toContain('- Visual vocabulary: map zooms')
+    expect(prompt.endsWith(SAFETY_LINES.join('\n'))).toBe(true)
+    expect(JSON.parse(window.localStorage.getItem('studio-new-format-draft') ?? '{}')).toMatchObject({ name: 'Border Run', project: 'scalargame' })
+  })
+})

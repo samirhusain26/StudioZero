@@ -9,6 +9,7 @@ import { ActivityView } from './views/ActivityView'
 import { SettingsView } from './views/SettingsView'
 import { MakeBatchView } from './views/MakeBatchView'
 import { StudioView } from './views/studio/StudioView'
+import { NewFormatView } from './views/studio/NewFormatView'
 import { StoryJobsView } from './views/studio/StoryJobsView'
 import { StoryJobView } from './views/studio/StoryJobView'
 import { StoryRendersView } from './views/studio/StoryRendersView'
@@ -182,6 +183,7 @@ export function App() {
               <ExportView />
             </Suspense>
           ) : null}
+          {view === 'studio' && route.newFormat ? <NewFormatView /> : null}
           {view === 'studio' && route.jobs ? <StoryJobsView /> : null}
           {view === 'studio' && route.job ? <StoryJobView key={route.job} id={route.job} /> : null}
           {view === 'studio' && route.renders ? <StoryRendersView /> : null}

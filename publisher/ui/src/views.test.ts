@@ -35,6 +35,8 @@ describe('hash routes', () => {
     expect(routeFromHash('#/studio')).toEqual({ view: 'studio' })
     expect(routeFromHash('#/studio/export')).toEqual({ view: 'studio', export: true })
     expect(screenOf(routeFromHash('#/studio/export'))).toBe('export')
+    expect(routeFromHash('#/studio/new')).toEqual({ view: 'studio', newFormat: true })
+    expect(screenOf(routeFromHash('#/studio/new'))).toBe('newFormat')
     expect(routeFromHash('#/studio/jobs')).toEqual({ view: 'studio', jobs: true })
     expect(routeFromHash('#/studio/jobs/Galactic_Garage')).toEqual({ view: 'studio', job: 'Galactic_Garage' })
     expect(routeFromHash('#/studio/jobs/..%2Fetc')).toEqual({ view: 'studio', jobs: true })

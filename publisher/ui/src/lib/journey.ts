@@ -258,6 +258,7 @@ export function journey(args: { dashboard: DashboardResponse | null | undefined;
 export const SCREEN_STEPS = {
   studio: ['make'],
   export: ['make'],
+  newFormat: ['make'],
   jobs: ['make'],
   job: ['make'],
   renders: ['make'],

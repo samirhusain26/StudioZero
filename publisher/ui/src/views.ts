@@ -16,7 +16,7 @@ export const VIEWS = [
 export type ViewId = (typeof VIEWS)[number]['id']
 
 /**
- * A parsed hash route. Sub-routes: `#/studio/make[?project=<id>]`, `#/studio/export`, `#/studio/jobs[/<id>]`, `#/studio/renders`,
+ * A parsed hash route. Sub-routes: `#/studio/make[?project=<id>]`, `#/studio/export`, `#/studio/new`, `#/studio/jobs[/<id>]`, `#/studio/renders`,
  * `#/studio/story-settings`, `#/library/episode/<episodeId>/<revision>`, `#/schedule/queue`,
  * `#/activity?tab=<posts|uploads|approvals|system>`, `#/settings#<section>`, `#/home#platforms` and `#/guide/<anchor>` (the guide is opened from the help icon,
  * not a tab). `redirect` is set for an old hash (`#/dashboard`, `#/history`, `#/activation`, `#/next-batch`, `#/library/make`):
@@ -28,6 +28,8 @@ export interface Route {
   make?: true
   /** Studio › Export (in-browser motion export). */
   export?: true
+  /** Studio › New format, style or project (prompt builder mode 2). */
+  newFormat?: true
   /** Studio › Story jobs (the story worker on the laptop): the list, one job, the renders, the worker's settings. */
   jobs?: true
   job?: string
@@ -81,6 +83,7 @@ export function routeFromHash(hash: string): Route {
       return PROJECT.test(project) && project.length <= 40 ? { view: 'studio', make: true, project } : { view: 'studio', make: true }
     }
     if (rest.length === 1 && rest[0] === 'export') return { view: 'studio', export: true }
+    if (rest.length === 1 && rest[0] === 'new') return { view: 'studio', newFormat: true }
     if (rest[0] === 'jobs' && rest.length === 1) return { view: 'studio', jobs: true }
     if (rest[0] === 'jobs' && rest.length === 2) {
       const id = decode(rest[1] ?? '')
@@ -122,12 +125,13 @@ export function guideHash(anchor: string): string {
 }
 
 /** The screen a route shows, for titles, the step line and the help icon. */
-export type Screen = 'home' | 'studio' | 'export' | 'jobs' | 'job' | 'renders' | 'storySettings' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
+export type Screen = 'home' | 'studio' | 'export' | 'newFormat' | 'jobs' | 'job' | 'renders' | 'storySettings' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
 
 export function screenOf(route: Route): Screen {
   if (route.view === 'studio') {
     if (route.make) return 'make'
     if (route.export) return 'export'
+    if (route.newFormat) return 'newFormat'
     if (route.job) return 'job'
     if (route.jobs) return 'jobs'
     if (route.renders) return 'renders'
@@ -143,6 +147,7 @@ export const SCREEN_TITLES: Record<Screen, string> = {
   home: 'Home',
   studio: 'Studio',
   export: 'Export',
+  newFormat: 'New format, style or project',
   jobs: 'Story jobs',
   job: 'Story job',
   renders: 'Story renders',

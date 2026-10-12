@@ -28,6 +28,7 @@
     "jobs": "story-jobs",
     "job": "story-jobs",
     "renders": "story-jobs",
-    "storySettings": "story-jobs"
+    "storySettings": "story-jobs",
+    "newFormat": "new-format-style-or-project"
   }
 }

@@ -38,6 +38,14 @@ export const SCREEN_HELP = {
       'When every episode passed, finalize and upload: the Pi validates everything again.',
     ],
   },
+  newFormat: {
+    anchor: 'new-format-style-or-project',
+    lines: [
+      'Describe a new format, a new look for a game, or a new project; only engines and options the catalog has are offered.',
+      'Copy the prompt into Claude Code on the Mac: it builds the template and one pilot, then stops for your review.',
+      'Watch the pilot in Studio › Export (motion) or Story renders (story) before anything else happens.',
+    ],
+  },
   jobs: {
     anchor: 'story-jobs',
     lines: [
