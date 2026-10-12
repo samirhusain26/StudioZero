@@ -12,9 +12,11 @@ import {
   evenMix,
   MAX_PRESETS,
   planProblems,
+  plansGeneratedVideo,
   PRESETS_KEY,
   readPresets,
   savePreset,
+  storyVideoModels,
   totalEpisodes,
   type BatchPlan,
 } from './promptBuilder'
@@ -183,27 +185,42 @@ describe('Scalargame prompt', () => {
 })
 
 describe('Originals prompt', () => {
-  it('is the originals playbook text with budget, checks and the safety lines', () => {
+  it('hands off to /originals with models from the catalog, budget, platforms and the safety lines', () => {
     const plan = {
-      ...defaultPlan(catalog, 'originals', '2026-11-originals-01'),
+      ...defaultPlan(catalog, 'originals', '2026-11-o01'),
       goal: 'First recap',
       subjects: 'Arrival (2016)\n- Heat (1995)\n',
       avoid: 'spoilers in the hook',
     }
     expect(planProblems(catalog, plan)).toEqual([])
     const brief = buildPlanBrief(catalog, plan, null)
-    expect(brief).toContain('# Brief: 2026-11-originals-01 (Originals)')
+    expect(brief).toContain('# Brief: 2026-11-o01 (Originals)')
     expect(brief).toContain('## Mix\n- Episodes: 1\n- movie-recap (Story · recap): 1\n')
     expect(brief).toContain('## Subjects\n- Arrival (2016)\n- Heat (1995)\n')
+    expect(brief).toMatch(/## Models \(catalog\)\n- movie-recap: script gemini-2\.5-flash \(fallback llama-3\.3-70b-versatile\), narration gemini-2\.5-flash-preview-tts/)
+    expect(brief).toContain('X and Bluesky get no caption')
+    expect(brief).toContain('- Mix: no target set yet')
     expect(brief).toContain('## Budget\n- Monthly budget: $0; every paid run needs my OK for that run, with a cost estimate.')
     expect(brief).toContain('## Checks\n- Rights, Script sanity, Visual QA, AI disclosure, Batch contract')
     expect(brief).toContain('## Avoid\n- spoilers in the hook')
     const prompt = buildPlanPrompt(catalog, plan, brief)
-    expect(prompt.startsWith('Originals batch 2026-11-originals-01 for project originals.\n')).toBe(true)
+    expect(prompt.startsWith('/originals brief 2026-11-o01\n')).toBe(true)
     expect(prompt).toContain('finalize only on my approval')
     expect(prompt).toContain('cost estimate')
     expect(prompt.endsWith(SAFETY)).toBe(true)
     expect(prompt).not.toContain('/video-batch')
+  })
+
+  it('animated shorts need a verified video model from the catalog', () => {
+    const base = defaultPlan(catalog, 'originals', '2026-11-o02')
+    const scope = base.scope.map((r) => (r.format === 'animated-short' ? { ...r, count: 2 } : { ...r, count: 0 }))
+    const plan = { ...base, scope, subjects: 'Galactic Garage: alien mechanics fix spaceships' }
+    expect(plansGeneratedVideo(catalog, plan)).toBe(true)
+    expect(plan.videoModel).toBe('veo-3.1-fast')
+    expect(planProblems(catalog, plan)).toEqual([])
+    expect(buildPlanBrief(catalog, plan, null)).toMatch(/- animated-short: story and shots .*video Veo 3\.1 Fast \(veo-3\.1-fast, \$0\.1\/s, 8 s a shot, native audio\)/)
+    expect(planProblems(catalog, { ...plan, videoModel: 'sora-2-pro' })).toContain('Choose a video model for the animated shorts.')
+    expect(storyVideoModels(catalog).map((m) => m.id)).not.toContain('sora-2-pro')
   })
 })
 

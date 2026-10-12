@@ -9,8 +9,10 @@ import {
   MAX_PER_FORMAT,
   MAX_SPARES,
   plannedGames,
+  plansGeneratedVideo,
   readPresets,
   savePreset,
+  storyVideoModels,
   totalEpisodes,
   type BatchPlan,
   type DifficultyMix,
@@ -220,10 +222,26 @@ export function PromptBuilderForm({ catalog, plan, onChange }: { catalog: Catalo
           </div>
         </>
       ) : (
-        <div className="field">
-          <label htmlFor={`${id}-subjects`}>Subjects (one title or story idea per line)</label>
-          <textarea id={`${id}-subjects`} rows={4} maxLength={2000} value={plan.subjects} onChange={(e) => set({ subjects: e.target.value })} />
-        </div>
+        <>
+          <div className="field">
+            <label htmlFor={`${id}-subjects`}>Subjects (one title or story idea per line)</label>
+            <textarea id={`${id}-subjects`} rows={4} maxLength={2000} value={plan.subjects} onChange={(e) => set({ subjects: e.target.value })} />
+          </div>
+          {plansGeneratedVideo(catalog, plan) ? (
+            <div className="field">
+              <label htmlFor={`${id}-video-model`}>Video model (animated shorts)</label>
+              <select id={`${id}-video-model`} value={plan.videoModel} onChange={(e) => set({ videoModel: e.target.value })}>
+                <option value="">Choose a model</option>
+                {storyVideoModels(catalog).map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} · ${m.costPerSecondWithAudioUsd ?? m.costPerSecondUsd}/s · {m.clipSeconds ?? m.maxDurationSeconds} s a shot · {m.tier.replace('_', ' ')}
+                  </option>
+                ))}
+              </select>
+              <span className="hint">Prices checked {storyVideoModels(catalog)[0]?.verifiedAt ?? 'in the catalog'}; Claude prints the exact estimate before any paid run.</span>
+            </div>
+          ) : null}
+        </>
       )}
 
       <div className="field">

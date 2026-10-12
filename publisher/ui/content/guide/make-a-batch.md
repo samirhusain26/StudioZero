@@ -52,6 +52,25 @@ It validates the batch again and writes `READY_FOR_UPLOAD`. From then on the fol
 
 After finalizing, Claude writes `library/_retros/<batchId>.md` (template: `library/_templates/RETRO.md`): what shipped, what went well, problems with the episode they affect, fixes, and a "Carry forward" list for the next brief. Upload it here as the batch's retro note. Later you can ask for an update once posts have results: `/video-batch retro <batchId>`.
 
+## Originals batches
+
+Originals (movie recaps and animated shorts from the story engine) have their own playbook, `/originals`. Studio › Make a batch with the **Originals** chip writes the prompt; it starts with:
+
+```text
+/originals brief 2026-11-o01
+```
+
+Originals batch IDs follow `YYYY-MM-oNN`. `/originals status <batchId>` and `/originals retro <batchId>` work like the Scalargame ones.
+
+| Checkpoint | You see | You decide |
+|---|---|---|
+| 0 · Brief | Titles, formats, models, a cost estimate per episode and in total, credits and licences, AI labels per platform, which platforms will post | The titles and the budget for this batch |
+| Each paid run | That run's estimate (from the story engine's `--estimate`) | Yes or no for that run only; Claude reports the actual cost after |
+| 1 · Checks | Each script with its independent fact-check against the plot source, the credits, frames from every video, the AI disclosure | Which episodes go ahead; how each concern is resolved |
+| 2 · Final batch | Every caption, the YouTube title and description, the platforms that post, the labels, the cost | Approve the exact files after watching each video with sound |
+
+Rules that never change: no paid generation without your OK for that run, every asset with a known licence and its attribution in the text that posts, the AI disclosure matches the models used, finalized batches are frozen, nothing is uploaded or posted from the Mac. A recap's TMDB and Wikipedia attribution does not fit X or Bluesky, so recaps post on the other five platforms.
+
 ## Latest batches
 
 | Batch | Episodes | Finalized | Notes |
@@ -59,4 +78,4 @@ After finalizing, Claude writes `library/_retros/<batchId>.md` (template: `libra
 | 2026-10-pilots | 4 (one per game) | 8 Oct 2026, 01:27 UTC | Retro: `library/_retros/2026-10-pilots.md` |
 | 2026-10-b01 | 20 (rest of the first 24) | 8 Oct 2026, 02:11 UTC | Retro: `library/_retros/2026-10-b01.md` |
 
-The next batch ID follows the pattern `YYYY-MM-bNN`; Make a batch suggests it.
+The next Scalargame batch ID follows the pattern `YYYY-MM-bNN` (Originals: `YYYY-MM-oNN`); Make a batch suggests it.

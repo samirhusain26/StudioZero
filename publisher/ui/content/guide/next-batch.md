@@ -17,6 +17,8 @@ Feedback file: library/_inbox/feedback-<batchId>.json
 
 The safety lines are always the same: nothing is finalized or uploaded without your approval, facts come only from frozen sources, every asset is credited, and paid generation only happens within budget after you confirm a cost estimate.
 
+For **Originals** (the chip at the top), step 2 asks for subjects (one movie title or story idea per line), the episodes per format and, for animated shorts, the video model (only models whose prices and endpoints are verified are offered, with their price per second). The brief lists the models, the platforms that will post and the mix; the prompt starts with `/originals brief <batchId>`, and the checklist follows the Originals checkpoints (see [Make a batch](#make-a-batch)).
+
 3. **Let Claude make it (Mac).** Start Claude in the StudioZero folder and paste the prompt (see [Make a batch](#make-a-batch)). Tick each checkpoint as you approve it; the checklist is only kept in this browser, and it is cleared once the batch arrives on the Pi.
 4. **Upload it (Pi).** Drop the finalized folder there (or in the Library), then review the episodes.
 5. **Retro, after posting (Mac).** Ask Claude for `/video-batch retro <batchId>`, add the RETRO.md it writes as the batch's retro note, then mark the feedback you used as used.

@@ -43,21 +43,26 @@ describe('Studio', () => {
     const project = catalog.projects.find((p) => p.id === 'originals')
     if (!project) throw new Error('no originals')
     render(<PlanMakeContent catalog={catalog} project={project} now={new Date('2026-11-03T10:00:00Z')} />)
-    expect(screen.getByLabelText('Batch id')).toHaveValue('2026-11-originals-01')
+    expect(screen.getByLabelText('Batch id')).toHaveValue('2026-11-o01')
     expect(screen.getByRole('button', { name: 'Copy prompt for Claude' })).toBeDisabled()
     await user.type(screen.getByLabelText('Subjects (one title or story idea per line)'), 'Arrival (2016)')
     await user.click(screen.getByRole('button', { name: 'Copy prompt for Claude' }))
     const prompt = writeText.mock.calls[0]?.[0] ?? ''
-    expect(prompt).toMatch(/^Originals batch 2026-11-originals-01 for project originals\./)
+    expect(prompt).toMatch(/^\/originals brief 2026-11-o01\n/)
     expect(prompt).toContain('- Arrival (2016)')
     expect(prompt.endsWith(SAFETY_LINES.join('\n'))).toBe(true)
     const list = screen.getByTestId('make-checklist')
     expect(within(list).getAllByRole('checkbox').map((b) => b.closest('div')?.textContent)).toEqual([
-      'Rights', 'Script sanity', 'Visual QA', 'AI disclosure', 'Batch contract', 'Finalize (only on your approval)',
+      'Checkpoint 0: brief, titles and cost estimates approved',
+      'Each paid run approved with its estimate (actual cost reported after)',
+      'Checkpoint 1: scripts (fact-check), rights, frames and AI disclosure',
+      'Checkpoint 2: captions, platforms and AI labels; each video watched with sound',
+      'Finalize (only on your approval)',
     ])
-    await user.click(within(list).getByRole('checkbox', { name: 'Rights' }))
-    expect(JSON.parse(window.localStorage.getItem('studio-make-originals') ?? '{}')).toEqual({ batchId: '2026-11-originals-01', checks: ['rights'] })
-    expect(suggestedBatchId('originals', new Date('2027-01-31T23:00:00Z'))).toBe('2027-01-originals-01')
+    await user.click(within(list).getByRole('checkbox', { name: /^Checkpoint 0/ }))
+    expect(JSON.parse(window.localStorage.getItem('studio-make-originals') ?? '{}')).toEqual({ batchId: '2026-11-o01', checks: ['checkpoint-0'] })
+    expect(suggestedBatchId('originals', new Date('2027-01-31T23:00:00Z'))).toBe('2027-01-o01')
+    expect(suggestedBatchId('newproject', new Date('2027-01-31T23:00:00Z'))).toBe('2027-01-newproject-01')
     window.localStorage.clear()
   })
 })

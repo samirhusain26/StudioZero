@@ -3,10 +3,10 @@
  * option comes from the catalog, presets live only in this browser, nothing is written to the Pi.
  *
  * Scalargame → the `/video-batch brief <batchId>` hand-off (nextBatch.ts, REBUILD_CONTRACTS §3).
- * Originals → the originals playbook prompt as text (the skill itself arrives in Phase 5).
+ * Originals → the `/originals brief <batchId>` hand-off (.claude/skills/originals), models from the catalog.
  * Every prompt ends with SAFETY_LINES.
  */
-import type { Catalog, CatalogProject, NextBatchInfo } from '../api/types'
+import type { Catalog, CatalogProject, CatalogVideoModel, NextBatchInfo } from '../api/types'
 import { bedsFor, catalogFormats, catalogGames, engineOf, formatOf, formatRenderable, projectOf, stylesFor } from './catalog'
 import { buildBriefTemplate, buildCopyPrompt, placeholderMix } from './nextBatch'
 import { SAFETY_LINES } from './promptSafety'
@@ -39,6 +39,8 @@ export interface BatchPlan {
   avoid: string
   /** Originals: one title or story idea per line. */
   subjects: string
+  /** Originals: the video model for animated shorts (a verified model in the catalog); '' when none are planned. */
+  videoModel: string
   notes: string
 }
 
@@ -52,6 +54,32 @@ const DIFFICULTY_NAMES = ['approachable', 'moderate', 'challenging'] as const
 
 function hasGames(project: CatalogProject): boolean {
   return Boolean(project.games?.length)
+}
+
+const TIERS = ['cheapest', 'recommended', 'high_fidelity']
+const price = (m: CatalogVideoModel) => m.costPerSecondWithAudioUsd ?? m.costPerSecondUsd
+
+/** The story engine's verified video models (catalog), by tier, then price per second. */
+export function storyVideoModels(catalog: Catalog): CatalogVideoModel[] {
+  return [...(engineOf(catalog, 'story')?.videoModels ?? [])].sort((a, b) => TIERS.indexOf(a.tier) - TIERS.indexOf(b.tier) || price(a) - price(b))
+}
+
+/** True when the plan has episodes of a format the story engine makes with generated video (route series). */
+export function plansGeneratedVideo(catalog: Catalog, plan: BatchPlan): boolean {
+  return plan.scope.some((r) => r.count > 0 && formatOf(catalog, plan.project, r.format)?.route === 'series')
+}
+
+/** The owner checkpoints Studio lists for a project's playbook (stored per batch in this browser). */
+export function playbookCheckpoints(project: CatalogProject): { id: string; name: string }[] {
+  if (project.id === 'originals')
+    return [
+      { id: 'checkpoint-0', name: 'Checkpoint 0: brief, titles and cost estimates approved' },
+      { id: 'paid-runs', name: 'Each paid run approved with its estimate (actual cost reported after)' },
+      { id: 'checkpoint-1', name: 'Checkpoint 1: scripts (fact-check), rights, frames and AI disclosure' },
+      { id: 'checkpoint-2', name: 'Checkpoint 2: captions, platforms and AI labels; each video watched with sound' },
+      { id: 'finalize', name: 'Finalize (only on your approval)' },
+    ]
+  return [...project.checks, { id: 'finalize', name: 'Finalize (only on your approval)' }]
 }
 
 function oneLine(text: string): string {
@@ -107,6 +135,7 @@ export function defaultPlan(catalog: Catalog, projectId: string, batchId: string
     prefer: '',
     avoid: '',
     subjects: '',
+    videoModel: games ? '' : (engineOf(catalog, 'story')?.tierDefaults?.recommended ?? ''),
     notes: '',
   }
 }
@@ -157,6 +186,8 @@ export function planProblems(catalog: Catalog, plan: BatchPlan): string[] {
   } else {
     if (plan.pilots) problems.push(`${project.name} has no pilot step.`)
     if (lines(plan.subjects).length === 0) problems.push('Name at least one subject (a title or story idea per line).')
+    if (plansGeneratedVideo(catalog, plan) && !storyVideoModels(catalog).some((m) => m.id === plan.videoModel))
+      problems.push('Choose a video model for the animated shorts.')
   }
   if (plan.experimentId && !EXPERIMENT_ID.test(plan.experimentId)) problems.push('Experiment id: lowercase letters, digits and dashes (up to 64).')
   for (const [label, text] of [['Goal', plan.goal], ['Prefer', plan.prefer], ['Avoid', plan.avoid], ['Subjects', plan.subjects], ['Notes', plan.notes]] as const)
@@ -216,6 +247,19 @@ export function buildPlanBrief(catalog: Catalog, plan: BatchPlan, info: Pick<Nex
     return f ? `${engine?.name ?? f.engine}${f.route ? ` · ${f.route}` : ''}` : '?'
   }
   const budget = project?.budget
+  const story = engineOf(catalog, 'story')
+  const dm = story?.defaultModels ?? {}
+  const video = storyVideoModels(catalog).find((m) => m.id === plan.videoModel)
+  const modelLine = (format: string) => {
+    const route = formatOf(catalog, plan.project, format)?.route
+    if (route === 'recap')
+      return `- ${format}: script ${dm.llm ?? '?'} (fallback ${dm.llmFallback ?? '?'}), narration ${dm.tts ?? '?'}, caption timing ${dm.asr ?? '?'}; stock footage Pexels, poster TMDB, music a CC0 track`
+    if (route === 'series')
+      return `- ${format}: story and shots ${dm.llm ?? '?'}, images ${dm.image ?? '?'}, video ${video ? `${video.name} (${video.id}, $${video.costPerSecondWithAudioUsd ?? video.costPerSecondUsd}/s, ${video.clipSeconds ?? video.maxDurationSeconds} s a shot${video.audio ? ', native audio' : ', silent'})` : '<choose a model>'}`
+    return `- ${format}: ${engineName(format)}`
+  }
+  const recaps = rows.some((r) => formatOf(catalog, plan.project, r.format)?.route === 'recap')
+  const mixTarget = project?.mix?.target
   return [
     `# Brief: ${plan.batchId} (${name})`,
     '',
@@ -230,6 +274,17 @@ export function buildPlanBrief(catalog: Catalog, plan: BatchPlan, info: Pick<Nex
     '',
     '## Subjects',
     ...lines(plan.subjects).map((l) => `- ${l}`),
+    '',
+    '## Models (catalog)',
+    ...rows.map((r) => modelLine(r.format)),
+    '- Cost estimate per episode and in total: Claude prints it with the story engine’s --estimate before any paid run.',
+    '',
+    '## Platforms and labels',
+    ...(recaps
+      ? ['- Recaps carry TMDB and Wikipedia attribution (about 260 characters), so X and Bluesky get no caption and skip them.']
+      : []),
+    '- AI labels: Instagram, TikTok and X from aiGenerated; YouTube from realisticSynthetic; Facebook Reels, Threads and Bluesky have none.',
+    `- Mix: ${typeof mixTarget === 'number' ? `${project?.name} target ${Math.round(mixTarget * 100)} %` : 'no target set yet (with no targets the Pi schedules these after the whole Scalargame backlog; once any project has a target, a project without one is not scheduled)'}.`,
     '',
     '## Budget',
     budget
@@ -252,10 +307,10 @@ export function buildPlanPrompt(catalog: Catalog, plan: BatchPlan, brief: string
   const project = projectOf(catalog, plan.project)
   if (project && hasGames(project)) return buildCopyPrompt(plan.batchId, brief)
   return [
-    `Originals batch ${plan.batchId} for project ${plan.project}.`,
+    `/originals brief ${plan.batchId}`,
     '',
-    'Follow the originals playbook: brief → make with the story engine (engines/story, headless CLI; docs/HEADLESS.md) → check (rights, script sanity, visual QA, AI disclosure) → package → stop at each owner checkpoint → finalize only on my approval.',
-    'Before any paid step, show me a cost estimate and wait for my OK for that run. If an open story-engine bug that blocks paid runs applies (docs/STUDIO_PLAN.md), stop and tell me.',
+    `${project?.name ?? plan.project} batch ${plan.batchId}: follow the playbook (.claude/skills/originals/SKILL.md): brief with cost estimates (Checkpoint 0) → make with the story engine, one approved paid run at a time → stage → check scripts against their sources, rights, frames and AI disclosure (Checkpoint 1) → package (Checkpoint 2) → finalize only on my approval.`,
+    'Before every paid run, show me its cost estimate and wait for my OK for that run.',
     '',
     brief.trimEnd(),
     '',
@@ -320,6 +375,7 @@ function parsePreset(value: unknown): PlanPreset | null {
       prefer: text('prefer'),
       avoid: text('avoid'),
       subjects: text('subjects'),
+      videoModel: text('videoModel'),
       notes: text('notes'),
     },
   }
@@ -381,5 +437,6 @@ export function applyPreset(catalog: Catalog, preset: PlanPreset, batchId: strin
   const music = { ...base.music }
   for (const [format, bed] of Object.entries(preset.plan.music))
     if (format in music && (bed === CALM || bedsFor(catalog, preset.plan.project, format).some((b) => b.id === bed))) music[format] = bed
-  return { ...base, ...preset.plan, batchId, scope, styles, music }
+  const videoModel = storyVideoModels(catalog).some((m) => m.id === preset.plan.videoModel) ? preset.plan.videoModel : base.videoModel
+  return { ...base, ...preset.plan, batchId, scope, styles, music, videoModel }
 }

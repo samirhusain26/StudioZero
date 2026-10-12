@@ -2,16 +2,16 @@ import { useId, useMemo, useState } from 'react'
 import type { Catalog, CatalogProject } from '../../api/types'
 import { CopyBlock } from '../../components/CopyBlock'
 import { readProjectChecks, writeProjectChecks } from '../../lib/makeChecklist'
-import { buildPlanBrief, buildPlanPrompt, defaultPlan, planProblems, type BatchPlan } from '../../lib/promptBuilder'
+import { buildPlanBrief, buildPlanPrompt, defaultPlan, planProblems, playbookCheckpoints, type BatchPlan } from '../../lib/promptBuilder'
 import { copyText } from '../../lib/saveFile'
 import { MakeStep as Step } from '../../components/MakeStep'
 import { PromptBuilderForm } from './PromptBuilderForm'
 
 const STUDIO_FOLDER = 'cd ~/Personal/code_projects/StudioZero && claude'
 
-/** The first batch id of the month for a project without numbered batches: `YYYY-MM-<project>-01`. */
+/** The first batch id of the month: Originals `YYYY-MM-o01` (the playbook's numbering), other projects `YYYY-MM-<project>-01`. */
 export function suggestedBatchId(project: string, now: Date = new Date()): string {
-  return `${now.toISOString().slice(0, 7)}-${project}-01`
+  return `${now.toISOString().slice(0, 7)}-${project === 'originals' ? 'o01' : `${project}-01`}`
 }
 
 /**
@@ -26,7 +26,7 @@ export function PlanMakeContent({ catalog, project, now }: { catalog: Catalog; p
   const brief = edited ?? template
   const problems = planProblems(catalog, plan)
   const [status, setStatus] = useState('')
-  const checks = useMemo(() => [...project.checks, { id: 'finalize', name: 'Finalize (only on your approval)' }], [project.checks])
+  const checks = useMemo(() => playbookCheckpoints(project), [project])
   const known = checks.map((c) => c.id)
   const [ticked, setTicked] = useState<string[]>(() => readProjectChecks(project.id, plan.batchId, known))
 
@@ -90,7 +90,10 @@ export function PlanMakeContent({ catalog, project, now }: { catalog: Catalog; p
               Start Claude in the StudioZero folder on the laptop:
               <CopyBlock label="On the laptop" code={STUDIO_FOLDER} />
             </li>
-            <li>Paste the prompt. Claude shows a cost estimate before any paid step and waits for your OK. Tick each check as you approve it (kept only in this browser):</li>
+            <li>
+              Paste the prompt: Claude runs <code>/originals brief {plan.batchId}</code>, shows a cost estimate before every paid run and stops at each
+              checkpoint for your OK. Tick each one as you approve it (kept only in this browser):
+            </li>
           </ol>
           <fieldset className="stack make-checks">
             <legend className="sr-only">Checks for {plan.batchId}</legend>

@@ -4,20 +4,69 @@
     {
       "name": "scalargame-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "../scalargame", "run", "dev", "--", "--port", "5173", "--strictPort"],
+      "runtimeArgs": [
+        "--prefix",
+        "../scalargame",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
       "port": 5173
     },
     {
       "name": "remotion-studio",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "engines/motion", "run", "studio", "--", "--port", "3300", "--no-open"],
+      "runtimeArgs": [
+        "--prefix",
+        "engines/motion",
+        "run",
+        "studio",
+        "--",
+        "--port",
+        "3300",
+        "--no-open"
+      ],
       "port": 3300
     },
     {
       "name": "audio-review",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8790", "--bind", "127.0.0.1", "--directory", "engines/motion"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8790",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "engines/motion"
+      ],
       "port": 8790
+    },
+    {
+      "name": "publisher-ui-dev",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "CREDENTIALS_DIRECTORY=library/_dev/ui-fixture/credentials",
+        "python3",
+        "publisher/app/ui_server.py",
+        "--state",
+        "library/_dev/ui-fixture/state",
+        "--update-state",
+        "library/_dev/ui-fixture/update",
+        "--config",
+        "library/_dev/ui-fixture/config.json",
+        "--no-legacy",
+        "--port",
+        "8765",
+        "--allowed-origin",
+        "http://127.0.0.1:8765",
+        "--allowed-origin",
+        "http://localhost:8765"
+      ],
+      "port": 8765
     }
   ]
 }
