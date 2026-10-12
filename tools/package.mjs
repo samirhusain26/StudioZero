@@ -11,7 +11,7 @@ import {resolve} from 'node:path';
 import {execFileSync, spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
-import {checkRender} from './render-json.mjs';
+import {BATCH_ID, batchDocument, checkProject, renderErrors} from './package-core.mjs';
 
 export const ROOT = resolve(import.meta.dirname, '..');
 const sha = p => createHash('sha256').update(readFileSync(p)).digest('hex');
@@ -30,10 +30,9 @@ export async function main(argv) {
   const {studio, projects} = loadStudio();
   const project = projects[args.project];
   if (!project) throw new Error(`--project must be one of ${Object.keys(projects).join(', ')}`);
-  if (!project.packager) throw new Error(`${project.id} has no packager yet (project.json "packager")`);
-  if (project.contract.schemaVersion !== 1) throw new Error(`${project.id} needs contract v${project.contract.schemaVersion} (Phase 4)`);
+  checkProject(project);
   const batchId = args.batch;
-  if (!/^\d{4}-\d{2}-[a-z0-9-]+$/.test(batchId ?? '')) throw new Error('--batch=YYYY-MM-slug required');
+  if (!BATCH_ID.test(batchId ?? '')) throw new Error('--batch=YYYY-MM-slug required');
   const dry = Boolean(args.dry);
   const batchDir = resolve(ROOT, args.dir ?? `library/${batchId}`);
   if (!dry && finalized(batchDir)) throw new Error(`${batchId} is finalized; batch.json is immutable.`);
@@ -48,9 +47,7 @@ export async function main(argv) {
       const path = resolve(jobs, id, 'render.json');
       if (!existsSync(path)) throw new Error(`${id}: no render.json (render and validate the job first)`);
       const render = JSON.parse(readFileSync(path, 'utf8'));
-      const errors = checkRender(render, {projects: known});
-      if (render.episodeId !== id) errors.push(`episodeId ${render.episodeId} differs from its folder`);
-      if (render.project !== project.id) errors.push(`project ${render.project}, expected ${project.id}`);
+      const errors = renderErrors(render, {folder: id, project, known});
       if (errors.length) throw new Error(`${id}/render.json: ${errors.join('; ')}`);
       return render;
     });
@@ -66,12 +63,7 @@ export async function main(argv) {
   const commit = args.commit ?? git('rev-parse', 'HEAD');
   const dirty = args.dirty === undefined ? git('status', '--porcelain').length > 0 : args.dirty === 'true';
   const createdAt = args['created-at'] ?? new Date().toISOString().replace(/\.\d+Z$/, 'Z');
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(createdAt) || !/^[0-9a-f]{40}$/.test(commit)) throw new Error('bad --created-at or --commit');
-  const out = {
-    schemaVersion: project.contract.schemaVersion, batchId, createdAt,
-    generator: {repoCommit: commit, dirty, ...p.generator}, ...p.fields, episodes: p.episodes,
-  };
-  const body = JSON.stringify(out, null, 2) + '\n';
+  const body = batchDocument({project, batchId, createdAt, commit, dirty, packaged: p});
   if (dry) {
     mkdirSync(resolve(ROOT, 'library/_dev'), {recursive: true});
     writeFileSync(resolve(ROOT, 'library/_dev/batch-dry.json'), body);

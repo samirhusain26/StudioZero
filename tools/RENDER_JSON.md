@@ -13,7 +13,7 @@ Check a file: `node tools/render-json.mjs <render.json>...` (exit 1 on any error
 | `project` | string | a project in `studio.json` |
 | `episodeId` | string | `[a-z0-9-]+`, ≤ 80 characters |
 | `createdAt` | UTC `YYYY-MM-DDTHH:MM:SSZ` | when the render was validated |
-| `job` | object | engine-specific inputs the project's packager needs (motion: `revision`, `contentKey`, `contentId`, `styleId`, `musicBed`, `propsHash`, `codeHash`, `coverFrame`) |
+| `job` | object | engine-specific inputs the project's packager needs (motion: `revision`, `contentKey`, `contentId`, `styleId`, `musicBed`, `propsHash`, `coverFrame`, and `renderer`: `"render.sh"` for render.mjs jobs, with their `codeHash`, or `"web"` for the Studio's in-browser export, with the UI bundle's `bundleCommit`) |
 | `video` | object | `file` (relative to this file's folder, no `..`), `sha256`, `bytes`, `durationSeconds`, `width`, `height`, `fps` (`num/den`), `videoCodec`, `audioCodec` (null when silent) |
 | `cover` | object or null | `file`, `sha256`, `bytes` |
 | `models` | list | `{role, id}` with `role` ∈ `llm`, `tts`, `image`, `video`, `music`, `asr`; every generative model that made something in the video |
