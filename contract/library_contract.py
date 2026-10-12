@@ -1,8 +1,10 @@
-"""Batch contract v1 (contract/BATCH_CONTRACT.md): Mac generation -> Pi publishing.
+"""Batch contract v1 and v2 (contract/BATCH_CONTRACT.md): Mac generation -> Pi publishing.
 
 Stdlib only; the Mac packager and the Pi importer call the same functions, so a batch
 the Mac accepts is one the Pi accepts. Media facts are re-measured with ffprobe and are
-never trusted from batch.json.
+never trusted from batch.json. validate_document() dispatches on schemaVersion: the v1
+path is unchanged; v2 (one project per batch) adds the project modules in
+contract/projects/<project>.py, credits, disclosure and the attribution rule.
 
     python3 contract/library_contract.py validate library/<batchId> [--json]
     python3 contract/library_contract.py finalize library/<batchId>
@@ -17,8 +19,12 @@ import re
 import shutil
 import subprocess
 import sys
+import importlib.util
 import unicodedata
 import urllib.parse
+
+# Project modules import this module by name; when it runs as a script, register it under that name too.
+sys.modules.setdefault('library_contract', sys.modules[__name__])
 
 SCHEMA_VERSION = 1
 MARKER = 'READY_FOR_UPLOAD'
@@ -125,6 +131,8 @@ def answer_mentions(text, terms, blank=()):
 
 
 def link_for(episode, platform):
+    if 'contentId' in episode:  # v2: the episode's own link
+        return link_for_v2(episode, platform)
     publication = episode['publication']
     query = urllib.parse.urlencode({'utm_source': platform, 'utm_medium': 'organic_social',
                                     'utm_campaign': publication['utmCampaign'],
@@ -179,6 +187,8 @@ def validate_document(data, *, now=None, origin='mac', report=None):
     report = report or Report()
     now = now or dt.datetime.now(dt.timezone.utc)
     today = now.astimezone(dt.timezone.utc).date()
+    if isinstance(data, dict) and data.get('schemaVersion') == 2 and not isinstance(data.get('schemaVersion'), bool):
+        return validate_document_v2(data, today=today, origin=origin, report=report)
     if not _keys(report, 'batch', data, ('schemaVersion', 'batchId', 'createdAt', 'generator',
                                          'sourceSnapshotHash', 'styleRecipes', 'episodes')):
         return report
@@ -511,6 +521,484 @@ def _publication(report, path, episode, publication, terms, choice_labels, answe
             report.error(path + '.answerReply.delayHours', '0.25–168 hours')
 
 
+# ---------- contract v2 (docs/STUDIO_PLAN.md §5; BATCH_CONTRACT.md "schemaVersion 2") ----------
+
+ENGINES = ('motion', 'story')
+ROUTES = ('recap', 'series')
+RENDERERS = ('render.sh', 'web')
+MODEL_ROLES = ('llm', 'tts', 'image', 'video', 'music', 'asr')
+GENERATIVE_ROLES = ('llm', 'tts', 'image', 'video', 'music')
+CREDIT_KINDS = ('footage', 'image', 'poster', 'music', 'sfx', 'font', 'voice', 'data', 'text', 'model')
+LICENSES = ('CC0-1.0', 'CC-BY-4.0', 'CC-BY-SA-4.0', 'OFL-1.1', 'Pexels', 'Pixabay', 'TMDB', 'Wikipedia-CC-BY-SA',
+            'owner', 'generated', 'public-domain')
+NEEDS_ATTRIBUTION = ('CC-BY-4.0', 'CC-BY-SA-4.0', 'TMDB', 'Wikipedia-CC-BY-SA')
+TMDB_NOTICE = 'This product uses the TMDB API but is not endorsed or certified by TMDB'
+AI_KINDS = ('script', 'voice', 'image', 'video', 'music', 'sfx')
+TAG = re.compile(r'[a-z0-9]+(-[a-z0-9]+)*')
+CONTENT_ID = re.compile(r'([a-z][a-z0-9-]*):[A-Za-z0-9][A-Za-z0-9:._-]{0,119}')
+PROJECT_NAME = re.compile(r'[a-z][a-z0-9]*')
+PROJECTS_DIR = Path(__file__).resolve().parent / 'projects'
+_PROJECT_MODULES = {}
+
+
+def project_names():
+    """Registered projects: contract/projects/<name>.py."""
+    return tuple(sorted(p.stem for p in PROJECTS_DIR.glob('*.py') if PROJECT_NAME.fullmatch(p.stem))) if PROJECTS_DIR.is_dir() else ()
+
+
+def project_module(name):
+    """The project's rules module, or None when `name` is not a registered project."""
+    if not isinstance(name, str) or name not in project_names():
+        return None
+    if name not in _PROJECT_MODULES:
+        spec = importlib.util.spec_from_file_location(f'library_contract_project_{name}', PROJECTS_DIR / f'{name}.py')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _PROJECT_MODULES[name] = module
+    return _PROJECT_MODULES[name]
+
+
+def namespace_owners():
+    """{contentId namespace: project}; a namespace claimed by two projects is a contract error."""
+    owners = {}
+    for name in project_names():
+        for namespace in project_module(name).NAMESPACES:
+            if owners.setdefault(namespace, name) != name:
+                raise RuntimeError(f'contentId namespace {namespace!r} is claimed by {owners[namespace]} and {name}')
+    return owners
+
+
+def project_of(episode):
+    """Project of a stored episode: v2 by its contentId namespace, v1 is always scalargame (§5.4)."""
+    if not isinstance(episode, dict) or 'contentId' not in episode:
+        return 'scalargame'
+    namespace = str(episode.get('contentId') or '').split(':', 1)[0]
+    return namespace_owners().get(namespace)
+
+
+def content_id(episode):
+    """The duplicate key: v2 contentId, v1 questionId (same namespaces, same ledger column)."""
+    return episode.get('contentId') if 'contentId' in episode else episode.get('questionId')
+
+
+def link_for_v2(episode, platform):
+    link = episode['link']
+    query = urllib.parse.urlencode({'utm_source': platform, 'utm_medium': 'organic_social',
+                                    'utm_campaign': link['utmCampaign'], 'utm_content': episode['episodeId']})
+    return link['url'] + '?' + query
+
+
+def episode_view(episode):
+    """Common v2 view of a stored v1 or v2 episode (§5.4 normalization) for the Pi's views and policies.
+    v1: project scalargame, contentId = questionId, engine motion, renderer not recorded, link from deepLink,
+    credits from publication.credits plus music, disclosure not declared (None)."""
+    if 'contentId' in episode:
+        data = episode.get('projectData') or {}
+        render = episode.get('render') or {}
+        return {'schemaVersion': 2, 'project': project_of(episode), 'contentId': episode['contentId'],
+                'group': data.get('game') or project_of(episode), 'format': episode.get('format'),
+                'difficulty': data.get('difficulty'), 'styleId': data.get('styleId'),
+                'engine': render.get('engine'), 'route': render.get('route'), 'renderer': render.get('renderer'),
+                'models': render.get('models') or [], 'costUsd': render.get('costUsd'),
+                'link': episode.get('link'), 'credits': episode.get('credits') or [],
+                'disclosure': episode.get('disclosure'), 'tags': episode.get('tags') or [],
+                'creative': data.get('creative')}
+    publication = episode.get('publication') or {}
+    credits = [{'kind': 'data', 'title': text, 'creator': None, 'sourceUrl': None, 'license': None,
+                'attribution': text, 'sha256': None} for text in publication.get('credits') or []]
+    music = episode.get('music')
+    if isinstance(music, dict):
+        credits.append({'kind': 'music', 'title': music.get('trackId'), 'creator': None, 'sourceUrl': None,
+                        'license': music.get('license'), 'attribution': None, 'sha256': music.get('sha256')})
+    deep = publication.get('deepLink')
+    return {'schemaVersion': 1, 'project': 'scalargame', 'contentId': episode.get('questionId'),
+            'group': episode.get('game'), 'format': episode.get('format'), 'difficulty': episode.get('difficulty'),
+            'styleId': episode.get('styleId'), 'engine': 'motion', 'route': None, 'renderer': None, 'models': [],
+            'costUsd': None,
+            'link': {'url': SITE + deep, 'utmCampaign': publication.get('utmCampaign')} if isinstance(deep, str) else None,
+            'credits': credits, 'disclosure': None, 'tags': [], 'creative': episode.get('creative')}
+
+
+def _https(value):
+    url = urllib.parse.urlsplit(value) if isinstance(value, str) and not re.search(r'\s', value) else None
+    return bool(url and url.scheme == 'https' and url.hostname)
+
+
+def _positive_int(value):
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 1
+
+
+def validate_document_v2(data, *, today, origin='mac', report):
+    if not _keys(report, 'batch', data, ('schemaVersion', 'batchId', 'createdAt', 'project', 'generator',
+                                         'styleRecipes', 'projectData', 'episodes')):
+        return report
+    batch_id = data['batchId']
+    if not isinstance(batch_id, str) or not (BATCH_ID.fullmatch(batch_id) or (origin == 'pi' and PI_BATCH_ID.fullmatch(batch_id))):
+        report.error('batch.batchId', 'Use YYYY-MM-<slug>, lowercase [a-z0-9-]')
+    if not isinstance(data['createdAt'], str) or not UTC_STAMP.fullmatch(data['createdAt']):
+        report.error('batch.createdAt', 'Use a UTC ISO-8601 timestamp ending in Z')
+    module = project_module(data['project'])
+    if module is None:
+        report.error('batch.project', f"Unknown project; registered: {', '.join(project_names())}", 'project')
+        return report
+    owners = namespace_owners()
+    generator = data['generator']
+    if _keys(report, 'batch.generator', generator, ('repoCommit', 'dirty')):
+        if not isinstance(generator['repoCommit'], str) or not COMMIT.fullmatch(generator['repoCommit']):
+            report.error('batch.generator.repoCommit', 'Use a lowercase git commit hash')
+        if not isinstance(generator['dirty'], bool):
+            report.error('batch.generator.dirty', 'Must be true or false')
+        elif generator['dirty']:
+            report.warn('batch.generator.dirty', 'Rendered from a working tree with uncommitted changes', 'dirty_generator')
+    styles = {}
+    if not isinstance(data['styleRecipes'], list):
+        report.error('batch.styleRecipes', 'Must be a list')
+    else:
+        for i, recipe in enumerate(data['styleRecipes']):
+            path = f'batch.styleRecipes[{i}]'
+            if not _keys(report, path, recipe, ('styleId', 'engine', 'version', 'summary')):
+                continue
+            if not _is_str(recipe['styleId']) or recipe['styleId'] in styles:
+                report.error(path + '.styleId', 'Required, unique styleId')
+            if recipe['engine'] not in ENGINES:
+                report.error(path + '.engine', 'Unknown engine')
+            if not _positive_int(recipe['version']):
+                report.error(path + '.version', 'Positive integer required')
+            if not _is_str(recipe['summary']):
+                report.error(path + '.summary', 'Required text')
+            styles[recipe['styleId']] = recipe
+    module.check_batch(data['projectData'], 'batch.projectData', styles, report)
+    episodes = data['episodes']
+    if not isinstance(episodes, list) or not episodes:
+        report.error('batch.episodes', 'At least one episode required')
+        return report
+    seen = set()
+    for i, episode in enumerate(episodes):
+        validate_episode_v2(episode, f'episodes[{i}]', module, owners, styles, today, report, origin)
+        episode_id = episode.get('episodeId') if isinstance(episode, dict) else None
+        if episode_id in seen:
+            report.error(f'episodes[{i}].episodeId', 'Duplicate episodeId in batch')
+        seen.add(episode_id)
+    return report
+
+
+def validate_episode_v2(episode, path, module, owners, styles, today, report, origin='mac'):
+    required = ('episodeId', 'contentId', 'revision', 'format', 'language', 'render', 'experimentId', 'variantId',
+                'tags', 'video', 'cover', 'link', 'publication', 'credits', 'disclosure', 'eligibility', 'projectData')
+    if not _keys(report, path, episode, required):
+        return
+    episode_id = episode['episodeId']
+    prefixes = '|'.join(re.escape(p) for p in module.EPISODE_PREFIXES)
+    if (not isinstance(episode_id, str) or len(episode_id) > 120
+            or not re.fullmatch(rf'({prefixes})-[a-z0-9]+(-[a-z0-9]+)*-[0-9]{{3,}}', episode_id)):
+        report.error(path + '.episodeId', f"Use <prefix>-<format>-<nnn>, lowercase; prefixes: {', '.join(module.EPISODE_PREFIXES)}")
+        episode_id = None
+    content = episode['contentId']
+    match = CONTENT_ID.fullmatch(content) if isinstance(content, str) else None
+    if not match:
+        report.error(path + '.contentId', 'Use <namespace>:<id>, no spaces or #')
+    elif match.group(1) not in module.NAMESPACES:
+        owner = owners.get(match.group(1))
+        report.error(path + '.contentId', f"Namespace {match.group(1)!r} belongs to {owner}" if owner
+                     else f"Unknown namespace; {module.NAME} uses {', '.join(module.NAMESPACES)}", 'namespace')
+    if not _positive_int(episode['revision']):
+        report.error(path + '.revision', 'Positive integer required')
+    fmt = module.FORMATS.get(episode['format']) if isinstance(episode['format'], str) else None
+    if fmt is None:
+        report.error(path + '.format', f'Not a {module.NAME} format (project module update needed)')
+    if not isinstance(episode['language'], str) or not re.fullmatch(r'[a-z]{2}(-[A-Z]{2})?', episode['language']):
+        report.error(path + '.language', 'Use a language tag such as en')
+    for key in ('experimentId', 'variantId'):
+        if episode[key] is not None and not _is_str(episode[key]):
+            report.error(f'{path}.{key}', 'Text or null')
+    tags = episode['tags']
+    if (not isinstance(tags, list) or len(tags) > 20 or len(set(map(str, tags))) != len(tags)
+            or not all(isinstance(t, str) and len(t) <= 40 and TAG.fullmatch(t) for t in tags)):
+        report.error(path + '.tags', 'Up to 20 unique labels of [a-z0-9-]')
+
+    models = _render_v2(report, path + '.render', episode['render'], fmt)
+    _credits_v2(report, path + '.credits', episode['credits'])
+    _disclosure_v2(report, path + '.disclosure', episode['disclosure'], models)
+    spoiler = module.check_episode(episode, path, styles, report, today) or {}
+    terms = spoiler.get('terms') or []
+    choice_labels, answer_labels = spoiler.get('choiceLabels') or [], spoiler.get('answerLabels') or []
+
+    video = episode['video']
+    if _keys(report, path + '.video', video, ('file', 'sha256', 'bytes', 'durationSeconds', 'width', 'height',
+                                               'fps', 'videoCodec', 'audioCodec')):
+        if episode_id and video['file'] != f'videos/{episode_id}.mp4':
+            report.error(path + '.video.file', f'Must be videos/{episode_id}.mp4')
+        _file_fields(report, path + '.video', video, MAX_VIDEO_BYTES)
+        if not isinstance(video['durationSeconds'], (int, float)) or isinstance(video['durationSeconds'], bool) or video['durationSeconds'] <= 0:
+            report.error(path + '.video.durationSeconds', 'Positive number required')
+        w, h = video['width'], video['height']
+        if not all(isinstance(v, int) and not isinstance(v, bool) and v > 0 for v in (w, h)) or w * 16 != h * 9:
+            report.error(path + '.video.width', 'Integer 9:16 dimensions required')
+        if not isinstance(video['fps'], str) or not FPS.fullmatch(video['fps']):
+            report.error(path + '.video.fps', 'Use a rational such as 30/1')
+        if video['videoCodec'] != 'h264':
+            report.error(path + '.video.videoCodec', 'H.264 required')
+        if video['audioCodec'] not in ('aac', None):
+            report.error(path + '.video.audioCodec', 'AAC or null (silent)')
+    cover = episode['cover']
+    if _keys(report, path + '.cover', cover, ('file', 'sha256', 'bytes')):
+        if episode_id and cover['file'] != f'covers/{episode_id}.jpg':
+            report.error(path + '.cover.file', f'Must be covers/{episode_id}.jpg')
+        _file_fields(report, path + '.cover', cover, MAX_COVER_BYTES)
+        if episode_id and terms and answer_mentions(episode_id, terms):
+            report.error(path + '.cover.file', 'Cover file name reveals the answer', 'spoiler')
+
+    link = episode['link']
+    link_ok = link is None
+    if link is not None and _keys(report, path + '.link', link, ('url', 'utmCampaign')):
+        url = urllib.parse.urlsplit(link['url']) if _https(link['url']) else None
+        if not url or url.query or url.fragment or url.username or url.password:
+            report.error(path + '.link.url', 'HTTPS URL without query, fragment or credentials')
+        elif not module.link_allowed(link['url']):
+            report.error(path + '.link.url', f'Not a {module.NAME} link', 'link')
+        if not isinstance(link['utmCampaign'], str) or not re.fullmatch(r'[a-z0-9_]{1,64}', link['utmCampaign']):
+            report.error(path + '.link.utmCampaign', 'Lowercase [a-z0-9_]')
+        link_ok = not any(e['path'].startswith(path + '.link') for e in report.errors)
+    if link is None and module.LINK_REQUIRED:
+        report.error(path + '.link', f'{module.NAME} episodes need a link', 'link')
+
+    publication = episode['publication']
+    if _keys(report, path + '.publication', publication,
+             ('captions', 'youtube', 'altText', 'hashtags', 'poll', 'firstComment', 'answerReply')):
+        _publication_v2(report, path + '.publication', episode, publication, module, link, link_ok,
+                        terms, choice_labels, answer_labels)
+        _attribution_v2(report, path, episode, publication)
+
+    eligibility = episode['eligibility']
+    if _keys(report, path + '.eligibility', eligibility, ('status', 'notBefore', 'reviewBy', 'expiresAt')):
+        allowed = ('qa-passed',) if origin == 'mac' else ('qa-passed', 'approved', 'withdrawn', 'expired')
+        if eligibility['status'] not in allowed:
+            report.error(path + '.eligibility.status', 'The Mac always sends qa-passed; only the Pi approves')
+        not_before = _date(report, path + '.eligibility.notBefore', eligibility['notBefore'], today)
+        review_by = _date(report, path + '.eligibility.reviewBy', eligibility['reviewBy'], today)
+        expires = _date(report, path + '.eligibility.expiresAt', eligibility['expiresAt'], today)
+        for key, value in (('reviewBy', review_by), ('expiresAt', expires)):
+            if value and value < today:
+                report.error(f'{path}.eligibility.{key}', 'Date is already in the past', 'expired')
+        if not_before and expires and not_before > expires:
+            report.error(path + '.eligibility.notBefore', 'notBefore is after expiresAt')
+
+
+def _render_v2(report, path, render, fmt):
+    """Checks `render`; returns its model list (empty when unreadable)."""
+    if not _keys(report, path, render, ('engine', 'route', 'renderer', 'kitVersion', 'renderSha256', 'models', 'costUsd')):
+        return []
+    if render['engine'] not in ENGINES:
+        report.error(path + '.engine', 'Use motion or story')
+    elif render['engine'] == 'motion' and render['route'] is not None:
+        report.error(path + '.route', 'null for the motion engine')
+    elif render['engine'] == 'story' and render['route'] not in ROUTES:
+        report.error(path + '.route', 'recap or series for the story engine')
+    if fmt and (render['engine'], render['route']) != fmt:
+        report.error(path + '.engine', f'This format is made by {fmt[0]}' + (f'/{fmt[1]}' if fmt[1] else ''))
+    if render['renderer'] is not None and render['renderer'] not in RENDERERS:
+        report.error(path + '.renderer', 'render.sh, web or null')
+    if not _is_str(render['kitVersion']):
+        report.error(path + '.kitVersion', 'Required text')
+    if not isinstance(render['renderSha256'], str) or not SHA256.fullmatch(render['renderSha256']):
+        report.error(path + '.renderSha256', 'sha256 of render.json required')
+    cost = render['costUsd']
+    if not isinstance(cost, (int, float)) or isinstance(cost, bool) or not cost >= 0 or cost == float('inf'):
+        report.error(path + '.costUsd', 'Number ≥ 0 required')
+    models = render['models']
+    if not isinstance(models, list):
+        report.error(path + '.models', 'List of {role, id}')
+        return []
+    for j, model in enumerate(models):
+        if not isinstance(model, dict) or set(model) != {'role', 'id'} or model['role'] not in MODEL_ROLES or not _is_str(model['id']):
+            report.error(f'{path}.models[{j}]', f"Use {{role, id}} with role in {', '.join(MODEL_ROLES)}")
+    return [m for m in models if isinstance(m, dict)]
+
+
+def _credits_v2(report, path, credits):
+    if not isinstance(credits, list):
+        report.error(path, 'List of credits')
+        return
+    for j, credit in enumerate(credits):
+        cpath = f'{path}[{j}]'
+        if not _keys(report, cpath, credit, ('kind', 'title', 'creator', 'sourceUrl', 'license', 'attribution', 'sha256')):
+            continue
+        if credit['kind'] not in CREDIT_KINDS:
+            report.error(cpath + '.kind', f"Use one of {', '.join(CREDIT_KINDS)}")
+        if not _is_str(credit['title']):
+            report.error(cpath + '.title', 'Required text')
+        if credit['creator'] is not None and not _is_str(credit['creator']):
+            report.error(cpath + '.creator', 'Text or null')
+        if credit['sourceUrl'] is not None and not _https(credit['sourceUrl']):
+            report.error(cpath + '.sourceUrl', 'HTTPS URL or null')
+        if credit['license'] not in LICENSES:
+            report.error(cpath + '.license', 'Unknown licence; the asset cannot be used until its licence is known', 'license')
+        if credit['attribution'] is not None and not _is_str(credit['attribution']):
+            report.error(cpath + '.attribution', 'Text or null')
+        if credit['license'] in NEEDS_ATTRIBUTION and not _is_str(credit['attribution']):
+            report.error(cpath + '.attribution', f"{credit['license']} needs attribution text", 'attribution')
+        if credit['license'] == 'TMDB' and TMDB_NOTICE not in str(credit['attribution'] or ''):
+            report.error(cpath + '.attribution', 'TMDB attribution must contain the TMDB notice', 'attribution')
+        if credit['sha256'] is not None and (not isinstance(credit['sha256'], str) or not SHA256.fullmatch(credit['sha256'])):
+            report.error(cpath + '.sha256', 'sha256 hex or null')
+
+
+def _disclosure_v2(report, path, disclosure, models):
+    if not _keys(report, path, disclosure, ('aiGenerated', 'aiKinds', 'realisticSynthetic', 'note')):
+        return
+    kinds = disclosure['aiKinds']
+    if not isinstance(disclosure['aiGenerated'], bool):
+        report.error(path + '.aiGenerated', 'Must be true or false')
+    if not isinstance(kinds, list) or len(set(map(str, kinds))) != len(kinds) or not all(k in AI_KINDS for k in kinds):
+        report.error(path + '.aiKinds', f"Unique items of {', '.join(AI_KINDS)}")
+    elif isinstance(disclosure['aiGenerated'], bool) and disclosure['aiGenerated'] != bool(kinds):
+        report.error(path + '.aiGenerated', 'True exactly when aiKinds is not empty', 'disclosure')
+    if any(m.get('role') in GENERATIVE_ROLES for m in models) and disclosure['aiGenerated'] is not True:
+        report.error(path + '.aiGenerated', 'A generative model made part of this video; aiGenerated must be true', 'disclosure')
+    if not isinstance(disclosure['realisticSynthetic'], bool):
+        report.error(path + '.realisticSynthetic', 'Must be true or false')
+    if not _is_str(disclosure['note']):
+        report.error(path + '.note', 'One plain sentence for the reviewer')
+
+
+def _publication_v2(report, path, episode, publication, module, link, link_ok, terms, choice_labels, answer_labels):
+    captions = publication['captions']
+    if not isinstance(captions, dict):
+        report.error(path + '.captions', 'Object keyed by platform')
+        captions = {}
+    for platform in sorted(set(captions) - set(CAPTION_PLATFORMS)):
+        report.error(f'{path}.captions.{platform}', 'Unknown caption platform')
+
+    def text_checks(tpath, platform, text, limit):
+        if '{link}' in text and link is None:
+            report.error(tpath, 'This episode has no link; remove {link}', 'link')
+            spoiler_check(report, tpath, text, terms, choice_labels, answer_labels)
+            return
+        if '{link}' in text and not link_ok:
+            return
+        _text_checks(report, tpath, episode, platform, text, limit, terms, choice_labels, answer_labels,
+                     platform in LINK_PLATFORMS)
+    usable = 0
+    for platform in CAPTION_PLATFORMS:
+        text = captions.get(platform)
+        if text is None:
+            continue
+        if not _is_str(text):
+            report.error(f'{path}.captions.{platform}', 'Text or null')
+            continue
+        usable += 1
+        text_checks(f'{path}.captions.{platform}', platform, text, CAPTION_LIMITS[platform])
+        if platform == 'instagram' and len(re.findall(r'(?<!\w)#\w+', text)) > MAX_HASHTAGS:
+            report.error(f'{path}.captions.instagram', f'More than {MAX_HASHTAGS} hashtags')
+    youtube = publication['youtube']
+    if youtube is not None and _keys(report, path + '.youtube', youtube, ('title', 'description')):
+        usable += 1
+        for key in ('title', 'description'):
+            value = youtube[key]
+            if not isinstance(value, str) or (key == 'title' and not value.strip()):
+                report.error(f'{path}.youtube.{key}', 'Text required')
+                continue
+            if '<' in value or '>' in value:
+                report.error(f'{path}.youtube.{key}', 'YouTube rejects < and >')
+            if '{link}' in value or PLACEHOLDER.search(value):
+                report.error(f'{path}.youtube.{key}', 'No placeholders in YouTube text', 'link')
+            spoiler_check(report, f'{path}.youtube.{key}', value, terms, choice_labels, answer_labels)
+        if isinstance(youtube['title'], str) and len(youtube['title']) > YOUTUBE_TITLE_LIMIT:
+            report.error(path + '.youtube.title', f'Over {YOUTUBE_TITLE_LIMIT} characters', 'length')
+        if isinstance(youtube['description'], str) and len(youtube['description'].encode()) > YOUTUBE_DESCRIPTION_BYTES:
+            report.error(path + '.youtube.description', f'Over {YOUTUBE_DESCRIPTION_BYTES} bytes', 'length')
+    if not usable:
+        report.error(path + '.captions', 'No platform has a caption; nothing could be scheduled')
+    alt = publication['altText']
+    if not _is_str(alt) or len(alt) > ALT_TEXT_LIMIT:
+        report.error(path + '.altText', f'Required, at most {ALT_TEXT_LIMIT} characters')
+    else:
+        spoiler_check(report, path + '.altText', alt, terms, choice_labels, answer_labels)
+    hashtags = publication['hashtags']
+    if (not isinstance(hashtags, list) or len(hashtags) > MAX_HASHTAGS
+            or not all(isinstance(t, str) and re.fullmatch(r'#\w{1,100}', t) for t in hashtags)):
+        report.error(path + '.hashtags', 'List of #tags')
+    poll = publication['poll']
+    if poll is not None and not module.POLL:
+        report.error(path + '.poll', f'{module.NAME} episodes have no poll; use null')
+    elif poll is not None and _keys(report, path + '.poll', poll, ('question', 'options')):
+        if not _is_str(poll['question']):
+            report.error(path + '.poll.question', 'Required text')
+        else:
+            spoiler_check(report, path + '.poll.question', poll['question'], terms, choice_labels, answer_labels, False)
+        options = poll['options']
+        if (not isinstance(options, list) or not 2 <= len(options) <= 4
+                or not all(isinstance(o, str) and 1 <= len(o) <= POLL_OPTION_LIMIT and o.strip() for o in options)):
+            report.error(path + '.poll.options', f'2–4 options of 1–{POLL_OPTION_LIMIT} characters')
+        elif terms and sum(normalize(o) in terms for o in options) != 1:
+            report.error(path + '.poll.options', 'Options must contain the answer exactly once', 'answer_choice')
+        elif len({normalize(o) for o in options}) != len(options):
+            report.error(path + '.poll.options', 'Duplicate options')
+    comments = publication['firstComment']
+    if comments is not None:
+        if not isinstance(comments, dict):
+            report.error(path + '.firstComment', 'Object keyed by platform, or null')
+            comments = {}
+        for platform in sorted(set(comments) - set(COMMENT_PLATFORMS)):
+            report.error(f'{path}.firstComment.{platform}', 'No comment route for this platform', 'route')
+        for platform in COMMENT_PLATFORMS:
+            text = comments.get(platform)
+            if text is None:
+                continue
+            if not _is_str(text):
+                report.error(f'{path}.firstComment.{platform}', 'Text or null')
+            else:
+                text_checks(f'{path}.firstComment.{platform}', platform, text, COMMENT_LIMITS[platform])
+    reply = publication['answerReply']
+    if reply is not None and not module.ANSWER_REPLY:
+        report.error(path + '.answerReply', f'{module.NAME} episodes have no answer reply; use null')
+    elif reply is not None and _keys(report, path + '.answerReply', reply, ('text', 'delayHours')):
+        text = reply['text']
+        if not isinstance(text, str) or '\n' not in text or not SPACER_LINE.fullmatch(text.split('\n', 1)[0]) or not text.split('\n', 1)[1].strip():
+            report.error(path + '.answerReply.text', 'Must open with a spacer line, then the reply')
+        elif len(text) > min(COMMENT_LIMITS[p] for p in ANSWER_REPLY_PLATFORMS) or PLACEHOLDER.search(text):
+            report.error(path + '.answerReply.text', 'Too long for every reply route, or contains a placeholder')
+        delay = reply['delayHours']
+        if not isinstance(delay, (int, float)) or isinstance(delay, bool) or not 0.25 <= delay <= 168:
+            report.error(path + '.answerReply.delayHours', '0.25–168 hours')
+
+
+def required_attributions(credits):
+    """Texts every posting platform must carry (attribution rule): each attribution-licence credit's
+    attribution, and the TMDB notice whenever a credit is TMDB."""
+    texts = []
+    for credit in credits if isinstance(credits, list) else []:
+        if isinstance(credit, dict) and credit.get('license') in NEEDS_ATTRIBUTION and _is_str(credit.get('attribution')):
+            texts.append(credit['attribution'].strip())
+        if isinstance(credit, dict) and credit.get('license') == 'TMDB':
+            texts.append(TMDB_NOTICE)
+    return list(dict.fromkeys(texts))
+
+
+def missing_attributions(episode, platform):
+    """Required attribution texts absent from what `platform` would publish for this v2 episode:
+    the caption (YouTube: the description) plus that platform's first comment."""
+    publication = episode.get('publication') or {}
+    if platform == 'youtube':
+        youtube = publication.get('youtube') or {}
+        texts = [youtube.get('description')]
+    else:
+        texts = [(publication.get('captions') or {}).get(platform), (publication.get('firstComment') or {}).get(platform)]
+    published = '\n'.join(t for t in texts if isinstance(t, str))
+    return [text for text in required_attributions(episode.get('credits')) if text not in published]
+
+
+def _attribution_v2(report, path, episode, publication):
+    captions = publication['captions'] if isinstance(publication['captions'], dict) else {}
+    posting = [p for p in CAPTION_PLATFORMS if _is_str(captions.get(p))]
+    if isinstance(publication['youtube'], dict):
+        posting.append('youtube')
+    for platform in posting:
+        for text in missing_attributions(episode, platform):
+            where = 'youtube.description' if platform == 'youtube' else f'captions.{platform}'
+            report.error(f'{path}.publication.{where}', f'Missing required attribution: {text!r}', 'attribution')
+
+
 def ffprobe_command():
     override = os.environ.get('SCALAR_FFPROBE')
     if override:
@@ -781,7 +1269,8 @@ def finalize(batch_dir, *, now=None, probe=run_ffprobe):
         return report  # validate() already proved the marker matches this batch.json
     digest = hashlib.sha256((batch_dir / 'batch.json').read_bytes()).hexdigest()
     stamp = (now or dt.datetime.now(dt.timezone.utc)).astimezone(dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
-    body = json.dumps({'schemaVersion': SCHEMA_VERSION, 'batchJsonSha256': digest, 'finalizedAt': stamp,
+    version = json.loads((batch_dir / 'batch.json').read_bytes())['schemaVersion']
+    body = json.dumps({'schemaVersion': version, 'batchJsonSha256': digest, 'finalizedAt': stamp,
                        'warnings': len(report.warnings)}, indent=2) + '\n'
     fd = os.open(marker, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
     with os.fdopen(fd, 'w') as handle:
@@ -804,7 +1293,7 @@ def _print(report, as_json, action):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description='Validate or finalize a video batch (contract v1).')
+    parser = argparse.ArgumentParser(description='Validate or finalize a video batch (contract v1 or v2).')
     parser.add_argument('command', choices=('validate', 'finalize'))
     parser.add_argument('batch_dir')
     parser.add_argument('--json', action='store_true')

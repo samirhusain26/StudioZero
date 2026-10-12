@@ -318,6 +318,8 @@ def import_batch_json(index, state, raw_bytes, now):
         data = json.loads(raw_text)
     except (UnicodeDecodeError, json.JSONDecodeError, RecursionError):
         return refuse('json', 'batch.json', "This isn't a readable batch.json (invalid JSON).")
+    if isinstance(data, dict) and data.get('schemaVersion') == 2:
+        return refuse('version', 'batch.schemaVersion', 'This Pi does not import contract v2 batches yet; update the Pi first.')
     report = lc.validate_document(data, now=now, origin='mac')
     episodes = data.get('episodes') if isinstance(data, dict) and isinstance(data.get('episodes'), list) else []
     result['warnings'] = [e['message'] for e in report.warnings]

@@ -119,3 +119,93 @@ def write_batch(root, data=None, files=True, faststart=True):
                 (folder / e[kind]['file']).write_bytes(blob)
     (folder / 'batch.json').write_text(json.dumps(data, indent=2, ensure_ascii=False))
     return folder, data, blobs
+
+
+# ---------- contract v2 ----------
+
+TMDB = 'This product uses the TMDB API but is not endorsed or certified by TMDB'
+WIKI = 'Plot summary adapted from Wikipedia (CC BY-SA 4.0)'
+WORLD_BANK = 'World Bank Open Data (CC BY 4.0)'
+
+
+def render_block(engine='motion', route=None, models=(), renderer='render.sh', cost=0):
+    return {'engine': engine, 'route': route, 'renderer': renderer, 'kitVersion': 'kit-1' if engine == 'motion' else 'story-1',
+            'renderSha256': 'b' * 64, 'models': [dict(m) for m in models], 'costUsd': cost}
+
+
+def credit(kind, title, license, attribution=None, creator=None, source='https://example.org/a'):
+    return {'kind': kind, 'title': title, 'creator': creator, 'sourceUrl': source, 'license': license,
+            'attribution': attribution, 'sha256': None}
+
+
+def scalargame_v2(n=1, game='scalar', **kwargs):
+    """The v1 fixture episode in v2 shape (§5.4 mapping, as the packager writes it)."""
+    v1 = episode(n, game, **kwargs)
+    pub = v1['publication']
+    credits = [credit('font', 'Fraunces', 'OFL-1.1'), credit('sfx', 'Procedural SFX', 'owner', source=None)]
+    if game == 'continuum':
+        credits.append(credit('data', 'World Bank figures', 'CC-BY-4.0', WORLD_BANK))
+        for p in pub['captions']:
+            pub['captions'][p] += f'\n{WORLD_BANK}'
+        pub['youtube']['description'] += f'\n{WORLD_BANK}'
+    return {
+        'episodeId': v1['episodeId'], 'contentId': v1['questionId'], 'revision': 1, 'format': v1['format'], 'language': 'en',
+        'render': render_block(), 'experimentId': v1['experimentId'], 'variantId': None, 'tags': ['quiz'],
+        'video': v1['video'], 'cover': v1['cover'],
+        'link': {'url': 'https://www.scalargame.com/' + game, 'utmCampaign': pub['utmCampaign']},
+        'publication': {k: pub[k] for k in ('captions', 'youtube', 'altText', 'hashtags', 'poll', 'firstComment', 'answerReply')},
+        'credits': credits,
+        'disclosure': {'aiGenerated': False, 'aiKinds': [], 'realisticSynthetic': False, 'note': 'Motion graphics; no AI.'},
+        'eligibility': v1['eligibility'],
+        'projectData': {'game': game, 'difficulty': v1['difficulty'], 'styleId': v1['styleId'], 'creative': v1['creative'],
+                        'evidence': v1['evidence'], 'music': v1['music']},
+    }
+
+
+def originals_v2(n=1, fmt='movie-recap'):
+    recap = fmt != 'animated-short'
+    episode_id = f"originals-{'recap' if recap else 'short'}-{n:03d}"
+    credits = ([credit('footage', 'City at night', 'Pexels', creator='A. Photographer'),
+                credit('poster', 'Film poster', 'TMDB', TMDB, source='https://www.themoviedb.org/movie/1'),
+                credit('text', 'Plot', 'Wikipedia-CC-BY-SA', WIKI, source='https://en.wikipedia.org/wiki/Film')]
+               if recap else [credit('model', 'Video clips', 'generated', source=None)])
+    credits += [credit('music', 'Calm bed', 'CC0-1.0'), credit('voice', 'Narration', 'generated', source=None)]
+    notes = f'{TMDB}. {WIKI}.' if recap else ''
+    line = f'A film in 60 seconds. {notes}'.strip()
+    return {
+        'episodeId': episode_id, 'contentId': f'originals:{fmt}:{n}', 'revision': 1, 'format': fmt, 'language': 'en',
+        'render': render_block('story', 'recap' if recap else 'series', models=[{'role': 'llm', 'id': 'gemini-2.5-flash'},
+                                                                              {'role': 'tts', 'id': 'gemini-tts'}],
+                               renderer=None, cost=0.12),
+        'experimentId': None, 'variantId': None, 'tags': [],
+        'video': {'file': f'videos/{episode_id}.mp4', 'sha256': '0' * 64, 'bytes': 1, 'durationSeconds': 22.0,
+                  'width': 1080, 'height': 1920, 'fps': '30/1', 'videoCodec': 'h264', 'audioCodec': 'aac'},
+        'cover': {'file': f'covers/{episode_id}.jpg', 'sha256': '0' * 64, 'bytes': 1},
+        'link': None,
+        'publication': {
+            'captions': {p: line for p in ('instagram', 'facebook', 'threads', 'x', 'bluesky', 'tiktok')},
+            'youtube': {'title': 'A film in 60 seconds #shorts', 'description': line},
+            'altText': 'A narrated recap of a film over stock footage.', 'hashtags': ['#movierecap'],
+            'poll': None, 'firstComment': None, 'answerReply': None,
+        },
+        'credits': credits,
+        'disclosure': {'aiGenerated': True, 'aiKinds': ['script', 'voice'], 'realisticSynthetic': False,
+                       'note': 'Script and narration are AI-generated; footage is stock.'},
+        'eligibility': {'status': 'qa-passed', 'notBefore': None, 'reviewBy': '2027-04-01', 'expiresAt': None},
+        'projectData': {'subject': {'kind': 'movie', 'title': 'A Film', 'year': 1999},
+                        'sources': [{'title': 'A Film (Wikipedia)', 'url': 'https://en.wikipedia.org/wiki/Film', 'retrieved': '2026-10-07'}],
+                        'checks': {'rights': True, 'garbage': True, 'visualQa': True}, 'reviewer': 'owner',
+                        'series': None if recap else {'seriesId': 'galactic-garage', 'episode': n}},
+    }
+
+
+def document_v2(episodes=None, project='scalargame', batch_id='2026-10-fixture'):
+    episodes = episodes or [scalargame_v2(1) if project == 'scalargame' else originals_v2(1)]
+    styles = sorted({e['projectData']['styleId'] for e in episodes if 'styleId' in e['projectData']})
+    return {
+        'schemaVersion': 2, 'batchId': batch_id, 'createdAt': '2026-10-06T14:00:00Z', 'project': project,
+        'generator': {'repoCommit': '7e7deb5', 'dirty': False},
+        'styleRecipes': [{'styleId': s, 'engine': 'motion', 'version': 1, 'summary': 'Paper style'} for s in styles],
+        'projectData': {'sourceSnapshotHash': 'a' * 64} if project == 'scalargame' else None,
+        'episodes': episodes,
+    }

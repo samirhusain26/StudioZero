@@ -1,6 +1,6 @@
 # Video batch contract (Mac generation → Pi publishing)
 
-Status: v1 specification, agreed 6 October 2026. This is the only interface between the video generation pipeline (scalargame repo: `docs/growth/VIDEO_GENERATION_PIPELINE.md`; this repo: [engines/motion/pipeline](../studio/pipeline/README.md)) and the publishing pipeline ([PUBLISHING_PIPELINE_PLAN.md](../publisher/docs/PUBLISHING_PIPELINE_PLAN.md)). Either side can change internally. Changing this file needs owner approval, a `schemaVersion` bump if the change is incompatible, and an update to the validator and its tests.
+Status: v1 specification, agreed 6 October 2026; v2 (one project per batch) approved 11 October 2026 (`docs/STUDIO_PLAN.md` §5, CHECKPOINT 1), `render.renderer` added 12 October 2026. v1 stays valid forever: the validator dispatches on `schemaVersion`. This is the only interface between the video generation pipeline (scalargame repo: `docs/growth/VIDEO_GENERATION_PIPELINE.md`; this repo: [engines/motion/pipeline](../studio/pipeline/README.md)) and the publishing pipeline ([PUBLISHING_PIPELINE_PLAN.md](../publisher/docs/PUBLISHING_PIPELINE_PLAN.md)). Either side can change internally. Changing this file needs owner approval, a `schemaVersion` bump if the change is incompatible, and an update to the validator and its tests.
 
 Validator (owned by the publishing build, stdlib Python, runs on Mac and Pi):
 
@@ -132,3 +132,65 @@ Existing Pi media (the 2026-10-05 batch in `/var/lib/scalar-social/catalog.json`
 - Spoiler gate: no caption, YouTube title/description, alt text, poll question, first comment or cover file name contains `answer` or any `answerAliases` (case- and accent-insensitive).
 - Per-platform caption length limits; `{link}` only where the platform shows clickable links; choices contain the answer exactly once.
 - `reviewBy`/`expiresAt` not in the past at import; `generator.dirty: true` is a warning, shown in the Pi review screen.
+
+
+## `batch.json` (schemaVersion 2)
+
+One project per batch. The project's rules live in `contract/projects/<project>.py` (synced to the Pi, so the Pi checks everything the Mac checks); the core rules below apply to every project. Media rules, file paths, the upload workflow, merge rules and finalize are unchanged from v1.
+
+```json
+{
+  "schemaVersion": 2,
+  "batchId": "2026-11-o01",
+  "createdAt": "2026-11-02T14:00:00Z",
+  "project": "originals",
+  "generator": { "repoCommit": "<sha>", "dirty": false },
+  "styleRecipes": [],
+  "projectData": null,
+  "episodes": [
+    {
+      "episodeId": "originals-recap-001",
+      "contentId": "originals:movie-recap:the-film-1999",
+      "revision": 1,
+      "format": "movie-recap",
+      "language": "en",
+      "render": { "engine": "story", "route": "recap", "renderer": null, "kitVersion": "story-1",
+                  "renderSha256": "<sha256 of render.json>", "models": [ { "role": "llm", "id": "…" } ], "costUsd": 0.12 },
+      "experimentId": null, "variantId": null, "tags": [],
+      "video": { "…": "as v1" }, "cover": { "…": "as v1" },
+      "link": null,
+      "publication": { "captions": { "…": "…" }, "youtube": { "title": "…", "description": "…" }, "altText": "…",
+                       "hashtags": [], "poll": null, "firstComment": null, "answerReply": null },
+      "credits": [ { "kind": "poster", "title": "…", "creator": null, "sourceUrl": "https://…", "license": "TMDB",
+                     "attribution": "This product uses the TMDB API but is not endorsed or certified by TMDB", "sha256": null } ],
+      "disclosure": { "aiGenerated": true, "aiKinds": ["script", "voice"], "realisticSynthetic": false, "note": "…" },
+      "eligibility": { "status": "qa-passed", "notBefore": null, "reviewBy": "2027-04-01", "expiresAt": null },
+      "projectData": { "…": "validated by contract/projects/originals.py" }
+    }
+  ]
+}
+```
+
+### Core rules (every project)
+
+- Batch: `project` is a registered project; `generator` is `{repoCommit, dirty}` (`dirty: true` is a warning); `styleRecipes` items are `{styleId, engine, version, summary}` (may be empty); `projectData` is the project's batch fields (or null).
+- `episodeId`: `<prefix>-<format-slug>-<nnn>` (≤ 120 characters), prefixes declared by the project. Unique forever.
+- `contentId`: the duplicate key, `<namespace>:<id>` (no spaces or `#`). Namespaces are declared by the project and unique across projects; a namespace of another project is refused. Scalargame's namespaces are its games, and its contentIds equal the v1 questionIds, so v1 and v2 share the Pi's ledger.
+- `format`: one of the project's formats; `render.engine`/`render.route` must be the engine and route that make it.
+- `render`: `engine` ∈ `motion`, `story`; `route` null for motion, `recap`/`series` for story; `renderer` ∈ `render.sh`, `web` or null (who rendered a motion episode: the Mac's `render.sh` or the Studio's browser export); `kitVersion`; `renderSha256` = sha256 of the engine's `render.json` file; `models` = `[{role, id}]` with role ∈ llm, tts, image, video, music, asr; `costUsd` ≥ 0.
+- `tags`: up to 20 unique `[a-z0-9-]` labels for Learn.
+- `link`: null or `{url, utmCampaign}` (HTTPS, no query, fragment or credentials; the project may restrict the host and may require a link). `{link}` in a text is allowed only when the link is non-null and only where v1 allows it; it expands to `url?utm_source=<platform>&utm_medium=organic_social&utm_campaign=<utmCampaign>&utm_content=<episodeId>`.
+- `publication`: v1 fields minus `deepLink`, `utmCampaign`, `credits`, with the v1 length, placeholder, link-platform and spoiler rules (the project supplies the spoiler terms). The project may forbid `poll` and `answerReply`.
+- `credits`: one entry per third-party, owner or generated asset: `{kind, title, creator, sourceUrl, license, attribution, sha256}`; `kind` ∈ footage, image, poster, music, sfx, font, voice, data, text, model; `license` ∈ CC0-1.0, CC-BY-4.0, CC-BY-SA-4.0, OFL-1.1, Pexels, Pixabay, TMDB, Wikipedia-CC-BY-SA, owner, generated, public-domain (`unknown` is refused). CC-BY-4.0, CC-BY-SA-4.0, TMDB and Wikipedia-CC-BY-SA need `attribution` text; TMDB attribution contains the TMDB notice.
+- **Attribution rule**: every platform that would post (each non-null caption, and YouTube when `youtube` is set) carries every required attribution text verbatim (each attribution-licence credit's `attribution`, and the TMDB notice "This product uses the TMDB API but is not endorsed or certified by TMDB" whenever a credit is TMDB) in its caption (YouTube: the description) or in that platform's first comment. The packager writes it; the validator refuses a batch that lacks it; the Pi publishes the approved text unchanged.
+- `disclosure`: `{aiGenerated, aiKinds, realisticSynthetic, note}`; `aiKinds` ⊆ script, voice, image, video, music, sfx; `aiGenerated` is true exactly when `aiKinds` is non-empty, and must be true when `render.models` lists an llm, tts, image, video or music model; `realisticSynthetic` is true only for realistic synthetic people, places or events (drives labels that only apply to realistic content).
+- `video`, `cover`, `eligibility`: v1 rules.
+
+### Project modules
+
+- **scalargame** (`contract/projects/scalargame.py`): batch `projectData = {sourceSnapshotHash}`; episode `projectData = {game, difficulty, styleId, creative, evidence, music}` with the v1 rules (episodeId and contentId prefixed by the game, styleId names a motion style recipe of the batch, choices contain the answer once, spoiler gate, evidence sources, `uniqueAnswer`). Formats: the eight v1 formats (motion). The link is required and points at `https://www.scalargame.com/<path>`. Poll and answer reply allowed.
+- **originals** (`contract/projects/originals.py`): batch `projectData = null`; episode `projectData = {subject: {kind: movie|book|story|original, title, year}, sources[], checks: {rights, garbage, visualQa}, reviewer, series: {seriesId, episode} | null}`; every check must be true; a recap needs at least one source and credits its footage; an animated short names its series. Formats `movie-recap`, `story-recap` (story/recap) and `animated-short` (story/series). The link is optional. No poll, no answer reply.
+
+### v1 on the Pi
+
+A v1 batch validates with the v1 rules forever. For views and policies the Pi reads a v1 episode as: project `scalargame`, `contentId = questionId`, engine `motion`, renderer not recorded, link `https://www.scalargame.com<deepLink>` with its `utmCampaign`, credits from `publication.credits` plus `music`, disclosure not declared (no AI label is applied). Duplicate protection keeps the ledger's `question_id` column, which holds the contentId; namespaces cannot collide, so nothing is migrated.
