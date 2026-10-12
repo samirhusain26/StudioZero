@@ -39,6 +39,7 @@ import updater  # noqa: E402
 STARTED_HEAD = updater.running_commit(updater.REPO) if __name__ == '__main__' else None
 import ui_sessions  # noqa: E402
 import library_contract  # noqa: E402
+import ui_assets  # noqa: E402
 import ui_catalog  # noqa: E402
 import ui_views  # noqa: E402
 
@@ -122,7 +123,7 @@ def load_passcode():
 class UiApp:
     def __init__(self, state, config_path, static_dir, passcode, allowed_origins, *, clock=time.time,
                  media_key=None, show=None, probe=None, frame_grabber=None, run=None, repo=None, running=None,
-                 update_state=None, catalog_path=None):
+                 update_state=None, catalog_path=None, assets=None):
         import ui_health
         import ui_library
         self.state, self.config_path = Path(state), Path(config_path)
@@ -150,6 +151,8 @@ class UiApp:
         self.update_state = Path(update_state) if update_state else self.state.parent/'scalar-social-update'
         # publisher/catalog.json in this checkout (Mac-generated, committed): GET /api/catalog.
         self.catalog = ui_catalog.Cache(catalog_path or ui_catalog.PATH)
+        # engines/motion/public files listed in publisher/motion-assets.json: GET /api/assets/motion/…
+        self.assets = assets or ui_assets.Assets()
 
     # --- state helpers -------------------------------------------------------------
     def config(self):
@@ -490,13 +493,16 @@ class Handler(http.server.BaseHTTPRequestHandler):
         path = (self.app.state/row[0]).resolve()
         if not path.is_relative_to(self.app.state.resolve()) or not path.is_file():
             raise ApiError(404, 'Not found.')
-        size = path.stat().st_size
-        headers = {'Accept-Ranges': 'bytes', 'Cache-Control': 'private, max-age=3600'}
         content_type = 'video/mp4' if kind == 'videos' else 'image/jpeg'
+        return self.ranged(path, path.stat().st_size, content_type, {'Cache-Control': 'private, max-age=3600'})
+
+    def ranged(self, path, size, content_type, headers):
+        """A file response honouring one `Range: bytes=…` request; send_raw streams it in 64 KB chunks."""
+        headers = {'Accept-Ranges': 'bytes', **headers}
         spec = self.headers.get('Range')
         if not spec:
             return Raw(path=path, length=size, content_type=content_type, headers=headers)
-        match = re.fullmatch(r'bytes=(\d*)-(\d*)', spec.strip())
+        match = re.fullmatch(r'bytes=(\d{0,15})-(\d{0,15})', spec.strip())
         if not match or match.groups() == ('', ''):
             return Raw(b'', content_type, 416, {**headers, 'Content-Range': f'bytes */{size}'})
         first, last = match.groups()
@@ -510,6 +516,33 @@ class Handler(http.server.BaseHTTPRequestHandler):
                    headers={**headers, 'Content-Range': f'bytes {start}-{end}/{size}'})
 
     # --- endpoints (bodies shaped by ui_views to publisher/ui/src/api/types.ts) ----------------------
+    def motion_assets(self):
+        try:
+            return self.app.assets.current()
+        except ui_assets.AssetError:
+            raise ApiError(503, 'The motion assets are unavailable on this Pi.',
+                           'Run Settings → Update; if it repeats, check the UI service log on the Pi.') from None
+
+    def get_motion_manifest(self, query):
+        version, files = self.motion_assets()
+        return {'version': version, 'base': f'/api/assets/motion/{version}',
+                'files': {path: {'bytes': entry['bytes'], 'sha256': entry['sha256']} for path, entry in sorted(files.items())}}
+
+    def get_motion_asset(self, version, path, query):
+        self.motion_assets()
+        try:
+            found = self.app.assets.lookup(version, path)
+        except ui_assets.AssetError:
+            raise ApiError(503, 'A motion asset differs from its manifest on this Pi.', 'Run Settings → Update.') from None
+        if found is None:
+            raise ApiError(404, 'Not found.', 'Reload the page: the assets may have been updated.')
+        file, size, content_type, sha = found
+        etag = f'"{sha}"'
+        headers = {'Cache-Control': 'private, max-age=31536000, immutable', 'ETag': etag}
+        if etag in (tag.strip() for tag in self.headers.get('If-None-Match', '').split(',')):
+            return Raw(b'', content_type, 304, headers)
+        return self.ranged(file, size, content_type, headers)
+
     def get_catalog(self, query):
         try:
             raw, _catalog, sha = self.app.catalog.get()
@@ -1203,6 +1236,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
 NAME = r'([a-z0-9-]+)'
 ROUTES = [
     ('GET', r'/api/catalog', 'get_catalog'),
+    ('GET', r'/api/assets/motion/manifest', 'get_motion_manifest'),
+    ('GET', r'/api/assets/motion/([0-9a-f]{16})/((?:episodes/fonts|episodes/music|sfx)/[a-z0-9-]{1,80}\.(?:woff2|m4a|wav))', 'get_motion_asset'),
     ('GET', r'/api/dashboard', 'get_dashboard'),
     ('GET', r'/api/library', 'get_library'),
     ('POST', r'/api/library/batches', 'post_batch'),

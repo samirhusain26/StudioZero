@@ -346,6 +346,64 @@ class ApplyTests(UpdaterCase):
         self.assert_no_stage()
 
 
+class SparseTests(UpdaterCase):
+    """publisher/deploy/sparse-paths in the applied commit sets the checkout's cone (the Studio's motion assets)."""
+    def sparse(self):
+        return git(self.pi, 'sparse-checkout', 'list').split()
+
+    def switch(self, sha):
+        status = self.apply(sha)
+        self.assertEqual(status['phase'], 'switched', status['error'])
+        updater.reconcile(self.state, sha)  # the new UI reports serving
+        return status
+
+    def test_the_applied_commit_widens_and_narrows_the_cone(self):
+        new = self.repos.push({updater.SPARSE_FILE: '# cone\npublisher\ncontract\nstudio\n', 'studio/big.txt': 'assets\n'})
+        status = self.switch(new)
+        self.assertEqual(sorted(self.sparse()), ['contract', 'publisher', 'studio'])
+        self.assertEqual((self.pi/'studio/big.txt').read_text(), 'assets\n')
+        self.assertTrue(any('Sparse checkout: contract, publisher, studio' in line for line in status['log']))
+        self.assertEqual(git(self.pi, 'status', '--porcelain'), '')
+        # Unchanged cone: no sparse step.
+        same = self.repos.push({'publisher/app/mod_a.py': 'VALUE = 5\n'})
+        status = self.switch(same)
+        self.assertFalse(any('Sparse checkout' in line for line in status['log'][-12:]))
+        # No file: back to publisher/ + contract/.
+        narrow = self.repos.push({updater.SPARSE_FILE: None})
+        self.switch(narrow)
+        self.assertEqual(sorted(self.sparse()), ['contract', 'publisher'])
+        self.assertFalse((self.pi/'studio').exists())
+
+    def test_an_invalid_list_changes_nothing(self):
+        old = self.repos.head()
+        for text in ('publisher\nstudio\n', 'publisher\ncontract\n../etc\n', 'publisher\ncontract\n/abs\n', 'publisher\ncontract\nStudio\n',
+                     'publisher\ncontract\n' + ''.join(f'd{i}\n' for i in range(9)), 'publisher\ncontract\n' + '#' * 3000 + '\n'):
+            with self.subTest(text=text[:30]):
+                bad = self.repos.push({updater.SPARSE_FILE: text})
+                status = self.apply(bad)
+                self.assertEqual(status['phase'], 'failed')
+                self.assertIn(updater.SPARSE_FILE, status['error'])
+                self.assertEqual((self.repos.head(), sorted(self.sparse())), (old, ['contract', 'publisher']))
+                self.assert_no_stage()
+                git(self.repos.src, 'reset', '-q', '--hard', old)
+                git(self.repos.src, 'push', '-q', '-f', 'origin', 'main')
+
+    def test_a_failed_sparse_set_restores_the_cone_and_switches_nothing(self):
+        old = self.repos.head()
+        new = self.repos.push({updater.SPARSE_FILE: 'publisher\ncontract\nstudio\n'})
+        real = updater.git
+
+        def failing(repo, *args, **kwargs):
+            if args[:3] == ('sparse-checkout', 'set', '--cone') and 'studio' in args:
+                return subprocess.CompletedProcess(args, 128, '', 'fatal: could not fetch blobs')
+            return real(repo, *args, **kwargs)
+        with mock.patch.object(updater, 'git', side_effect=failing):
+            status = self.apply(new)
+        self.assertEqual(status['phase'], 'failed')
+        self.assertIn('sparse-checkout set failed', status['error'])
+        self.assertEqual((self.repos.head(), sorted(self.sparse())), (old, ['contract', 'publisher']))
+
+
 class StartValidationTests(UpdaterCase):
     def refused(self, confirm, **kwargs):
         with self.assertRaises(updater.Refused) as caught:

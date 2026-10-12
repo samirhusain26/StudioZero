@@ -39,6 +39,18 @@ dirty_lines() {
   out=$(ugit -C "$1" status --porcelain --ignored) || { echo '?? (git status failed)'; return; }
   printf '%s\n' "$out" | awk '!/^!! / && NF {print; next} /^!! (publisher|contract)\/(.*\/)?(__pycache__\/?|[^\/]+\.py[co])$/ {print}'
 }
+# The sparse cone listed in publisher/deploy/sparse-paths at <rev> (the updater applies the same list on every update);
+# publisher and contract always. Plain lowercase paths only.
+sparse_paths() {
+  local rev=$1 line out=()
+  while IFS= read -r line; do
+    line=${line%%#*}; line=${line//[[:space:]]/}
+    [ -z "$line" ] && continue
+    [[ "$line" =~ ^[a-z0-9_-]+(/[a-z0-9_-]+){0,4}$ ]] || { echo "Refusing: invalid sparse path '$line'" >&2; return 1; }
+    out+=("$line")
+  done < <(ugit -C "$2" show "$rev:publisher/deploy/sparse-paths" 2>/dev/null || printf 'publisher\ncontract\n')
+  printf '%s\n' publisher contract "${out[@]}" | sort -u
+}
 wait_idle() {  # <seconds> <unit>...
   local left=$1 unit busy; shift
   while :; do
@@ -247,7 +259,9 @@ fi
 install -d -m 755 -o "$UUSER" -g "$UUSER" "$NEXT"
 ugit "${LOW_MEMORY[@]}" clone --quiet --filter=blob:none --no-checkout --branch main "$NEW_ORIGIN" "$NEXT"
 ugit -C "$NEXT" merge-base --is-ancestor "$COMMIT" refs/remotes/origin/main || { echo "Refusing: $COMMIT is not on StudioZero main"; rm -rf -- "$NEXT"; exit 1; }
-ugit -C "$NEXT" sparse-checkout set --cone publisher contract
+SPARSE_LIST=$(sparse_paths "$COMMIT" "$NEXT")  # command substitution: an invalid list stops the script (set -e)
+mapfile -t SPARSE <<<"$SPARSE_LIST"
+ugit -C "$NEXT" sparse-checkout set --cone "${SPARSE[@]}"
 ugit "${LOW_MEMORY[@]}" -C "$NEXT" checkout --quiet -B main "$COMMIT"
 ugit -C "$NEXT" branch --quiet --set-upstream-to=origin/main main
 

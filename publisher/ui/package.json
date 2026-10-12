@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:static": "tsc -b && node scripts/build-static.mjs && node ../../tools/export-catalog.mjs",
-    "check:static": "node scripts/build-static.mjs --check && node ../../tools/export-catalog.mjs --check",
+    "build:static": "tsc -b && node scripts/build-static.mjs && node ../../tools/export-catalog.mjs && node ../../tools/export-motion-assets.mjs",
+    "check:static": "node scripts/build-static.mjs --check && node ../../tools/export-catalog.mjs --check && node ../../tools/export-motion-assets.mjs --check",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest run",
@@ -16,6 +16,9 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@remotion/media": "4.0.529",
+    "@remotion/player": "4.0.529",
+    "@remotion/web-renderer": "4.0.529",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },

@@ -1,0 +1,530 @@
+{
+ "motionAssetsVersion": 1,
+ "root": "engines/motion/public",
+ "files": {
+  "episodes/fonts/fraunces-latin-600-italic.woff2": {
+   "sha256": "23712db611d0799df860504f0e6626ade20588fab2b8f4882d0e711a330da1b7",
+   "bytes": 23032
+  },
+  "episodes/fonts/fraunces-latin-600-normal.woff2": {
+   "sha256": "3a1de7711d147bad4422825045f87597fd77cca72e7c96d3b0a81735d00dda82",
+   "bytes": 18096
+  },
+  "episodes/fonts/fraunces-latin-900-italic.woff2": {
+   "sha256": "46998b6a42b4f1e787937b1a056752796db37c835e47bb3f0f89d8469a6738fd",
+   "bytes": 22408
+  },
+  "episodes/fonts/fraunces-latin-900-normal.woff2": {
+   "sha256": "260485eb7d18e5d71b2fce7dd285c3d3737f8c1f5e89079f9e6ee973ad00c66b",
+   "bytes": 18004
+  },
+  "episodes/fonts/geist-mono-latin-500-normal.woff2": {
+   "sha256": "72971bd4908d3984fa1b1426bb363730e4957e16a0f58bfbca76993095715488",
+   "bytes": 10116
+  },
+  "episodes/fonts/geist-mono-latin-700-normal.woff2": {
+   "sha256": "e26f16d6bda234828e574c948d9a5aca1327f83df2b3529a4ebea406ca026d0c",
+   "bytes": 10180
+  },
+  "episodes/fonts/ibm-plex-mono-latin-500-normal.woff2": {
+   "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+   "bytes": 14888
+  },
+  "episodes/fonts/ibm-plex-mono-latin-700-normal.woff2": {
+   "sha256": "4f84d86cfd060f4ded334358ff8a4c81d4db2ed5addd568359d693f44a87765a",
+   "bytes": 14908
+  },
+  "episodes/fonts/montserrat-latin-600-normal.woff2": {
+   "sha256": "d857325c360f7128b347ca924c1974967aaa886ba47dad22e4042d6c38b26a83",
+   "bytes": 18688
+  },
+  "episodes/fonts/montserrat-latin-800-normal.woff2": {
+   "sha256": "ba826fb84c2e961578adf3a08b5778b87905d4443445d1d56d84f9f157d5ea4b",
+   "bytes": 19012
+  },
+  "episodes/fonts/montserrat-latin-900-normal.woff2": {
+   "sha256": "5b6958520638bb8609f9eacb17c4d189563efeae96d5da49f7c2043988697205",
+   "bytes": 18020
+  },
+  "episodes/fonts/nunito-latin-700-normal.woff2": {
+   "sha256": "fa89300b9bbb3bd0f60d6991aa055965d98e2ccca27bf8688fe0c39cdc796846",
+   "bytes": 16228
+  },
+  "episodes/fonts/nunito-latin-800-normal.woff2": {
+   "sha256": "2363d3ed037283ebb961e8c4b4917e40a8bc8853cf9965cf1ea7b4daa1df630a",
+   "bytes": 16520
+  },
+  "episodes/fonts/nunito-latin-900-normal.woff2": {
+   "sha256": "9ca32f5d8334579387361096944286df451272a557bb09bd906254a623aba99e",
+   "bytes": 16676
+  },
+  "episodes/music/continuum-20-holizna-clouds.m4a": {
+   "sha256": "8921289b59b8469871f58e9294ad191c151aa029451640c139177b25f5caecbe",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-holizna-morning-coffee.m4a": {
+   "sha256": "9478e1f26aa9cb3b14a871c71557a4024f74c5a3afdd0b376b547e9d30dc2b4f",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-holizna-opinions.m4a": {
+   "sha256": "c6b06a7d36f9b70a1c39aca066d1e881b6df009c1f9337568efe6845f775cb90",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-holizna-puppy-love.m4a": {
+   "sha256": "31608b1d4975e73680cab38f63045be2b05b19625826266a7bcb2322f1a24ab8",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-a-cup-of-tea.m4a": {
+   "sha256": "1990dc47e79a98fc51ce5258923103617422f00d1e5ddd88451a0f8489f359d7",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-advertisements.m4a": {
+   "sha256": "41679a7fbcd66052b0ac9593262251b1c4fc07f3c51b02b543e765ad5aba5a20",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-ambienttrack-1.m4a": {
+   "sha256": "7c02292053820caa81d11c6a349cff8d4c218eee75b1c59decb3ac0a99b0355e",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-boredom.m4a": {
+   "sha256": "5fd15d7306077803fc456153c705deb6d8451172d9ed060d5fc5ab1b77ca181a",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-cat-caffe.m4a": {
+   "sha256": "6363be38db507050e1f5acb46191f3a8270ef47711caecb062463156c6eb491f",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-childhood.m4a": {
+   "sha256": "8e229b3484b17f022952b9e15a1dd81b1204c7b7b7aa87459bb0be7ec178ae14",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-dreams.m4a": {
+   "sha256": "9a13b0f3664487bc2e5cc0e98cfc358178fa1ffdfde4f3e393b5fae05df6afb1",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-lofihiphop.m4a": {
+   "sha256": "29c6698ff1b21093510820373b8430d20dd41f17bf3499f0776801f95ef7ed01",
+   "bytes": 646289
+  },
+  "episodes/music/continuum-20-oga-morning-rain.m4a": {
+   "sha256": "43770933d2a6c2d9c127c68803b6b7c57dadd5df4d934e6de011212505e3d40a",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-slow-stride-loop.m4a": {
+   "sha256": "db0ca168fa5dde4bbeba2ab30b652a356a63fced7177e5e20a2c5de590e0cdfb",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-20-oga-you-loved-me-once.m4a": {
+   "sha256": "37858e512f11ea90c48b77e62241f55ff7fd78f83b50d6e4bc2b1b78f2d9d9fd",
+   "bytes": 646290
+  },
+  "episodes/music/continuum-22-holizna-clouds.m4a": {
+   "sha256": "7f2efa418b9f041b01aaa56782f2ed7cbf053086a5ac0de770eca2a0501d6d72",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-holizna-morning-coffee.m4a": {
+   "sha256": "d35e3586e2bac140887f12b0e6f65bfb2cc8e43d6403f68f0a372fedf395d481",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-holizna-opinions.m4a": {
+   "sha256": "6527b6a29557c817b08523ff6f83163d3ff35175864003b721c96261587a48cb",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-holizna-puppy-love.m4a": {
+   "sha256": "cefc3882a358b5ae98110d17853b98918dea1e14870580d3d5e59f5962125dbe",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-a-cup-of-tea.m4a": {
+   "sha256": "59c312eabd73d973e5f2c0cac068f014c96f5d1f9140934f5b339d7af675011b",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-advertisements.m4a": {
+   "sha256": "154b677116337d28b032921c17eb3a3b486aff3b979d5f816df24c55e3c68377",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-ambienttrack-1.m4a": {
+   "sha256": "5d1f2c9caf00db0916cb59f0f90b188674622038b8ec2872470b622909908460",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-boredom.m4a": {
+   "sha256": "c9e3cff7e35835d7796368ee2b7612ce3e2ad47275e226bcbd0b79615f0d868a",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-cat-caffe.m4a": {
+   "sha256": "50720ad4df7d17c5aff2c6e37a123e462506c6af82cdbd0b107c7edfdd3cb8cf",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-childhood.m4a": {
+   "sha256": "5ac53ff36d917df6a05ab3976b24a52d50b005075db26c211c34b9549c6f153b",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-dreams.m4a": {
+   "sha256": "a4ac93f8a82165c0780927a3831619ddda1563545da5c3e9f1acd79e6887d0b7",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-lofihiphop.m4a": {
+   "sha256": "4753221ee8054c47976ee347b8dd2aa2cfdb3eb788632619adc8e7f301f70f3b",
+   "bytes": 710836
+  },
+  "episodes/music/continuum-22-oga-morning-rain.m4a": {
+   "sha256": "f3d0163b50b15374a0f3efa2ff570ef068f5739daa910746986f19e675ba98a1",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-slow-stride-loop.m4a": {
+   "sha256": "7106b32c18c48cacfcdd480f35f5a4913336e080fd94877043055a124068a95f",
+   "bytes": 710837
+  },
+  "episodes/music/continuum-22-oga-you-loved-me-once.m4a": {
+   "sha256": "eaecb88872acc2ccdfdd5ab14b8d52d37ede5af27886288f54f605953d22e0d3",
+   "bytes": 710837
+  },
+  "episodes/music/scalar-24-holizna-blue-skies.m4a": {
+   "sha256": "78fc39f131987f0c350d9b65cd1fe87fcb62e947eab6d65899c46ecd892cc07d",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-holizna-creature-comforts.m4a": {
+   "sha256": "6fc597733a0d50ea416d9590477d7e172811bbd90b59dc3ec5a7010e01936e76",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-holizna-first-snow.m4a": {
+   "sha256": "9cef29dfdedba9710b3fc654ce744d3da8ab410815416024c496f6fdc28346cb",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-holizna-laundry-on-the-wire.m4a": {
+   "sha256": "7381480f2faf416663f4f72b57d076afb828fcdf4df2027a7a846d66f899aa4f",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-holizna-shut-up-or-shut-in.m4a": {
+   "sha256": "0861d8136a8835d4dc46e4bebaef0f2ace965fd5aa72cf304206a0518d380a6e",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-a-small-fire-will-do.m4a": {
+   "sha256": "2d5dcea906a944938488f4719dc0b3b4900a68db6e1c695a3286a2fc81b809f3",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-cozy-puzzle-in-game-1.m4a": {
+   "sha256": "2fcfa3c1b07969a8b5e9b0ea872931a931f331c3421312d5b4f53117853a72a1",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-hot-spring-town.m4a": {
+   "sha256": "e2bb094f59da31d52abca43be099e5cde074125242240dfae5a49b4afd84b071",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-quiet-village-1.m4a": {
+   "sha256": "1944492317232a7b0ee4cbd4d6ec73463f55f4cf5a61431a97b9ef45592d0367",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-quiet-village-2.m4a": {
+   "sha256": "e125a38fe2b52a94ae43a2b11f8391f139e97d721afec80040db88af8bc7cbc7",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-quiet-village-3.m4a": {
+   "sha256": "55098fed7eab2c403612b5b50609ce9187d2e62e8ebd3422bc17b3c57db70138",
+   "bytes": 774688
+  },
+  "episodes/music/scalar-24-oga-quiet-village-4.m4a": {
+   "sha256": "2e55eded97ddc22edbf014b2bd08b9d0ec96f60cf7e02c8b447d01a3f7585297",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-town1-home-town.m4a": {
+   "sha256": "4056d08fca168bcc434877c90557427023e0d7ee125c1b69de0fd8e246d48f90",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-town2-where-time-stands-still.m4a": {
+   "sha256": "cf5f80489171bd26f2a88b82d41a2c3a0aa6132f4f59c9124fcddc82544c16b9",
+   "bytes": 774689
+  },
+  "episodes/music/scalar-24-oga-urban-shop.m4a": {
+   "sha256": "81ae87aa3a8624859fac536a1da724075c36e58083f10acf14a4d981557e0560",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-22-holizna-2-hour-delay.m4a": {
+   "sha256": "2cc91f8f77ddf4c33747f818eca083c89cf259d00efa4861dbf210a49ec72902",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-holizna-dream-pop.m4a": {
+   "sha256": "bb5fcdc455d31ecf0f0fb110a9083002e4b1c02d72fecb10b66c2723e034b82f",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-holizna-everything-you-ever-dreamed.m4a": {
+   "sha256": "3c0458fcba1c7c7f19aeb66f857cdf78c62d6410f5fd1c699d2d62f65d1dfe09",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-holizna-families.m4a": {
+   "sha256": "6e66898c034c4898d3c0105f87e51216be8113e270a62ab8eef5aad3748c3f1c",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-holizna-letting-go-of-the-past.m4a": {
+   "sha256": "be4ad6bc12063012496e1768659357a072682e8f01862fa40c4d03e9523f5955",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-holizna-new-shoes.m4a": {
+   "sha256": "9173b8a64623e75c471bf9cec410b8d160da596603406b70890d4a0367f310d8",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-holizna-snow-drift.m4a": {
+   "sha256": "48db605b5e4033cb320a7bada24d611be7b8cb979db57c326001fd5f5df50a42",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-holizna-so-broke.m4a": {
+   "sha256": "cfec490c833c73f2af101082737f28ea4d5e227b4cc86b61149ea6e078b67ecf",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-holizna-whatever.m4a": {
+   "sha256": "98a8cd8a579051399500f2b72443f832049225279886fe2f4215fa1148aefcf0",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-oga-krank-space-atmo.m4a": {
+   "sha256": "747861004e7e069a4be2e82a82eae30fbc618055881e4ca31893deb2ed252eba",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-oga-lifewave2k.m4a": {
+   "sha256": "aefb07610692e06c331e34b25f86de8f23197092e357f90e60dfee7897557b7d",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-oga-song18.m4a": {
+   "sha256": "33db047157f09a575a78a3a3affed74684131fd161215a0f81f3e98becf2cebe",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-oga-synthwave-15k.m4a": {
+   "sha256": "63dfbd4159b1a447593d489a3d925d684872274b61bf89f89e1de534960105b7",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-oga-synthwave-4k.m4a": {
+   "sha256": "89342f2833e74fbeb61d74d8dd87a451e1619bbea0d0d39addb9caee2f3dfcb9",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-22-oga-tylersong3-normal.m4a": {
+   "sha256": "92ad02e95e002319a1098867843ac20465ea4e01c8f2c799cd8017d04a988288",
+   "bytes": 710837
+  },
+  "episodes/music/tectonic-24-holizna-2-hour-delay.m4a": {
+   "sha256": "d81d337a4513f8e576066e5fcbfb15698b0b1fc1af99751dec290290d02f98d2",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-holizna-dream-pop.m4a": {
+   "sha256": "06bcd42f89ecc8626246d17cd9601effea1a26eb191d8af187346ee750915197",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-holizna-everything-you-ever-dreamed.m4a": {
+   "sha256": "5b54a1bc3fcb2c5d0907c91884105f5d9fd9c8933a1761a2ebd7a662d1e7b929",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-holizna-families.m4a": {
+   "sha256": "c76b428e0d32708278bc68b2e8b7812d2b0cedb68a2ec37845a043785999ee26",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-holizna-letting-go-of-the-past.m4a": {
+   "sha256": "14be7f295aa474f1b89ca8f43a76b19c88af38e30ca28616fac936e9f365c6c0",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-holizna-new-shoes.m4a": {
+   "sha256": "81d2aafeceba52c615e08f07fce9f58cc73dfe7b0b56c369dc6472cc5d0fa880",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-holizna-snow-drift.m4a": {
+   "sha256": "6d2e745de8a377bcea88402cea6be1f3aafd1c7c26c009517efb66cf625978c9",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-holizna-so-broke.m4a": {
+   "sha256": "e004b4fb5d99db9b174c8b6e6a01972e6bf99aaee20599e43b2dae16a59fccce",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-holizna-whatever.m4a": {
+   "sha256": "051d4956a4271cbf86dab9283c8b390b4688eadf21ad079e8975dfc7eb1a41d9",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-oga-krank-space-atmo.m4a": {
+   "sha256": "fc9557dcd7a6712663b94452263706a93b19d6cf3760567b3e6326246a51fc6f",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-oga-lifewave2k.m4a": {
+   "sha256": "82be92442306df43c50634a947c178b3512159e7ee9366e0b876769e7305c135",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-oga-song18.m4a": {
+   "sha256": "a91c3e0a337d4dc4551fb41dfed7ce38c5cdc7a37936363be4a4db7f83134b83",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-oga-synthwave-15k.m4a": {
+   "sha256": "9b2395f2fa7b679e3cf7ebe4b265a0a90e85ed35882caac6294321d40240b5b4",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-oga-synthwave-4k.m4a": {
+   "sha256": "be5a437b0d538f83bf750eee841a6a2396c8d79cd952624da0958eb52a6e4656",
+   "bytes": 774689
+  },
+  "episodes/music/tectonic-24-oga-tylersong3-normal.m4a": {
+   "sha256": "3f932022020860139b851f39f319fa1a28e9f43f9afdd7c2b681602a9b6e55aa",
+   "bytes": 774689
+  },
+  "episodes/music/whenabouts-22-holizna-come-again.m4a": {
+   "sha256": "2201bc3bbab94a4efa9a40726784a59d29da31f00de43e34bcfbdc46c2440f5c",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-holizna-glad-to-be-stuck-inside.m4a": {
+   "sha256": "b79c8e362c2bc11fefc6f9f815bfdd58f02de132470a3e19c82ea32d6be32209",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-holizna-old-age.m4a": {
+   "sha256": "ed1c3fb50da632fc1c1ac46a0ece04c5676615e75ec12772f127250bd1b6d4fb",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-holizna-yesterday.m4a": {
+   "sha256": "c9eee85c0c870929e9559e60a38c8a8746d59e31536a44568e29694edf0f9adf",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-beginning-4.m4a": {
+   "sha256": "fc625cca736c86d84bec5a9161c19064cafa5607db48f3732121111536846072",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-beginning-5.m4a": {
+   "sha256": "c97df2f06074a566e14fe11549a5bf8aaf20336388685b960cef00387233ef59",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-beginning-7.m4a": {
+   "sha256": "7a47c8401516c782221a1a9c57b7e96fd06324086c0f4261aee7955c8e214758",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-calm2-childhood-friends.m4a": {
+   "sha256": "bb9e7bcc33998c1cafc26697079fd8898b543cb257d35d229f5192de5af265e5",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-calm3-peaceful-days.m4a": {
+   "sha256": "178b7db07df562d0cb1de3cf384c7d76f721a24156df20cde62f508f4d9a8867",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-calm4-sand-castles.m4a": {
+   "sha256": "94daba5b5b4b8d96f79e9920e0014af32344f60dc16788e2dbe3ef08d934bfa0",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-calm5-summer-memories.m4a": {
+   "sha256": "e2c5993ff6afeb23c44e50657d5fced809151a6d179fdeeca0d512cc332c7996",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-elevator.m4a": {
+   "sha256": "a6b0c8c0d85199687f5bacacb698a9647c4337fbb6b0966dc6c68074e6cf8ff0",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-jazz-take-2.m4a": {
+   "sha256": "3037c6b9fd84f9ccb380433821da31cf2d804b535a9657d9202d59f1b4ec3dc6",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-little-cafe-0.m4a": {
+   "sha256": "4c2191e58ea46b76a8b0fc4b93e63f5e4f47c07830bec48117c4201c332484e1",
+   "bytes": 710837
+  },
+  "episodes/music/whenabouts-22-oga-vaporware-1.m4a": {
+   "sha256": "cc6fdd355db14c4525a57431cf2de206eef683f44e43755dd978a8949165e2c5",
+   "bytes": 710837
+  },
+  "sfx/chime.wav": {
+   "sha256": "7674e76297fc81d8c382c71bee31f70601be22a43bfc6628eb54e34ca24bd7ab",
+   "bytes": 441044
+  },
+  "sfx/ding.wav": {
+   "sha256": "1598be22dabf6c313fb5714985f6413e2eb84f4182da6e2326ce09e9099b0fd6",
+   "bytes": 61782
+  },
+  "sfx/flip.wav": {
+   "sha256": "6cbcb8931b8ae068bfb3711adb2f76443c21ba7b0f911f72e280d8b7bdc4e016",
+   "bytes": 19448
+  },
+  "sfx/hit.wav": {
+   "sha256": "f377214d32758eb6a3aa519d397a11ab0fadffcd5c6ba5ce82ffaae296176cad",
+   "bytes": 105884
+  },
+  "sfx/note0.wav": {
+   "sha256": "51ee41e6180f097fe0db6e9ace58c024b17fabd8daad53be0ce7410f2cb92550",
+   "bytes": 105884
+  },
+  "sfx/note1.wav": {
+   "sha256": "f527b544a1ad32f8356b4c7114b33c34bc779663eb8b35ce9fdd5671704193a1",
+   "bytes": 105884
+  },
+  "sfx/note2.wav": {
+   "sha256": "a45f2ecb0ef7b9c209a70d7df73618610d3bc116a3018aaf1c4de4a4f75d7bb0",
+   "bytes": 105884
+  },
+  "sfx/note3.wav": {
+   "sha256": "d8195885f9801af0f8f5e8541392b4a021e46ef3b5e96240569db7c0d24a1567",
+   "bytes": 105884
+  },
+  "sfx/note4.wav": {
+   "sha256": "7ddfc1029c2cbcf0f6923494f690e5bbc7a0d5466d2ed5b2857c0760a6762639",
+   "bytes": 105884
+  },
+  "sfx/note5.wav": {
+   "sha256": "0bf61bf4cb4b38d4d0f039af8df47024060aa6d783e4ab92bc1c3a988a061d7f",
+   "bytes": 105884
+  },
+  "sfx/note6.wav": {
+   "sha256": "0b4631ae7a57a57a1c93d151c5e269a39741c483fe0e9896051177663e4a954a",
+   "bytes": 105884
+  },
+  "sfx/note7.wav": {
+   "sha256": "3dc9b7ace3686770c13b80ab15503c80f74df1aa2066a510152d897432b23221",
+   "bytes": 105884
+  },
+  "sfx/note8.wav": {
+   "sha256": "378eb15b5653ed601cec22ca48c57fadc1836c0b04aee3075b0081e67c52b912",
+   "bytes": 105884
+  },
+  "sfx/note9.wav": {
+   "sha256": "01cb1c4d19c71adde6c8d65985dde875f32ffbec313fc11db8b035104f66a7aa",
+   "bytes": 105884
+  },
+  "sfx/ocean.wav": {
+   "sha256": "ef225a412c5823cbeaae1e77e801d7cb5f7c751df2febd178a1a0ee9eaefb6af",
+   "bytes": 4939244
+  },
+  "sfx/pop.wav": {
+   "sha256": "234de60a4e2db233900b524ecfa3bd7efa8b4ac2c6434420f308c1d47349f84f",
+   "bytes": 10628
+  },
+  "sfx/poweroff.wav": {
+   "sha256": "bafde7cb98e1ec0833f007e0ecb799a8d0e5d3f6dbe2ce1cefee4b2bf584efd4",
+   "bytes": 61782
+  },
+  "sfx/rewind.wav": {
+   "sha256": "cfee6b71cf8671b4acae7375d8612ff798145ca50b23d559a81129d9f37c4b91",
+   "bytes": 52964
+  },
+  "sfx/riser.wav": {
+   "sha256": "f38d75a4730b466874d99aa9e4808f59a56cc7596c38f5ad77d976c289aa121a",
+   "bytes": 352844
+  },
+  "sfx/shake.wav": {
+   "sha256": "43480940e5f54a37b7f748a5fc997ed858e23836cc6f1e626023847cd2ca5ff5",
+   "bytes": 39734
+  },
+  "sfx/sparkle.wav": {
+   "sha256": "ffa7a2be4026507fbda17c123318436744694ff0b68731d557542c86b27bdbb8",
+   "bytes": 158804
+  },
+  "sfx/stamp.wav": {
+   "sha256": "d91d9ef40a8542eb2f03d9f7f2976563c07b6c3ab45c54f6db656c0d23f88af8",
+   "bytes": 44144
+  },
+  "sfx/swoosh.wav": {
+   "sha256": "a0d5621aa0cb6703b8b74e698fbec6098bbb1f10eed7865632999e446b8f1c46",
+   "bytes": 88244
+  },
+  "sfx/thock.wav": {
+   "sha256": "39fe59413107fb7cfd8285d4a51a08dc85fe12a1d893edee2ab4f3603b36527f",
+   "bytes": 22094
+  },
+  "sfx/tick.wav": {
+   "sha256": "5ee17703c03af44c12a2ab8fb604b57159d5c57734e996c96efb8906a157967a",
+   "bytes": 5336
+  },
+  "sfx/tock.wav": {
+   "sha256": "14fe5c6db00ff37197145f5195ed1c58583b431fdc2f912fa78e3350036adfe9",
+   "bytes": 7100
+  },
+  "sfx/whip.wav": {
+   "sha256": "a0154d98033c45613fc21fc5768f7816b7c40f996e305de79347e088fb3bf42e",
+   "bytes": 30912
+  }
+ }
+}

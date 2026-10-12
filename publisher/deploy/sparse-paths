@@ -1,0 +1,5 @@
+# The Pi checkout's sparse cone (one directory per line), applied by the updater (app/updater.py SPARSE_FILE)
+# and used by bootstrap-git.sh and migrate-origin.sh. publisher and contract must stay listed.
+contract
+engines/motion/public
+publisher

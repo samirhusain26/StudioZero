@@ -72,6 +72,14 @@ LOW_MEMORY = ('-c', 'pack.threads=1', '-c', 'pack.windowMemory=32m', '-c', 'pack
               '-c', 'gc.autoDetach=false')
 QUICK_TESTS = ('test_runner', 'test_operations', 'test_activation', 'test_credentials', 'test_ui_views', 'test_ui_health',
                'test_ui_activity', 'test_ui_schedule', 'test_ui_approval', 'test_ui_library', 'test_ui_feedback', 'test_updater')
+# The checkout's sparse cone: publisher/deploy/sparse-paths in the commit being applied (one directory per line, '#'
+# comments), else publisher/ + contract/. Applied before the switch, outside the publisher lock (it never touches
+# publisher/ or contract/); the Studio needs engines/motion/public for its in-browser motion assets.
+SPARSE_FILE = 'publisher/deploy/sparse-paths'
+BASE_SPARSE = ('contract', 'publisher')
+SPARSE_ENTRY = re.compile(r'[a-z0-9_-]+(/[a-z0-9_-]+){0,4}')
+SPARSE_MAX = 8
+SPARSE_TIMEOUT = 30*60
 STAGE_DIR = 'scalar-update-stage'  # <repo>/.git/<STAGE_DIR>/stage-<id>: writable only by the update user
 PYCACHE = re.compile(r'(publisher|contract)/(.*/)?(__pycache__/?|[^/]+\.py[co])')
 UNIT_FILE = re.compile(r'publisher/deploy/[^/]+\.(service|path|timer|conf)')
@@ -515,6 +523,42 @@ def do_check(state, repo, status):
 
 
 # --- apply (runs in the update unit) ---------------------------------------------------------
+def sparse_paths(repo, sha):
+    """The sparse cone that commit `sha` asks for (sorted). Refuses an invalid list; nothing is changed then."""
+    listed = git(repo, 'ls-tree', '--name-only', sha, '--', SPARSE_FILE)
+    if listed.returncode:
+        raise UpdateError(f'git ls-tree failed: {tail(listed)}')
+    if not listed.stdout.strip():
+        return BASE_SPARSE
+    shown = git(repo, 'show', f'{sha}:{SPARSE_FILE}', timeout=300)
+    if shown.returncode or len(shown.stdout) > 2048:
+        raise UpdateError(f'{SPARSE_FILE} could not be read; nothing was changed')
+    entries = sorted({line.strip() for line in shown.stdout.splitlines() if line.strip() and not line.strip().startswith('#')})
+    if (len(entries) > SPARSE_MAX or not set(BASE_SPARSE) <= set(entries)
+            or not all(SPARSE_ENTRY.fullmatch(e) and '..' not in e for e in entries)):
+        raise UpdateError(f'{SPARSE_FILE} is invalid (it must list publisher and contract, at most {SPARSE_MAX} plain '
+                          'lowercase paths); nothing was changed')
+    return tuple(entries)
+
+
+def current_sparse(repo):
+    proc = git(repo, 'sparse-checkout', 'list')
+    return tuple(sorted(proc.stdout.split())) if proc.returncode == 0 else None
+
+
+def sync_sparse(state, repo, status, paths):
+    """Set the cone to `paths` (lazily fetching their blobs); on failure restore the previous cone."""
+    current = current_sparse(repo)
+    if current == paths:
+        return
+    log_line(status, f"Sparse checkout: {', '.join(paths)}")
+    write_status(state, status)
+    proc = git(repo, 'sparse-checkout', 'set', '--cone', *paths, timeout=SPARSE_TIMEOUT)
+    if proc.returncode:
+        if current:
+            git(repo, 'sparse-checkout', 'set', '--cone', *current, timeout=SPARSE_TIMEOUT)
+        raise UpdateError(f'git sparse-checkout set failed: {tail(proc)}; nothing was changed')
+
 LOCK_MISSING = ('runner.lock is missing or cannot be opened, so a post could start mid-switch; nothing was changed. '
                 'The owner re-runs bootstrap-git.sh, which creates it (0644).')
 
@@ -708,6 +752,7 @@ def do_apply(state, repo, status, sha, lock_timeout=LOCK_TIMEOUT, quick_tests=QU
         if added.returncode:
             raise UpdateError(f'git worktree add failed: {tail(added)}')
         staged_checks(stage, status, state, quick_tests)
+        sync_sparse(state, repo, status, sparse_paths(repo, sha))
         status['phase'] = 'waiting'
         log_line(status, 'Staged checks passed; waiting for the publisher lock')
         write_status(state, status)

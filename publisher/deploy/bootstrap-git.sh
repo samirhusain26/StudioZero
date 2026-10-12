@@ -3,7 +3,7 @@
 #   sudo bash <staged copy>/publisher/deploy/bootstrap-git.sh
 # Creates the system user scalar-social-update (owns and alone writes the checkout; runs the update unit), a
 # root-owned folder /etc/scalar-social-update with a read-only deploy key (you add it on GitHub), an ssh config for
-# the github.com-scalar alias and GitHub's published SSH host keys. Clones publisher/ + contract/ (partial, sparse)
+# the github.com-scalar alias and GitHub's published SSH host keys. Clones the sparse cone of publisher/deploy/sparse-paths (partial, sparse)
 # to /opt/scalar-social/repo, proves the key cannot push, creates the update state folder and its inbox, backs up
 # the current units and code, installs the units from the checkout, enables scalar-social-update.path and restarts
 # the UI. Never touches /etc/scalar-social, credentials, other /var/lib content, the pause state or the publishing
@@ -44,6 +44,18 @@ dirty_lines() {
   local out
   out=$(ugit -C "$1" status --porcelain --ignored) || { echo '?? (git status failed)'; return; }
   printf '%s\n' "$out" | awk '!/^!! / && NF {print; next} /^!! (publisher|contract)\/(.*\/)?(__pycache__\/?|[^\/]+\.py[co])$/ {print}'
+}
+# The sparse cone listed in publisher/deploy/sparse-paths at <rev> (the updater applies the same list on every update);
+# publisher and contract always. Plain lowercase paths only.
+sparse_paths() {
+  local rev=$1 line out=()
+  while IFS= read -r line; do
+    line=${line%%#*}; line=${line//[[:space:]]/}
+    [ -z "$line" ] && continue
+    [[ "$line" =~ ^[a-z0-9_-]+(/[a-z0-9_-]+){0,4}$ ]] || { echo "Refusing: invalid sparse path '$line'" >&2; return 1; }
+    out+=("$line")
+  done < <(ugit -C "$2" show "$rev:publisher/deploy/sparse-paths" 2>/dev/null || printf 'publisher\ncontract\n')
+  printf '%s\n' publisher contract "${out[@]}" | sort -u
 }
 # Moves a checkout that must not be reused out of the way, root-only.
 move_aside() {
@@ -245,11 +257,13 @@ else
   NEW=$REPO.new-$STAMP
   install -d -m 755 -o "$UUSER" -g "$UUSER" "$NEW"
   ugit "${LOW_MEMORY[@]}" clone --quiet --filter=blob:none --no-checkout --branch main "$ORIGIN" "$NEW"
-  ugit -C "$NEW" sparse-checkout set --cone publisher contract
+  SPARSE_LIST=$(sparse_paths origin/main "$NEW")  # command substitution: an invalid list stops the script (set -e)
+  mapfile -t SPARSE <<<"$SPARSE_LIST"
+  ugit -C "$NEW" sparse-checkout set --cone "${SPARSE[@]}"
   ugit "${LOW_MEMORY[@]}" -C "$NEW" checkout --quiet main
   verify_checkout "$NEW"
   mv "$NEW" "$REPO"
-  echo "Cloned main (partial, sparse: publisher/ contract/) and moved it to $REPO"
+  echo "Cloned main (partial, sparse: ${SPARSE[*]}) and moved it to $REPO"
 fi
 
 say 'Proving the deploy key is read-only (GitHub must refuse a dry-run push as read-only)'
