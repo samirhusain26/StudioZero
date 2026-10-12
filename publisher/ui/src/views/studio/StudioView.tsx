@@ -66,6 +66,11 @@ export function StudioView() {
                     ? 'Runs in this browser: preview and export on the device you are using; nothing is rendered on the Pi.'
                     : 'Runs on the laptop worker; its jobs and spend appear here once the worker is set up.'}
                 </p>
+                {e.id === 'motion' ? (
+                  <p>
+                    <a href="#/studio/export">Preview and export a batch →</a>
+                  </p>
+                ) : null}
               </li>
             ))}
           </ul>

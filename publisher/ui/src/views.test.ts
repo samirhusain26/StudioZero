@@ -33,6 +33,8 @@ describe('hash routes', () => {
     expect(routeFromHash('#/studio/make?project=originals')).toEqual({ view: 'studio', make: true, project: 'originals' })
     expect(routeFromHash('#/studio/make?project=Bad<x>')).toEqual({ view: 'studio', make: true })
     expect(routeFromHash('#/studio')).toEqual({ view: 'studio' })
+    expect(routeFromHash('#/studio/export')).toEqual({ view: 'studio', export: true })
+    expect(screenOf(routeFromHash('#/studio/export'))).toBe('export')
     expect(routeFromHash('#/studio/nope')).toEqual({ view: 'studio' })
     expect(screenOf(routeFromHash('#/studio'))).toBe('studio')
     expect(routeFromHash('#/schedule/queue')).toEqual({ view: 'schedule', queue: true })

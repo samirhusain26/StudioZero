@@ -16,7 +16,7 @@ export const VIEWS = [
 export type ViewId = (typeof VIEWS)[number]['id']
 
 /**
- * A parsed hash route. Sub-routes: `#/studio/make[?project=<id>]`, `#/library/episode/<episodeId>/<revision>`, `#/schedule/queue`,
+ * A parsed hash route. Sub-routes: `#/studio/make[?project=<id>]`, `#/studio/export`, `#/library/episode/<episodeId>/<revision>`, `#/schedule/queue`,
  * `#/activity?tab=<posts|uploads|approvals|system>`, `#/settings#<section>`, `#/home#platforms` and `#/guide/<anchor>` (the guide is opened from the help icon,
  * not a tab). `redirect` is set for an old hash (`#/dashboard`, `#/history`, `#/activation`, `#/next-batch`, `#/library/make`):
  * the address bar is replaced with it.
@@ -25,6 +25,8 @@ export interface Route {
   view: ViewId | 'guide'
   /** Studio › Make a batch. */
   make?: true
+  /** Studio › Export (in-browser motion export). */
+  export?: true
   /** Studio › Make a batch for one catalog project (default: the page's own choice). */
   project?: string
   queue?: true
@@ -71,6 +73,7 @@ export function routeFromHash(hash: string): Route {
       const project = new URLSearchParams(query).get('project') ?? ''
       return PROJECT.test(project) && project.length <= 40 ? { view: 'studio', make: true, project } : { view: 'studio', make: true }
     }
+    if (rest.length === 1 && rest[0] === 'export') return { view: 'studio', export: true }
     return { view: 'studio' }
   }
   if (first === 'library') {
@@ -105,10 +108,10 @@ export function guideHash(anchor: string): string {
 }
 
 /** The screen a route shows, for titles, the step line and the help icon. */
-export type Screen = 'home' | 'studio' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
+export type Screen = 'home' | 'studio' | 'export' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
 
 export function screenOf(route: Route): Screen {
-  if (route.view === 'studio') return route.make ? 'make' : 'studio'
+  if (route.view === 'studio') return route.make ? 'make' : route.export ? 'export' : 'studio'
   if (route.view === 'library') return route.episode ? 'episode' : 'library'
   if (route.view === 'schedule' && route.queue) return 'queue'
   return route.view
@@ -117,6 +120,7 @@ export function screenOf(route: Route): Screen {
 export const SCREEN_TITLES: Record<Screen, string> = {
   home: 'Home',
   studio: 'Studio',
+  export: 'Export',
   library: 'Library',
   make: 'Make a batch',
   episode: 'Episode',

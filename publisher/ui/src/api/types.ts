@@ -1580,3 +1580,15 @@ export interface Catalog {
   engines: CatalogEngine[]
   channels: CatalogChannel[]
 }
+
+// ---------------------------------------------------------------------------
+// GET /api/assets/motion/manifest: the motion engine's public files the Pi serves for in-browser preview and export
+// (publisher/motion-assets.json). Files: GET <base>/<path> (session cookie; immutable, ETag = sha256, Range).
+// ---------------------------------------------------------------------------
+
+export interface MotionManifest {
+  version: string
+  /** e.g. `/api/assets/motion/<version>`: staticFile() resolves against it. */
+  base: string
+  files: Record<string, { bytes: number; sha256: Sha256 }>
+}

@@ -8,7 +8,7 @@ This repository is public (GitHub `samirhusain26/StudioZero`), and whoever can p
 - Media and renders: anything under `out/`, `output/`, `.audio-work/`, review folders, QA screenshots (some show tokens). Batch videos, covers and masters stay in `library/<batch>/` locally (only `batch.json` is tracked).
 - Music or sound effects without a recorded free licence (`beds.json` entry with a CC0/CC BY licence, or a procedural generator).
 - Pi and tailnet addresses: `*.ts.net` names, IP addresses. Docs use the ssh alias `scalar-pi` and placeholders such as `https://<pi>.<tailnet>.ts.net`. The Pi's short LAN name and login user (`scout`) appear in historical notes and one-off scripts; that is accepted, the tailnet name is not.
-- Personal details: e-mail addresses, phone numbers, home addresses, home-directory paths (`/Users/<name>`).
+- Personal details: e-mail addresses, phone numbers, home addresses, home-directory paths (`/Users/<name>`). Two vendor strings in the committed UI bundle are allowed by name: Remotion's public support address (`…@remotion.dev`) and Emscripten's virtual `/home/web_user` in a WebAssembly encoder.
 - Platform account IDs (Buffer channel IDs, provider IDs, Page IDs, Bluesky DID, Cloudflare account ID): they live only in the Pi's root-owned `/etc/scalar-social/config.json` under `identities`; `publisher/config.example.json` and tests carry fakes.
 - Unreleased or future game answers, and private game-repo content beyond the snapshot rules, **except** `library/_sources/**`: the owner decided on 2026-10-11 that the frozen snapshots (including future Whenabouts puzzles, which the live site serves anyway) may be public.
 

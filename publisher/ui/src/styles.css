@@ -2238,3 +2238,32 @@ a.chip-btn[aria-current='page'] {
     height: 8px;
   }
 }
+
+/*
+ * Studio › Export: Remotion renders an episode in a scaffold appended to <body> (class remotion-scaffold-<random>), and
+ * the preview in the Player. Neither may inherit this app's text styles: reset them to what a plain Remotion page has
+ * (render.sh renders there). Layout properties stay with Remotion's inline styles.
+ */
+div[class^='remotion-scaffold-'],
+.__remotion-player {
+  font: initial;
+  color: initial;
+  overflow-wrap: normal;
+  word-break: normal;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-align: start;
+  text-transform: none;
+  text-indent: 0;
+  white-space: normal;
+}
+
+/* Studio › Export: the Remotion Player preview stays phone-sized on wide screens */
+.motion-preview {
+  max-width: 360px;
+}
+
+.motion-player {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+}

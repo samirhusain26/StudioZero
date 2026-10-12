@@ -1,6 +1,11 @@
 /** Save text generated in the page as a file (no network). */
 export function saveTextFile(name: string, text: string, type = 'application/json'): void {
-  const url = URL.createObjectURL(new Blob([text], { type }))
+  saveBlob(name, new Blob([text], { type }))
+}
+
+/** Save a file made in the page (e.g. an exported MP4) to the device (no network). */
+export function saveBlob(name: string, blob: Blob): void {
+  const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
   link.download = name

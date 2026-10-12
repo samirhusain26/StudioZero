@@ -68,8 +68,8 @@ export const ClueCard: React.FC<{
     <div style={{position: 'relative', flex: 1, display: 'flex', alignItems: 'center', padding: '22px 26px 18px',
       backgroundColor: focus > 0 ? `rgba(20,184,166,${0.1 * focus})` : s.card,
       fontFamily: s.fontDisplay, fontWeight: 900, fontSize, lineHeight: 1.06, color: s.fg, letterSpacing: '-0.005em'}}>
-      {/* Card border 3 px each side; the number tab is 78 px plus its 3 px border. */}
-      <Ruling width={w - 6 - 81} height={h - 6} />
+      {/* Card border 3 px each side; the number tab is 78 px including its border (Remotion pages are border-box). */}
+      <Ruling width={w - 6 - 78} height={h - 6} />
       <span style={{position: 'relative', opacity: textFade}}>{text}</span>
     </div>
   </div>

@@ -11,7 +11,7 @@ import {resolve, relative} from 'node:path';
 import {ROOT, STUDIO, loadSet, bedPool} from '../../engines/motion/pipeline/lib.mjs';
 import {scalargameEpisodes} from './package-core.mjs';
 
-function recipeOf(id) {
+export function recipeOf(id) {
   const src = readFileSync(resolve(STUDIO, `src/projects/scalargame/styles/${id}.ts`), 'utf8');
   const summary = src.match(/summary:\s*(['"`])([\s\S]*?)\1\s*,/)?.[2];
   const version = Number(src.match(/version:\s*(\d+)/)?.[1]);

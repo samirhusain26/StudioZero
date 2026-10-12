@@ -55,8 +55,12 @@ REQUEST_TIMEOUT_SECONDS = 60
 LOOPBACK = {'127.0.0.1', '::1', 'localhost'}
 JSON_CAP = 256_000
 MEDIA_TTL = 3600
-CSP = ("default-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; style-src 'self'; script-src 'self'; "
-       "connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'; object-src 'none'")
+# Studio › Export (in-browser rendering): the mastered mix is fetched from a blob: URL, the encoders run in blob:
+# workers and the AAC fallback encoder is WebAssembly ('wasm-unsafe-eval' allows compiling Wasm, not JS eval).
+# Nothing may connect anywhere but this origin (Remotion's usage ping to its own site stays blocked).
+CSP = ("default-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; style-src 'self'; "
+       "script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' blob:; "
+       "frame-ancestors 'none'; base-uri 'none'; form-action 'none'; object-src 'none'")
 SECURITY_HEADERS = {'Content-Security-Policy': CSP, 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer',
                     'X-Frame-Options': 'DENY', 'Cross-Origin-Opener-Policy': 'same-origin',
                     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'}

@@ -30,6 +30,14 @@ export const SCREEN_HELP = {
       'Make a batch builds the prompt for Claude from what the engines can make.',
     ],
   },
+  export: {
+    anchor: 'export-in-the-browser',
+    lines: [
+      'Open the batch\'s job bundle (web-jobs.json); it stays in this browser.',
+      'Preview any episode, then export: each one is rendered, mastered and checked here, on this device.',
+      'When every episode passed, finalize and upload: the Pi validates everything again.',
+    ],
+  },
   library: {
     anchor: 'upload-a-batch',
     lines: [

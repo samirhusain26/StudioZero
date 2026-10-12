@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { api, clearPasscode, onUnauthorized, restoreSession } from './api/client'
 import { PasscodeView } from './views/PasscodeView'
 import { DashboardView } from './views/DashboardView'
@@ -9,6 +9,10 @@ import { ActivityView } from './views/ActivityView'
 import { SettingsView } from './views/SettingsView'
 import { MakeBatchView } from './views/MakeBatchView'
 import { StudioView } from './views/studio/StudioView'
+import { Loading } from './components/Loading'
+
+// Remotion (preview and export) loads only on this screen.
+const ExportView = lazy(() => import('./views/studio/ExportView'))
 import { GuideView } from './views/GuideView'
 import { AppNav } from './components/AppNav'
 import { StepLine } from './components/StepLine'
@@ -169,7 +173,12 @@ export function App() {
             <EpisodeDetailView key={`${episode.episodeId}@${episode.revision}`} episodeId={episode.episodeId} revision={episode.revision} />
           ) : null}
           {view === 'studio' && route.make ? <MakeBatchView key={route.project ?? ''} project={route.project} /> : null}
-          {view === 'studio' && !route.make ? <StudioView /> : null}
+          {view === 'studio' && route.export ? (
+            <Suspense fallback={<Loading />}>
+              <ExportView />
+            </Suspense>
+          ) : null}
+          {view === 'studio' && !route.make && !route.export ? <StudioView /> : null}
           {view === 'library' && !episode ? <LibraryView /> : null}
           {view === 'schedule' ? <ScheduleView queue={Boolean(route.queue)} /> : null}
           {view === 'guide' ? <GuideView anchor={route.anchor} /> : null}

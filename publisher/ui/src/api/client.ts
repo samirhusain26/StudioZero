@@ -30,6 +30,7 @@ import type {
   LibraryResponse,
   MarkUsedResponse,
   MetricsStatus,
+  MotionManifest,
   NextBatchInfo,
   PauseResponse,
   Problem,
@@ -340,6 +341,7 @@ export const api = {
   logoutSession: () => request<{ authenticated: boolean }>('DELETE', '/api/session'),
   health: () => request<HealthResponse>('GET', '/api/health'),
   catalog: () => request<Catalog>('GET', '/api/catalog'),
+  motionManifest: () => request<MotionManifest>('GET', '/api/assets/motion/manifest'),
   dashboard: (signal?: AbortSignal) => request<DashboardResponse>('GET', '/api/dashboard', signal ? { signal } : {}),
   pause: (note?: string) => request<PauseResponse>('POST', '/api/pause', { json: note ? { note } : {} }),
 

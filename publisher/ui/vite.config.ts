@@ -5,8 +5,10 @@ import react from '@vitejs/plugin-react'
 // The motion engine's kit (engines/motion/src) is imported as @motion/* by the lazily loaded Studio motion chunk. One
 // copy of React and Remotion: bare imports from the kit resolve to this project's node_modules (same pinned versions).
 export const MOTION_SRC = fileURLToPath(new URL('../../engines/motion/src', import.meta.url))
+// The repo's pure packaging cores (tools/*-core.mjs, projects/*/package-core.mjs, engines/motion/pipeline/*-core.mjs).
+export const STUDIO_ROOT = fileURLToPath(new URL('../..', import.meta.url))
 export const MOTION_RESOLVE = {
-  alias: { '@motion': MOTION_SRC },
+  alias: { '@motion': MOTION_SRC, '@studio': STUDIO_ROOT },
   dedupe: ['react', 'react-dom', 'remotion', '@remotion/media'],
 }
 

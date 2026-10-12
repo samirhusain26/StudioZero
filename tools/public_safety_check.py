@@ -63,10 +63,12 @@ CONTENT = [
     (r'"private_key"\s*:\s*"-----BEGIN', 'service account key'),
     (r'\b[a-z0-9-]+\.tail[0-9a-f]{4,}\.ts\.net\b', 'Tailscale host name'),
     (r'(?<![\d.])(?!127\.0\.0\.1\b|0\.0\.0\.0\b|255\.255\.255\.255\b)(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)(?![\d.])', 'IP address'),
-    (r'(?<![:/\w.%+-])[A-Za-z0-9._%+-]+@(?!example\.(?:com|org|net)\b|anthropic\.com\b|users\.noreply\.github\.com\b|github\.com\b)'
+    # remotion.dev: Remotion's public support address inside its library code (the Studio's export bundle).
+    (r'(?<![:/\w.%+-])[A-Za-z0-9._%+-]+@(?!example\.(?:com|org|net)\b|anthropic\.com\b|users\.noreply\.github\.com\b|github\.com\b|remotion\.dev\b)'
      r'[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.(?:com|net|org|io|co|dev|app|me|uk|de|in|us|ai)\b', 'e-mail address'),
     (r'/Users/[A-Za-z0-9._-]+', 'Mac home path'),
-    (r'/home/(?!scout\b)[a-z_][a-z0-9_-]*', 'home path'),
+    # web_user: Emscripten's virtual file system home inside WebAssembly glue code (a vendor encoder), not a real user.
+    (r'/home/(?!scout\b|web_user\b)[a-z_][a-z0-9_-]*', 'home path'),
     (r'(?<![0-9a-zA-Z])(?!' + FAKE + r')[0-9a-f]{24}(?![0-9a-zA-Z])', 'Buffer/Mongo-style ID'),
     (r'(?<![A-Za-z0-9_-])(?!' + FAKE + r')UC[A-Za-z0-9_-]{22}(?![A-Za-z0-9_-])', 'YouTube channel ID'),
     (r'did:plc:(?!a{24})[a-z2-7]{24}', 'Bluesky DID'),

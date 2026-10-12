@@ -23,6 +23,7 @@
     "queue": "approve-a-schedule",
     "activity": "health",
     "settings": "things-only-samir-can-do",
-    "guide": "how-it-works"
+    "guide": "how-it-works",
+    "export": "export-in-the-browser"
   }
 }

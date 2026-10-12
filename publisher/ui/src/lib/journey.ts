@@ -257,6 +257,7 @@ export function journey(args: { dashboard: DashboardResponse | null | undefined;
 /** Screens and the steps they belong to (first listed = the default when none of them is current). */
 export const SCREEN_STEPS = {
   studio: ['make'],
+  export: ['make'],
   make: ['make', 'learn'],
   library: ['upload', 'review'],
   episode: ['review'],

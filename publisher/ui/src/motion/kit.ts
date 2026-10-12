@@ -6,6 +6,3 @@ import '@motion/fonts'
 export { LibraryEpisode, calculateLibraryMetadata } from '@motion/projects/scalargame/LibraryEpisode'
 export { FPS } from '@motion/projects/scalargame/timing'
 export type { LibraryEpisodeProps } from '@motion/projects/scalargame/types'
-
-export const WIDTH = 1080
-export const HEIGHT = 1920
