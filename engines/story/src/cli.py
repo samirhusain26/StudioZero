@@ -259,17 +259,70 @@ def interactive_wizard():
         return 1
 
 
-def main():
+def _parse_args(argv=None):
     import argparse
-    parser = argparse.ArgumentParser(description="StudioZero CLI")
-    parser.add_argument("--headless", action="store_true")
-    args, _ = parser.parse_known_args()
+    parser = argparse.ArgumentParser(
+        description="StudioZero story engine. Without --headless: the interactive wizard.",
+        epilog=(
+            "Headless examples (paid API calls unless --offline; owner OK required):\n"
+            "  python -m src.cli --headless --route recap --title \"The Dark Knight\"\n"
+            "  python -m src.cli --headless --route recap --title \"The Dark Knight\" --offline\n"
+            "  python -m src.cli --headless --route series --title \"Galactic Garage\" "
+            "--brief \"Alien mechanics fix spaceships\" --episodes 1"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--headless", action="store_true", help="Run one job without prompts")
+    parser.add_argument("--route", choices=["recap", "series"], help="recap (stock footage) or series (AI animation)")
+    parser.add_argument("--title", help="recap: movie title or story idea; series: project title")
+    parser.add_argument("--brief", help="series: 1-3 sentence story brief")
+    parser.add_argument("--episodes", type=int, default=1, help="series: number of episodes (1-10, default 1)")
+    parser.add_argument("--project-dir", help="series: project directory (default output/temp/<title>)")
+    parser.add_argument("--no-resume", action="store_true", help="series: start fresh instead of resuming")
+    parser.add_argument("--offline", action="store_true", help="recap: replay output/temp/<title>/pipeline_cache.json, no API calls")
+    parser.add_argument("--clean", action="store_true", help="recap: delete the temp folder after rendering")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    return parser, parser.parse_args(argv)
+
+
+def run_headless(args) -> int:
+    """Map headless CLI arguments onto src.headless.run_single."""
+    if args.route == "recap":
+        # No validate_input / random-idea step here: headless runs take the title as given.
+        cfg = RunConfig(
+            movie=args.title,
+            mode="movie",
+            offline=args.offline,
+            clean=args.clean,
+            verbose=args.verbose,
+        )
+    else:
+        cfg = RunConfig(
+            movie=args.title,
+            mode="animation-series",
+            storyline=args.brief or "",
+            num_episodes=args.episodes,
+            no_resume=args.no_resume,
+            project_dir=args.project_dir,
+            verbose=args.verbose,
+        )
+    return run_single(cfg)
+
+
+def main(argv=None):
+    parser, args = _parse_args(argv)
 
     if not args.headless:
         return interactive_wizard()
-    else:
-        print("Headless mode requires arguments. Use --help for details.")
-        return 1
+
+    if not args.route or not args.title:
+        parser.error("--headless needs --route recap|series and --title")
+    if args.route == "series":
+        if not args.brief and not args.project_dir:
+            parser.error("--route series needs --brief (or --project-dir of an existing project)")
+        if not 1 <= args.episodes <= 10:
+            parser.error("--episodes must be between 1 and 10")
+    return run_headless(args)
 
 
 if __name__ == "__main__":

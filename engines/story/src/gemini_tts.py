@@ -23,12 +23,18 @@ from typing import Tuple, Optional
 from google import genai
 from google.genai import types
 from google.genai.errors import ClientError, ServerError as GenAIServerError
-from google.api_core.exceptions import (
-    ServiceUnavailable,
-    ResourceExhausted,
-    DeadlineExceeded,
-    InternalServerError,
-)
+try:
+    from google.api_core.exceptions import (
+        ServiceUnavailable,
+        ResourceExhausted,
+        DeadlineExceeded,
+        InternalServerError,
+    )
+    _API_CORE_ERRORS = (ServiceUnavailable, ResourceExhausted, DeadlineExceeded, InternalServerError)
+except ImportError:
+    # google-api-core is not a declared dependency (it used to arrive with the retired
+    # Sheets/Drive clients); google-genai raises its own ClientError/ServerError anyway.
+    _API_CORE_ERRORS = ()
 from tenacity import (
     retry,
     stop_after_attempt,
@@ -265,10 +271,7 @@ def _extract_audio_from_response(response) -> Optional[bytes]:
 
 @retry(
     retry=retry_if_exception_type((
-        ServiceUnavailable,
-        ResourceExhausted,
-        DeadlineExceeded,
-        InternalServerError,
+        *_API_CORE_ERRORS,
         ClientError,
         GenAIServerError,
         ConnectionError,

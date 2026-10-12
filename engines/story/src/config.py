@@ -10,8 +10,11 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 def _load_settings_file() -> dict:
-    """Load settings overrides from output/settings.json if it exists."""
-    settings_path = Path(__file__).resolve().parent.parent / "output" / "settings.json"
+    """Load settings overrides from output/settings.json (or $STORY_SETTINGS_FILE) if it exists."""
+    settings_path = Path(
+        os.getenv("STORY_SETTINGS_FILE")
+        or Path(__file__).resolve().parent.parent / "output" / "settings.json"
+    )
     if settings_path.exists():
         try:
             data = json.loads(settings_path.read_text(encoding="utf-8"))

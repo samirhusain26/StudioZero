@@ -20,7 +20,8 @@ StudioZero/
 │   ├── server_launcher.py  # Server startup helper
 │   ├── video_models.py     # Central registry of all 11 video generation models
 │   ├── video_client.py     # Unified video client (fal.ai + Vertex AI routing)
-│   ├── budget_guard.py     # Per-project budget enforcement + auto-downgrade
+│   ├── budget_guard.py     # Per-project budget enforcement + auto-downgrade, spend ledger
+│   ├── render_json.py      # render.json + cover.jpg per final video (docs/HEADLESS.md)
 │   ├── steps/              # Modular Pipeline Steps (Animation Series)
 │   │   ├── writer.py        # Brief → Story + Character Seeds
 │   │   ├── screenwriter.py  # Story → Episode Scene Breakdowns
@@ -52,11 +53,13 @@ StudioZero/
 │   ├── music/              # Background tracks by genre
 │   └── creds/              # Service account credentials
 ├── output/
-│   ├── final/              # Rendered MP4 videos
+│   ├── final/              # Rendered MP4s; recaps in <safe_title>/ with cover.jpg + render.json
 │   ├── temp/               # Per-project temporary assets and state
 │   ├── projects/           # Project state JSON files (Web Dashboard)
 │   └── pipeline_logs/      # Script generation JSON logs
 ├── docs/                   # Detailed documentation
+├── tests/                  # $0 unittest suite (smoke tests for both routes)
+├── registry.json           # Routes, default models, video model registry (single source)
 └── README.md               # Project overview
 ```
 

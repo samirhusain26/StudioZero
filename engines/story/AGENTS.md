@@ -18,5 +18,5 @@ StudioZero is a Python pipeline for producing vertical social video through stoc
 
 ## Verify
 
-- Prefer a low-cost or mocked smoke path for changed stages.
+- Prefer a low-cost or mocked smoke path for changed stages: `.venv/bin/python -m unittest discover -s tests -v` runs both routes at $0 (`docs/HEADLESS.md`).
 - Validate resume behavior when changing persisted pipeline state.

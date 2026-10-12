@@ -22,6 +22,8 @@ from src.config_mappings import (
 
 logger = logging.getLogger(__name__)
 
+GROQ_FALLBACK_MODEL = "llama-3.3-70b-versatile"
+
 
 # ============================================================================
 # Pydantic Models - Video Director Pro Schema
@@ -127,6 +129,11 @@ class StoryGenerator:
         self.log_dir = log_dir or Config.LOGS_DIR
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
+        # What produced the last script (read by render.json): provider, model, token usage
+        self.last_provider: Optional[str] = None
+        self.last_model: Optional[str] = None
+        self.last_usage: Optional[dict] = None
+
     def _generate_with_gemini(self, system_prompt: str, user_prompt: str) -> str:
         """
         Generate script using Google Gemini with structured JSON output.
@@ -156,6 +163,12 @@ class StoryGenerator:
             ),
         )
 
+        usage = getattr(response, "usage_metadata", None)
+        self.last_usage = {
+            "promptTokens": getattr(usage, "prompt_token_count", None),
+            "outputTokens": getattr(usage, "candidates_token_count", None),
+            "totalTokens": getattr(usage, "total_token_count", None),
+        } if usage is not None else None
         return response.text
 
     @retry(
@@ -171,6 +184,12 @@ class StoryGenerator:
             Raw JSON string response from Groq
         """
         response = self.groq_client.chat.completions.create(**kwargs)
+        usage = getattr(response, "usage", None)
+        self.last_usage = {
+            "promptTokens": getattr(usage, "prompt_tokens", None),
+            "outputTokens": getattr(usage, "completion_tokens", None),
+            "totalTokens": getattr(usage, "total_tokens", None),
+        } if usage is not None else None
         return response.choices[0].message.content
 
     def _log_result(self, movie_title: str, data: dict) -> Path:
@@ -404,6 +423,7 @@ Output ONLY valid JSON."""
 
         content = None
         provider_used = "gemini"
+        self.last_usage = None
 
         # Try Gemini first (primary)
         try:
@@ -428,7 +448,7 @@ Output ONLY valid JSON."""
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt}
                     ],
-                    model="llama-3.3-70b-versatile",
+                    model=GROQ_FALLBACK_MODEL,
                     response_format={"type": "json_object"}
                 )
                 logger.info(f"Script generated successfully with Groq fallback")
@@ -446,6 +466,9 @@ Output ONLY valid JSON."""
 
             # Set lang_code based on selected voice
             result.lang_code = get_lang_code_for_voice(result.selected_voice_id)
+
+            self.last_provider = provider_used
+            self.last_model = self.gemini_model if provider_used == "gemini" else GROQ_FALLBACK_MODEL
 
             # Log result
             self._log_result(movie_title, {

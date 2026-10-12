@@ -16,21 +16,26 @@ generation uses the google.genai SDK directly.
 
 Rate limits are enforced between requests (35s for Vertex AI, lower for fal.ai).
 
+Budget: spend is tracked per project in spend_ledger.json (budget_guard.SpendLedger).
+Every billed attempt is recorded with the model that actually ran (after fallback or
+downgrade); clips that predate the ledger are backfilled with an estimate.
+
 Retry / override mechanism:
   - Before sending, the generator checks for clips/scene_X_override.txt.
     If present, its contents replace the default veo_prompt.
   - A skip marker at clips/scene_X.skip causes the scene to be skipped entirely.
 """
 
+import json
 import logging
 import time
 from pathlib import Path
 from typing import List, Optional
 
 from src.config import Config
-from src.video_models import get_model
+from src.video_models import get_model, estimate_cost
 from src.video_client import UnifiedVideoClient
-from src.budget_guard import BudgetGuard, BudgetExceeded
+from src.budget_guard import BudgetGuard, BudgetExceeded, SpendLedger
 from src.steps import StepContext, StepResult
 from src.steps.director import load_director_shots
 
@@ -61,11 +66,64 @@ def _get_scene_start_image(ctx: StepContext, character_id: str, location_id: str
     return None
 
 
+def _recorded_model_id(project_dir: Path) -> Optional[str]:
+    """The video model a dashboard run recorded in project.json step_data, if any."""
+    project_file = project_dir / "project.json"
+    if not project_file.exists():
+        return None
+    try:
+        step_data = json.loads(project_file.read_text(encoding="utf-8")).get("step_data") or {}
+    except Exception:
+        return None
+    for data in step_data.values():
+        if isinstance(data, dict) and data.get("model_id"):
+            return data["model_id"]
+    return None
+
+
+def _backfill_existing_clips(ctx: StepContext, ledger: SpendLedger, shots, clips_dir: Path) -> None:
+    """Record clips rendered before the ledger existed, so the budget counts them."""
+    assumed_model = _recorded_model_id(ctx.project_dir) or Config.ACTIVE_VIDEO_MODEL
+    try:
+        assumed_cfg = get_model(assumed_model)
+    except KeyError:
+        assumed_model, assumed_cfg = Config.ACTIVE_VIDEO_MODEL, get_model(Config.ACTIVE_VIDEO_MODEL)
+    for shot in shots.shots:
+        clip_path = clips_dir / f"scene_{shot.scene_id}.mp4"
+        if not (clip_path.exists() and clip_path.stat().st_size > 0):
+            continue
+        if ledger.clip_entry(ctx.episode_number, shot.scene_id):
+            continue
+        pending = [e for e in ledger.entries_for(ctx.episode_number, shot.scene_id) if e.get("status") == "submitted"]
+        if pending:
+            # Billed and downloaded, but the run stopped before the entry was closed
+            ledger.update(pending[-1], status="ok")
+            continue
+        cost = estimate_cost(assumed_model, assumed_cfg.max_duration_sec, False)
+        ledger.record(
+            episode=ctx.episode_number,
+            scene_id=shot.scene_id,
+            model_id=assumed_model,
+            duration_sec=assumed_cfg.max_duration_sec,
+            cost_usd=cost,
+            status="ok",
+            source="backfill",
+        )
+        logger.info(
+            f"[scene_generator] Backfilled ledger for existing clip {clip_path.name}: "
+            f"assumed {assumed_model}, ${cost:.2f}"
+        )
+
+
 def run(ctx: StepContext) -> StepResult:
     """Render each director shot as a video clip, sequentially."""
     shots = load_director_shots(ctx.episode_dir)
     clips_dir = ctx.episode_dir / "clips"
     clips_dir.mkdir(parents=True, exist_ok=True)
+
+    # Project-wide spend ledger: the budget covers every episode and every earlier run
+    ledger = SpendLedger(ctx.project_dir)
+    _backfill_existing_clips(ctx, ledger, shots, clips_dir)
 
     # Initialize video client and budget guard with the configured model
     model_id = Config.ACTIVE_VIDEO_MODEL
@@ -74,6 +132,7 @@ def run(ctx: StepContext) -> StepResult:
     guard = BudgetGuard(
         max_budget=Config.VIDEO_MAX_BUDGET,
         auto_downgrade=Config.VIDEO_AUTO_DOWNGRADE,
+        ledger=ledger,
     )
 
     rate_limit_wait = _RATE_LIMIT_VERTEX if model_config.provider == "vertex_ai" else _RATE_LIMIT_FAL
@@ -84,10 +143,31 @@ def run(ctx: StepContext) -> StepResult:
     logger.info(
         f"[scene_generator] Episode {ctx.episode_number}: "
         f"rendering {len(shots.shots)} shot(s) via {model_config.display_name} ({model_id}), "
-        f"budget: ${Config.VIDEO_MAX_BUDGET:.2f}"
+        f"budget: ${Config.VIDEO_MAX_BUDGET:.2f} (project spend so far: ${guard.cumulative_spend:.2f})"
     )
 
+    def _record_attempt(scene_id: int, event: str, attempt: dict) -> None:
+        """Ledger + guard bookkeeping for every attempt the client makes."""
+        if event == "submitted":
+            # Billed from the moment the provider accepted the job
+            attempt["ledger_entry"] = ledger.record(
+                episode=ctx.episode_number,
+                scene_id=scene_id,
+                model_id=attempt["model_id"],
+                duration_sec=attempt["duration"],
+                cost_usd=attempt["cost"],
+            )
+            guard.record_spend(attempt["cost"])
+        elif "ledger_entry" in attempt:
+            fields = {"status": "ok" if event == "succeeded" else "failed"}
+            if attempt.get("error"):
+                fields["error"] = attempt["error"][:300]
+            ledger.update(attempt["ledger_entry"], **fields)
+
     for shot in shots.shots:
+        # The client may have switched model (fallback/downgrade) on an earlier scene
+        model_config = get_model(client.model_id)
+        rate_limit_wait = _RATE_LIMIT_VERTEX if model_config.provider == "vertex_ai" else _RATE_LIMIT_FAL
         clip_path = clips_dir / f"scene_{shot.scene_id}.mp4"
         skip_marker = clips_dir / f"scene_{shot.scene_id}.skip"
         override_file = clips_dir / f"scene_{shot.scene_id}_override.txt"
@@ -207,6 +287,8 @@ def run(ctx: StepContext) -> StepResult:
                     "model": model_id,
                 })
 
+        client.on_attempt = lambda event, attempt, _sid=shot.scene_id: _record_attempt(_sid, event, attempt)
+
         try:
             last_call_at = time.monotonic()
 
@@ -224,12 +306,15 @@ def run(ctx: StepContext) -> StepResult:
                     dialogue=shot.dialogue,
                     voice_profile=shot.voice_profile,
                     on_poll=_on_poll,
+                    budget_check=lambda _mid, cost: guard.can_afford(cost),
                 )
             else:
                 result_path = client.generate_video(
                     prompt=veo_prompt,
                     output_dir=clips_dir,
                     filename=f"scene_{shot.scene_id}.mp4",
+                    # Veo renders max_duration_sec by default; cost it at that length
+                    duration=model_config.max_duration_sec,
                     image_path=str(ref_image),
                     dialogue=shot.dialogue,
                     voice_profile=shot.voice_profile,
@@ -248,19 +333,17 @@ def run(ctx: StepContext) -> StepResult:
                 raise RuntimeError(detail)
 
             size_kb = clip_path.stat().st_size // 1024
-            # Record cost with budget guard
-            from src.video_models import estimate_cost as _est_cost
-            scene_cost = _est_cost(client.model_id, model_config.max_duration_sec, False)
-            guard.record_spend(scene_cost)
+            # Spend was recorded per billed attempt (ledger + guard) by _record_attempt
+            scene_cost = round(sum(e.get("costUsd", 0.0) for e in ledger.entries_for(ctx.episode_number, shot.scene_id)), 4)
 
             # Emit live cost update to UI
             if ctx.progress_callback:
                 ctx.progress_callback({
                     "type": "cost_update",
                     "scene_id": shot.scene_id,
-                    "scene_cost": round(scene_cost, 4),
+                    "scene_cost": scene_cost,
                     "budget": guard.summary(),
-                    "model_name": model_config.display_name,
+                    "model_name": client.model.display_name,
                 })
 
             logger.info(
@@ -303,7 +386,8 @@ def run(ctx: StepContext) -> StepResult:
     budget = guard.summary()
     logger.info(
         f"[scene_generator] Episode {ctx.episode_number} complete — "
-        f"{len(artifact_paths)} clip(s) rendered, estimated cost: ${total_cost:.2f} "
+        f"{len(artifact_paths)} clip(s) rendered, estimated cost this run: ${total_cost:.2f}, "
+        f"episode total: ${ledger.total(ctx.episode_number):.2f} "
         f"(budget: ${budget['remaining']:.2f} remaining)"
     )
     return StepResult(
@@ -313,6 +397,12 @@ def run(ctx: StepContext) -> StepResult:
             "model_name": client.model.display_name,
             "generation_count": client.get_generation_count(),
             "estimated_cost": total_cost,
+            "episode_cost": ledger.total(ctx.episode_number),
+            "clip_models": {
+                str(shot.scene_id): entry["modelId"]
+                for shot in shots.shots
+                if (entry := ledger.clip_entry(ctx.episode_number, shot.scene_id))
+            },
             "budget": budget,
         },
     )

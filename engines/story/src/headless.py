@@ -1,14 +1,14 @@
 """
 Headless (non-interactive) runner for StudioZero pipelines.
 
-Extracted from the original app.py CLI. Used by:
-  - cli.py --headless  (backwards-compatible CLI)
-  - batch_runner.py    (Google Sheets automation)
+Used by `python -m src.cli --headless --route recap|series ...` and by the smoke
+tests (tests/test_smoke.py).
 """
 
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
+from pathlib import Path
 from typing import Optional, Tuple, List
 
 from src.logging_utils import setup_logging
@@ -32,6 +32,7 @@ class RunConfig:
     episode_number: Optional[int] = None
     no_resume: bool = False
     output: Optional[str] = None
+    project_dir: Optional[str] = None  # series: explicit project directory (default output/temp/{title})
 
 
 def print_banner():
@@ -111,7 +112,7 @@ def run_single(cfg: RunConfig) -> int:
         "animated": "ANIMATED (episodic parody via Veo 3.1)",
         "animation-script": f"ANIMATION SCRIPT WRITER ({cfg.num_episodes} episodes)",
         "animation-render": f"ANIMATION RENDERER (episode {cfg.episode_number or 'next pending'})",
-        "animation-series": f"ANIMATION SERIES (9-step pipeline, {cfg.num_episodes} episodes)",
+        "animation-series": f"ANIMATION SERIES (8-step pipeline, {cfg.num_episodes} episodes)",
     }
     log.info(f"Mode: {mode_labels.get(cfg.mode, cfg.mode)}")
     if cfg.offline:
@@ -134,6 +135,7 @@ def run_single(cfg: RunConfig) -> int:
                 brief=cfg.storyline or "",
                 num_episodes=cfg.num_episodes,
                 resume=not cfg.no_resume,
+                project_dir=Path(cfg.project_dir) if cfg.project_dir else None,
             )
 
             project_dir = consume_generator(gen, log)

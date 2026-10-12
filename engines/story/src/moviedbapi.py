@@ -152,6 +152,13 @@ class MovieDBClient:
         # If too many, just take top 10
         categories = categories[:10]
 
+        # Article URL for the CC BY-SA attribution in render.json (one small info request)
+        try:
+            source_url = page.fullurl
+        except Exception as e:
+            logger.warning(f"Could not read the Wikipedia page URL: {e}")
+            source_url = ""
+
         return {
             "title": page.title,
             "plot": plot_text,
@@ -159,6 +166,8 @@ class MovieDBClient:
             "year": "",
             "tagline": "",
             "source": "Wikipedia",
+            "source_url": source_url,
+            "wiki_title": page.title,
             "categories": categories
         }
 
@@ -216,6 +225,7 @@ class MovieDBClient:
                 "source": "TMDB",
                 "genres": genres,
                 "poster_path": details.get("poster_path", ""),
+                "tmdb_id": details.get("id"),
             }
 
         except requests.RequestException as e:

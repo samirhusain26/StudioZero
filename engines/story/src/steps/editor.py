@@ -2,7 +2,8 @@
 Step 7 (per episode): Editor — Assemble all scene clips into a final episode video.
 
 Input:  episodes/episode_N/clips/scene_*.mp4 (from Scene Generator)
-Output: episodes/episode_N/final.mp4 + output/final/{title}_ep{N}.mp4
+Output: episodes/episode_N/final.mp4 + cover.jpg + render.json, and a copy at
+        output/final/{title}_ep{N}.mp4
 
 Trims the first 0.2s from each clip (removes the reference-image flash that
 Veo produces when image-to-video mode anchors on the input PNG), then
@@ -17,6 +18,7 @@ from pathlib import Path
 from typing import List
 
 from src.renderer import assemble_veo_clips
+from src.render_json import RENDER_JSON, write_series_render_json
 from src.config import Config
 from src.steps import StepContext, StepResult
 from src.steps.writer import load_story
@@ -57,7 +59,10 @@ def run(ctx: StepContext) -> StepResult:
             f"[editor] Final video already exists for episode {ctx.episode_number} "
             f"({final_path.stat().st_size // 1024} KB) — skipping"
         )
-        return StepResult(artifact_paths=[str(final_path)])
+        render_json = ctx.episode_dir / RENDER_JSON
+        if not render_json.exists():
+            write_series_render_json(ctx.project_dir, ctx.episode_number, final_path)
+        return StepResult(artifact_paths=[str(final_path), str(render_json)])
 
     clips_dir = ctx.episode_dir / "clips"
     clip_paths = sorted(
@@ -106,7 +111,10 @@ def run(ctx: StepContext) -> StepResult:
     shutil.copy2(final_path, final_output)
     logger.info(f"[editor] Copied to output: {final_output}")
 
+    # render.json + cover.jpg next to final.mp4 (engine → packager hand-off)
+    render_json = write_series_render_json(ctx.project_dir, ctx.episode_number, final_path)
+
     return StepResult(
-        artifact_paths=[str(final_path), str(final_output)],
-        data={"final_video": str(final_output)},
+        artifact_paths=[str(final_path), str(final_output), str(render_json)],
+        data={"final_video": str(final_output), "render_json": str(render_json)},
     )

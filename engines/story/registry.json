@@ -1,0 +1,273 @@
+{
+  "registryVersion": 1,
+  "kitVersion": "story-1",
+  "routes": [
+    {
+      "id": "recap",
+      "name": "Recap",
+      "description": "A narrated vertical recap of a film or story idea over licensed stock footage, with karaoke captions and a poster ending.",
+      "inputs": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "description": "Movie title or story idea"
+        }
+      ],
+      "paidServices": [
+        "gemini-llm",
+        "gemini-tts",
+        "groq-llm-fallback"
+      ],
+      "freeServices": [
+        "wikipedia",
+        "tmdb",
+        "pexels"
+      ],
+      "localTools": [
+        "ffmpeg",
+        "openai-whisper"
+      ],
+      "formats": [
+        "movie-recap",
+        "story-recap"
+      ]
+    },
+    {
+      "id": "series",
+      "name": "Series",
+      "description": "A multi-episode AI-animated short series: story, characters, worlds, shot prompts and generated video clips per episode.",
+      "inputs": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "description": "Project title"
+        },
+        {
+          "name": "brief",
+          "type": "string",
+          "required": true,
+          "description": "One to three sentence story brief"
+        },
+        {
+          "name": "episodes",
+          "type": "integer",
+          "required": false,
+          "description": "Number of episodes (1-10, default 1)"
+        }
+      ],
+      "paidServices": [
+        "gemini-llm",
+        "gemini-image",
+        "gemini-veo",
+        "fal-ai"
+      ],
+      "freeServices": [],
+      "localTools": [
+        "ffmpeg"
+      ],
+      "formats": [
+        "animated-short"
+      ]
+    }
+  ],
+  "defaultModels": {
+    "llm": "gemini-2.5-flash",
+    "llmFallback": "llama-3.3-70b-versatile",
+    "image": "gemini-2.5-flash-image",
+    "tts": "gemini-2.5-flash-preview-tts",
+    "asr": "openai-whisper-base"
+  },
+  "videoModels": [
+    {
+      "model_id": "wan-2.5",
+      "provider": "fal.ai",
+      "display_name": "Wan 2.5",
+      "endpoint_t2v": "fal-ai/wan2.5/v1/text-to-video",
+      "endpoint_i2v": "fal-ai/wan2.5/v1/image-to-video",
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.05,
+      "max_resolution": "480p",
+      "max_duration_sec": 5,
+      "has_audio": false,
+      "has_reference_images": false,
+      "tier": "cheapest",
+      "description": "Cheapest option. 480p only — good for drafts and prompt testing."
+    },
+    {
+      "model_id": "kling-2.5-turbo-pro",
+      "provider": "fal.ai",
+      "display_name": "Kling 2.5 Turbo Pro",
+      "endpoint_t2v": "fal-ai/kling-video/v2.5-turbo/pro/text-to-video",
+      "endpoint_i2v": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.07,
+      "max_resolution": "1080p",
+      "max_duration_sec": 10,
+      "has_audio": false,
+      "has_reference_images": false,
+      "tier": "cheapest",
+      "description": "Best price-performance ratio. Excellent motion fluidity. No native audio."
+    },
+    {
+      "model_id": "wan-2.2",
+      "provider": "fal.ai",
+      "display_name": "Wan 2.2",
+      "endpoint_t2v": "fal-ai/wan-t2v",
+      "endpoint_i2v": "fal-ai/wan-i2v",
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.1,
+      "max_resolution": "720p",
+      "max_duration_sec": 5,
+      "has_audio": false,
+      "has_reference_images": false,
+      "tier": "cheapest",
+      "description": "Open source (Alibaba). Budget option at 720p. No native audio."
+    },
+    {
+      "model_id": "seedance-1.5-pro-fast",
+      "provider": "fal.ai",
+      "display_name": "Seedance 1.5 Pro Fast",
+      "endpoint_t2v": "fal-ai/seedance/v1.5/pro/fast/text-to-video",
+      "endpoint_i2v": "fal-ai/seedance/v1.5/pro/fast/image-to-video",
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.052,
+      "max_resolution": "1080p",
+      "max_duration_sec": 12,
+      "has_audio": true,
+      "has_reference_images": true,
+      "tier": "recommended",
+      "description": "ByteDance. Native audio + start/end frame control. Token-based pricing, estimated at $0.052/s."
+    },
+    {
+      "model_id": "seedance-2.0-fast",
+      "provider": "fal.ai",
+      "display_name": "Seedance 2.0 Fast",
+      "endpoint_t2v": "bytedance/seedance-2.0/fast/text-to-video",
+      "endpoint_i2v": "bytedance/seedance-2.0/fast/image-to-video",
+      "endpoint_ref2v": "bytedance/seedance-2.0/fast/reference-to-video",
+      "cost_per_second": null,
+      "max_resolution": "720p",
+      "max_duration_sec": 15,
+      "has_audio": true,
+      "has_reference_images": true,
+      "tier": "recommended",
+      "description": "Newest model (Apr 2026). Multi-shot editing, native audio, reference-to-video with up to 9 images. Token-based pricing, estimated at $0.052/s."
+    },
+    {
+      "model_id": "veo-3.1-fast",
+      "provider": "gemini_api",
+      "display_name": "Veo 3.1 Fast",
+      "endpoint_t2v": "veo-3.1-fast-generate-preview",
+      "endpoint_i2v": null,
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.1,
+      "max_resolution": "1080p",
+      "max_duration_sec": 8,
+      "has_audio": true,
+      "has_reference_images": true,
+      "tier": "recommended",
+      "description": "Google Gemini API. Fast generation with reference images (up to 3). Audio included. $0.10/s at 1080p."
+    },
+    {
+      "model_id": "kling-3.0-pro",
+      "provider": "fal.ai",
+      "display_name": "Kling 3.0 Pro",
+      "endpoint_t2v": "fal-ai/kling-video/v3/pro/text-to-video",
+      "endpoint_i2v": "fal-ai/kling-video/v3/pro/image-to-video",
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.224,
+      "max_resolution": "1080p",
+      "max_duration_sec": 15,
+      "has_audio": true,
+      "has_reference_images": true,
+      "tier": "high_fidelity",
+      "description": "Multi-shot sequences with subject consistency. Native audio. Art-house aesthetic."
+    },
+    {
+      "model_id": "seedance-2.0",
+      "provider": "fal.ai",
+      "display_name": "Seedance 2.0",
+      "endpoint_t2v": "bytedance/seedance-2.0/text-to-video",
+      "endpoint_i2v": "bytedance/seedance-2.0/image-to-video",
+      "endpoint_ref2v": "bytedance/seedance-2.0/reference-to-video",
+      "cost_per_second": null,
+      "max_resolution": "720p",
+      "max_duration_sec": 15,
+      "has_audio": true,
+      "has_reference_images": true,
+      "tier": "high_fidelity",
+      "description": "Standard quality tier of Seedance 2.0. Higher quality than fast variant. Token-based pricing, estimated at $0.052/s."
+    },
+    {
+      "model_id": "veo-3.1",
+      "provider": "gemini_api",
+      "display_name": "Veo 3.1",
+      "endpoint_t2v": "veo-3.1-generate-preview",
+      "endpoint_i2v": null,
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.4,
+      "max_resolution": "4K",
+      "max_duration_sec": 8,
+      "has_audio": true,
+      "has_reference_images": true,
+      "tier": "high_fidelity",
+      "description": "Google Gemini API. Best quality — cinematic video with lip-sync, audio, reference images. $0.40/s."
+    },
+    {
+      "model_id": "sora-2-pro",
+      "provider": "fal.ai",
+      "display_name": "Sora 2 Pro",
+      "endpoint_t2v": "fal-ai/sora-2/pro",
+      "endpoint_i2v": "fal-ai/sora-2/image-to-video/pro",
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.3,
+      "max_resolution": "1080p",
+      "max_duration_sec": 25,
+      "has_audio": true,
+      "has_reference_images": false,
+      "tier": "high_fidelity",
+      "description": "OpenAI. Best physics simulation. Longest clips (up to 25s). Most expensive."
+    },
+    {
+      "model_id": "veo-3.1-lite",
+      "provider": "gemini_api",
+      "display_name": "Veo 3.1 Lite",
+      "endpoint_t2v": "veo-3.1-lite-generate-preview",
+      "endpoint_i2v": null,
+      "endpoint_ref2v": null,
+      "cost_per_second": 0.05,
+      "max_resolution": "1080p",
+      "max_duration_sec": 8,
+      "has_audio": true,
+      "has_reference_images": false,
+      "tier": "cheapest",
+      "description": "Google Gemini API. Cheapest Veo — 50% less than Fast. Audio included. $0.05/s at 1080p."
+    }
+  ],
+  "tierDefaults": {
+    "cheapest": "veo-3.1-lite",
+    "recommended": "veo-3.1-fast",
+    "high_fidelity": "veo-3.1"
+  },
+  "fallbackOrder": {
+    "cheapest": [
+      "veo-3.1-lite",
+      "wan-2.5",
+      "kling-2.5-turbo-pro",
+      "wan-2.2"
+    ],
+    "recommended": [
+      "veo-3.1-fast",
+      "seedance-2.0-fast",
+      "seedance-1.5-pro-fast"
+    ],
+    "high_fidelity": [
+      "veo-3.1",
+      "kling-3.0-pro",
+      "seedance-2.0",
+      "sora-2-pro"
+    ]
+  }
+}

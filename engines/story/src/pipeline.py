@@ -6,7 +6,8 @@ This module orchestrates the complete video generation workflow:
     2. Parallel: Download stock videos + Generate TTS audio
     3. Transcribe audio with Whisper for word timestamps
     4. Generate karaoke-style ASS subtitles
-    5. Render final video with background music and subtitles
+    5. Render final video with background music and subtitles, then write
+       render.json + cover.jpg next to it (output/final/{safe_title}/)
 """
 
 import json
@@ -26,10 +27,12 @@ from src.gemini_tts import generate_audio
 from src.stock_media import download_video
 from src.subtitles import generate_karaoke_subtitles
 from src.renderer import VideoRenderer
+from src.render_json import write_recap_render_json
 
 logger = logging.getLogger(__name__)
 
 CACHE_FILENAME = "pipeline_cache.json"
+WHISPER_MODEL_NAME = "base"
 
 
 @dataclass
@@ -115,8 +118,8 @@ def _get_whisper_model():
         with _whisper_load_lock:
             if _whisper_model is None:
                 import whisper
-                logger.info("Loading Whisper model (base)...")
-                _whisper_model = whisper.load_model("base")
+                logger.info(f"Loading Whisper model ({WHISPER_MODEL_NAME})...")
+                _whisper_model = whisper.load_model(WHISPER_MODEL_NAME)
     return _whisper_model
 
 
@@ -455,6 +458,12 @@ class VideoGenerationPipeline:
                     plot=plot
                 )
                 cache_data['video_script'] = script.model_dump()
+                cache_data['llm'] = {
+                    'provider': getattr(self.story_gen, 'last_provider', None),
+                    'model': getattr(self.story_gen, 'last_model', None),
+                    'usage': getattr(self.story_gen, 'last_usage', None),
+                }
+                cache_data['tts_model'] = Config.TTS_MODEL
 
             yield PipelineStatus(
                 step=1,
@@ -656,12 +665,14 @@ class VideoGenerationPipeline:
 
             all_whisper_segments = []
             cumulative_offset = 0.0
+            asr_used = False
 
             for asset in scene_assets_list:
                 yield PipelineStatus(step=3, message=f"Transcribing scene {asset.index}...")
 
                 try:
                     segments = whisper_transcribe(asset.audio_path)
+                    asr_used = True
 
                     # Adjust timestamps with cumulative offset and store on asset
                     adjusted_words = []
@@ -740,9 +751,10 @@ class VideoGenerationPipeline:
                 else:
                     yield PipelineStatus(step=5, message=f"Music file not found: {script.selected_music_file}")
 
-            # Output path
-            Config.FINAL_DIR.mkdir(parents=True, exist_ok=True)
-            final_output_path = str(Config.FINAL_DIR / f"{Config.safe_title(movie_name)}.mp4")
+            # Output path: one folder per recap, which also holds cover.jpg and render.json
+            final_dir = Config.FINAL_DIR / Config.safe_title(movie_name)
+            final_dir.mkdir(parents=True, exist_ok=True)
+            final_output_path = str(final_dir / f"{Config.safe_title(movie_name)}.mp4")
 
             try:
                 renderer = VideoRenderer()
@@ -773,6 +785,29 @@ class VideoGenerationPipeline:
                     is_error=True
                 )
                 return scene_assets_list, script, None
+
+            # render.json (engine → packager hand-off, tools/RENDER_JSON.md)
+            try:
+                render_json_path = write_recap_render_json(
+                    final_video=Path(final_output_path),
+                    movie_name=movie_name,
+                    movie_details=movie_details,
+                    script=script,
+                    scene_assets=scene_assets_list,
+                    music_path=music_path,
+                    llm=cache_data.get('llm'),
+                    tts_model=cache_data.get('tts_model') or Config.TTS_MODEL,
+                    asr_model=f"openai-whisper-{WHISPER_MODEL_NAME}" if asr_used else None,
+                    subtitles_burned=bool(subtitle_path) and VideoRenderer._ass_filter_available is True,
+                )
+                yield PipelineStatus(
+                    step=5,
+                    message=f"render.json written: {render_json_path}",
+                    data={'render_json': str(render_json_path)},
+                )
+            except Exception as e:
+                logger.exception("render.json failed")
+                yield PipelineStatus(step=5, message=f"Failed to write render.json: {e}", is_error=True)
 
             # Save cache
             if not self.offline:

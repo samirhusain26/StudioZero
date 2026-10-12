@@ -35,6 +35,13 @@ Requires: Google Gemini (LLM/TTS/Vision + Veo video generation), Groq (Fallback)
 ```bash
 python -m src.cli
 ```
+Non-interactive runs and the $0 smoke test (no paid or network calls):
+```bash
+python -m src.cli --headless --route recap --title "The Dark Knight"
+python -m src.cli --headless --route series --title "Galactic Garage" --brief "..." --episodes 1
+.venv/bin/python -m unittest discover -s tests -v
+```
+Details, outputs (`render.json`) and the ffmpeg caveat: [docs/HEADLESS.md](docs/HEADLESS.md).
 You will be prompted to choose between:
 *   **CLI Wizard**: The recommended interactive terminal interface for both production routes.
 *   **Web Dashboard**: A modern FastAPI/WebSocket interface for project management and real-time monitoring.
@@ -43,6 +50,7 @@ You will be prompted to choose between:
 
 Detailed guides and technical references:
 
+- [**HEADLESS.md**](docs/HEADLESS.md) — Headless commands, the $0 smoke test, render.json, the spend ledger and `registry.json`.
 - [**FLOW_AND_FEATURES.md**](docs/FLOW_AND_FEATURES.md) — Visual flow maps and development roadmap.
 - [**PIPELINE_OVERVIEW.md**](docs/PIPELINE_OVERVIEW.md) — Deep dive into Stock Footage vs. Animation routes.
 - [**TECHNICAL_REFERENCE.md**](docs/TECHNICAL_REFERENCE.md) — Technical breakdown of the rendering engine and 8-step logic.

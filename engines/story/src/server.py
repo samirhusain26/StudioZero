@@ -43,6 +43,9 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 # ── Active pipeline runs (project_id -> asyncio.Queue) ──────────────
 
 _active_runs: Dict[str, asyncio.Queue] = {}
+# Worker thread per project. A paused run's thread finishes its current step before it
+# stops, so a new /run must wait for it (review B2: no second concurrent spender).
+_active_threads: Dict[str, threading.Thread] = {}
 
 
 # ── Models ───────────────────────────────────────────────────────────
@@ -188,6 +191,9 @@ async def api_run_pipeline(project_id: str):
 
     if project_id in _active_runs:
         raise HTTPException(409, "Pipeline already running for this project")
+    previous = _active_threads.get(project_id)
+    if previous is not None and previous.is_alive():
+        raise HTTPException(409, "The paused run is still finishing its current step; try again shortly")
 
     queue: asyncio.Queue = asyncio.Queue()
     _active_runs[project_id] = queue
@@ -207,6 +213,7 @@ async def api_run_pipeline(project_id: str):
             )
 
     thread = threading.Thread(target=_run_in_thread, daemon=True)
+    _active_threads[project_id] = thread
     thread.start()
 
     p.status = "running"
@@ -259,6 +266,10 @@ def _execute_pipeline(project: Project, queue: asyncio.Queue, loop):
     try:
         while True:
             status: PipelineStatus = next(gen)
+            if _active_runs.get(project_id) is not queue:
+                # Paused (or superseded): stop consuming, so the generator does no more work
+                logger.info(f"[server] Run for '{project_id}' was paused — stopping after the current step")
+                return
             msg = {
                 "type": "status",
                 "step": status.step,
@@ -330,7 +341,8 @@ def _execute_pipeline(project: Project, queue: asyncio.Queue, loop):
 
         _put({"type": "completed", "data": p.step_data if p else {}})
     finally:
-        _active_runs.pop(project_id, None)
+        if _active_runs.get(project_id) is queue:
+            _active_runs.pop(project_id, None)
 
 
 # ── Veo scene retry ──────────────────────────────────────────────────────────

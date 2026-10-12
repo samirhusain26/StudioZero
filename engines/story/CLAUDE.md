@@ -4,6 +4,8 @@
 
 ## Build & Run Commands
 - **Direct CLI Wizard**: `python -m src.cli`
+- **Headless**: `python -m src.cli --headless --route recap --title "..."` or `--route series --title "..." --brief "..." --episodes N` (paid unless recap `--offline`; see `docs/HEADLESS.md`)
+- **$0 smoke test**: `.venv/bin/python -m unittest discover -s tests -v` (all paid/network calls stubbed, sockets blocked)
 - **FastAPI Dashboard**: `uvicorn src.server:app --port 8910 --reload`
 - **Model Comparison**: `python -m src.tools.model_compare --prompt "..." --models kling-2.5-turbo-pro,seedance-2.0-fast`
 - **Dependencies**: `pip install -r requirements.txt`
@@ -37,8 +39,9 @@
 - `src/pipeline_state.py`: Crash-resilient state persistence.
 - `src/steps/`: Modular steps for the animation series (writer, screenwriter, casting, world_builder, director, set_designer, scene_generator, editor).
 - `src/project_manager.py`: Project CRUD for the web dashboard.
-- `src/video_models.py`: Central registry of all 11 supported video generation models (Gemini API + fal.ai).
+- `src/video_models.py`: Loads and validates the 11 video models from `registry.json` (the single source, also read by the studio catalog).
+- `src/render_json.py`: Writes `render.json` + `cover.jpg` next to each final MP4 (engine → packager hand-off).
 - `src/video_client.py`: Unified client routing to Gemini API, fal.ai, or Vertex AI. Handles retries, cost tracking, model fallback.
-- `src/budget_guard.py`: Per-project budget enforcement with auto-downgrade to cheaper models.
+- `src/budget_guard.py`: Per-project budget enforcement with auto-downgrade; `SpendLedger` persists spend in `spend_ledger.json`.
 - `src/tools/model_compare.py`: CLI utility to compare video outputs across models. Generates HTML report.
 - `src/config_mappings.py`: Music/voice/mood lookup tables.
