@@ -6,16 +6,14 @@ import type {Question, StyleTokens, Timing} from '../../types';
 import {SAFE_RECT} from '../../timing';
 import {exit} from '../../kit/motion';
 import {PINK_INK, GRID} from '../../styles/continuum-poster-1';
+import {GridLines} from '../../kit/paint';
 
 export const SAFE_W = SAFE_RECT.x1 - SAFE_RECT.x0;
 
 /** Cream paper with a faint print grid and a pink spine bleeding off the left edge. Decoration only. */
 export const Backdrop: React.FC<{s: StyleTokens}> = ({s}) => (
   <AbsoluteFill style={{background: s.bg}}>
-    <AbsoluteFill style={{
-      backgroundImage: `linear-gradient(to right, ${GRID} 1px, transparent 1px), linear-gradient(to bottom, ${GRID} 1px, transparent 1px)`,
-      backgroundSize: '90px 90px', backgroundPosition: '0px 0px',
-    }} />
+    <GridLines step={90} color={GRID} width={1080} height={1920} />
     <div style={{position: 'absolute', left: 0, top: 0, width: 34, height: 1920, background: s.accent}} />
     <div style={{position: 'absolute', left: 34, top: 0, width: 4, height: 1920, background: s.fg}} />
   </AbsoluteFill>

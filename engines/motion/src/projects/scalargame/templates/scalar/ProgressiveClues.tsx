@@ -7,7 +7,7 @@ import {BrandLabel, Choices, EndCard, Explanation, ThinkBar} from '../../kit/ui'
 import {easeInOut, enter, exit, mix} from '../../kit/motion';
 import {SAFE_RECT} from '../../timing';
 import {NB} from '../../styles/scalar-notebook-1';
-import {ClueCard, Desk, LocatorMap, Stamp, cardStyle, coverSpan, deal, fitSpan, ruledBackground} from './notebook';
+import {ClueCard, Desk, LocatorMap, Stamp, cardStyle, coverSpan, deal, fitSpan, Ruling} from './notebook';
 
 const X0 = SAFE_RECT.x0, W = SAFE_RECT.x1 - SAFE_RECT.x0;
 const PILE_TOP = 596, SLOT_H = 178, SLOT_GAP = 18;            // three clue slots: 596–774, 792–970, 988–1166
@@ -29,14 +29,15 @@ const Tally: React.FC<TemplateProps & {frame: number}> = ({ep, s, t, frame}) => 
   const out = exit(frame, t.cta - 0.3, 0.3);
   return (
     <div style={{position: 'absolute', left: 642, top: 318, width: 258, height: 246, transform: 'rotate(1.4deg)', opacity: out,
-      ...cardStyle(s), background: ruledBackground(), backgroundColor: s.card, padding: '26px 22px 18px'}}>
-      <div style={{fontFamily: s.fontBody, fontWeight: 700, fontSize: 30, lineHeight: 1.12, color: s.muted, letterSpacing: '0.03em'}}>
+      ...cardStyle(s), backgroundColor: s.card, padding: '26px 22px 18px'}}>
+      <Ruling width={258 - 6} height={246 - 6} />
+      <div style={{position: 'relative', fontFamily: s.fontBody, fontWeight: 700, fontSize: 30, lineHeight: 1.12, color: s.muted, letterSpacing: '0.03em'}}>
         COUNTRIES<br />LEFT OF {universe}
       </div>
-      <div style={{fontFamily: s.fontNumber, fontWeight: 700, fontSize: 104, lineHeight: 1, color: s.fg, marginTop: 6,
+      <div style={{position: 'relative', fontFamily: s.fontNumber, fontWeight: 700, fontSize: 104, lineHeight: 1, color: s.fg, marginTop: 6,
         transform: `scale(${1 + 0.06 * bump})`, transformOrigin: '0% 70%'}}>{n}</div>
       {/* Zero-based bar on a single scale: full width = all countries. */}
-      <div style={{marginTop: 12, height: 20, border: `3px solid ${s.line}`, background: s.bg}}>
+      <div style={{position: 'relative', marginTop: 12, height: 20, border: `3px solid ${s.line}`, background: s.bg}}>
         <div style={{height: '100%', width: `${(v / universe) * 100}%`, background: s.accent}} />
       </div>
     </div>

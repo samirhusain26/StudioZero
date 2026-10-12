@@ -1,7 +1,8 @@
 // One composition for every library episode: picks the format template and style recipe, adds the music bed and the
 // SFX cue sheet derived from the shared timing. Props come from library/<batch>/review/jobs/<episodeId>/input.json.
 import React from 'react';
-import {AbsoluteFill, Audio, staticFile, type CalculateMetadataFunction} from 'remotion';
+import {Audio} from '@remotion/media';
+import {AbsoluteFill, staticFile, type CalculateMetadataFunction} from 'remotion';
 import {Sfx} from '../../kit/sfx';
 import {libraryFontsReady} from './fonts';
 import {STYLES} from './styles';

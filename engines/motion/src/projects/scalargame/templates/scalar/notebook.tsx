@@ -5,6 +5,7 @@ import {AbsoluteFill, Easing, interpolate} from 'remotion';
 import type {GeoCountry, StyleTokens} from '../../types';
 import {orthographic, labelPoint, pixelBox, type Projector} from '../../kit/geo';
 import {enter, mix} from '../../kit/motion';
+import {RuledLines} from '../../kit/paint';
 import {f} from '../../timing';
 import {NB} from '../../styles/scalar-notebook-1';
 
@@ -45,10 +46,12 @@ export const cardStyle = (s: StyleTokens, lift = 0, shadow = s.line): React.CSSP
   boxShadow: `${NB.shadow + lift * 16}px ${NB.shadow + lift * 16}px 0 ${shadow}`,
 });
 
-/** Index card body: orange header rule and faint ruling. */
-export const ruledBackground = (top = 16) =>
-  `linear-gradient(to bottom, transparent ${top}px, ${NB.rule} ${top}px, ${NB.rule} ${top + 3}px, transparent ${top + 3}px),` +
-  `repeating-linear-gradient(to bottom, transparent 0, transparent 58px, ${NB.ruled} 58px, ${NB.ruled} 60px)`;
+/**
+ * Index card body: orange header rule and faint ruling over the padding box (`width` × `height`), as an SVG layer: the
+ * first child; content after it is `position: relative`.
+ */
+export const Ruling: React.FC<{width: number; height: number; top?: number}> = ({width, height, top = 16}) =>
+  <RuledLines width={width} height={height} top={top} rule={NB.rule} ruled={NB.ruled} />;
 
 /** Numbered clue index card (fixed slot; text vertically centred, wraps to ≤ 2 lines at 56 px). */
 export const ClueCard: React.FC<{
@@ -62,29 +65,15 @@ export const ClueCard: React.FC<{
       alignItems: 'center', justifyContent: 'center', fontFamily: s.fontDisplay, fontWeight: 900, fontSize: 54, color: s.fg}}>
       <span style={{opacity: textFade}}>{n}</span>
     </div>
-    <div style={{flex: 1, display: 'flex', alignItems: 'center', padding: '22px 26px 18px', background: ruledBackground(),
+    <div style={{position: 'relative', flex: 1, display: 'flex', alignItems: 'center', padding: '22px 26px 18px',
       backgroundColor: focus > 0 ? `rgba(20,184,166,${0.1 * focus})` : s.card,
       fontFamily: s.fontDisplay, fontWeight: 900, fontSize, lineHeight: 1.06, color: s.fg, letterSpacing: '-0.005em'}}>
-      <span style={{opacity: textFade}}>{text}</span>
+      {/* Card border 3 px each side; the number tab is 78 px plus its 3 px border. */}
+      <Ruling width={w - 6 - 81} height={h - 6} />
+      <span style={{position: 'relative', opacity: textFade}}>{text}</span>
     </div>
   </div>
 );
-
-// Deterministic speckle mask so the stamp ink looks pressed, not printed.
-const hash = (i: number) => {
-  let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b);
-  x ^= x >>> 13; x = Math.imul(x, 0xc2b2ae35); x ^= x >>> 16;
-  return (x >>> 0) / 4294967296;
-};
-const speckleMask = (() => {
-  const dots: string[] = [];
-  for (let i = 0; i < 140; i++) {
-    const cx = (hash(i * 3 + 1) * 400).toFixed(1), cy = (hash(i * 3 + 2) * 160).toFixed(1), r = (0.6 + hash(i * 3 + 3) * 2.4).toFixed(1);
-    dots.push(`<circle cx='${cx}' cy='${cy}' r='${r}' fill='black'/>`);
-  }
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='160'><rect width='400' height='160' fill='white'/>${dots.join('')}</svg>`;
-  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
-})();
 
 /**
  * Rubber stamp: invisible before `at`; scales 1.4 → 1 over 4 frames into the impact (accelerating), then holds.
@@ -99,8 +88,8 @@ export const Stamp: React.FC<{
   const scale = mix(1.25, 1, k);
   const o = interpolate(frame, [f(at), f(at) + 2], [0.35, 0.95], clamp);
   return (
-    <div style={{position: 'absolute', left: cx, top: cy, transform: `translate(-50%, -50%) rotate(${rotate}deg) scale(${scale})`, opacity: o,
-      mixBlendMode: 'multiply', WebkitMaskImage: speckleMask, maskImage: speckleMask, WebkitMaskSize: '400px 160px', maskSize: '400px 160px'}}>
+    // No blend mode or mask: client-side rendering supports neither (the old speckle mask was opaque, so it never showed).
+    <div style={{position: 'absolute', left: cx, top: cy, transform: `translate(-50%, -50%) rotate(${rotate}deg) scale(${scale})`, opacity: o}}>
       <div style={{border: `7px solid ${color}`, padding: 6}}>
         <div style={{border: `3px solid ${color}`, padding: small ? '8px 30px 14px' : '10px 30px', textAlign: 'center', color, whiteSpace: 'nowrap'}}>
           {small && <div style={{fontFamily: fontBody, fontWeight: 700, fontSize: 32, letterSpacing: '0.24em', marginBottom: 2}}>{small}</div>}

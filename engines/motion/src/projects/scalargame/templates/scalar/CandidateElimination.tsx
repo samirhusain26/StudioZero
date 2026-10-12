@@ -9,7 +9,7 @@ import {BrandLabel, EndCard, ThinkBar} from '../../kit/ui';
 import {easeInOut, enter, exit, mix} from '../../kit/motion';
 import {SAFE_RECT, f} from '../../timing';
 import {NB} from '../../styles/scalar-notebook-1';
-import {ClueCard, Cross, Desk, Stamp, Tick, cardStyle, deal, ruledBackground} from './notebook';
+import {ClueCard, Cross, Desk, Stamp, Tick, cardStyle, deal, Ruling} from './notebook';
 
 const X0 = SAFE_RECT.x0, W = SAFE_RECT.x1 - SAFE_RECT.x0;
 const ROW_TOP = 616, ROW_H = 92, ROW_GAP = 14;
@@ -130,9 +130,10 @@ const Component: React.FC<TemplateProps> = ({ep, s, t}) => {
       {/* Explanation note card, dealt onto the lower clues. */}
       {note && (
         <div style={{position: 'absolute', left: X0, top: clueY(1) - 6, width: W, height: clueY(2) + CLUE_H - clueY(1) + 12, transform: note.transform,
-          opacity: out, ...cardStyle(s, note.lift), background: ruledBackground(18), backgroundColor: s.card, padding: '40px 32px 24px',
+          opacity: out, ...cardStyle(s, note.lift), backgroundColor: s.card, padding: '40px 32px 24px',
           fontFamily: s.fontDisplay, fontWeight: 600, fontSize: 40, lineHeight: 1.22, color: s.fg, display: 'flex', alignItems: 'center'}}>
-          {q.explanation}
+          <Ruling width={W - 6} height={clueY(2) + CLUE_H - clueY(1) + 12 - 6} top={18} />
+          <span style={{position: 'relative'}}>{q.explanation}</span>
         </div>
       )}
 

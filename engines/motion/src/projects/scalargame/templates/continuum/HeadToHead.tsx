@@ -8,6 +8,7 @@ import {BrandLabel, EndCard, Explanation, ThinkBar} from '../../kit/ui';
 import {SAFE_RECT, f} from '../../timing';
 import {easeOut, enter, exit, pop} from '../../kit/motion';
 import {HATCH} from '../../styles/continuum-poster-1';
+import {Hatch, InsetRing} from '../../kit/paint';
 import {Backdrop, Check, SAFE_W, SourceLine, countText, niceCeil, scaleLabel} from './shared';
 
 const X0 = SAFE_RECT.x0;
@@ -69,8 +70,9 @@ const Component: React.FC<TemplateProps> = ({ep, s, t}) => {
           return (
             <div key={c.key} style={{position: 'absolute', left: X0, top, width: SAFE_W, height: PANEL_H, opacity: Math.min(1, p),
               transform: `translateY(${(1 - Math.min(1, p)) * 50}px)`}}>
-              <div style={{position: 'absolute', inset: 0, background: s.card, borderTop: `6px solid ${s.fg}`,
-                boxShadow: `inset 0 0 0 ${6 * w}px ${s.accent}`}} />
+              <div style={{position: 'absolute', inset: 0, background: s.card, borderTop: `6px solid ${s.fg}`}}>
+                <InsetRing width={6 * w} color={s.accent} />
+              </div>
               {/* key box */}
               <div style={{position: 'absolute', left: 24, top: 28, width: KEY, height: KEY, background: s.fg, color: s.bg,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: s.fontNumber, fontWeight: 700, fontSize: 54}}>
@@ -89,8 +91,9 @@ const Component: React.FC<TemplateProps> = ({ep, s, t}) => {
               </div>}
               {/* empty, identical track before the reveal */}
               <div style={{position: 'absolute', left: ZERO_X - X0, top: BAR_DY, width: TRACK_W, height: BAR_H, opacity: hidden,
-                backgroundImage: `repeating-linear-gradient(135deg, ${HATCH} 0 10px, transparent 10px 22px)`,
-                outline: `2px dashed ${s.muted}`, outlineOffset: -2}} />
+                outline: `2px dashed ${s.muted}`, outlineOffset: -2}}>
+                <Hatch id={`h2h-hatch-${c.key}`} width={TRACK_W} height={BAR_H} color={HATCH} on={10} period={22} />
+              </div>
               {/* bar */}
               <div style={{position: 'absolute', left: ZERO_X - X0, top: BAR_DY, width: barW, height: BAR_H, background: s.fg}}>
                 <div style={{position: 'absolute', inset: 0, background: s.accent, opacity: w}} />

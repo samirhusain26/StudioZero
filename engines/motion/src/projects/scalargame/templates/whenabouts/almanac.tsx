@@ -32,9 +32,25 @@ export const niceStep = (pxPerYear: number, minPx: number) => {
 };
 
 /** Parchment page: vignette, laid-paper lines, double-rule frame (decoration may bleed past the safe rectangle). */
+// As SVG (client-side rendering has no radial or repeating CSS gradients): radial-gradient(ellipse 85% 70% at 46% 45%,
+// bg 55%, bg2 100%) and repeating-linear-gradient(0deg, line 0 1px, transparent 1px 7px), whose 1 px lines repeat every
+// 7 px up from the bottom edge (y = 1, 8, 15 … from the top of a 1920 px frame).
 export const Page: React.FC<{s: StyleTokens}> = ({s}) => (
-  <AbsoluteFill style={{background: `radial-gradient(ellipse 85% 70% at 46% 45%, ${s.bg} 55%, ${s.bg2} 100%)`}}>
-    <AbsoluteFill style={{backgroundImage: `repeating-linear-gradient(0deg, rgba(43,29,14,0.035) 0px, rgba(43,29,14,0.035) 1px, transparent 1px, transparent 7px)`}} />
+  <AbsoluteFill>
+    <svg width={1080} height={1920} style={{position: 'absolute', left: 0, top: 0}} aria-hidden>
+      <defs>
+        <radialGradient id="wa-vignette" gradientUnits="userSpaceOnUse" cx={496.8} cy={864} r={918}
+          gradientTransform={`translate(496.8 864) scale(1 ${1344 / 918}) translate(-496.8 -864)`}>
+          <stop offset={0.55} stopColor={s.bg} />
+          <stop offset={1} stopColor={s.bg2} />
+        </radialGradient>
+        <pattern id="wa-laid" width={1080} height={7} patternUnits="userSpaceOnUse">
+          <rect x={0} y={1} width={1080} height={1} fill="rgba(43,29,14,0.035)" />
+        </pattern>
+      </defs>
+      <rect width={1080} height={1920} fill="url(#wa-vignette)" />
+      <rect width={1080} height={1920} fill="url(#wa-laid)" shapeRendering="crispEdges" />
+    </svg>
     <div style={{position: 'absolute', left: 40, top: 150, right: 40, bottom: 150, border: `2px solid ${s.line}`, opacity: 0.28}} />
     <div style={{position: 'absolute', left: 50, top: 160, right: 50, bottom: 160, border: `1px solid ${s.line}`, opacity: 0.22}} />
   </AbsoluteFill>

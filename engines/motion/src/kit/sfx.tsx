@@ -1,5 +1,6 @@
 import React from 'react';
-import { Audio, Sequence, staticFile } from 'remotion';
+import { Audio } from '@remotion/media';
+import { Sequence, staticFile } from 'remotion';
 
 export type SfxName =
   | 'thock' | 'tick' | 'tock' | 'flip' | 'ding' | 'shake' | 'stamp' | 'rewind' | 'whip' | 'pop'
