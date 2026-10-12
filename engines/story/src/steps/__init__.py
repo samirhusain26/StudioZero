@@ -6,6 +6,7 @@ Steps are organized into pre-production (run once for the whole project)
 and production (run per episode).
 """
 
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
@@ -22,6 +23,12 @@ class StepContext:
     num_episodes: int = 1
     brief: str = ""  # Original user brief — used only by the Writer step
     progress_callback: Optional[Callable[[dict], None]] = None  # pushes WS messages mid-step
+    # Set by the worker agent's cancel: long steps stop before their next paid call (StepCancelled).
+    cancel_event: Optional[threading.Event] = None
+
+    def check_cancelled(self) -> None:
+        if self.cancel_event is not None and self.cancel_event.is_set():
+            raise StepCancelled()
 
     @property
     def episode_dir(self) -> Path:
@@ -43,6 +50,10 @@ class StepContext:
         d = self.project_dir / "worlds"
         d.mkdir(parents=True, exist_ok=True)
         return d
+
+
+class StepCancelled(Exception):
+    """The run was cancelled; the step stops before its next paid call and is not marked complete."""
 
 
 @dataclass

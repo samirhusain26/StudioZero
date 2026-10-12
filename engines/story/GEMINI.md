@@ -19,7 +19,7 @@ StudioZero is an automated system for creating vertical (9:16) social media vide
 
 ### Execution
 - **Main Entry**: `python -m src.cli` (from engines/story).
-- **Web Dashboard**: Access the FastAPI dashboard by choosing Option 2 in the main entry point.
+- **Story worker agent**: `python -m src.agent` serves the Pi UI's Studio › Story jobs (see `docs/HEADLESS.md`).
 
 ### Development & Extension
 - **Adding Voices**: Update `VOICE_MAP` in `src/config_mappings.py`.
@@ -29,7 +29,7 @@ StudioZero is an automated system for creating vertical (9:16) social media vide
 ## Architectural Map
 
 - `src/cli.py`: The interactive CLI wizard implementing the two-route flow.
-- `src/server.py`: FastAPI backend for the web dashboard.
+- `src/agent.py`: Story worker agent (FastAPI) behind the Pi's studio proxy.
 - `src/pipeline.py`: Orchestration engine for the Stock Footage route.
 - `src/animation_pipeline.py`: Orchestrator for the 8-step Animation series.
 - `src/steps/`: Modular steps for the Animation series (writer, screenwriter, casting, world_builder, director, set_designer, scene_generator, editor).

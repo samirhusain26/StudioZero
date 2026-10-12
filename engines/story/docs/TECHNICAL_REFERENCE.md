@@ -61,7 +61,7 @@ A robust, step-based workflow for multi-episode series with character and world 
 
 ## Web Server Architecture
 
-The dashboard uses **FastAPI** with **WebSockets** for real-time log streaming.
+The worker agent (`src/agent.py`) uses **FastAPI** with polling JSON (`…/events?since=N`); the old WebSocket dashboard was retired in Phase 3.
 *   **Project Manager**: `src/project_manager.py` handles CRUD for projects.
 *   **WebSocket streaming**: Progress is yielded via the `PipelineStatus` generator and pushed to the client in real-time.
 *   **Video Model Settings**: `/api/settings/video-models` returns the full model registry; `/api/settings/active-model` manages the selected model and budget.

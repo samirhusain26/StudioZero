@@ -255,8 +255,46 @@ Never committed: credentials, tokens, passcodes, deploy keys, `.env*`, `env.yaml
 - [x] Story engine: venv (python3.12, requirements only), `--headless` for both routes, mocked $0 smoke test (34 tests), `render.json` per recap/episode, `registry.json` (single source for video models), B4/B6/B8 fixed, B2/B10 partly (see §14)
 - [x] Docs, skill, agent, memory; all checks green; local = GitHub = Pi
 
-### Phase 3 — Studio tab, agent, proxy, prompt builder · Phase 4 — contract v2 + publisher · Phase 5 — Originals back online
-As in the brief; not started. Session prompt for Phase 3: `docs/prompts/PHASE3_SESSION.md`.
+### Phase 3 — Studio tab, device compute, story worker (in progress; log §15)
+- [x] Catalog API (`GET /api/catalog`) + prompt builder mode 1 (ca7f969)
+- [x] Studio tab (sixth section), Make a batch moved into it (dbfebad)
+- [x] Motion in the browser: Pi asset streaming + sparse widening (686c53c), kit in the UI, `@remotion/media` audio (437170d), Player preview, `renderMediaOnWeb` export, browser QA, IndexedDB resume, `render.json` with `job.renderer: "web"`, shared packager cores (1291a0b), upload through the existing flow (9bb1ddb, 8407d65)
+- [x] Story worker agent (`engines/story/src/agent.py`), Pi proxy (`publisher/app/studio_proxy.py`, `scalar-social-studio-proxy.service`), Story jobs pages; B1, B2, B5 fixed in the agent
+- [x] Old dashboard parity (written check below); `server.py` and `static/` retired
+- [ ] Prompt builder mode 2
+- [ ] build/check static, Pi memory and latency, security review and fixes, guide pages
+- [ ] Plan status, memory, `docs/prompts/PHASE4_SESSION.md`
+
+**Old dashboard parity** (features F1–F26 and endpoints E1–E24 of `plan/STORY_ENGINE_REVIEW.md` §1; UI = Studio › Story jobs, `publisher/ui/src/views/studio/Story*.tsx`; API = `engines/story/src/agent.py` behind the Pi proxy):
+- [x] F1 job list (status badge, pulse while running, delete with a confirm; the API needs the id as confirmation and refuses while running) · E3, E6
+- [x] F2 kind picker (recap / animation series) · E4
+- [x] F3 recap from a typed title. The wizard's `validate_input` + random fallback is **not** added: it is a paid Gemini call before any estimate (the headless path skips it too); the review gate (F14) shows what the script made of the title
+- [x] F4 **dropped**: Google Sheets is retired (E7 dropped)
+- [x] F5 series form (name, brief, 1–10 episodes, tier badge with a link to Story settings)
+- [x] F6 "Surprise me" on Gemini (`POST /studio/ideas/random`, needs its own confirmation; E8 was Groq)
+- [x] F7 Start / Continue / Retry show the worker's signed estimate first; the run carries it back; budget re-checked against the spend ledger (428 without, 409 when changed or over budget, 403 while paid runs are off) · E11
+- [x] F8 live log by polling (`…/events?since=`), All / Steps / Errors, follow, "last update" · E13 (WebSocket → polling)
+- [x] F9 step rail: pre-production, then per episode director, **set designer** (B7), scene generator, editor; duration, error, file count · E18 (state trimmed: no host paths)
+- [x] F10 step files: images, clips, readable JSON for story/episodes/sheets/shots/layouts · E17, E10 (Range through the proxy)
+- [x] F11 info panel (kind, episodes, steps done, time, clips/files, dates)
+- [x] F12 budget panel from the job's spend ledger (not from WebSocket messages)
+- [x] F13 tier badge on the new-job form and the job page (per-job model) · E20
+- [x] F14 recap review gate: edit the JSON, approve; Continue narrates exactly the approved script (**B1** fixed: `pipeline.run(approved_script=…)` skips script generation) · E9
+- [x] F15 scene failed: error, editable prompt with word count, model for this job only (B8 part), retry / edit / skip / change model; each decision returns a new estimate and runs only after it is confirmed · E12
+- [x] F16 video polling indicator (latest `veo_polling` line while running)
+- [x] F17 Cancel run with real cancellation: before the next step and, in the scene generator, before the next clip's paid submit (**B2** fixed) · E14
+- [x] F18 error state with Retry (through the estimate)
+- [x] F19 renders library from `render.json` (cover, play, cost, credits, download) · E15, E16
+- [x] F20 quality presets with the detected preset or "Custom"
+- [x] F21 model pickers; changes apply to the next run without a restart and `FAL_KEY` reaches fal (**B5** fixed: `Config.reload_settings` reloads every model and the key, `export_fal_key`) · E19–E21, models part of E22–E23
+- [x] F22 video tier cards, per-model cards ($/s, resolution, length, audio, reference images, ~$/episode), budget per job, auto-downgrade
+- [x] F23 **dropped**: keys stay in the laptop's `.env`; Story settings shows set / missing only (credential parts of E22–E23 dropped)
+- [x] F24 **dropped**: Integrations (Sheets) retired
+- [x] F25 stale "running" jobs reset to paused at agent start · E24
+- [x] F26 **dropped**: no browser auto-open (the Pi UI is the front end; E1, E2 dropped)
+
+### Phase 4 — contract v2 + publisher · Phase 5 — Originals back online
+As in the brief; not started.
 
 ## 10. CHECKPOINT 1 answers (2026-10-11)
 

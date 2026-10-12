@@ -452,6 +452,12 @@ class VideoGenerationPipeline:
                     return scene_assets_list, script, None
                 script = VideoScript.model_validate(script_data)
                 yield PipelineStatus(step=1, message="Using cached script")
+            elif kwargs.get('approved_script'):
+                # The owner approved (and maybe edited) this script at the review gate: never regenerate it
+                script = VideoScript.model_validate(kwargs['approved_script'])
+                cache_data['video_script'] = script.model_dump()
+                cache_data['tts_model'] = Config.TTS_MODEL
+                yield PipelineStatus(step=1, message="Using the approved script")
             else:
                 script = self.story_gen.generate_script(
                     movie_title=movie_title,
@@ -469,7 +475,7 @@ class VideoGenerationPipeline:
                 step=1,
                 message=f"Script generated: {len(script.scenes)} scenes, genre={script.genre}, voice={script.selected_voice_id}, mood={script.overall_mood}, lang={script.lang_code}",
                 data={'script': script.model_dump()},
-                review_gate=True,
+                review_gate=not kwargs.get('approved_script'),
             )
 
             # =================================================================

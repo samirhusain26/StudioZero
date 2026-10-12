@@ -26,11 +26,11 @@ Run everything from `engines/story`. Paid generation (Gemini LLM/TTS/image, Veo,
 .venv/bin/python -m src.cli --help             # all flags; no --headless = the interactive wizard
 ```
 
-Headless recap takes the title as given (the wizard's `validate_input` / random-idea step is a paid Gemini call and is skipped). `--project-dir` runs a series in an existing project folder (for example a dashboard project under `output/projects/<id>`); the default is `output/temp/<title>`.
+Headless recap takes the title as given (the wizard's `validate_input` / random-idea step is a paid Gemini call and is skipped). `--project-dir` runs a series in an existing project folder (for example a Story jobs project under `output/projects/<id>`); the default is `output/temp/<title>`.
 
 ## Outputs
 
-- **recap**: `output/final/<safe_title>/` holds `<safe_title>.mp4`, `cover.jpg`, `script.json` and `render.json` (one folder per recap, so render.json never collides; the old dashboard's finals list only shows `output/final/*.mp4`, so it no longer lists recaps).
+- **recap**: `output/final/<safe_title>/` holds `<safe_title>.mp4`, `cover.jpg`, `script.json` and `render.json` (one folder per recap, so render.json never collides; Studio › Story renders lists every folder with a render.json).
 - **series**: `episodes/episode_N/` holds `final.mp4`, `cover.jpg` and `render.json`; the editor still copies the MP4 to `output/final/<title>_ep<N>.mp4`. The project folder also holds `spend_ledger.json`.
 
 ## The $0 smoke test
@@ -43,10 +43,29 @@ It makes no paid or networked call: API keys are `dummy-not-a-key`, `.env` and `
 
 - **recap** (`tests/test_smoke.py`, `RecapSmokeTest`): `python -m src.cli --headless --route recap` with TMDB/Wikipedia, the LLM script (3 scenes), TTS (silent WAV), Pexels (generated clips with Pexels-like metadata; scene 2 takes the basevideos fallback) and Whisper (synthetic word timings) stubbed. ffmpeg, the subtitles, render.json and the cover run for real.
 - **series** (`SeriesSmokeTest`): copies the local fixture `output/projects/Galactic_Garage` to a temp dir, resets episode 1's clips and final, and runs the headless series route with the video providers' network calls replaced by scripted fakes (fallback after a billed failure, a refused submit, a reset download, a Veo clip with audio). The fixture is local, gitignored data: without it this test is skipped. A second run checks that resume spends nothing.
-- `tests/test_video_client.py` (B6 retries and fallback budget), `tests/test_budget.py` (B4 ledger), `tests/test_registry.py` (registry.json), `tests/test_server_pause.py` (B2, partial).
+- `tests/test_video_client.py` (B6 retries and fallback budget), `tests/test_budget.py` (B4 ledger), `tests/test_registry.py` (registry.json), `tests/test_agent.py` (the worker agent: auth, estimates and budget, cancel (B2), recap review gate (B1), settings reload (B5), scene decisions, files and paths).
 - Every render.json is checked with `node tools/render-json.mjs` (run from the repo root by the test).
 
 **ffmpeg caveat.** System ffmpeg on the owner's Mac is broken (missing Homebrew dylibs), so the tests put a shim on `PATH` that runs the Remotion-bundled ffmpeg from `../motion/node_modules/@remotion/compositor-*` (falling back to `remotion ffmpeg`). That build has no `setsar`, `fps`, `loop`, `asplit`, `aloop`, `sidechaincompress` or `ass` filters, so it cannot run the recap renderer's filter graph: the recap smoke test then swaps `VideoRenderer.render_from_scenes` for a test-only stand-in (scale/crop + concat, no music ducking, no captions), and `RealRendererTest` is skipped with the list of missing filters. With a full ffmpeg (with libass) on `PATH`, both run for real. The renderer itself already skips caption burn-in when libass is missing. Series assembly (concat + libx264/aac) runs on the bundled ffmpeg.
+
+## Story worker agent (Studio › Story jobs)
+
+`src/agent.py` is the engine's API for the Pi UI (it replaced the old dashboard, `src/server.py` + `static/`, in Phase 3). It runs on this laptop, listens on `127.0.0.1:8911` only, and is reached solely through the Pi's studio proxy (`publisher/app/studio_proxy.py`), which forwards the UI's `/api/studio/*` after the UI's own sign-in. Keys stay in this folder's `.env`.
+
+```bash
+python3 scripts/agent-token.py                 # once: ~/.config/studiozero/agent-token (0600); never printed
+.venv/bin/python -m src.agent                  # run it in a terminal, or at login:
+sh scripts/install-agent.sh                    # launchd (macOS) / systemd user unit (Linux); --remove to undo
+tailscale serve --bg --https=8911 http://127.0.0.1:8911            # expose it on the tailnet (this host only)
+python3 scripts/agent-token.py --send-to-pi --url https://<laptop>.<tailnet>.ts.net:8911 --addr <laptop tailnet IP>
+```
+
+The last command pipes the token over ssh into `publisher/deploy/studio-worker.sh` on the Pi, which writes a root-only credential and a Pi-local drop-in for `scalar-social-studio-proxy.service` (the address and token never enter git). `--rotate` makes a new token (restart the agent, then send it again). Without the drop-in, or while the laptop sleeps, the Studio shows **Worker offline**.
+
+- Every request needs the bearer token; no OpenAPI or docs pages are served.
+- Paid work needs a server-side estimate token that the owner confirmed (`GET …/estimate`, then `POST …/run` with it) and a budget check against the project's `spend_ledger.json`. **Paid runs stay off** unless the agent starts with `STUDIO_AGENT_ALLOW_PAID=1` (the open bugs in `docs/STUDIO_PLAN.md` §14 block paid runs).
+- One run at a time; Cancel stops before the next step and, in the scene generator, before the next clip's paid submit. Runs found "running" at start are reset to paused.
+- Event text and errors replace this host's folders with `…` / `~`; the pipeline state sent to the UI has no paths.
 
 ## render.json
 

@@ -24,6 +24,10 @@
     "activity": "health",
     "settings": "things-only-samir-can-do",
     "guide": "how-it-works",
-    "export": "export-in-the-browser"
+    "export": "export-in-the-browser",
+    "jobs": "story-jobs",
+    "job": "story-jobs",
+    "renders": "story-jobs",
+    "storySettings": "story-jobs"
   }
 }

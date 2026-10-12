@@ -165,6 +165,8 @@ def run(ctx: StepContext) -> StepResult:
             ledger.update(attempt["ledger_entry"], **fields)
 
     for shot in shots.shots:
+        # Cancel (worker agent): stop before the next scene's paid submit
+        ctx.check_cancelled()
         # The client may have switched model (fallback/downgrade) on an earlier scene
         model_config = get_model(client.model_id)
         rate_limit_wait = _RATE_LIMIT_VERTEX if model_config.provider == "vertex_ai" else _RATE_LIMIT_FAL

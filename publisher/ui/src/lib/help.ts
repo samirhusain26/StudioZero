@@ -38,6 +38,33 @@ export const SCREEN_HELP = {
       'When every episode passed, finalize and upload: the Pi validates everything again.',
     ],
   },
+  jobs: {
+    anchor: 'story-jobs',
+    lines: [
+      'Story jobs run on the laptop worker: recaps and animated series for Originals.',
+      'Create a job here, then open it to see each step, its files and what it has spent.',
+      'Nothing paid starts until you confirm a cost estimate; the worker checks the budget again.',
+    ],
+  },
+  job: {
+    anchor: 'story-jobs',
+    lines: [
+      'Run shows the cost estimate first; nothing paid starts until you confirm it.',
+      'A recap stops for you to review its script; a failed scene waits for retry, edit, skip or another model.',
+      'Cancel stops before the next paid step. Click a finished step to see its files.',
+    ],
+  },
+  renders: {
+    anchor: 'story-jobs',
+    lines: ['Every finished story video on the laptop, with its cost and credits.', 'Videos stream from the laptop through the Pi; nothing is stored here.'],
+  },
+  storySettings: {
+    anchor: 'story-jobs',
+    lines: [
+      'Models and the video tier for the next story runs. Changes apply at once.',
+      'API keys stay in the laptop\'s .env: this page only says whether each one is set.',
+    ],
+  },
   library: {
     anchor: 'upload-a-batch',
     lines: [

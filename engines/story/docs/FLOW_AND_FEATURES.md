@@ -12,7 +12,7 @@ This document provides a map of the current StudioZero video generation logic an
 *   **Random Story Fallback**: Automatic generation of creative plots when user input is invalid.
 *   **Modular Architecture**: Crash-resilient, 8-step execution for complex series.
 *   **Multi-Model Video Generation**: 11 models across 3 tiers (Budget/Recommended/Premium) via Gemini API (Veo 3.1) and fal.ai, with per-project budget enforcement.
-*   **Hybrid UI**: Choice between a high-speed CLI Wizard and a feature-rich Web Dashboard.
+*   **Interfaces**: the CLI wizard, headless runs, and the Pi UI's Studio › Story jobs (through the worker agent).
 
 ---
 

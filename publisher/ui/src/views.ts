@@ -16,7 +16,8 @@ export const VIEWS = [
 export type ViewId = (typeof VIEWS)[number]['id']
 
 /**
- * A parsed hash route. Sub-routes: `#/studio/make[?project=<id>]`, `#/studio/export`, `#/library/episode/<episodeId>/<revision>`, `#/schedule/queue`,
+ * A parsed hash route. Sub-routes: `#/studio/make[?project=<id>]`, `#/studio/export`, `#/studio/jobs[/<id>]`, `#/studio/renders`,
+ * `#/studio/story-settings`, `#/library/episode/<episodeId>/<revision>`, `#/schedule/queue`,
  * `#/activity?tab=<posts|uploads|approvals|system>`, `#/settings#<section>`, `#/home#platforms` and `#/guide/<anchor>` (the guide is opened from the help icon,
  * not a tab). `redirect` is set for an old hash (`#/dashboard`, `#/history`, `#/activation`, `#/next-batch`, `#/library/make`):
  * the address bar is replaced with it.
@@ -27,6 +28,11 @@ export interface Route {
   make?: true
   /** Studio › Export (in-browser motion export). */
   export?: true
+  /** Studio › Story jobs (the story worker on the laptop): the list, one job, the renders, the worker's settings. */
+  jobs?: true
+  job?: string
+  renders?: true
+  storySettings?: true
   /** Studio › Make a batch for one catalog project (default: the page's own choice). */
   project?: string
   queue?: true
@@ -39,6 +45,7 @@ export interface Route {
 
 const ANCHOR = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const PROJECT = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const STORY_ID = /^[A-Za-z0-9_-]{1,120}$/
 
 const OLD: Record<string, { route: Route; hash: string }> = {
   dashboard: { route: { view: 'home' }, hash: '#/home' },
@@ -74,6 +81,13 @@ export function routeFromHash(hash: string): Route {
       return PROJECT.test(project) && project.length <= 40 ? { view: 'studio', make: true, project } : { view: 'studio', make: true }
     }
     if (rest.length === 1 && rest[0] === 'export') return { view: 'studio', export: true }
+    if (rest[0] === 'jobs' && rest.length === 1) return { view: 'studio', jobs: true }
+    if (rest[0] === 'jobs' && rest.length === 2) {
+      const id = decode(rest[1] ?? '')
+      return id && STORY_ID.test(id) ? { view: 'studio', job: id } : { view: 'studio', jobs: true }
+    }
+    if (rest.length === 1 && rest[0] === 'renders') return { view: 'studio', renders: true }
+    if (rest.length === 1 && rest[0] === 'story-settings') return { view: 'studio', storySettings: true }
     return { view: 'studio' }
   }
   if (first === 'library') {
@@ -108,10 +122,18 @@ export function guideHash(anchor: string): string {
 }
 
 /** The screen a route shows, for titles, the step line and the help icon. */
-export type Screen = 'home' | 'studio' | 'export' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
+export type Screen = 'home' | 'studio' | 'export' | 'jobs' | 'job' | 'renders' | 'storySettings' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
 
 export function screenOf(route: Route): Screen {
-  if (route.view === 'studio') return route.make ? 'make' : route.export ? 'export' : 'studio'
+  if (route.view === 'studio') {
+    if (route.make) return 'make'
+    if (route.export) return 'export'
+    if (route.job) return 'job'
+    if (route.jobs) return 'jobs'
+    if (route.renders) return 'renders'
+    if (route.storySettings) return 'storySettings'
+    return 'studio'
+  }
   if (route.view === 'library') return route.episode ? 'episode' : 'library'
   if (route.view === 'schedule' && route.queue) return 'queue'
   return route.view
@@ -121,6 +143,10 @@ export const SCREEN_TITLES: Record<Screen, string> = {
   home: 'Home',
   studio: 'Studio',
   export: 'Export',
+  jobs: 'Story jobs',
+  job: 'Story job',
+  renders: 'Story renders',
+  storySettings: 'Story settings',
   library: 'Library',
   make: 'Make a batch',
   episode: 'Episode',

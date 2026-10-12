@@ -6,7 +6,7 @@
 - **Direct CLI Wizard**: `python -m src.cli`
 - **Headless**: `python -m src.cli --headless --route recap --title "..."` or `--route series --title "..." --brief "..." --episodes N` (paid unless recap `--offline`; see `docs/HEADLESS.md`)
 - **$0 smoke test**: `.venv/bin/python -m unittest discover -s tests -v` (all paid/network calls stubbed, sockets blocked)
-- **FastAPI Dashboard**: `uvicorn src.server:app --port 8910 --reload`
+- **Story worker agent** (the Studio's Story jobs pages on the Pi talk to it): `python -m src.agent` (127.0.0.1:8911, bearer token; setup in `docs/HEADLESS.md`)
 - **Model Comparison**: `python -m src.tools.model_compare --prompt "..." --models kling-2.5-turbo-pro,seedance-2.0-fast`
 - **Dependencies**: `pip install -r requirements.txt`
 - **Type Checking**: `mypy .` (if configured)
@@ -32,13 +32,13 @@
 
 ## Architectural Notes
 - `src/cli.py`: Interactive wizard logic with retry gate for Veo failures.
-- `src/server.py`: FastAPI backend with WebSocket streaming.
+- `src/agent.py`: Story worker agent (FastAPI, polling JSON) behind the Pi's studio proxy; replaced the old dashboard (`server.py`, `static/`) in Phase 3.
 - `src/narrative.py`: Primary LLM logic including random story generation.
 - `src/pipeline.py`: Stock footage orchestration.
 - `src/animation_pipeline.py`: 8-step animation orchestrator.
 - `src/pipeline_state.py`: Crash-resilient state persistence.
 - `src/steps/`: Modular steps for the animation series (writer, screenwriter, casting, world_builder, director, set_designer, scene_generator, editor).
-- `src/project_manager.py`: Project CRUD for the web dashboard.
+- `src/project_manager.py`: Project CRUD for the worker agent.
 - `src/video_models.py`: Loads and validates the 11 video models from `registry.json` (the single source, also read by the studio catalog).
 - `src/render_json.py`: Writes `render.json` + `cover.jpg` next to each final MP4 (engine → packager hand-off).
 - `src/video_client.py`: Unified client routing to Gemini API, fal.ai, or Vertex AI. Handles retries, cost tracking, model fallback.

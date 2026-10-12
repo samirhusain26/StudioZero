@@ -259,10 +259,11 @@ else
 fi
 # The exceptions to "re-enables only what was already enabled", for these units only: the two read-only stats units
 # (the hourly timer does nothing while the switch is off; the path unit is the UI's "read now" request), the
-# automatic apply after an update (scalar-social-apply-units.path, which runs this script) and the autopilot timer
-# (it does nothing while publishing is paused in the UI). Never scalar-social.timer, the pause state or channels.
+# automatic apply after an update (scalar-social-apply-units.path, which runs this script), the autopilot timer
+# (it does nothing while publishing is paused in the UI) and the Studio proxy (no network until studio-worker.sh
+# configures the one worker address; it never publishes). Never scalar-social.timer, the pause state or channels.
 STATS_UNITS=()
-for name in scalar-social-metrics.timer scalar-social-metrics.path scalar-social-apply-units.path scalar-social-autopilot.timer; do
+for name in scalar-social-metrics.timer scalar-social-metrics.path scalar-social-apply-units.path scalar-social-autopilot.timer scalar-social-studio-proxy.service; do
   if [ "$(systemctl is-enabled "$name" 2>/dev/null || true)" = masked ]; then
     echo "  $name is masked: left as it is (unmask it to use it)"
   else
@@ -303,7 +304,7 @@ else
 fi
 
 # 3. Restart the UI (and the path watchers) on the new units; record what was applied only if all of it worked.
-systemctl try-restart scalar-social-approve.path scalar-social-metrics.path scalar-social-apply-units.path
+systemctl try-restart scalar-social-approve.path scalar-social-metrics.path scalar-social-apply-units.path scalar-social-studio-proxy.service
 if [ "$(systemctl is-enabled scalar-social-ui.service 2>/dev/null || true)" = enabled ]; then
   # Type=notify: restart itself fails when the UI crashes or never becomes ready, so it must not end the script
   # (set -e) before the rollback is printed.

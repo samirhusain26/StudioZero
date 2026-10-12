@@ -9,15 +9,13 @@ StudioZero is a modular AI video generation system designed for high scalability
 ```text
 StudioZero/
 ├── src/
-│   ├── app.py              # Main entry point (Interface Switcher)
 │   ├── cli.py              # Interactive CLI Wizard
 │   ├── headless.py         # Headless (non-interactive) runner
-│   ├── server.py           # FastAPI Web Dashboard backend
+│   ├── agent.py            # Story worker agent (FastAPI) for the Pi UI's Story jobs
 │   ├── pipeline.py         # Stock Footage Route Orchestrator
 │   ├── animation_pipeline.py # Animation Series Route Orchestrator (8-step)
 │   ├── pipeline_state.py   # Persistence & State for Animation series
-│   ├── project_manager.py  # Project CRUD for Web Dashboard
-│   ├── server_launcher.py  # Server startup helper
+│   ├── project_manager.py  # Project CRUD for the worker agent
 │   ├── video_models.py     # Central registry of all 11 video generation models
 │   ├── video_client.py     # Unified video client (fal.ai + Vertex AI routing)
 │   ├── budget_guard.py     # Per-project budget enforcement + auto-downgrade, spend ledger
@@ -47,7 +45,6 @@ StudioZero/
 │   ├── config_mappings.py  # Music/Voice/Mood lookup tables
 │   ├── marketing.py        # Social media caption generation (Groq)
 │   └── logging_utils.py    # Centralized Logging
-├── static/                 # Web Dashboard Frontend (HTML/JS/CSS)
 ├── assets/
 │   ├── basevideos/         # Fallback portrait clips
 │   ├── music/              # Background tracks by genre
@@ -55,7 +52,7 @@ StudioZero/
 ├── output/
 │   ├── final/              # Rendered MP4s; recaps in <safe_title>/ with cover.jpg + render.json
 │   ├── temp/               # Per-project temporary assets and state
-│   ├── projects/           # Project state JSON files (Web Dashboard)
+│   ├── projects/           # Project state JSON files (story worker agent)
 │   └── pipeline_logs/      # Script generation JSON logs
 ├── docs/                   # Detailed documentation
 ├── tests/                  # $0 unittest suite (smoke tests for both routes)
@@ -77,7 +74,7 @@ StudioZero/
 | **Text-to-Speech** | Google Gemini TTS |
 | **Rendering** | FFmpeg (H.264, libass, sidechain) |
 | **Transcription** | OpenAI Whisper (Local) |
-| **Dashboard** | FastAPI, WebSockets, Vanilla CSS |
+| **Worker agent** | FastAPI, polling JSON (UI: the Pi's Studio › Story jobs) |
 
 ---
 

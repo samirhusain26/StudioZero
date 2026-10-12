@@ -29,7 +29,7 @@ from google import genai as genai_lib
 
 from src.config import Config
 from src.pipeline_state import PipelineState, load_state, save_state
-from src.steps import StepContext, StepResult, PRE_PRODUCTION_STEPS, EPISODE_STEPS
+from src.steps import StepCancelled, StepContext, StepResult, PRE_PRODUCTION_STEPS, EPISODE_STEPS
 from src.steps.scene_generator import SceneGenerationError
 
 logger = logging.getLogger(__name__)
@@ -50,6 +50,7 @@ def run_animation_pipeline(
     resume: bool = True,
     progress_callback=None,
     project_dir: Optional[Path] = None,
+    cancel_event=None,
 ) -> Generator[PipelineStatus, None, Optional[str]]:
     """
     Run the full animation pipeline.
@@ -63,6 +64,8 @@ def run_animation_pipeline(
         num_episodes:   Number of episodes to generate (each = multiple Veo scenes).
         resume:         If True (default), skip already-completed steps on re-run.
         project_dir:    Optional explicit project directory. If None, uses TEMP_DIR / safe_title.
+        cancel_event:   Optional threading.Event (worker agent): checked before every step and, inside the
+                        scene generator, before every scene; a cancelled step is not marked complete.
     """
     Config.ensure_directories()
 
@@ -92,7 +95,15 @@ def run_animation_pipeline(
         gemini_client=gemini_client,
         num_episodes=num_episodes,
         brief=brief,
+        cancel_event=cancel_event,
     )
+
+    def cancelled(step_name: str, episode: Optional[int] = None) -> PipelineStatus:
+        state.mark_failed(step_name, "cancelled", episode_number=episode)
+        save_state(state, project_dir)
+        where = f"ep{episode}/{step_name}" if episode else step_name
+        logger.info(f"[pipeline] [{where}] Cancelled")
+        return PipelineStatus(step=step_counter, message=f"[{where}] Cancelled; resume to continue", is_error=True)
 
     step_counter = 0
 
@@ -112,6 +123,9 @@ def run_animation_pipeline(
             )
             continue
 
+        if cancel_event is not None and cancel_event.is_set():
+            yield cancelled(step_name)
+            return None
         logger.info(f"[pipeline] [{step_name}] Starting (step {step_counter})...")
         yield PipelineStatus(
             step=step_counter,
@@ -138,6 +152,9 @@ def run_animation_pipeline(
                 data=result.data,
             )
 
+        except StepCancelled:
+            yield cancelled(step_name)
+            return None
         except Exception as e:
             state.mark_failed(step_name, str(e))
             save_state(state, project_dir)
@@ -168,6 +185,7 @@ def run_animation_pipeline(
             num_episodes=num_episodes,
             brief=brief,
             progress_callback=progress_callback,
+            cancel_event=cancel_event,
         )
 
         for step_name in EPISODE_STEPS:
@@ -181,6 +199,9 @@ def run_animation_pipeline(
                 )
                 continue
 
+            if cancel_event is not None and cancel_event.is_set():
+                yield cancelled(step_name, ep_num)
+                return None
             logger.info(f"[pipeline] [ep{ep_num}/{step_name}] Starting (step {step_counter})...")
             yield PipelineStatus(
                 step=step_counter,
@@ -206,6 +227,10 @@ def run_animation_pipeline(
                     message=f"[ep{ep_num}/{step_name}] Complete — {len(result.artifact_paths)} artifact(s)",
                     data=result.data,
                 )
+
+            except StepCancelled:
+                yield cancelled(step_name, ep_num)
+                return None
 
             except SceneGenerationError as e:
                 # Special case: Veo scene failure — offer retry/edit to the user

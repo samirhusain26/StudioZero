@@ -157,11 +157,23 @@ class Config:
         creds = settings.get("credentials", {})
         vg = settings.get("video_generation", {})
         models = settings.get("models", {})
+        # Models apply to the next run without a restart (review B5)
+        cls.GEMINI_MODEL_NAME = models.get("llm_model") or os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash")
+        cls.GEMINI_IMAGE_MODEL = models.get("image_model") or os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
+        cls.TTS_MODEL = models.get("tts_model") or os.getenv("TTS_MODEL", "gemini-2.5-flash-preview-tts")
+        cls.FAL_KEY = creds.get("FAL_KEY") or os.getenv("FAL_KEY") or ""
+        cls.export_fal_key()
         # Refresh video generation settings
         cls.ACTIVE_VIDEO_MODEL = vg.get("active_model") or os.getenv("ACTIVE_VIDEO_MODEL", "veo-3.1-fast")
         cls.ACTIVE_VIDEO_TIER = vg.get("active_tier") or os.getenv("ACTIVE_VIDEO_TIER", "recommended")
         cls.VIDEO_MAX_BUDGET = float(vg.get("max_budget", os.getenv("VIDEO_MAX_BUDGET", "10.0")))
         cls.VIDEO_AUTO_DOWNGRADE = vg.get("auto_downgrade", True)
+
+    @classmethod
+    def export_fal_key(cls):
+        """fal_client reads only the FAL_KEY environment variable (review B5)."""
+        if cls.FAL_KEY and not os.environ.get("FAL_KEY"):
+            os.environ["FAL_KEY"] = cls.FAL_KEY
 
     @classmethod
     def ensure_directories(cls):
@@ -179,3 +191,7 @@ class Config:
 # or let the main application call Config.validate()
 # For this request, we won't auto-execute validate() at module level to avoid import side-effects,
 # but it is ready to be called.
+
+
+# A FAL_KEY from output/settings.json reaches fal_client too (review B5).
+Config.export_fal_key()

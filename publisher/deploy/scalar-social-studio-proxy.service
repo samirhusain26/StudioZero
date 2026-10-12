@@ -1,0 +1,39 @@
+[Unit]
+Description=Studio proxy: the UI's /api/studio/* to the story worker on the owner's laptop (allowlisted; never publishes)
+After=network.target
+
+[Service]
+Type=simple
+# A throwaway user in the scalar-social group: it can serve the UI on a 0660 socket in its runtime folder, and cannot
+# read the UI's or the publisher's state or credentials.
+DynamicUser=yes
+Group=scalar-social
+RuntimeDirectory=scalar-social-studio
+RuntimeDirectoryMode=0750
+ExecStart=/usr/bin/python3 -I -B /opt/scalar-social/repo/publisher/app/studio_proxy.py --socket /run/scalar-social-studio/proxy.sock
+# Not configured here: publisher/deploy/studio-worker.sh writes a Pi-local drop-in (never in git) with
+# STUDIO_WORKER_URL, STUDIO_WORKER_ADDR, LoadCredential=STUDIO_AGENT_TOKEN and IPAddressAllow=<that address>. Until
+# then every route answers "Worker offline".
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+# No network at all unless the drop-in allows the one worker address.
+IPAddressDeny=any
+MemoryMax=48M
+
+[Install]
+WantedBy=multi-user.target

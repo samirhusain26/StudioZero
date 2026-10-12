@@ -62,7 +62,8 @@ CONTENT = [
     (r'\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}', 'JWT'),
     (r'"private_key"\s*:\s*"-----BEGIN', 'service account key'),
     (r'\b[a-z0-9-]+\.tail[0-9a-f]{4,}\.ts\.net\b', 'Tailscale host name'),
-    (r'(?<![\d.])(?!127\.0\.0\.1\b|0\.0\.0\.0\b|255\.255\.255\.255\b)(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)(?![\d.])', 'IP address'),
+    # 100.64.0.0/10: the RFC 6598 shared range (Tailscale's tailnet addresses) as a network, never a host address.
+    (r'(?<![\d.])(?!127\.0\.0\.1\b|0\.0\.0\.0\b|255\.255\.255\.255\b|100\.64\.0\.0/10\b)(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)(?![\d.])', 'IP address'),
     # remotion.dev: Remotion's public support address inside its library code (the Studio's export bundle).
     (r'(?<![:/\w.%+-])[A-Za-z0-9._%+-]+@(?!example\.(?:com|org|net)\b|anthropic\.com\b|users\.noreply\.github\.com\b|github\.com\b|remotion\.dev\b)'
      r'[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.(?:com|net|org|io|co|dev|app|me|uk|de|in|us|ai)\b', 'e-mail address'),

@@ -64,11 +64,16 @@ export function StudioView() {
                 <p className="muted">
                   {e.id === 'motion'
                     ? 'Runs in this browser: preview and export on the device you are using; nothing is rendered on the Pi.'
-                    : 'Runs on the laptop worker; its jobs and spend appear here once the worker is set up.'}
+                    : 'Runs on the laptop worker: start and follow its jobs here; paid services and their keys stay on the laptop.'}
                 </p>
                 {e.id === 'motion' ? (
                   <p>
                     <a href="#/studio/export">Preview and export a batch →</a>
+                  </p>
+                ) : null}
+                {e.id === 'story' ? (
+                  <p>
+                    <a href="#/studio/jobs">Story jobs →</a>
                   </p>
                 ) : null}
               </li>

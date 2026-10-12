@@ -12,6 +12,7 @@ import contextlib
 import datetime as dt
 import hashlib
 import hmac
+import http.client
 import http.server
 import json
 import math
@@ -55,6 +56,10 @@ REQUEST_TIMEOUT_SECONDS = 60
 LOOPBACK = {'127.0.0.1', '::1', 'localhost'}
 JSON_CAP = 256_000
 MEDIA_TTL = 3600
+STUDIO_SOCKET = '/run/scalar-social-studio/proxy.sock'  # scalar-social-studio-proxy.service (studio_proxy.py)
+STUDIO_BODY_CAP = 256_000
+STUDIO_TIMEOUT = 60
+STUDIO_HEADERS = ('Content-Type', 'Content-Length', 'Content-Range', 'Accept-Ranges', 'ETag', 'Last-Modified')
 # Studio › Export (in-browser rendering): the mastered mix is fetched from a blob: URL, the encoders run in blob:
 # workers and the AAC fallback encoder is WebAssembly ('wasm-unsafe-eval' allows compiling Wasm, not JS eval).
 # Nothing may connect anywhere but this origin (Remotion's usage ping to its own site stays blocked).
@@ -127,7 +132,7 @@ def load_passcode():
 class UiApp:
     def __init__(self, state, config_path, static_dir, passcode, allowed_origins, *, clock=time.time,
                  media_key=None, show=None, probe=None, frame_grabber=None, run=None, repo=None, running=None,
-                 update_state=None, catalog_path=None, assets=None):
+                 update_state=None, catalog_path=None, assets=None, studio_socket=STUDIO_SOCKET):
         import ui_health
         import ui_library
         self.state, self.config_path = Path(state), Path(config_path)
@@ -157,6 +162,8 @@ class UiApp:
         self.catalog = ui_catalog.Cache(catalog_path or ui_catalog.PATH)
         # engines/motion/public files listed in publisher/motion-assets.json: GET /api/assets/motion/…
         self.assets = assets or ui_assets.Assets()
+        # /api/studio/* goes to the story worker through the proxy's unix socket (never directly to the network).
+        self.studio_socket = studio_socket
 
     # --- state helpers -------------------------------------------------------------
     def config(self):
@@ -315,6 +322,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.authenticate()
             if method in ('POST', 'PUT', 'DELETE'):
                 self.check_mutation()
+            if path.startswith('/api/studio/'):
+                return self.studio(method, path[len('/api'):], url.query)
             for route_method, pattern, name in ROUTES:
                 if route_method == method or (route_method == 'GET' and method == 'HEAD'):
                     match = re.fullmatch(pattern, path)
@@ -518,6 +527,56 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return Raw(b'', content_type, 416, {**headers, 'Content-Range': f'bytes */{size}'})
         return Raw(path=path, offset=start, length=end-start+1, content_type=content_type, status=206,
                    headers={**headers, 'Content-Range': f'bytes {start}-{end}/{size}'})
+
+    # --- Studio worker (through studio_proxy.py, which holds the allowlist and the worker's address and token) ---
+    def studio(self, method, path, query_string):
+        if method not in ('GET', 'HEAD', 'POST', 'PUT', 'DELETE'):
+            raise ApiError(405, 'Method not allowed.')
+        body = None
+        if self.headers.get('Content-Length') not in (None, '0'):
+            body = json.dumps(self.read_json(STUDIO_BODY_CAP)).encode()
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.settimeout(STUDIO_TIMEOUT)
+        try:
+            sock.connect(self.app.studio_socket)
+        except OSError:
+            sock.close()
+            raise ApiError(503, 'Worker offline', 'The Studio proxy is not running on this Pi; run apply-units.sh, then try again.') from None
+        conn = http.client.HTTPConnection('studio-proxy', timeout=STUDIO_TIMEOUT)
+        conn.sock = sock
+        headers = {'Content-Type': 'application/json'} if body is not None else {}
+        if self.headers.get('Range'):
+            headers['Range'] = self.headers['Range'][:100]
+        started = False
+        try:
+            try:
+                conn.request('GET' if method == 'HEAD' else method, path + (f'?{query_string}' if query_string else ''), body=body, headers=headers)
+                response = conn.getresponse()
+            except (OSError, http.client.HTTPException):
+                raise ApiError(504, 'The story worker did not answer in time.', 'Try again; if it repeats, check the laptop.') from None
+            started = True
+            self.finish_body()
+            self.send_response(response.status)
+            for name in STUDIO_HEADERS:
+                value = response.getheader(name)
+                if value is not None:
+                    self.send_header(name, value)
+            if response.getheader('Content-Length') is None:
+                self.close_connection = True
+                self.send_header('Connection', 'close')
+            self.headers_common()
+            self.end_headers()
+            while method != 'HEAD':
+                chunk = response.read(65536)
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
+        except (OSError, http.client.HTTPException):
+            if not started:
+                raise
+            self.close_connection = True  # mid-stream: the client sees a short body and retries
+        finally:
+            conn.close()
 
     # --- endpoints (bodies shaped by ui_views to publisher/ui/src/api/types.ts) ----------------------
     def motion_assets(self):
@@ -1319,6 +1378,7 @@ def main(argv=None):
     parser.add_argument('--allowed-origin', action='append', default=None)
     parser.add_argument('--insecure-dev', action='store_true', help='No passcode; loopback http origins only')
     parser.add_argument('--no-legacy', action='store_true', help='Skip registering existing Pi media at start')
+    parser.add_argument('--studio-socket', default=STUDIO_SOCKET, help='Studio proxy socket (studio_proxy.py)')
     args = parser.parse_args(argv)
     origins = args.allowed_origin or []
     if args.host not in LOOPBACK:
@@ -1336,7 +1396,8 @@ def main(argv=None):
             return 1
     import ui_library
     ui_library.cleanup_incoming(args.state, all_files=True)
-    app = UiApp(args.state, args.config, args.static, passcode, origins, running=running, update_state=args.update_state)
+    app = UiApp(args.state, args.config, args.static, passcode, origins, running=running, update_state=args.update_state,
+                studio_socket=args.studio_socket)
     server = make_server(app, args.host, args.port)
     # Only now, with the socket listening, does the UI report `serving` for a switched update and tell systemd it
     # is ready (Type=notify). The update unit rolls the checkout back if this never happens after a restart.

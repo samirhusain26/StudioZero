@@ -6,7 +6,7 @@ This document provides a comprehensive breakdown of the StudioZero video generat
 
 ## 1. System Architecture Overview
 
-StudioZero uses a generator-based orchestrator model. Pipelines yield `PipelineStatus` objects, enabling real-time progress tracking across the CLI Wizard, Web Dashboard, and Batch Runner.
+StudioZero uses a generator-based orchestrator model. Pipelines yield `PipelineStatus` objects, enabling real-time progress tracking across the CLI wizard, headless runs and the worker agent.
 
 ### High-Level Flow
 ```
@@ -72,4 +72,4 @@ The Animation Series route uses `src/pipeline_state.py` to track the completion 
 ## 4. UI Interfaces
 
 *   **CLI Wizard**: A lightweight, interactive terminal interface for launching jobs.
-*   **Web Dashboard**: A modern FastAPI/WebSocket interface for managing projects, editing scripts, and viewing real-time rendering logs.
+*   **Worker agent**: `src/agent.py` (FastAPI, polling JSON) behind the Pi's studio proxy; the Pi UI's Studio › Story jobs manage projects, review scripts and show logs.

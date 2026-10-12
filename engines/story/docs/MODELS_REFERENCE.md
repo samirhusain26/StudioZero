@@ -276,7 +276,7 @@ Per-scene asset bundle for the Stock Footage route.
 
 ---
 
-## 7. Web Dashboard Models (`src/server.py`, `src/project_manager.py`)
+## 7. Project Models (`src/project_manager.py`, used by `src/agent.py`)
 
 ### `Project`
 

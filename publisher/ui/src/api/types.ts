@@ -1592,3 +1592,170 @@ export interface MotionManifest {
   base: string
   files: Record<string, { bytes: number; sha256: Sha256 }>
 }
+
+// ---------------------------------------------------------------------------
+// /api/studio/*: the story worker agent on the laptop (engines/story/src/agent.py), through the Pi's studio proxy
+// (publisher/app/studio_proxy.py). 503 "Worker offline" when the laptop sleeps or the worker is not set up.
+// ---------------------------------------------------------------------------
+
+export type StoryRoute = 'recap' | 'series'
+export type StoryStatus = 'created' | 'running' | 'paused' | 'review' | 'scene_failed' | 'error' | 'completed'
+export type StoryStepName = 'writer' | 'screenwriter' | 'casting' | 'world_builder' | 'director' | 'set_designer' | 'scene_generator' | 'editor'
+
+export interface StoryOriginalsBudget {
+  monthlyUsd?: number
+  perRunApproval?: boolean
+}
+
+export interface StoryHealth {
+  ok: boolean
+  version: string
+  engine: 'story'
+  running: string[]
+  keys: Record<string, boolean>
+  paidRunsEnabled: boolean
+  originalsBudget: StoryOriginalsBudget
+}
+
+export interface StoryFailedScene {
+  episode: number | null
+  scene: number | null
+  prompt: string | null
+  error: string
+}
+
+export interface StoryProject {
+  id: string
+  name: string
+  route: StoryRoute
+  params: { project_title?: string; brief?: string; num_episodes?: number; video_model?: string; max_budget?: number }
+  status: StoryStatus
+  running: boolean
+  currentStep: string | null
+  createdAt: string
+  updatedAt: string
+  error: string | null
+  videoModel: string
+  spentUsd: number
+  maxBudgetUsd: number
+  /** Recap only: the script waiting for review (or the approved one). */
+  script?: Record<string, unknown> | null
+  scriptApproved?: boolean
+  failedScene: StoryFailedScene | null
+}
+
+export interface StoryStepState {
+  completed: boolean
+  startedAt: string | null
+  completedAt: string | null
+  error: string | null
+  artifacts: number
+}
+
+export interface StoryPipelineState {
+  seriesSteps: Partial<Record<StoryStepName, StoryStepState>>
+  episodes: Record<string, Partial<Record<StoryStepName, StoryStepState>>>
+}
+
+export interface StoryProjectDetail extends StoryProject {
+  pipelineState: StoryPipelineState | null
+}
+
+export interface StoryEvent {
+  seq: number
+  at: string
+  kind: string
+  message: string
+  step?: number | string
+  data?: Record<string, string | number | boolean>
+}
+
+export interface StoryEvents {
+  events: StoryEvent[]
+  last: number
+  running: boolean
+  status: StoryStatus
+}
+
+export interface StoryEstimate {
+  estimateUsd: number
+  lines: { what: string; usd: number }[]
+  unpriced: string[]
+  token: string
+  spentUsd: number
+  maxBudgetUsd: number
+  paidRunsEnabled: boolean
+  originalsBudget: StoryOriginalsBudget
+}
+
+export interface StoryConfirm {
+  token: string
+  estimateUsd: number
+}
+
+export interface StoryArtifact {
+  path: string
+  bytes: number
+  kind: 'image' | 'video' | 'json' | 'text' | 'file'
+  json: unknown
+}
+
+export interface StoryArtifacts {
+  step: StoryStepName
+  episode: number | null
+  files: StoryArtifact[]
+}
+
+export interface StoryRender {
+  id: string
+  episodeId: string | null
+  route: string | null
+  createdAt: string | null
+  video: { file?: string; durationSeconds?: number; width?: number; height?: number; bytes?: number } | null
+  costUsd: number | null
+  credits: unknown
+  disclosure: unknown
+}
+
+export interface StoryVideoModel {
+  id: string
+  name: string
+  provider: string
+  costPerSecondUsd: number
+  maxResolution: string
+  maxDurationSeconds: number
+  audio: boolean
+  referenceImages: boolean
+  description: string
+  episodeUsd: number
+}
+
+export type StoryTier = 'cheapest' | 'recommended' | 'high_fidelity'
+
+export interface StoryModels {
+  llm_model: string
+  image_model: string
+  tts_model: string
+}
+
+export interface StoryPreset extends StoryModels {
+  tier: StoryTier
+}
+
+export interface StorySettings {
+  models: StoryModels
+  choices: Record<keyof StoryModels, string[]>
+  video: { active_model: string; active_tier: StoryTier; max_budget: number; auto_downgrade: boolean }
+  tiers: Partial<Record<StoryTier, StoryVideoModel[]>>
+  presets: Record<string, StoryPreset>
+  keys: Record<string, boolean>
+}
+
+export type StorySettingsUpdate = Partial<StoryModels> & {
+  active_tier?: StoryTier
+  active_model?: string
+  max_budget?: number
+  auto_downgrade?: boolean
+}
+
+export type StorySceneAction = 'retry' | 'edit' | 'skip' | 'change_model'

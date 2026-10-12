@@ -9,6 +9,10 @@ import { ActivityView } from './views/ActivityView'
 import { SettingsView } from './views/SettingsView'
 import { MakeBatchView } from './views/MakeBatchView'
 import { StudioView } from './views/studio/StudioView'
+import { StoryJobsView } from './views/studio/StoryJobsView'
+import { StoryJobView } from './views/studio/StoryJobView'
+import { StoryRendersView } from './views/studio/StoryRendersView'
+import { StorySettingsView } from './views/studio/StorySettingsView'
 import { Loading } from './components/Loading'
 
 // Remotion (preview and export) loads only on this screen.
@@ -178,7 +182,11 @@ export function App() {
               <ExportView />
             </Suspense>
           ) : null}
-          {view === 'studio' && !route.make && !route.export ? <StudioView /> : null}
+          {view === 'studio' && route.jobs ? <StoryJobsView /> : null}
+          {view === 'studio' && route.job ? <StoryJobView key={route.job} id={route.job} /> : null}
+          {view === 'studio' && route.renders ? <StoryRendersView /> : null}
+          {view === 'studio' && route.storySettings ? <StorySettingsView /> : null}
+          {screen === 'studio' ? <StudioView /> : null}
           {view === 'library' && !episode ? <LibraryView /> : null}
           {view === 'schedule' ? <ScheduleView queue={Boolean(route.queue)} /> : null}
           {view === 'guide' ? <GuideView anchor={route.anchor} /> : null}

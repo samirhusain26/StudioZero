@@ -36,6 +36,18 @@ import type {
   Problem,
   ScheduleInputs,
   ScheduleResponse,
+  StoryArtifacts,
+  StoryConfirm,
+  StoryEstimate,
+  StoryEvents,
+  StoryHealth,
+  StoryProject,
+  StoryProjectDetail,
+  StoryRender,
+  StoryRoute,
+  StorySceneAction,
+  StorySettings,
+  StorySettingsUpdate,
   UpdateInfo,
   UpdateQueuedResponse,
   WithdrawContentRequest,
@@ -408,4 +420,39 @@ export const api = {
   /** 409 while a read is already pending; 422 for a backfill outside 0–93. */
   requestMetricsRead: (backfill?: number) =>
     request<MetricsStatus>('POST', '/api/metrics/read', { json: backfill === undefined ? {} : { backfill } }),
+
+  // Story worker (laptop) through the Pi's studio proxy. Paid calls carry the confirmed estimate; the worker re-checks it.
+  storyHealth: () => request<StoryHealth>('GET', '/api/studio/health'),
+  storyProjects: () => request<{ projects: StoryProject[] }>('GET', '/api/studio/projects'),
+  storyCreate: (body: { route: StoryRoute; name: string; brief?: string; episodes?: number }) =>
+    request<StoryProject>('POST', '/api/studio/projects', { json: body }),
+  storyProject: (id: string) => request<StoryProjectDetail>('GET', `/api/studio/projects/${enc(id)}`),
+  /** `confirm` must be the project id. */
+  storyDelete: (id: string, confirm: string) => request<{ ok: true }>('DELETE', `/api/studio/projects/${enc(id)}`, { json: { confirm } }),
+  storyEvents: (id: string, since: number) => request<StoryEvents>('GET', `/api/studio/projects/${enc(id)}/events`, { query: { since } }),
+  storyEstimate: (id: string) => request<StoryEstimate>('GET', `/api/studio/projects/${enc(id)}/estimate`),
+  storyRun: (id: string, confirm: StoryConfirm) => request<StoryProject>('POST', `/api/studio/projects/${enc(id)}/run`, { json: { confirm } }),
+  storyCancel: (id: string) => request<StoryProject & { cancelling: boolean }>('POST', `/api/studio/projects/${enc(id)}/cancel`, { json: {} }),
+  storySaveScript: (id: string, script: Record<string, unknown>) =>
+    request<StoryProject>('PUT', `/api/studio/projects/${enc(id)}/script`, { json: { script } }),
+  storyApproveScript: (id: string) => request<StoryProject>('POST', `/api/studio/projects/${enc(id)}/approve-script`, { json: {} }),
+  storyScene: (id: string, action: StorySceneAction, prompt = '', modelId = '') =>
+    request<StoryProject & { estimate: StoryEstimate }>('POST', `/api/studio/projects/${enc(id)}/scene`, { json: { action, prompt, modelId } }),
+  storyArtifacts: (id: string, step: string, episode?: number) =>
+    request<StoryArtifacts>('GET', `/api/studio/projects/${enc(id)}/artifacts`, { query: { step, episode } }),
+  storyRenders: () => request<{ renders: StoryRender[] }>('GET', '/api/studio/renders'),
+  storySettings: () => request<StorySettings>('GET', '/api/studio/settings'),
+  storySaveSettings: (body: StorySettingsUpdate) => request<StorySettings>('PUT', '/api/studio/settings', { json: body }),
+  /** One short Gemini call (unpriced): the worker refuses it without this confirmation. */
+  storyRandomIdea: () =>
+    request<{ name: string; brief: string }>('POST', '/api/studio/ideas/random', { json: { confirm: { token: 'idea-llm-call', estimateUsd: 0 } } }),
+}
+
+/** Same-origin media URLs (session cookie) for <img>/<video>: a project file or a render's video/cover. */
+export function storyFileUrl(id: string, path: string): string {
+  return `/api/studio/projects/${enc(id)}/files/${path.split('/').map(enc).join('/')}`
+}
+
+export function storyRenderUrl(renderId: string, name: 'video.mp4' | 'cover.jpg'): string {
+  return `/api/studio/renders/${enc(renderId)}/${name}`
 }

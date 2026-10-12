@@ -44,7 +44,7 @@ python -m src.cli --headless --route series --title "Galactic Garage" --brief ".
 Details, outputs (`render.json`) and the ffmpeg caveat: [docs/HEADLESS.md](docs/HEADLESS.md).
 You will be prompted to choose between:
 *   **CLI Wizard**: The recommended interactive terminal interface for both production routes.
-*   **Web Dashboard**: A modern FastAPI/WebSocket interface for project management and real-time monitoring.
+*   **Story worker agent**: a FastAPI API (`src/agent.py`) that the Pi UI's Studio › Story jobs pages drive through the Pi's proxy.
 
 ## Documentation
 
