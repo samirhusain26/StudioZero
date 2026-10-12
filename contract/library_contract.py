@@ -142,7 +142,9 @@ def link_for(episode, platform):
 
 def expand(episode, platform, text):
     """Final text the Pi publishes: `{link}` expanded, nothing else changed."""
-    return None if text is None else text.replace('{link}', link_for(episode, platform))
+    if text is None or '{link}' not in text:
+        return text
+    return text.replace('{link}', link_for(episode, platform))
 
 
 def text_length(platform, text):

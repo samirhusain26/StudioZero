@@ -42,6 +42,7 @@ SENT = 'Already sent to the platform; cannot change'
 OCCUPIED = 'This time already has a post on this account'
 TIKTOK_MAX_HASHTAGS = 5       # Buffer's TikTok route (support.buffer.com, using-tiktok-with-buffer)
 THREADS_SCOPE_MISSING = 'Threads replies need the threads_manage_replies grant'
+ATTRIBUTION_MISSING = 'Required attribution would not post: it is not in the caption and its first comment is off or unavailable'
 KIND_ORDER = ('post', 'comment', 'poll', 'answer')
 
 # Per-route companion capability (PUBLISHING_PIPELINE_PLAN.md "Polls and comments").
@@ -350,6 +351,22 @@ def _static_reason(video, platform):
     return None if (publication.get('captions') or {}).get(platform) is not None else f'No {LABELS[platform]} caption'
 
 
+def _attribution_reason(video, platform, first_comment, threads_ok):
+    """Contract v2: the Pi publishes the approved text unchanged, so it only verifies that every required
+    attribution posts on this platform: in the caption, or in a first comment that this draft will post."""
+    episode = video['episode']
+    if 'contentId' not in episode:
+        return None
+    publication = episode['publication']
+    if not lc.missing_attributions({**episode, 'publication': {**publication, 'firstComment': None}}, platform):
+        return None
+    comment_posts = first_comment and (platform in ('instagram', 'bluesky') or (
+        platform == 'threads' and threads_ok and not publication.get('poll')))
+    if comment_posts and not lc.missing_attributions(episode, platform):
+        return None
+    return ATTRIBUTION_MISSING
+
+
 def _date_reason(video, day):
     window = video.get('eligibility') or {}
     if window.get('notBefore') and day < dt.date.fromisoformat(window['notBefore']):
@@ -451,7 +468,7 @@ def _carried_jobs(base_manifest, zone, channels, by_sha):
 
 
 def _answer_terms(episode):
-    creative = episode.get('creative') or {}
+    creative = lc.episode_view(episode)['creative'] or {}
     terms = sorted({lc.normalize(t) for t in [creative.get('answer') or '', *(creative.get('answerAliases') or [])]
                     if lc.normalize(t)})
     labels = [lc.normalize(c['label']) for c in creative.get('choices') or []]
@@ -479,6 +496,16 @@ def _edit_errors(job, text, video):
         limit = lc.CAPTION_LIMITS[platform] if job['kind'] == 'post' else lc.COMMENT_LIMITS[platform]
         lc._text_checks(report, 'text', episode, platform, text, limit, terms, labels, answers,
                         platform in lc.LINK_PLATFORMS)
+    if 'contentId' in episode and job['kind'] in ('post', 'comment'):
+        publication = copy.deepcopy(episode['publication'])
+        if job['kind'] == 'comment':
+            publication['firstComment'] = {**(publication.get('firstComment') or {}), platform: text}
+        elif platform == 'youtube':
+            publication['youtube'] = {**publication['youtube'], 'description': text}
+        else:
+            publication['captions'] = {**publication['captions'], platform: text}
+        for missing in lc.missing_attributions({**episode, 'publication': publication}, platform):
+            report.error('text', f'Keep the required attribution: {missing!r}', 'attribution')
     return [e['message'] for e in report.errors]
 
 
@@ -530,10 +557,11 @@ def generate(inputs, videos, history, config, base_manifest=None, base_manifest_
     buffer_group = [p for p in PLATFORM_ORDER if (channels.get(p) or {}).get('route') == 'buffer']
 
     order = round_robin(videos)
+    threads_ok = THREADS_REPLY_SCOPE in ((channels.get('threads') or {}).get('observedScopes') or [])
     static = {}
     for p in active:
         for i, video in enumerate(order):
-            reason = _static_reason(video, p)
+            reason = _static_reason(video, p) or _attribution_reason(video, p, inputs['companions']['firstComment'], threads_ok)
             if reason:
                 static[(p, i)] = reason
             elif video['questionId'] in history_used[p]:
@@ -615,7 +643,6 @@ def generate(inputs, videos, history, config, base_manifest=None, base_manifest_
             unfilled += [entry for _, entry in sorted(failures, key=lambda f: f[0])[:want - filled]]
 
     first_comment, answer_reply = inputs['companions']['firstComment'], inputs['companions']['answerReply']
-    threads_ok = THREADS_REPLY_SCOPE in ((channels.get('threads') or {}).get('observedScopes') or [])
     if first_comment or answer_reply:
         for p in active:
             if p == 'threads' and not threads_ok:

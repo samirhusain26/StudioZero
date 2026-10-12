@@ -17,6 +17,11 @@ Schema = DESIGN.md plus these additions:
   Feedback and notes may name answers: they are owner-only planning text, never read by scheduling,
   approval or publishing, and never part of captions.
 
+Contract v1 and v2 batches share the index: episodes.question_id holds the duplicate key (v2 contentId, v1
+questionId; the namespaces are the same, so nothing is migrated) and episodes.game the scheduling group (v1 game;
+v2 projectData.game, else the project). metadata is the episode exactly as imported; lc.episode_view() reads
+both versions for the views.
+
 Statuses: awaiting_files -> reviewable | invalid; reviewable -> approved -> withdrawn.
 A withdrawn revision may be approved again (a fresh, recorded decision). "Expired" is
 computed from eligibility.expiresAt when a date is given, never written.
@@ -273,10 +278,11 @@ def _refresh(index, state, episode_id, revision):
 
 
 def _insert_episode(index, batch_id, meta, status, problems, now, cover_sha=None):
+    view = lc.episode_view(meta)
     index.execute('INSERT OR REPLACE INTO episodes(episode_id,revision,batch_id,question_id,game,format,difficulty,metadata,'
                   'metadata_sha256,video_sha256,cover_sha256,status,problems,imported_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                  (meta['episodeId'], meta['revision'], batch_id, meta['questionId'], meta['game'], meta.get('format'),
-                   meta.get('difficulty'), json.dumps(meta, ensure_ascii=False, sort_keys=True), lc.episode_metadata_hash(meta),
+                  (meta['episodeId'], meta['revision'], batch_id, view['contentId'], view['group'], meta.get('format'),
+                   view['difficulty'], json.dumps(meta, ensure_ascii=False, sort_keys=True), lc.episode_metadata_hash(meta),
                    meta['video']['sha256'], cover_sha if cover_sha is not None else meta['cover']['sha256'],
                    status, json.dumps(problems), stamp(now)))
 
@@ -318,8 +324,6 @@ def import_batch_json(index, state, raw_bytes, now):
         data = json.loads(raw_text)
     except (UnicodeDecodeError, json.JSONDecodeError, RecursionError):
         return refuse('json', 'batch.json', "This isn't a readable batch.json (invalid JSON).")
-    if isinstance(data, dict) and data.get('schemaVersion') == 2:
-        return refuse('version', 'batch.schemaVersion', 'This Pi does not import contract v2 batches yet; update the Pi first.')
     report = lc.validate_document(data, now=now, origin='mac')
     episodes = data.get('episodes') if isinstance(data, dict) and isinstance(data.get('episodes'), list) else []
     result['warnings'] = [e['message'] for e in report.warnings]
@@ -895,9 +899,13 @@ def library_view(index, state, media_url, today=None):
                                                         'caption_sha256,note FROM approvals WHERE episode_id=? AND revision=? ORDER BY id',
                                                         (row['episode_id'], row['revision']))]
             publication = meta.get('publication') or {}
+            view = lc.episode_view(meta)
             episodes.append({
                 'episodeId': row['episode_id'], 'revision': row['revision'], 'questionId': row['question_id'],
                 'game': row['game'], 'format': row['format'], 'difficulty': row['difficulty'],
+                'schemaVersion': view['schemaVersion'], 'project': view['project'], 'engine': view['engine'],
+                'route': view['route'], 'renderer': view['renderer'], 'models': view['models'], 'costUsd': view['costUsd'],
+                'credits': view['credits'], 'disclosure': view['disclosure'], 'tags': view['tags'],
                 'status': row['status'], 'expired': _expired(meta, today), 'problems': json.loads(row['problems']),
                 'missing': [k for k, ok in (('video', v_ok or removed is not None), ('cover', c_ok)) if not ok],
                 'videoRemovedAt': removed['at'] if removed else None,
@@ -906,12 +914,12 @@ def library_view(index, state, media_url, today=None):
                              'pixFmt': m.get('pixFmt'), 'audio': m.get('audioCodec'), 'fastStart': m.get('fastStart')} if v else None,
                 'platforms': json.loads(v['platforms']) if v else None,
                 'legacy': bool(v['legacy']) if v else False,
-                'creative': meta.get('creative'),
+                'creative': view['creative'],
                 'captions': publication.get('captions'), 'youtube': publication.get('youtube'),
                 'poll': publication.get('poll'), 'firstComment': publication.get('firstComment'),
                 'answerReply': publication.get('answerReply'), 'altText': publication.get('altText'),
                 'hashtags': publication.get('hashtags'), 'eligibility': meta.get('eligibility'),
-                'links': {p: lc.link_for(meta, p) for p in lc.LINK_PLATFORMS} if publication.get('deepLink') else {},
+                'links': {p: lc.link_for(meta, p) for p in lc.LINK_PLATFORMS} if view['link'] else {},
                 'videoSha256': row['video_sha256'], 'coverSha256': row['cover_sha256'],
                 'metadataSha256': row['metadata_sha256'],
                 'approvals': approvals, 'approval': approvals[-1] if approvals else None,
@@ -1035,8 +1043,9 @@ def open_feedback(index):
             meta = stored_episode(index, batch_id, f['episode_id'], f['revision']) if batch_id else None
         if not isinstance(meta, dict):
             continue
-        out.append({**_feedback(f), 'batchId': batch_id, 'questionId': meta.get('questionId'), 'game': meta.get('game'),
-                    'format': meta.get('format'), 'styleId': meta.get('styleId')})
+        view = lc.episode_view(meta)
+        out.append({**_feedback(f), 'batchId': batch_id, 'questionId': view['contentId'], 'game': view['group'],
+                    'format': meta.get('format'), 'styleId': view['styleId'], 'project': view['project']})
     return out
 
 
