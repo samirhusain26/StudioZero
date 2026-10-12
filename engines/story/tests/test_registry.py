@@ -11,6 +11,9 @@ from src.narrative import GROQ_FALLBACK_MODEL
 from src.pipeline import WHISPER_MODEL_NAME
 from src.video_models import (
     REGISTRY_FILE,
+    clip_duration,
+    get_model,
+    price_per_second,
     TIER_FALLBACK_ORDER,
     VIDEO_MODEL_REGISTRY,
     VideoModelConfig,
@@ -65,10 +68,41 @@ class RegistryTest(unittest.TestCase):
         self.assertEqual(d["asr"], f"openai-whisper-{WHISPER_MODEL_NAME}")
 
     def test_descriptions_agree_with_prices(self):
-        """Review B8: a $X/s in a description must match cost_per_second (or the $0.052/s estimate)."""
+        """Review B8: a $X/s in a description must be one of the model's prices."""
         for m in VIDEO_MODEL_REGISTRY.values():
             for price in re.findall(r"\$(\d+(?:\.\d+)?)/s", m.description):
-                self.assertEqual(float(price), m.cost_per_second or 0.052, m.model_id)
+                self.assertIn(float(price), {m.cost_per_second, m.cost_per_second_audio}, m.model_id)
+
+    def test_fallback_order_is_verified_models_cheapest_first(self):
+        """Review B8: only verified models, sorted by price per second (with native audio)."""
+        for tier, order in self.reg["fallbackOrder"].items():
+            expected = [m.model_id for m in VIDEO_MODEL_REGISTRY.values() if m.tier == tier and m.available]
+            expected.sort(key=lambda mid: price_per_second(mid, include_audio=True))
+            self.assertEqual(order, expected, tier)
+        self.assertIn("seedance-1.5-pro", self.reg["fallbackOrder"]["recommended"])
+        self.assertNotIn("sora-2-pro", sum(self.reg["fallbackOrder"].values(), []))
+        for tier, model_id in self.reg["tierDefaults"].items():
+            self.assertTrue(VIDEO_MODEL_REGISTRY[model_id].available, model_id)
+
+    def test_verified_models_have_sources_and_request_maps(self):
+        for m in VIDEO_MODEL_REGISTRY.values():
+            if not m.available:
+                continue
+            self.assertTrue(m.verified.sources and all(u.startswith("https://") for u in m.verified.sources), m.model_id)
+            if m.provider == "fal.ai":
+                self.assertIsNotNone(m.params, m.model_id)
+                self.assertTrue(m.verified.sources[0].endswith(m.endpoint_t2v), m.model_id)
+                if m.params.durations:
+                    self.assertIn(m.clip_seconds, m.params.durations, m.model_id)
+                if m.has_audio:
+                    self.assertEqual(m.params.audio, "generate_audio", m.model_id)
+            else:
+                self.assertIsNone(m.params, m.model_id)
+            self.assertLessEqual(m.clip_seconds, m.max_duration_sec, m.model_id)
+            self.assertEqual(clip_duration(m.model_id), m.clip_seconds)
+
+    def test_renamed_model_keeps_working(self):
+        self.assertEqual(get_model("seedance-1.5-pro-fast").model_id, "seedance-1.5-pro")
 
     def test_no_secrets_or_paths(self):
         text = REGISTRY_FILE.read_text(encoding="utf-8")

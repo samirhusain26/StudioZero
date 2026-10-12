@@ -40,7 +40,8 @@ from pydantic import BaseModel, Field
 from src.budget_guard import SpendLedger
 from src.config import Config
 from src.project_manager import Project, create_project, delete_project, get_project, get_project_dir, list_projects, update_project
-from src.video_models import VIDEO_MODEL_REGISTRY, estimate_cost, estimate_episode_cost, get_model
+from src.pricing import AUDIO_TOKENS_PER_SECOND, image_cost, text_cost, tts_cost
+from src.video_models import available_models, clip_duration, estimate_cost, estimate_episode_cost, get_model
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,9 @@ MODES = {v: k for k, v in ROUTES.items()}
 EVENTS_MAX = 2000
 EVENT_TEXT_MAX = 2000
 SHOTS_PER_EPISODE = 6  # estimate for episodes whose director step has not run yet (video_models.estimate_episode_cost)
+CAST_SIZE = 3  # characters and locations assumed before the writer has run
+IMAGE_PROMPT_TOKENS = 1500  # prompt plus reference images sent with an image request
+NARRATION_WORDS_PER_SECOND = 2.5
 PROJECT_ID = r"[A-Za-z0-9_-]{1,120}"
 PRIVATE_FILES = {"spend_ledger.json", "project.json", "pipeline_state.json"}
 FILE_TYPES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".mp4": "video/mp4",
@@ -65,6 +69,14 @@ PRESETS = {  # F20: one click sets the LLM, image, TTS and video tier
 LLM_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-2.5-pro", "gemini-3-pro-preview"]
 IMAGE_MODELS = ["gemini-2.5-flash-image", "gemini-3-pro-image-preview", "imagen-4.0-generate-001"]
 TTS_MODELS = ["gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"]
+
+
+def usable_model(model_id: Optional[str]) -> bool:
+    """A known video model whose endpoints and price are verified (registry.json)."""
+    try:
+        return get_model(model_id or "").available
+    except KeyError:
+        return False
 
 
 def utc() -> str:
@@ -113,7 +125,8 @@ class Runner:
 
     def recap(self, project: Project, cancel: threading.Event, approved_script: Optional[dict]) -> Iterator:
         from src.pipeline import VideoGenerationPipeline
-        return VideoGenerationPipeline(offline=False, clean=False).run(project.name, mode="movie", approved_script=approved_script)
+        return VideoGenerationPipeline(offline=False, clean=False).run(
+            project.name, mode="movie", approved_script=approved_script, ledger_dir=get_project_dir(project.id))
 
     def series(self, project: Project, cancel: threading.Event, progress: Callable[[dict], None]) -> Iterator:
         from src.animation_pipeline import run_animation_pipeline
@@ -265,22 +278,56 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
                 out.extend({"episode": ep, "scene": None} for _ in range(SHOTS_PER_EPISODE))
         return out
 
+    def text_line(what: str, calls: int, tokens_in: int, tokens_out: int) -> dict:
+        usd, assumed = text_cost(Config.GEMINI_MODEL_NAME, calls * tokens_in, calls * tokens_out)
+        return {"what": f"{what} ({Config.GEMINI_MODEL_NAME}{', price assumed' if assumed else ''})", "usd": round(usd, 4)}
+
+    def image_line(what: str, images: int) -> dict:
+        usd, assumed = image_cost(Config.GEMINI_IMAGE_MODEL, images * IMAGE_PROMPT_TOKENS, images)
+        return {"what": f"{what} ({Config.GEMINI_IMAGE_MODEL}{', price assumed' if assumed else ''})", "usd": round(usd, 4)}
+
     def estimate(p: Project) -> dict:
+        """Upper-end estimate of the next run: list prices (src/pricing.py, registry.json) times typical usage."""
         route = MODES.get(p.mode, p.mode)
         unpriced: List[str] = []
         lines: List[dict] = []
         if route == "series":
             model_id = video_model(p)
             model = get_model(model_id)
+            audio = Config.SERIES_NATIVE_AUDIO and model.has_audio
+            st = pipeline_state(p) or {}
+            done = lambda step: bool((st.get("series_steps") or {}).get(step, {}).get("completed"))  # noqa: E731
+            episodes = int(p.params.get("num_episodes", 1))
+            todo_eps = [ep for ep in range(1, episodes + 1)
+                        if not ((st.get("episodes") or {}).get(str(ep), {}).get("steps", {}).get("director", {}).get("completed"))]
+            if not done("writer") or not done("screenwriter"):
+                lines.append(text_line("Story and episode scripts", 2, 6000, 6000))
+            if not done("casting"):
+                lines += [text_line(f"Character sheets (about {CAST_SIZE})", CAST_SIZE, 3000, 1500),
+                          image_line(f"Character reference images (about {CAST_SIZE})", CAST_SIZE)]
+            if not done("world_builder"):
+                lines += [text_line(f"Location layouts (about {CAST_SIZE})", CAST_SIZE, 3000, 1500),
+                          image_line(f"Location reference images (about {CAST_SIZE})", CAST_SIZE)]
+            if todo_eps:
+                lines += [text_line(f"Shot lists for {len(todo_eps)} episode(s)", len(todo_eps), 8000, 4000),
+                          image_line(f"Scene start images (about {SHOTS_PER_EPISODE} per episode)", SHOTS_PER_EPISODE * len(todo_eps))]
             scenes = remaining_scenes(p)
-            per = estimate_cost(model_id, model.max_duration_sec)
+            per = estimate_cost(model_id, clip_duration(model_id), audio)
             if scenes:
-                lines.append({"what": f"{len(scenes)} video clip(s) with {model.display_name}", "usd": round(per * len(scenes), 4)})
-            unpriced += ["Gemini text and image calls (story, casting, worlds, set images)"]
+                lines.append({"what": f"{len(scenes)} video clip(s) with {model.display_name}, {clip_duration(model_id)} s each"
+                                      + (" with native audio" if audio else ""), "usd": round(per * len(scenes), 4)})
         else:
-            approved = bool(p.step_data.get("approved_script"))
-            unpriced += (["Gemini text-to-speech narration"] if approved
-                         else ["Gemini script (LLM)", "then, after you approve the script, Gemini text-to-speech"])
+            approved = p.step_data.get("approved_script")
+            if approved:
+                words = sum(len(str(sc.get("narration", "")).split()) for sc in approved.get("scenes", [])) + 12  # + ending
+                seconds = words / NARRATION_WORDS_PER_SECOND
+                usd, assumed = tts_cost(Config.TTS_MODEL, words * 2 + 200 * len(approved.get("scenes", [])),
+                                        int(seconds * AUDIO_TOKENS_PER_SECOND))
+                lines.append({"what": f"Narration, about {seconds:.0f} s ({Config.TTS_MODEL}{', price assumed' if assumed else ''})",
+                              "usd": round(usd, 4)})
+            else:
+                lines.append(text_line("Recap script", 1, 5000, 3000))
+                unpriced += ["then, after you approve the script, the narration (estimated on the next run)"]
         total = round(sum(l["usd"] for l in lines), 4)
         fingerprint = json.dumps({"p": p.id, "u": p.updated_at, "l": lines, "m": video_model(p)}, sort_keys=True)
         sig = hmac.new(state["secret"], f"{fingerprint}|{total}".encode(), hashlib.sha256).hexdigest()[:32]
@@ -514,11 +561,9 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
             clips.mkdir(parents=True, exist_ok=True)
             (clips / f"scene_{sid}.skip").touch()
         elif body.action == "change_model":
-            try:
-                get_model(body.modelId)
-            except KeyError:
-                raise HTTPException(422, "Unknown video model.") from None
-            p.params["video_model"] = body.modelId  # this project only (review B8)
+            if not usable_model(body.modelId):
+                raise HTTPException(422, "Unknown or unverified video model.")
+            p.params["video_model"] = get_model(body.modelId).model_id  # this project only (review B8)
         elif body.action != "retry":
             raise HTTPException(422, "action must be retry, edit, skip or change_model")
         p.step_data.pop("failed_scene", None)
@@ -592,11 +637,13 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
     @app.get("/studio/settings")
     def settings(_: None = Depends(auth)) -> dict:
         tiers: Dict[str, list] = {}
-        for m in VIDEO_MODEL_REGISTRY.values():
+        for m in available_models():
             tiers.setdefault(m.tier, []).append({"id": m.model_id, "name": m.display_name, "provider": m.provider, "costPerSecondUsd": m.cost_per_second,
                                                   "maxResolution": m.max_resolution, "maxDurationSeconds": m.max_duration_sec, "audio": m.has_audio,
                                                   "referenceImages": m.has_reference_images, "description": m.description,
-                                                  "episodeUsd": estimate_episode_cost(m.model_id, SHOTS_PER_EPISODE, m.max_duration_sec)})
+                                                  "clipSeconds": clip_duration(m.model_id), "available": m.available,
+                                                  "episodeUsd": estimate_episode_cost(m.model_id, SHOTS_PER_EPISODE, None,
+                                                                                      Config.SERIES_NATIVE_AUDIO and m.has_audio)})
         return {"models": {"llm_model": Config.GEMINI_MODEL_NAME, "image_model": Config.GEMINI_IMAGE_MODEL, "tts_model": Config.TTS_MODEL},
                 "choices": {"llm_model": LLM_MODELS, "image_model": IMAGE_MODELS, "tts_model": TTS_MODELS},
                 "video": {"active_model": Config.ACTIVE_VIDEO_MODEL, "active_tier": Config.ACTIVE_VIDEO_TIER,
@@ -608,11 +655,8 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
         if body.llm_model and body.llm_model not in LLM_MODELS or body.image_model and body.image_model not in IMAGE_MODELS \
                 or body.tts_model and body.tts_model not in TTS_MODELS:
             raise HTTPException(422, "Unknown model.")
-        if body.active_model:
-            try:
-                get_model(body.active_model)
-            except KeyError:
-                raise HTTPException(422, "Unknown video model.") from None
+        if body.active_model and not usable_model(body.active_model):
+            raise HTTPException(422, "Unknown or unverified video model.")
         if body.active_tier and body.active_tier not in ("cheapest", "recommended", "high_fidelity"):
             raise HTTPException(422, "Unknown tier.")
         path = Path(os.getenv("STORY_SETTINGS_FILE") or Config.SETTINGS_FILE)

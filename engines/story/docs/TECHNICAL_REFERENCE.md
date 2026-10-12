@@ -31,7 +31,7 @@ A robust, step-based workflow for multi-episode series with character and world 
 ### Orchestration & State
 *   **Orchestrator**: `src/animation_pipeline.py`.
 *   **Persistence**: `src/pipeline_state.py` manages `pipeline_state.json`, storing completion flags and artifact paths for every step.
-*   **Video Routing**: `src/video_client.py` (UnifiedVideoClient) routes to fal.ai or Vertex AI based on the active model from `src/video_models.py`.
+*   **Video Routing**: `src/video_client.py` (UnifiedVideoClient) routes to fal.ai or the Gemini API based on the active model from `src/video_models.py`.
 *   **Budget**: `src/budget_guard.py` enforces per-project cost caps with auto-downgrade.
 
 ### Detailed Steps:
@@ -41,7 +41,7 @@ A robust, step-based workflow for multi-episode series with character and world 
 4.  **World Builder**: Establishes the series bible, setting, and location layout references.
 5.  **Director**: Combines episode scenes with character/world references to engineer final video generation prompts. Adapts prompt style per model family (veo, kling, seedance, wan, sora).
 6.  **Set Designer**: Composites character reference images into world environments using Gemini Imagen, producing scene-appropriate starting frames. Cached by `{character_id}_{location_id}` and reused across episodes.
-7.  **Scene Generator**: Renders video clips via the active model (11 models across fal.ai and Vertex AI). Uses `UnifiedVideoClient` with `BudgetGuard` enforcement and tier-based model fallback.
+7.  **Scene Generator**: Renders video clips via the active model (10 verified models across fal.ai and the Gemini API). Uses `UnifiedVideoClient` with `BudgetGuard` enforcement and tier-based model fallback.
 8.  **Editor**: Final FFmpeg assembly with audio mixing and Hormozi-style karaoke subtitles.
 
 ---
@@ -50,7 +50,7 @@ A robust, step-based workflow for multi-episode series with character and world 
 
 | Feature | Stock Footage Route | Animation Route |
 | :--- | :--- | :--- |
-| **Video Engine** | Pexels API (Stock) | 11 models via Gemini API + fal.ai |
+| **Video Engine** | Pexels API (Stock) | 10 verified models via Gemini API + fal.ai |
 | **Voice Engine** | Gemini TTS | Gemini TTS |
 | **Subtitle Format** | Hormozi-style ASS | Hormozi-style ASS |
 | **Audio Mix** | Sidechain Ducking | Sidechain Ducking |

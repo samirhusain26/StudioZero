@@ -11,7 +11,7 @@ This document provides a map of the current StudioZero video generation logic an
 *   **Smart Input Validation**: Gemini-powered detection of "garbage" text entries.
 *   **Random Story Fallback**: Automatic generation of creative plots when user input is invalid.
 *   **Modular Architecture**: Crash-resilient, 8-step execution for complex series.
-*   **Multi-Model Video Generation**: 11 models across 3 tiers (Budget/Recommended/Premium) via Gemini API (Veo 3.1) and fal.ai, with per-project budget enforcement.
+*   **Multi-Model Video Generation**: 10 verified models across 3 tiers (Budget/Recommended/Premium) via Gemini API (Veo 3.1) and fal.ai, with per-project budget enforcement.
 *   **Interfaces**: the CLI wizard, headless runs, and the Pi UI's Studio › Story jobs (through the worker agent).
 
 ---
@@ -35,7 +35,7 @@ This document provides a map of the current StudioZero video generation logic an
 4.  **[Pre-Production] World Builder**: Define world rules, setting, and location layouts.
 5.  **[Production] Director**: Engineer final video generation prompts, adapted per model family (Veo/Kling/Seedance/Wan/Sora).
 6.  **[Production] Set Designer**: Composite character references into world environments for scene starting frames (cached across episodes).
-7.  **[Production] Scene Gen**: Multi-model video generation via **fal.ai** or **Vertex AI** (with Retry Gate and Budget Guard).
+7.  **[Production] Scene Gen**: Multi-model video generation via **fal.ai** or the **Gemini API** (Veo) (with Retry Gate and Budget Guard).
 8.  **[Production] Editor**: Final clip assembly, audio mixing, and caption burning.
 
 ---
@@ -45,7 +45,7 @@ This document provides a map of the current StudioZero video generation logic an
 ### Phase 1: Enhancement (Short-Term)
 - [x] **Retry Gate**: Added interactive failure handling for Veo scenes in the CLI wizard.
 - [x] **Modular Step Pattern**: Successfully transitioned to 8 discrete pre-production and production steps.
-- [x] **Multi-Model Video Generation**: 11 models across 3 tiers via Gemini API and fal.ai with budget guard.
+- [x] **Multi-Model Video Generation**: 10 verified models across 3 tiers via Gemini API and fal.ai with budget guard.
 - [x] **Set Designer Step**: Scene starting images that composite characters into environments (eliminates white-background artifacts).
 - [x] **Model-Adaptive Director**: Director adapts prompt style per video model family.
 - [ ] **Multi-Angle Blueprints**: Generate 3-5 angles per character for better model consistency.

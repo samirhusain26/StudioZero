@@ -14,7 +14,7 @@ StudioZero is organized into two primary production routes:
 
 2.  **Animation Series Route**:
     *   **Modular 8-Step Pipeline**: A robust, crash-resilient process for multi-episode series (Writer, Screenwriter, Casting, World Builder, Director, Set Designer, Scene Gen, Editor).
-    *   **Features**: Consistent characters via visual blueprints, world-building (Series Bible), and multi-model video generation (11 models across 3 tiers via Gemini API and fal.ai).
+    *   **Features**: Consistent characters via visual blueprints, world-building (Series Bible), and multi-model video generation (10 verified models across 3 tiers via Gemini API and fal.ai).
     *   **Retry Gate**: Interactive failure handling that allows users to retry, edit prompts, or skip failed video generation scenes.
     *   **Budget Guard**: Per-project budget enforcement with auto-downgrade to cheaper models when cost limits are reached.
 
@@ -65,7 +65,7 @@ Detailed guides and technical references:
 - **Hormozi-Style Captions**: High-energy, frame-accurate karaoke subtitles (ASS format).
 - **Sidechain Audio Ducking**: Professional-grade audio mixing with automatic music ducking.
 - **Crash Recovery**: The animation series pipeline persists state in `pipeline_state.json` and can resume from any failure point.
-- **Multi-Model Video Generation**: 11 models across 3 tiers (Budget/Recommended/Premium) via Gemini API (Veo 3.1) and fal.ai, with per-project budget enforcement and auto-downgrade.
+- **Multi-Model Video Generation**: 10 verified models across 3 tiers (Budget/Recommended/Premium) via Gemini API (Veo 3.1) and fal.ai, with per-project budget enforcement and auto-downgrade.
 
 ## Technical Specs
 

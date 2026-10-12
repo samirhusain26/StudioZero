@@ -84,16 +84,38 @@
       "model_id": "wan-2.5",
       "provider": "fal.ai",
       "display_name": "Wan 2.5",
-      "endpoint_t2v": "fal-ai/wan2.5/v1/text-to-video",
-      "endpoint_i2v": "fal-ai/wan2.5/v1/image-to-video",
+      "endpoint_t2v": "fal-ai/wan-25-preview/text-to-video",
+      "endpoint_i2v": "fal-ai/wan-25-preview/image-to-video",
       "endpoint_ref2v": null,
       "cost_per_second": 0.05,
+      "cost_per_second_audio": null,
       "max_resolution": "480p",
-      "max_duration_sec": 5,
+      "max_duration_sec": 10,
+      "clip_seconds": 5,
       "has_audio": false,
       "has_reference_images": false,
       "tier": "cheapest",
-      "description": "Cheapest option. 480p only — good for drafts and prompt testing."
+      "params": {
+        "image": "image_url",
+        "audio": null,
+        "references": null,
+        "aspect_ratio": [
+          "t2v"
+        ],
+        "resolution": true,
+        "durations": [
+          5,
+          10
+        ]
+      },
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://fal.ai/models/fal-ai/wan-25-preview/text-to-video",
+          "https://fal.ai/models/fal-ai/wan-25-preview/image-to-video"
+        ]
+      },
+      "description": "Cheapest option, requested at 480p ($0.05/s; 720p and 1080p cost more). No generated audio. Good for drafts and prompt testing."
     },
     {
       "model_id": "kling-2.5-turbo-pro",
@@ -103,12 +125,34 @@
       "endpoint_i2v": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
       "endpoint_ref2v": null,
       "cost_per_second": 0.07,
+      "cost_per_second_audio": null,
       "max_resolution": "1080p",
       "max_duration_sec": 10,
+      "clip_seconds": 5,
       "has_audio": false,
       "has_reference_images": false,
       "tier": "cheapest",
-      "description": "Best price-performance ratio. Excellent motion fluidity. No native audio."
+      "params": {
+        "image": "image_url",
+        "audio": null,
+        "references": null,
+        "aspect_ratio": [
+          "t2v"
+        ],
+        "resolution": false,
+        "durations": [
+          5,
+          10
+        ]
+      },
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://fal.ai/models/fal-ai/kling-video/v2.5-turbo/pro/text-to-video",
+          "https://fal.ai/models/fal-ai/kling-video/v2.5-turbo/pro/image-to-video"
+        ]
+      },
+      "description": "Best price-performance ratio ($0.07/s). Excellent motion fluidity. No native audio."
     },
     {
       "model_id": "wan-2.2",
@@ -117,28 +161,78 @@
       "endpoint_t2v": "fal-ai/wan-t2v",
       "endpoint_i2v": "fal-ai/wan-i2v",
       "endpoint_ref2v": null,
-      "cost_per_second": 0.1,
+      "cost_per_second": 0.08,
+      "cost_per_second_audio": null,
       "max_resolution": "720p",
       "max_duration_sec": 5,
+      "clip_seconds": 5,
       "has_audio": false,
       "has_reference_images": false,
       "tier": "cheapest",
-      "description": "Open source (Alibaba). Budget option at 720p. No native audio."
+      "params": {
+        "image": "image_url",
+        "audio": null,
+        "references": null,
+        "aspect_ratio": [
+          "t2v",
+          "i2v"
+        ],
+        "resolution": true,
+        "durations": null
+      },
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://fal.ai/models/fal-ai/wan-t2v",
+          "https://fal.ai/models/fal-ai/wan-i2v"
+        ]
+      },
+      "description": "Open source (Alibaba). About 5 s clips at 720p, priced per clip ($0.40, about $0.08/s). No native audio."
     },
     {
-      "model_id": "seedance-1.5-pro-fast",
+      "model_id": "seedance-1.5-pro",
       "provider": "fal.ai",
-      "display_name": "Seedance 1.5 Pro Fast",
-      "endpoint_t2v": "fal-ai/seedance/v1.5/pro/fast/text-to-video",
-      "endpoint_i2v": "fal-ai/seedance/v1.5/pro/fast/image-to-video",
+      "display_name": "Seedance 1.5 Pro",
+      "endpoint_t2v": "fal-ai/bytedance/seedance/v1.5/pro/text-to-video",
+      "endpoint_i2v": "fal-ai/bytedance/seedance/v1.5/pro/image-to-video",
       "endpoint_ref2v": null,
-      "cost_per_second": 0.052,
-      "max_resolution": "1080p",
+      "cost_per_second": 0.026,
+      "cost_per_second_audio": 0.052,
+      "max_resolution": "720p",
       "max_duration_sec": 12,
+      "clip_seconds": 5,
       "has_audio": true,
-      "has_reference_images": true,
+      "has_reference_images": false,
       "tier": "recommended",
-      "description": "ByteDance. Native audio + start/end frame control. Token-based pricing, estimated at $0.052/s."
+      "params": {
+        "image": "image_url",
+        "audio": "generate_audio",
+        "references": null,
+        "aspect_ratio": [
+          "t2v",
+          "i2v"
+        ],
+        "resolution": true,
+        "durations": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://fal.ai/models/fal-ai/bytedance/seedance/v1.5/pro/text-to-video",
+          "https://fal.ai/models/fal-ai/bytedance/seedance/v1.5/pro/image-to-video"
+        ]
+      },
+      "description": "ByteDance. Native audio + start/end frame control. Token-priced: at 720p and 24 fps about $0.026/s silent, $0.052/s with audio."
     },
     {
       "model_id": "seedance-2.0-fast",
@@ -147,13 +241,48 @@
       "endpoint_t2v": "bytedance/seedance-2.0/fast/text-to-video",
       "endpoint_i2v": "bytedance/seedance-2.0/fast/image-to-video",
       "endpoint_ref2v": "bytedance/seedance-2.0/fast/reference-to-video",
-      "cost_per_second": null,
+      "cost_per_second": 0.2419,
+      "cost_per_second_audio": null,
       "max_resolution": "720p",
       "max_duration_sec": 15,
+      "clip_seconds": 5,
       "has_audio": true,
       "has_reference_images": true,
       "tier": "recommended",
-      "description": "Newest model (Apr 2026). Multi-shot editing, native audio, reference-to-video with up to 9 images. Token-based pricing, estimated at $0.052/s."
+      "params": {
+        "image": "image_url",
+        "audio": "generate_audio",
+        "references": "image_urls",
+        "aspect_ratio": [
+          "t2v",
+          "i2v",
+          "ref2v"
+        ],
+        "resolution": true,
+        "durations": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://fal.ai/models/bytedance/seedance-2.0/fast/text-to-video",
+          "https://fal.ai/models/bytedance/seedance-2.0/fast/image-to-video",
+          "https://fal.ai/models/bytedance/seedance-2.0/fast/reference-to-video"
+        ]
+      },
+      "description": "Newest Seedance (2026). Multi-shot editing, native audio, reference-to-video with up to 9 images. $0.2419/s at 720p, audio included."
     },
     {
       "model_id": "veo-3.1-fast",
@@ -163,12 +292,21 @@
       "endpoint_i2v": null,
       "endpoint_ref2v": null,
       "cost_per_second": 0.1,
-      "max_resolution": "1080p",
+      "cost_per_second_audio": null,
+      "max_resolution": "720p",
       "max_duration_sec": 8,
+      "clip_seconds": 8,
       "has_audio": true,
       "has_reference_images": true,
       "tier": "recommended",
-      "description": "Google Gemini API. Fast generation with reference images (up to 3). Audio included. $0.10/s at 1080p."
+      "params": null,
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://ai.google.dev/gemini-api/docs/pricing"
+        ]
+      },
+      "description": "Google Gemini API. Fast generation with reference images (up to 3). Audio included. $0.10/s at 720p (the API default)."
     },
     {
       "model_id": "kling-3.0-pro",
@@ -177,13 +315,46 @@
       "endpoint_t2v": "fal-ai/kling-video/v3/pro/text-to-video",
       "endpoint_i2v": "fal-ai/kling-video/v3/pro/image-to-video",
       "endpoint_ref2v": null,
-      "cost_per_second": 0.224,
+      "cost_per_second": 0.112,
+      "cost_per_second_audio": 0.168,
       "max_resolution": "1080p",
       "max_duration_sec": 15,
+      "clip_seconds": 5,
       "has_audio": true,
-      "has_reference_images": true,
+      "has_reference_images": false,
       "tier": "high_fidelity",
-      "description": "Multi-shot sequences with subject consistency. Native audio. Art-house aesthetic."
+      "params": {
+        "image": "start_image_url",
+        "audio": "generate_audio",
+        "references": null,
+        "aspect_ratio": [
+          "t2v"
+        ],
+        "resolution": false,
+        "durations": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://fal.ai/models/fal-ai/kling-video/v3/pro/text-to-video",
+          "https://fal.ai/models/fal-ai/kling-video/v3/pro/image-to-video"
+        ]
+      },
+      "description": "Multi-shot sequences with subject consistency. Native audio. $0.112/s silent, $0.168/s with audio."
     },
     {
       "model_id": "seedance-2.0",
@@ -192,13 +363,48 @@
       "endpoint_t2v": "bytedance/seedance-2.0/text-to-video",
       "endpoint_i2v": "bytedance/seedance-2.0/image-to-video",
       "endpoint_ref2v": "bytedance/seedance-2.0/reference-to-video",
-      "cost_per_second": null,
+      "cost_per_second": 0.3034,
+      "cost_per_second_audio": null,
       "max_resolution": "720p",
       "max_duration_sec": 15,
+      "clip_seconds": 5,
       "has_audio": true,
       "has_reference_images": true,
       "tier": "high_fidelity",
-      "description": "Standard quality tier of Seedance 2.0. Higher quality than fast variant. Token-based pricing, estimated at $0.052/s."
+      "params": {
+        "image": "image_url",
+        "audio": "generate_audio",
+        "references": "image_urls",
+        "aspect_ratio": [
+          "t2v",
+          "i2v",
+          "ref2v"
+        ],
+        "resolution": true,
+        "durations": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://fal.ai/models/bytedance/seedance-2.0/text-to-video",
+          "https://fal.ai/models/bytedance/seedance-2.0/image-to-video",
+          "https://fal.ai/models/bytedance/seedance-2.0/reference-to-video"
+        ]
+      },
+      "description": "Standard Seedance 2.0: higher quality than Fast. $0.3034/s at 720p, audio included."
     },
     {
       "model_id": "veo-3.1",
@@ -208,12 +414,21 @@
       "endpoint_i2v": null,
       "endpoint_ref2v": null,
       "cost_per_second": 0.4,
-      "max_resolution": "4K",
+      "cost_per_second_audio": null,
+      "max_resolution": "720p",
       "max_duration_sec": 8,
+      "clip_seconds": 8,
       "has_audio": true,
       "has_reference_images": true,
       "tier": "high_fidelity",
-      "description": "Google Gemini API. Best quality — cinematic video with lip-sync, audio, reference images. $0.40/s."
+      "params": null,
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://ai.google.dev/gemini-api/docs/pricing"
+        ]
+      },
+      "description": "Google Gemini API. Best quality: cinematic video with lip-sync, audio, reference images. $0.40/s at 720p."
     },
     {
       "model_id": "sora-2-pro",
@@ -223,12 +438,16 @@
       "endpoint_i2v": "fal-ai/sora-2/image-to-video/pro",
       "endpoint_ref2v": null,
       "cost_per_second": 0.3,
+      "cost_per_second_audio": null,
       "max_resolution": "1080p",
       "max_duration_sec": 25,
+      "clip_seconds": 8,
       "has_audio": true,
       "has_reference_images": false,
       "tier": "high_fidelity",
-      "description": "OpenAI. Best physics simulation. Longest clips (up to 25s). Most expensive."
+      "params": null,
+      "verified": null,
+      "description": "OpenAI. Unavailable: its fal.ai endpoint ids and price could not be verified (2026-10-12), so the engine never calls it."
     },
     {
       "model_id": "veo-3.1-lite",
@@ -238,12 +457,21 @@
       "endpoint_i2v": null,
       "endpoint_ref2v": null,
       "cost_per_second": 0.05,
-      "max_resolution": "1080p",
+      "cost_per_second_audio": null,
+      "max_resolution": "720p",
       "max_duration_sec": 8,
+      "clip_seconds": 8,
       "has_audio": true,
       "has_reference_images": false,
       "tier": "cheapest",
-      "description": "Google Gemini API. Cheapest Veo — 50% less than Fast. Audio included. $0.05/s at 1080p."
+      "params": null,
+      "verified": {
+        "at": "2026-10-12",
+        "sources": [
+          "https://ai.google.dev/gemini-api/docs/pricing"
+        ]
+      },
+      "description": "Google Gemini API. Cheapest Veo. Audio included. $0.05/s at 720p (the API default)."
     }
   ],
   "tierDefaults": {
@@ -253,21 +481,20 @@
   },
   "fallbackOrder": {
     "cheapest": [
-      "veo-3.1-lite",
       "wan-2.5",
+      "veo-3.1-lite",
       "kling-2.5-turbo-pro",
       "wan-2.2"
     ],
     "recommended": [
+      "seedance-1.5-pro",
       "veo-3.1-fast",
-      "seedance-2.0-fast",
-      "seedance-1.5-pro-fast"
+      "seedance-2.0-fast"
     ],
     "high_fidelity": [
-      "veo-3.1",
       "kling-3.0-pro",
       "seedance-2.0",
-      "sora-2-pro"
+      "veo-3.1"
     ]
   }
 }

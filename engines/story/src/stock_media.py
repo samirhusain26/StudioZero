@@ -8,7 +8,6 @@ Videos are optimized for cinematic quality with 4K enhancement.
 
 import logging
 import os
-import random
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -28,8 +27,8 @@ TARGET_HEIGHT = 1920
 # Minimum video duration in seconds
 MIN_VIDEO_DURATION = 5
 
-# Local fallback video directory
-FALLBACK_VIDEO_DIR = Config.ASSETS_DIR / "basevideos"
+# Tried when every scene query fails (still Pexels: licensed and credited)
+GENERIC_QUERIES = ["city lights at night", "clouds moving over sky", "light rays abstract"]
 
 
 class PexelsAPIError(Exception):
@@ -189,14 +188,15 @@ def _download_file(url: str, output_path: Path) -> None:
 
 def download_video(
     queries: List[str],
-    output_path: str = None
+    output_path: str = None,
+    _generic: bool = False,
 ) -> Tuple[str, dict]:
     """
     Downloads a stock video from Pexels matching one of the queries.
 
     Loops through the queries list, appending "cinematic 4k" to each for quality.
     Searches for portrait (9:16) videos and validates duration > 5 seconds.
-    If all queries fail, falls back to a random local video from assets/basevideos/.
+    If all queries fail, tries GENERIC_QUERIES on Pexels, then raises VideoNotFoundError.
 
     Args:
         queries: List of search queries (e.g., ['stormy ocean', 'dramatic waves']).
@@ -207,7 +207,7 @@ def download_video(
         metadata_dict contains: width, height, duration, pexels_url, photographer.
 
     Raises:
-        VideoNotFoundError: If no suitable video is found and no fallback exists.
+        VideoNotFoundError: If no suitable video is found on Pexels.
     """
     # Set default output path using first query
     if output_path is None:
@@ -290,60 +290,17 @@ def download_video(
             failed_queries.append(f"'{query}': Network error - {e}")
             continue
 
-    # All queries failed - use local fallback
-    return _use_local_fallback(queries, failed_queries)
-
-
-def _use_local_fallback(
-    queries: List[str],
-    failed_queries: List[str]
-) -> Tuple[str, dict]:
-    """
-    Falls back to a random local video from assets/basevideos/ when all queries fail.
-
-    Args:
-        queries: The original list of search queries.
-        failed_queries: List of failure reasons for each query.
-
-    Returns:
-        Tuple of (file_path, metadata_dict).
-
-    Raises:
-        VideoNotFoundError: If no fallback videos exist in assets/basevideos/.
-    """
-    # Check if fallback directory exists
-    if not FALLBACK_VIDEO_DIR.exists():
-        raise VideoNotFoundError(
-            f"Pexels search failed for all queries and fallback directory does not exist.\n"
-            f"Failed queries: {failed_queries}\n"
-            f"Please create the directory: {FALLBACK_VIDEO_DIR}"
-        )
-
-    # Find all .mp4 files in the fallback directory
-    mp4_files = list(FALLBACK_VIDEO_DIR.glob("*.mp4"))
-
-    if not mp4_files:
-        raise VideoNotFoundError(
-            f"Pexels search failed for all queries and no fallback videos found.\n"
-            f"Failed queries: {failed_queries}\n"
-            f"Please add .mp4 files to: {FALLBACK_VIDEO_DIR}"
-        )
-
-    # Randomly select one fallback video
-    selected_file = random.choice(mp4_files)
-
-    logger.warning(f"Pexels search failed for all queries. Using local fallback: {selected_file.name}")
-
-    metadata = {
-        "width": None,
-        "height": None,
-        "duration": None,
-        "pexels_url": None,
-        "photographer": None,
-        "queries": queries,
-        "fallback": True,
-        "fallback_file": selected_file.name,
-        "failed_queries": failed_queries,
-    }
-
-    return str(selected_file), metadata
+    # All queries failed: try generic Pexels footage (licensed and credited like any
+    # other clip) before giving up. There is no local fallback: assets/basevideos has no
+    # licence records, and contract v2 refuses unknown licences.
+    if not _generic:
+        try:
+            path, metadata = download_video(GENERIC_QUERIES, output_path=str(output_path), _generic=True)
+            metadata["generic"] = True
+            metadata["failed_queries"] = failed_queries
+            return path, metadata
+        except VideoNotFoundError as e:
+            failed_queries.append(str(e).splitlines()[0])
+    raise VideoNotFoundError(
+        "Pexels found no usable video for this scene:\n" + "\n".join(f"  - {q}" for q in failed_queries)
+    )

@@ -7,14 +7,16 @@ Output: episodes/episode_N/clips/scene_N.mp4
 Persists: project_dir/episodes/episode_N/clips/
 
 Supports multiple video generation providers via UnifiedVideoClient:
-  - fal.ai models (Kling, Seedance, Wan, Sora, Veo via fal)
-  - Vertex AI Veo (legacy, direct Google API)
+  - fal.ai models (Kling, Seedance, Wan)
+  - Gemini API Veo (google.genai SDK)
 
-The active model is read from config (ACTIVE_VIDEO_MODEL from settings.json).
-When the active model is a Gemini API Veo model (e.g. "veo-3.1-fast"),
-generation uses the google.genai SDK directly.
+The active model is read from config (ACTIVE_VIDEO_MODEL from settings.json, or the
+worker's per-project model). Each shot is requested at the model's clip_seconds
+(registry.json). Audio policy (review B3): with Config.SERIES_NATIVE_AUDIO a model
+that has native audio is asked for it (and priced with it); the editor gives silent
+clips a silent track.
 
-Rate limits are enforced between requests (35s for Vertex AI, lower for fal.ai).
+Rate limits are enforced between requests (35 s for Gemini API Veo, 5 s for fal.ai).
 
 Budget: spend is tracked per project in spend_ledger.json (budget_guard.SpendLedger).
 Every billed attempt is recorded with the model that actually ran (after fallback or
@@ -33,7 +35,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from src.config import Config
-from src.video_models import get_model, estimate_cost
+from src.video_models import clip_duration, get_model, estimate_cost
 from src.video_client import UnifiedVideoClient
 from src.budget_guard import BudgetGuard, BudgetExceeded, SpendLedger
 from src.steps import StepContext, StepResult, slug_part
@@ -41,9 +43,13 @@ from src.steps.director import load_director_shots
 
 logger = logging.getLogger(__name__)
 
-# Seconds between requests — Vertex AI has strict 2 RPM; fal.ai is more lenient
-_RATE_LIMIT_VERTEX = 35
+# Seconds between requests: Veo preview models allow about 2 requests a minute; fal.ai queues
+_RATE_LIMIT_GEMINI = 35
 _RATE_LIMIT_FAL = 5
+
+
+def _rate_limit(provider: str) -> int:
+    return _RATE_LIMIT_GEMINI if provider == "gemini_api" else _RATE_LIMIT_FAL
 
 
 class SceneGenerationError(Exception):
@@ -103,7 +109,7 @@ def _backfill_existing_clips(ctx: StepContext, ledger: SpendLedger, shots, clips
         ledger.record(
             episode=ctx.episode_number,
             scene_id=shot.scene_id,
-            model_id=assumed_model,
+            model_id=assumed_cfg.model_id,
             duration_sec=assumed_cfg.max_duration_sec,
             cost_usd=cost,
             status="ok",
@@ -135,7 +141,7 @@ def run(ctx: StepContext) -> StepResult:
         ledger=ledger,
     )
 
-    rate_limit_wait = _RATE_LIMIT_VERTEX if model_config.provider == "vertex_ai" else _RATE_LIMIT_FAL
+    rate_limit_wait = _rate_limit(model_config.provider)
 
     artifact_paths: List[str] = []
     last_call_at: Optional[float] = None
@@ -149,17 +155,19 @@ def run(ctx: StepContext) -> StepResult:
     def _record_attempt(scene_id: int, event: str, attempt: dict) -> None:
         """Ledger + guard bookkeeping for every attempt the client makes."""
         if event == "submitted":
-            # Billed from the moment the provider accepted the job
+            # Billed from the moment the provider accepted the job (or may have)
             attempt["ledger_entry"] = ledger.record(
                 episode=ctx.episode_number,
                 scene_id=scene_id,
                 model_id=attempt["model_id"],
                 duration_sec=attempt["duration"],
                 cost_usd=attempt["cost"],
+                status="uncertain" if attempt.get("uncertain") else "submitted",
             )
             guard.record_spend(attempt["cost"])
         elif "ledger_entry" in attempt:
-            fields = {"status": "ok" if event == "succeeded" else "failed"}
+            failed = "uncertain" if attempt.get("uncertain") else "failed"
+            fields = {"status": "ok" if event == "succeeded" else failed}
             if attempt.get("error"):
                 fields["error"] = attempt["error"][:300]
             ledger.update(attempt["ledger_entry"], **fields)
@@ -169,7 +177,7 @@ def run(ctx: StepContext) -> StepResult:
         ctx.check_cancelled()
         # The client may have switched model (fallback/downgrade) on an earlier scene
         model_config = get_model(client.model_id)
-        rate_limit_wait = _RATE_LIMIT_VERTEX if model_config.provider == "vertex_ai" else _RATE_LIMIT_FAL
+        rate_limit_wait = _rate_limit(model_config.provider)
         clip_path = clips_dir / f"scene_{shot.scene_id}.mp4"
         skip_marker = clips_dir / f"scene_{shot.scene_id}.skip"
         override_file = clips_dir / f"scene_{shot.scene_id}_override.txt"
@@ -249,11 +257,12 @@ def run(ctx: StepContext) -> StepResult:
                 time.sleep(wait_needed)
 
         # ── Budget check ────────────────────────────────────────────────────
+        native_audio = Config.SERIES_NATIVE_AUDIO
         try:
             approved_model = guard.check_budget(
                 client.model_id,
-                duration=model_config.max_duration_sec,
-                include_audio=False,
+                duration=model_config.clip_seconds,
+                include_audio=native_audio and model_config.has_audio,
             )
             if approved_model != client.model_id:
                 logger.info(
@@ -262,7 +271,7 @@ def run(ctx: StepContext) -> StepResult:
                 )
                 client.switch_model(approved_model)
                 model_config = get_model(approved_model)
-                rate_limit_wait = _RATE_LIMIT_VERTEX if model_config.provider == "vertex_ai" else _RATE_LIMIT_FAL
+                rate_limit_wait = _rate_limit(model_config.provider)
         except BudgetExceeded as e:
             raise SceneGenerationError(
                 scene_id=shot.scene_id,
@@ -286,7 +295,7 @@ def run(ctx: StepContext) -> StepResult:
                     "type": "veo_polling",
                     "scene_id": shot.scene_id,
                     "elapsed": elapsed,
-                    "model": model_id,
+                    "model": client.model_id,
                 })
 
         client.on_attempt = lambda event, attempt, _sid=shot.scene_id: _record_attempt(_sid, event, attempt)
@@ -300,9 +309,9 @@ def run(ctx: StepContext) -> StepResult:
                     prompt=veo_prompt,
                     output_dir=clips_dir,
                     filename=f"scene_{shot.scene_id}.mp4",
-                    duration=model_config.max_duration_sec,
+                    duration=clip_duration(model_config.model_id),
                     resolution=model_config.max_resolution,
-                    include_audio=False,  # Use our own TTS pipeline
+                    include_audio=native_audio,  # native audio where the model has it (B3 policy)
                     image_path=str(ref_image),
                     reference_images=reference_images,
                     dialogue=shot.dialogue,
@@ -315,8 +324,9 @@ def run(ctx: StepContext) -> StepResult:
                     prompt=veo_prompt,
                     output_dir=clips_dir,
                     filename=f"scene_{shot.scene_id}.mp4",
-                    # Veo renders max_duration_sec by default; cost it at that length
-                    duration=model_config.max_duration_sec,
+                    # Veo renders clip_seconds (8 s) by default; cost it at that length
+                    duration=clip_duration(model_config.model_id),
+                    include_audio=native_audio,
                     image_path=str(ref_image),
                     dialogue=shot.dialogue,
                     voice_profile=shot.voice_profile,

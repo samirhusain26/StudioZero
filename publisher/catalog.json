@@ -1535,21 +1535,20 @@
    },
    "fallbackOrder": {
     "cheapest": [
-     "veo-3.1-lite",
      "wan-2.5",
+     "veo-3.1-lite",
      "kling-2.5-turbo-pro",
      "wan-2.2"
     ],
     "recommended": [
+     "seedance-1.5-pro",
      "veo-3.1-fast",
-     "seedance-2.0-fast",
-     "seedance-1.5-pro-fast"
+     "seedance-2.0-fast"
     ],
     "high_fidelity": [
-     "veo-3.1",
      "kling-3.0-pro",
      "seedance-2.0",
-     "sora-2-pro"
+     "veo-3.1"
     ]
    },
    "videoModels": [
@@ -1559,11 +1558,14 @@
      "provider": "fal.ai",
      "tier": "cheapest",
      "costPerSecondUsd": 0.05,
+     "costPerSecondWithAudioUsd": null,
      "maxResolution": "480p",
-     "maxDurationSeconds": 5,
+     "maxDurationSeconds": 10,
+     "clipSeconds": 5,
      "audio": false,
      "referenceImages": false,
-     "description": "Cheapest option. 480p only — good for drafts and prompt testing."
+     "description": "Cheapest option, requested at 480p ($0.05/s; 720p and 1080p cost more). No generated audio. Good for drafts and prompt testing.",
+     "verifiedAt": "2026-10-12"
     },
     {
      "id": "kling-2.5-turbo-pro",
@@ -1571,47 +1573,59 @@
      "provider": "fal.ai",
      "tier": "cheapest",
      "costPerSecondUsd": 0.07,
+     "costPerSecondWithAudioUsd": null,
      "maxResolution": "1080p",
      "maxDurationSeconds": 10,
+     "clipSeconds": 5,
      "audio": false,
      "referenceImages": false,
-     "description": "Best price-performance ratio. Excellent motion fluidity. No native audio."
+     "description": "Best price-performance ratio ($0.07/s). Excellent motion fluidity. No native audio.",
+     "verifiedAt": "2026-10-12"
     },
     {
      "id": "wan-2.2",
      "name": "Wan 2.2",
      "provider": "fal.ai",
      "tier": "cheapest",
-     "costPerSecondUsd": 0.1,
+     "costPerSecondUsd": 0.08,
+     "costPerSecondWithAudioUsd": null,
      "maxResolution": "720p",
      "maxDurationSeconds": 5,
+     "clipSeconds": 5,
      "audio": false,
      "referenceImages": false,
-     "description": "Open source (Alibaba). Budget option at 720p. No native audio."
+     "description": "Open source (Alibaba). About 5 s clips at 720p, priced per clip ($0.40, about $0.08/s). No native audio.",
+     "verifiedAt": "2026-10-12"
     },
     {
-     "id": "seedance-1.5-pro-fast",
-     "name": "Seedance 1.5 Pro Fast",
+     "id": "seedance-1.5-pro",
+     "name": "Seedance 1.5 Pro",
      "provider": "fal.ai",
      "tier": "recommended",
-     "costPerSecondUsd": 0.052,
-     "maxResolution": "1080p",
+     "costPerSecondUsd": 0.026,
+     "costPerSecondWithAudioUsd": 0.052,
+     "maxResolution": "720p",
      "maxDurationSeconds": 12,
+     "clipSeconds": 5,
      "audio": true,
-     "referenceImages": true,
-     "description": "ByteDance. Native audio + start/end frame control. Token-based pricing, estimated at $0.052/s."
+     "referenceImages": false,
+     "description": "ByteDance. Native audio + start/end frame control. Token-priced: at 720p and 24 fps about $0.026/s silent, $0.052/s with audio.",
+     "verifiedAt": "2026-10-12"
     },
     {
      "id": "seedance-2.0-fast",
      "name": "Seedance 2.0 Fast",
      "provider": "fal.ai",
      "tier": "recommended",
-     "costPerSecondUsd": null,
+     "costPerSecondUsd": 0.2419,
+     "costPerSecondWithAudioUsd": null,
      "maxResolution": "720p",
      "maxDurationSeconds": 15,
+     "clipSeconds": 5,
      "audio": true,
      "referenceImages": true,
-     "description": "Newest model (Apr 2026). Multi-shot editing, native audio, reference-to-video with up to 9 images. Token-based pricing, estimated at $0.052/s."
+     "description": "Newest Seedance (2026). Multi-shot editing, native audio, reference-to-video with up to 9 images. $0.2419/s at 720p, audio included.",
+     "verifiedAt": "2026-10-12"
     },
     {
      "id": "veo-3.1-fast",
@@ -1619,35 +1633,44 @@
      "provider": "gemini_api",
      "tier": "recommended",
      "costPerSecondUsd": 0.1,
-     "maxResolution": "1080p",
+     "costPerSecondWithAudioUsd": null,
+     "maxResolution": "720p",
      "maxDurationSeconds": 8,
+     "clipSeconds": 8,
      "audio": true,
      "referenceImages": true,
-     "description": "Google Gemini API. Fast generation with reference images (up to 3). Audio included. $0.10/s at 1080p."
+     "description": "Google Gemini API. Fast generation with reference images (up to 3). Audio included. $0.10/s at 720p (the API default).",
+     "verifiedAt": "2026-10-12"
     },
     {
      "id": "kling-3.0-pro",
      "name": "Kling 3.0 Pro",
      "provider": "fal.ai",
      "tier": "high_fidelity",
-     "costPerSecondUsd": 0.224,
+     "costPerSecondUsd": 0.112,
+     "costPerSecondWithAudioUsd": 0.168,
      "maxResolution": "1080p",
      "maxDurationSeconds": 15,
+     "clipSeconds": 5,
      "audio": true,
-     "referenceImages": true,
-     "description": "Multi-shot sequences with subject consistency. Native audio. Art-house aesthetic."
+     "referenceImages": false,
+     "description": "Multi-shot sequences with subject consistency. Native audio. $0.112/s silent, $0.168/s with audio.",
+     "verifiedAt": "2026-10-12"
     },
     {
      "id": "seedance-2.0",
      "name": "Seedance 2.0",
      "provider": "fal.ai",
      "tier": "high_fidelity",
-     "costPerSecondUsd": null,
+     "costPerSecondUsd": 0.3034,
+     "costPerSecondWithAudioUsd": null,
      "maxResolution": "720p",
      "maxDurationSeconds": 15,
+     "clipSeconds": 5,
      "audio": true,
      "referenceImages": true,
-     "description": "Standard quality tier of Seedance 2.0. Higher quality than fast variant. Token-based pricing, estimated at $0.052/s."
+     "description": "Standard Seedance 2.0: higher quality than Fast. $0.3034/s at 720p, audio included.",
+     "verifiedAt": "2026-10-12"
     },
     {
      "id": "veo-3.1",
@@ -1655,23 +1678,14 @@
      "provider": "gemini_api",
      "tier": "high_fidelity",
      "costPerSecondUsd": 0.4,
-     "maxResolution": "4K",
+     "costPerSecondWithAudioUsd": null,
+     "maxResolution": "720p",
      "maxDurationSeconds": 8,
+     "clipSeconds": 8,
      "audio": true,
      "referenceImages": true,
-     "description": "Google Gemini API. Best quality — cinematic video with lip-sync, audio, reference images. $0.40/s."
-    },
-    {
-     "id": "sora-2-pro",
-     "name": "Sora 2 Pro",
-     "provider": "fal.ai",
-     "tier": "high_fidelity",
-     "costPerSecondUsd": 0.3,
-     "maxResolution": "1080p",
-     "maxDurationSeconds": 25,
-     "audio": true,
-     "referenceImages": false,
-     "description": "OpenAI. Best physics simulation. Longest clips (up to 25s). Most expensive."
+     "description": "Google Gemini API. Best quality: cinematic video with lip-sync, audio, reference images. $0.40/s at 720p.",
+     "verifiedAt": "2026-10-12"
     },
     {
      "id": "veo-3.1-lite",
@@ -1679,11 +1693,14 @@
      "provider": "gemini_api",
      "tier": "cheapest",
      "costPerSecondUsd": 0.05,
-     "maxResolution": "1080p",
+     "costPerSecondWithAudioUsd": null,
+     "maxResolution": "720p",
      "maxDurationSeconds": 8,
+     "clipSeconds": 8,
      "audio": true,
      "referenceImages": false,
-     "description": "Google Gemini API. Cheapest Veo — 50% less than Fast. Audio included. $0.05/s at 1080p."
+     "description": "Google Gemini API. Cheapest Veo. Audio included. $0.05/s at 720p (the API default).",
+     "verifiedAt": "2026-10-12"
     }
    ]
   }

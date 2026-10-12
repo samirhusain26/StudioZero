@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 
 from src.config import Config
 from src.steps import StepContext, StepResult
+from src.pricing import charge_genai
 
 logger = logging.getLogger(__name__)
 
@@ -150,6 +151,7 @@ def run(ctx: StepContext) -> StepResult:
             response_schema=schema,
         ),
     )
+    charge_genai(response, "llm", Config.GEMINI_MODEL_NAME, "story", combined_prompt)
 
     raw = json.loads(response.text)
     story = StoryOutput.model_validate(raw)

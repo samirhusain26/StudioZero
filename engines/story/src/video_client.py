@@ -3,6 +3,7 @@ Unified Video Client — Single interface for generating video from any register
 
 Routes requests to the correct provider (Gemini API or fal.ai) based
 on the model registry. Handles retries, cost tracking, and model fallback.
+Only models with a `verified` record in registry.json are ever called (review B8).
 
 Billing safety (review B6): a generation is split into submit, wait and download.
 Only the submit starts a paid job, so it is retried only when the error proves the
@@ -10,6 +11,9 @@ request never reached the provider (connection refused, DNS failure). Once a sub
 succeeded, waiting and downloading are retried on their own and never re-submit.
 Every attempt is recorded in `attempts`; `on_attempt(event, attempt)` is called with
 "submitted" (billed), "succeeded" or "failed" so callers can keep a spend ledger.
+A submit that fails in a way that may have reached the provider (a timeout after
+sending, a 5xx, a dropped connection) is never retried and is counted as billed with
+`attempt["uncertain"] = True`, so the ledger never under-counts.
 """
 
 import logging
@@ -31,8 +35,8 @@ from tenacity import (
 from src.config import Config
 from src.video_models import (
     VideoModelConfig,
-    VIDEO_MODEL_REGISTRY,
     TIER_FALLBACK_ORDER,
+    clip_duration,
     get_model,
     estimate_cost,
 )
@@ -58,6 +62,19 @@ try:
     _TRANSIENT_ERRORS += (httpx.TransportError,)
 except ImportError:
     pass
+
+
+def _submit_may_have_reached_provider(exc: BaseException) -> bool:
+    """True when a failed submit may still have started a paid job (count it, never retry)."""
+    if isinstance(exc, _SUBMIT_NOT_STARTED_ERRORS):
+        return False
+    response = getattr(exc, "response", None)
+    status = getattr(exc, "status_code", None) or getattr(response, "status_code", None) or getattr(exc, "code", None)
+    if isinstance(status, int) and not isinstance(status, bool):
+        return status >= 500 or status == 408  # a 4xx rejection starts no job
+    return isinstance(exc, _TRANSIENT_ERRORS)
+
+
 _RETRY_ATTEMPTS = 3
 _RETRY_WAIT = wait_exponential(multiplier=2, min=5, max=60)
 
@@ -78,7 +95,7 @@ def _retrying(errors: tuple, label: str) -> Retrying:
 class UnifiedVideoClient:
     """
     Generates video clips through a single interface, routing to the correct
-    provider (fal.ai or Vertex AI) based on the active model.
+    provider (fal.ai or the Gemini API) based on the active model.
 
     Usage:
         client = UnifiedVideoClient("kling-2.5-turbo-pro")
@@ -125,11 +142,25 @@ class UnifiedVideoClient:
         if self.on_attempt:
             self.on_attempt(event, attempt)
 
-    def _mark_submitted(self, attempt: dict) -> None:
-        """The provider accepted the job: from here on it is billed."""
+    def _mark_submitted(self, attempt: dict, uncertain: bool = False) -> None:
+        """The provider accepted the job (or may have): from here on it is billed."""
         attempt["submitted"] = True
+        attempt["uncertain"] = uncertain
         self._total_cost += attempt["cost"]
         self._notify("submitted", attempt)
+
+    def _submit_paid(self, label: str, fn: Callable, *args, on_submitted: Optional[Callable[..., None]] = None):
+        """Start a paid job: retried only when it provably never started; counted when it may have."""
+        try:
+            result = _retrying(_SUBMIT_NOT_STARTED_ERRORS, label)(fn, *args)
+        except Exception as exc:
+            if on_submitted and _submit_may_have_reached_provider(exc):
+                logger.error(f"[video_client] {label} may have reached the provider ({exc}); counted as billed, not retried")
+                on_submitted(uncertain=True)
+            raise
+        if on_submitted:
+            on_submitted()
+        return result
 
     def get_generation_count(self) -> int:
         return self._generation_count
@@ -160,10 +191,10 @@ class UnifiedVideoClient:
             resolution: Target resolution (e.g. "720p", "1080p").
             include_audio: Whether to request native audio from the model.
             image_url: URL of an input image for image-to-video.
-            image_path: Local path to an input image (uploaded for fal.ai, used directly for Vertex).
+            image_path: Local path to an input image (uploaded for fal.ai, sent inline to the Gemini API).
             reference_images: List of image URLs/paths for reference-to-video (Seedance 2.0).
-            dialogue: Character dialogue (used for Vertex AI Veo lip-sync).
-            voice_profile: Voice description (used for Vertex AI Veo).
+            dialogue: Character dialogue (Veo lip-sync; added to fal.ai prompts when audio is on).
+            voice_profile: Voice description (Veo).
             on_poll: Callback for polling progress updates.
 
         Returns:
@@ -172,24 +203,31 @@ class UnifiedVideoClient:
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / filename
         self._last_error = None
+        self._fallback_errors = []
 
         logger.info(
             f"[video_client] Generating video with {self._model.display_name} "
             f"({self._model.model_id}) — {duration}s @ {resolution}, audio={include_audio}"
         )
 
+        include_audio = include_audio and self._model.has_audio
         attempt = {
             "model_id": self._model.model_id,
             "duration": duration,
             "include_audio": include_audio,
             "cost": estimate_cost(self._model.model_id, duration, include_audio),
             "submitted": False,
+            "uncertain": False,
             "ok": False,
             "error": None,
         }
         self.attempts.append(attempt)
 
         try:
+            if not self._model.available:
+                raise VideoGenerationError(
+                    f"{self._model.display_name}: endpoints and price not verified (registry.json); not called"
+                )
             if self._model.provider == "gemini_api":
                 result_path = self._generate_gemini_api(
                     prompt=prompt,
@@ -201,7 +239,7 @@ class UnifiedVideoClient:
                     dialogue=dialogue or "",
                     voice_profile=voice_profile or "",
                     on_poll=on_poll,
-                    on_submitted=lambda: self._mark_submitted(attempt),
+                    on_submitted=lambda uncertain=False: self._mark_submitted(attempt, uncertain),
                 )
             else:
                 result_path = self._generate_fal(
@@ -213,12 +251,14 @@ class UnifiedVideoClient:
                     image_url=image_url,
                     image_path=image_path,
                     reference_images=reference_images,
-                    on_submitted=lambda: self._mark_submitted(attempt),
+                    dialogue=dialogue or "",
+                    on_submitted=lambda uncertain=False: self._mark_submitted(attempt, uncertain),
                 )
         except Exception as e:
             self._last_error = str(e)
             attempt["error"] = str(e)
-            billed = " (billed: the job was accepted)" if attempt["submitted"] else ""
+            billed = (" (counted as billed: the submit may have reached the provider)" if attempt["uncertain"]
+                      else " (billed: the job was accepted)" if attempt["submitted"] else "")
             logger.error(f"[video_client] Generation failed ({self._model.model_id}){billed}: {e}")
             self._notify("failed", attempt)
             return None
@@ -252,55 +292,20 @@ class UnifiedVideoClient:
         image_url: Optional[str] = None,
         image_path: Optional[str] = None,
         reference_images: Optional[List[str]] = None,
-        on_submitted: Optional[Callable[[], None]] = None,
+        dialogue: str = "",
+        on_submitted: Optional[Callable[..., None]] = None,
     ) -> str:
         """Generate video via fal.ai and download to output_path."""
         model = self._model
-
-        # Determine endpoint
-        if reference_images and model.endpoint_ref2v:
-            endpoint = model.endpoint_ref2v
-        elif (image_url or image_path) and model.endpoint_i2v:
-            endpoint = model.endpoint_i2v
-        else:
-            endpoint = model.endpoint_t2v
-
-        # Build arguments
-        arguments: dict = {"prompt": prompt}
-
-        if duration:
-            arguments["duration"] = str(duration)
-        if resolution:
-            arguments["resolution"] = resolution
-
-        # Image-to-video: upload local file or pass URL (uploads are free and safe to retry)
-        if image_path and not image_url:
-            image_url = _retrying(_TRANSIENT_ERRORS, "fal.ai upload")(self._fal_upload, image_path)
-        if image_url and not reference_images:
-            arguments["image_url"] = image_url
-
-        # Reference-to-video (Seedance 2.0)
-        if reference_images and model.endpoint_ref2v:
-            ref_urls = []
-            for ref in reference_images:
-                if ref.startswith("http"):
-                    ref_urls.append(ref)
-                else:
-                    ref_urls.append(_retrying(_TRANSIENT_ERRORS, "fal.ai upload")(self._fal_upload, ref))
-            arguments["reference_images"] = [{"url": u} for u in ref_urls]
-
-        # Audio control — disable by default (use our own TTS pipeline)
-        if not include_audio and model.has_audio:
-            arguments["enable_audio"] = False
-
-        logger.info(f"[video_client] fal.ai call: {endpoint} — {list(arguments.keys())}")
+        endpoint, arguments, uploads = self._fal_request(
+            prompt, duration, include_audio, image_url, image_path, reference_images, dialogue,
+        )
+        logger.info(f"[video_client] fal.ai call: {endpoint} — {sorted(arguments)}")
 
         # Submit (paid): retried only when the request provably never started
-        request_id = _retrying(_SUBMIT_NOT_STARTED_ERRORS, "fal.ai submit")(
-            self._fal_submit, endpoint, arguments
+        request_id = self._submit_paid(
+            "fal.ai submit", self._fal_submit, endpoint, arguments, on_submitted=on_submitted,
         )
-        if on_submitted:
-            on_submitted()
 
         # Wait for the result of the already-submitted job (never re-submits)
         result = _retrying(_TRANSIENT_ERRORS, "fal.ai result")(self._fal_wait, endpoint, request_id)
@@ -324,9 +329,62 @@ class UnifiedVideoClient:
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
         _retrying(_TRANSIENT_ERRORS, "fal.ai download")(self._fal_download, video_url, output_path)
         size_kb = Path(output_path).stat().st_size // 1024
-        logger.info(f"[video_client] Downloaded fal.ai video: {output_path} ({size_kb} KB)")
+        logger.info(f"[video_client] Downloaded {model.display_name} video: {output_path} ({size_kb} KB)")
 
         return output_path
+
+    def _fal_request(
+        self,
+        prompt: str,
+        duration: int,
+        include_audio: bool,
+        image_url: Optional[str],
+        image_path: Optional[str],
+        reference_images: Optional[List[str]],
+        dialogue: str,
+    ) -> tuple:
+        """(endpoint, arguments, uploads) shaped by the model's verified input schema (registry params)."""
+        model = self._model
+        params = model.params
+        if params is None:
+            raise VideoGenerationError(f"{model.model_id}: no fal.ai parameter map in registry.json")
+        upload = _retrying(_TRANSIENT_ERRORS, "fal.ai upload")  # uploads are free and safe to retry
+        uploads = 0
+
+        if reference_images and model.endpoint_ref2v and params.references:
+            mode, endpoint = "ref2v", model.endpoint_ref2v
+        elif (image_url or image_path) and model.endpoint_i2v and params.image:
+            mode, endpoint = "i2v", model.endpoint_i2v
+        else:
+            mode, endpoint = "t2v", model.endpoint_t2v
+
+        full_prompt = prompt
+        if include_audio and dialogue:
+            full_prompt += f'\n\nThe character says: "{dialogue}"'
+        arguments: dict = {"prompt": full_prompt}
+        if params.durations:
+            arguments["duration"] = str(clip_duration(model.model_id, duration))
+        if params.resolution:
+            arguments["resolution"] = model.max_resolution
+        if mode in params.aspect_ratio:
+            arguments["aspect_ratio"] = "9:16"
+        if params.audio:
+            arguments[params.audio] = bool(include_audio)
+        if mode == "i2v":
+            if image_path and not image_url:
+                image_url = upload(self._fal_upload, image_path)
+                uploads += 1
+            arguments[params.image] = image_url
+        elif mode == "ref2v":
+            urls = []
+            for ref in reference_images:
+                if ref.startswith("http"):
+                    urls.append(ref)
+                else:
+                    urls.append(upload(self._fal_upload, ref))
+                    uploads += 1
+            arguments[params.references] = urls
+        return endpoint, arguments, uploads
 
     # fal.ai network primitives (one request each; the smoke test stubs these)
 
@@ -367,7 +425,7 @@ class UnifiedVideoClient:
         dialogue: str = "",
         voice_profile: str = "",
         on_poll: Optional[Callable[[int], None]] = None,
-        on_submitted: Optional[Callable[[], None]] = None,
+        on_submitted: Optional[Callable[..., None]] = None,
     ) -> str:
         """Generate video via the Gemini API (google.genai SDK)."""
         from google.genai import types
@@ -432,11 +490,7 @@ class UnifiedVideoClient:
         )
 
         # Submit (paid): retried only when the request provably never started
-        operation = _retrying(_SUBMIT_NOT_STARTED_ERRORS, "Gemini API submit")(
-            self._gemini_submit, kwargs
-        )
-        if on_submitted:
-            on_submitted()
+        operation = self._submit_paid("Gemini API submit", self._gemini_submit, kwargs, on_submitted=on_submitted)
 
         # Wait for the already-submitted operation (each poll retried on its own)
         operation = self._gemini_wait(operation, on_poll)
@@ -551,8 +605,8 @@ class UnifiedVideoClient:
         budget_check: Optional[Callable[[str, float], bool]] = None,
     ) -> Optional[str]:
         """
-        Try generating with the active model, falling back to other models
-        in the same tier on failure.
+        Try generating with the active model, then the tier's other available
+        models from the cheapest up (registry fallbackOrder, review B8).
 
         budget_check(model_id, estimated_cost) is asked before every attempt
         (spend from earlier, billed attempts already counted by the caller);
@@ -562,13 +616,9 @@ class UnifiedVideoClient:
         tier = self._model.tier
         fallback_order = TIER_FALLBACK_ORDER.get(tier, [])
 
-        # Start from the current model's position in the fallback order
+        # The current model first, then the others cheapest first
         current_id = self._model.model_id
-        if current_id in fallback_order:
-            start_idx = fallback_order.index(current_id)
-            models_to_try = fallback_order[start_idx:] + fallback_order[:start_idx]
-        else:
-            models_to_try = [current_id] + fallback_order
+        models_to_try = [current_id] + [m for m in fallback_order if m != current_id]
 
         # Deduplicate while preserving order
         seen = set()
@@ -583,6 +633,10 @@ class UnifiedVideoClient:
         for model_id in unique_models:
             model_cfg = get_model(model_id)
 
+            if not model_cfg.available:
+                errors.append(f"{model_cfg.display_name}: not verified, never called")
+                continue
+
             # Skip models whose provider SDK isn't installed
             available, reason = self._is_provider_available(model_cfg.provider)
             if not available:
@@ -591,14 +645,14 @@ class UnifiedVideoClient:
                 logger.warning(f"[video_client] Skipping {model_id} — {reason}")
                 continue
 
-            # Clamp duration and resolution to the fallback model's capabilities
-            effective_duration = min(duration, model_cfg.max_duration_sec)
+            # Snap duration and resolution to the fallback model's capabilities
+            effective_duration = clip_duration(model_id, duration)
             effective_resolution = model_cfg.max_resolution
             # Only pass reference_images if this model supports them
             effective_refs = reference_images if model_cfg.has_reference_images else None
 
             # Re-check the budget before every attempt (review B6)
-            estimated = estimate_cost(model_id, effective_duration, include_audio)
+            estimated = estimate_cost(model_id, effective_duration, include_audio and model_cfg.has_audio)
             if budget_check is not None and not budget_check(model_id, estimated):
                 msg = f"{model_cfg.display_name}: skipped, ${estimated:.2f} exceeds the remaining budget"
                 errors.append(msg)

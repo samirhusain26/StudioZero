@@ -46,9 +46,11 @@ function story(engine) {
   if (reg.registryVersion !== 1) throw new Error('engines/story/registry.json: registryVersion must be 1');
   return {
     routes: reg.routes, defaultModels: reg.defaultModels, tierDefaults: reg.tierDefaults, fallbackOrder: reg.fallbackOrder,
-    videoModels: reg.videoModels.map(m => ({id: m.model_id, name: m.display_name, provider: m.provider, tier: m.tier,
-      costPerSecondUsd: m.cost_per_second ?? null, maxResolution: m.max_resolution, maxDurationSeconds: m.max_duration_sec,
-      audio: m.has_audio, referenceImages: m.has_reference_images, description: m.description})),
+    // Only models whose endpoints and prices are verified (the engine never calls the others)
+    videoModels: reg.videoModels.filter(m => m.verified).map(m => ({id: m.model_id, name: m.display_name, provider: m.provider, tier: m.tier,
+      costPerSecondUsd: m.cost_per_second ?? null, costPerSecondWithAudioUsd: m.cost_per_second_audio ?? null,
+      maxResolution: m.max_resolution, maxDurationSeconds: m.max_duration_sec, clipSeconds: m.clip_seconds,
+      audio: m.has_audio, referenceImages: m.has_reference_images, description: m.description, verifiedAt: m.verified.at})),
   };
 }
 

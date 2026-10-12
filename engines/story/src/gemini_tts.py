@@ -43,6 +43,7 @@ from tenacity import (
 )
 
 from src.config import Config
+from src.pricing import charge_genai
 
 logger = logging.getLogger(__name__)
 
@@ -300,7 +301,11 @@ def _call_gemini_tts(client, prompt: str, gemini_voice: str) -> Optional[bytes]:
             ),
         )
     )
-    return _extract_audio_from_response(response)
+    audio = _extract_audio_from_response(response)
+    # 24 kHz 16-bit mono PCM: 48,000 bytes a second
+    charge_genai(response, "tts", Config.TTS_MODEL, "narration", prompt,
+                 audio_seconds=len(audio) / 48000 if audio else 0.0)
+    return audio
 
 
 def generate_audio(

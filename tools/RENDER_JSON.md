@@ -11,20 +11,20 @@ Check a file: `node tools/render-json.mjs <render.json>...` (exit 1 on any error
 | `route` | `recap`, `series` or null | null for motion; required for story |
 | `kitVersion` | string | the engine's version label (motion: `kit-1`; story: `story-1`) |
 | `project` | string | a project in `studio.json` |
-| `episodeId` | string | `[a-z0-9-]+`, ≤ 80 characters |
+| `episodeId` | string | `[a-z0-9-]+`, ≤ 80 characters. In a batch it is the contract id and equals the job folder's name; the story engine writes its own work id (`originals-recap-<title>-<year>`, `originals-series-<project>-ep<n>`) and `tools/stage-story.mjs` assigns the contract id (`originals-<format>-<nnn>`) when it stages the render, keeping the work id in `job.workId` |
 | `createdAt` | UTC `YYYY-MM-DDTHH:MM:SSZ` | when the render was validated |
 | `job` | object | engine-specific inputs the project's packager needs (motion: `revision`, `contentKey`, `contentId`, `styleId`, `musicBed`, `propsHash`, `coverFrame`, and `renderer`: `"render.sh"` for render.mjs jobs, with their `codeHash`, or `"web"` for the Studio's in-browser export, with the UI bundle's `bundleCommit`) |
 | `video` | object | `file` (relative to this file's folder, no `..`), `sha256`, `bytes`, `durationSeconds`, `width`, `height`, `fps` (`num/den`), `videoCodec`, `audioCodec` (null when silent) |
 | `cover` | object or null | `file`, `sha256`, `bytes` |
 | `models` | list | `{role, id}` with `role` ∈ `llm`, `tts`, `image`, `video`, `music`, `asr`; every generative model that made something in the video |
-| `costUsd` | number ≥ 0 | paid-API spend for this episode (0 for a motion render or a mocked run) |
+| `costUsd` | number ≥ 0 | paid-API spend for this episode (0 for a motion render). Story: from the project's spend ledger (every LLM, image, TTS and video call at list prices; a series episode adds its share of the project-level work) |
 | `costEstimated` | boolean | true when `costUsd` is (partly) an estimate rather than billed usage |
 | `credits` | list | one entry per third-party, owner or generated asset in the video: `{kind, title, creator, sourceUrl, license, attribution, sha256}` |
 | `disclosure` | object | `{aiGenerated, aiKinds, realisticSynthetic, note}` |
 
 Credits:
 - `kind` ∈ `footage`, `image`, `poster`, `music`, `sfx`, `font`, `voice`, `data`, `text`, `model`.
-- `license` ∈ `CC0-1.0`, `CC-BY-4.0`, `CC-BY-SA-4.0`, `OFL-1.1`, `Pexels`, `Pixabay`, `TMDB`, `Wikipedia-CC-BY-SA`, `owner`, `generated`, `public-domain`, `unknown`. `unknown` is recorded honestly (e.g. the story engine's stock fallback clips); the packager refuses it from contract v2 on.
+- `license` ∈ `CC0-1.0`, `CC-BY-4.0`, `CC-BY-SA-4.0`, `OFL-1.1`, `Pexels`, `Pixabay`, `TMDB`, `Wikipedia-CC-BY-SA`, `owner`, `generated`, `public-domain`, `unknown`. `unknown` is recorded honestly (today only a recap replayed from a cache made before 2026-10-12, with an old local stock clip); the staging step and the packager refuse it from contract v2 on.
 - `CC-BY-4.0`, `CC-BY-SA-4.0`, `TMDB` and `Wikipedia-CC-BY-SA` need non-empty `attribution` text. `TMDB` attribution must contain "This product uses the TMDB API but is not endorsed or certified by TMDB".
 - `creator`, `sourceUrl`, `attribution`, `sha256` may be null; `sourceUrl` is https when set; `sha256` is 64 hex characters when set.
 

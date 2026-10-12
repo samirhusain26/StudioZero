@@ -18,6 +18,7 @@ from src.config_mappings import (
     get_available_voices_for_groq,
     get_lang_code_for_voice,
 )
+from src.pricing import charge, charge_genai
 
 
 logger = logging.getLogger(__name__)
@@ -163,6 +164,7 @@ class StoryGenerator:
             ),
         )
 
+        charge_genai(response, "llm", self.gemini_model, "recap script", combined_prompt)
         usage = getattr(response, "usage_metadata", None)
         self.last_usage = {
             "promptTokens": getattr(usage, "prompt_token_count", None),
@@ -185,6 +187,9 @@ class StoryGenerator:
         """
         response = self.groq_client.chat.completions.create(**kwargs)
         usage = getattr(response, "usage", None)
+        charge("llm", kwargs.get("model", GROQ_FALLBACK_MODEL), "recap script (Groq fallback)",
+               input_tokens=int(getattr(usage, "prompt_tokens", 0) or 0),
+               output_tokens=int(getattr(usage, "completion_tokens", 0) or 0), estimated=usage is None)
         self.last_usage = {
             "promptTokens": getattr(usage, "prompt_tokens", None),
             "outputTokens": getattr(usage, "completion_tokens", None),
@@ -518,6 +523,7 @@ def generate_character_blueprint(
                 response_modalities=["IMAGE", "TEXT"],
             ),
         )
+        charge_genai(response, "image", Config.GEMINI_IMAGE_MODEL, "reference image", prompt)
 
         # Extract image data from response parts
         for part in response.candidates[0].content.parts:
@@ -609,6 +615,7 @@ def validate_input(text: str, gemini_client: genai.Client) -> dict:
                 response_mime_type="application/json",
             ),
         )
+        charge_genai(response, "llm", Config.GEMINI_MODEL_NAME, "input check", prompt)
         return json.loads(response.text)
     except Exception as e:
         logger.error(f"Input validation failed: {e}")
@@ -629,6 +636,7 @@ def generate_random_story_idea(gemini_client: genai.Client) -> str:
             model=Config.GEMINI_MODEL_NAME,
             contents=prompt,
         )
+        charge_genai(response, "llm", Config.GEMINI_MODEL_NAME, "random story idea", prompt)
         return response.text.strip()
     except Exception as e:
         logger.error(f"Random story generation failed: {e}")

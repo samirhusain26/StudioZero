@@ -144,7 +144,12 @@ class PaidRefusalTests(AgentTestCase):
         self.assertEqual(self.call("POST", f"/studio/projects/{pid}/run", json={}).status_code, 428)
         est = self.call("GET", f"/studio/projects/{pid}/estimate").json()
         self.assertGreater(est["estimateUsd"], 0)
-        self.assertEqual(est["lines"][0]["what"].split()[0], "6")
+        clips = [l for l in est["lines"] if "video clip" in l["what"]]
+        self.assertEqual(clips[0]["what"].split()[0], "6")
+        # Text and image calls are priced too (nothing left unpriced for a series)
+        self.assertTrue(any("Character reference images" in l["what"] and l["usd"] > 0 for l in est["lines"]), est["lines"])
+        self.assertEqual(est["unpriced"], [])
+        self.assertAlmostEqual(est["estimateUsd"], round(sum(l["usd"] for l in est["lines"]), 4))
         for confirm in ({"token": "est-forged000000", "estimateUsd": est["estimateUsd"]}, {"token": est["token"], "estimateUsd": 0}):
             r = self.call("POST", f"/studio/projects/{pid}/run", json={"confirm": confirm})
             self.assertEqual(r.status_code, 409, r.text)
@@ -202,8 +207,9 @@ class RunTests(AgentTestCase):
         r = self.call("POST", "/studio/projects", json={"route": "recap", "name": "Arrival"})
         pid = r.json()["id"]
         est = self.call("GET", f"/studio/projects/{pid}/estimate").json()
-        self.assertEqual(est["estimateUsd"], 0)
-        self.assertIn("Gemini script (LLM)", est["unpriced"])
+        self.assertGreater(est["estimateUsd"], 0)  # the script call is priced
+        self.assertTrue(est["lines"][0]["what"].startswith("Recap script"), est["lines"])
+        self.assertIn("narration", est["unpriced"][0])
         self.assertEqual(self.confirmed_run(pid).status_code, 200)
         self.assertTrue(wait_until(lambda: self.call("GET", f"/studio/projects/{pid}").json()["status"] == "review"))
         self.assertEqual(self.confirmed_run(pid).status_code, 409)  # approve first
@@ -211,6 +217,9 @@ class RunTests(AgentTestCase):
         self.assertEqual(self.call("PUT", f"/studio/projects/{pid}/script", json={"script": edited}).status_code, 200)
         self.assertEqual(self.call("PUT", f"/studio/projects/{pid}/script", json={"script": {"nope": 1}}).status_code, 422)
         self.assertEqual(self.call("POST", f"/studio/projects/{pid}/approve-script").status_code, 200)
+        est = self.call("GET", f"/studio/projects/{pid}/estimate").json()
+        self.assertTrue(est["lines"][0]["what"].startswith("Narration"), est["lines"])
+        self.assertGreater(est["estimateUsd"], 0)
         self.assertEqual(self.confirmed_run(pid).status_code, 200)
         self.assertTrue(wait_until(lambda: self.call("GET", f"/studio/projects/{pid}").json()["status"] == "completed"))
         self.assertEqual(self.runner.approved_scripts[0], None)
@@ -308,6 +317,14 @@ class SettingsTests(AgentTestCase):
                 self.assertEqual(r.status_code, 422, body)
         Path(smoke_support.os.environ["STORY_SETTINGS_FILE"]).unlink()
         Config.reload_settings()
+
+    def test_unverified_models_are_neither_listed_nor_accepted(self):
+        tiers = self.call("GET", "/studio/settings").json()["tiers"]
+        listed = {m["id"] for models in tiers.values() for m in models}
+        self.assertNotIn("sora-2-pro", listed)
+        self.assertIn("seedance-1.5-pro", listed)
+        self.assertTrue(all(m["clipSeconds"] > 0 and m["available"] for models in tiers.values() for m in models))
+        self.assertEqual(self.call("PUT", "/studio/settings", json={"active_model": "sora-2-pro"}).status_code, 422)
 
 
 if __name__ == "__main__":

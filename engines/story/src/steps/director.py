@@ -27,6 +27,7 @@ from src.steps import StepContext, StepResult
 from src.steps.screenwriter import load_episode
 from src.steps.casting import load_all_character_sheets
 from src.steps.world_builder import load_all_world_layouts
+from src.pricing import charge_genai
 
 logger = logging.getLogger(__name__)
 
@@ -252,6 +253,7 @@ def run(ctx: StepContext) -> StepResult:
             response_schema=schema,
         ),
     )
+    charge_genai(response, "llm", Config.GEMINI_MODEL_NAME, "director shots", combined_prompt)
 
     raw = json.loads(response.text)
     shots = DirectorShots.model_validate(raw)

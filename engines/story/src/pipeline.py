@@ -28,6 +28,10 @@ from src.stock_media import download_video
 from src.subtitles import generate_karaoke_subtitles
 from src.renderer import VideoRenderer
 from src.render_json import write_recap_render_json
+from src.status import PipelineStatus  # noqa: F401 (re-exported)
+from src.budget_guard import SpendLedger
+from src.pricing import charging
+from src.music import pick_track
 
 logger = logging.getLogger(__name__)
 
@@ -48,17 +52,6 @@ class SceneAssets:
     word_timestamps: Optional[List[dict]] = None
     poster_path: Optional[str] = None  # If set, use this image instead of video
     is_ending_scene: bool = False  # True for the final "This was the story of..." scene
-
-
-@dataclass
-class PipelineStatus:
-    """Represents a status update from the pipeline."""
-    step: int
-    message: str
-    data: Optional[Dict[str, Any]] = None
-    is_error: bool = False
-    review_gate: bool = False
-    retry_gate: bool = False  # Veo scene failure — user must retry/edit/skip before continuing
 
 
 def _create_silent_audio(output_path: str, duration_seconds: float = 3.0,
@@ -278,8 +271,8 @@ class VideoGenerationPipeline:
                 output_path=video_output_path
             )
 
-            if video_metadata.get('fallback'):
-                status_messages.append(f"Scene {scene_num}: Fallback to base video (Pexels search failed)")
+            if video_metadata.get('generic'):
+                status_messages.append(f"Scene {scene_num}: generic Pexels footage (no match for the scene's queries)")
             else:
                 status_messages.append(f"Scene {scene_num}: Downloaded video for '{video_metadata.get('query', queries[0])}'")
 
@@ -340,6 +333,20 @@ class VideoGenerationPipeline:
             
             return ([], None, final_path)
 
+        # Every paid text and speech call of this recap is charged to its spend ledger: the
+        # worker's project folder, else the recap's temp folder (render.json reads it).
+        ledger_dir = Path(kwargs.get('ledger_dir') or self._get_output_dir(movie_name))
+        kwargs['ledger_dir'] = ledger_dir
+        with charging(SpendLedger(ledger_dir)):
+            return (yield from self._run_recap(movie_name, mode, **kwargs))
+
+    def _run_recap(
+        self,
+        movie_name: str,
+        mode: str = "movie",
+        **kwargs
+    ) -> Generator[PipelineStatus, None, Tuple[List[SceneAssets], Optional[VideoScript], Optional[str]]]:
+        """The recap route's steps (run() wraps it with the spend meter)."""
         scene_assets_list: List[SceneAssets] = []
         script: Optional[VideoScript] = None
         cache_data: Dict = {}
@@ -747,15 +754,13 @@ class VideoGenerationPipeline:
             # =================================================================
             yield PipelineStatus(step=5, message="Rendering final video...")
 
-            # Determine background music path
-            music_path = None
-            if script.selected_music_file:
-                music_file = Config.ASSETS_DIR / "music" / script.selected_music_file
-                if music_file.exists():
-                    music_path = str(music_file)
-                    yield PipelineStatus(step=5, message=f"Using background music: {script.selected_music_file}")
-                else:
-                    yield PipelineStatus(step=5, message=f"Music file not found: {script.selected_music_file}")
+            # Background music: a CC0 track with its licence recorded (src/music.py), or none
+            music_track = pick_track(script.genre, movie_details.get("title") or movie_name)
+            music_path = music_track["path"] if music_track else None
+            if music_track:
+                yield PipelineStatus(step=5, message=f"Background music: \"{music_track['title']}\" by {music_track['artist']} (CC0)")
+            else:
+                yield PipelineStatus(step=5, message="No licensed background music available: narration only")
 
             # Output path: one folder per recap, which also holds cover.jpg and render.json
             final_dir = Config.FINAL_DIR / Config.safe_title(movie_name)
@@ -800,11 +805,12 @@ class VideoGenerationPipeline:
                     movie_details=movie_details,
                     script=script,
                     scene_assets=scene_assets_list,
-                    music_path=music_path,
+                    music=music_track,
                     llm=cache_data.get('llm'),
                     tts_model=cache_data.get('tts_model') or Config.TTS_MODEL,
                     asr_model=f"openai-whisper-{WHISPER_MODEL_NAME}" if asr_used else None,
                     subtitles_burned=bool(subtitle_path) and VideoRenderer._ass_filter_available is True,
+                    ledger_dir=kwargs.get('ledger_dir'),
                 )
                 yield PipelineStatus(
                     step=5,

@@ -10,22 +10,24 @@ would exceed the remaining budget. If so, it can:
 Spend is per project, not per run: SpendLedger keeps every billed video generation
 in <project_dir>/spend_ledger.json (recorded when the provider accepts the job, so a
 crash while polling still counts), and BudgetGuard starts from the ledger total.
-Only video generation is in the ledger; LLM, image and TTS calls are not yet counted.
+LLM, image and TTS calls are in the same ledger (kind llm/image/tts, priced by
+src/pricing.py), so the budget and render.json's costUsd count them too.
 """
 
 import json
 import logging
 import os
 import tempfile
+import threading
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional, Tuple
 
 from src.video_models import (
-    VideoModelConfig,
     TIER_FALLBACK_ORDER,
+    clip_duration,
     get_model,
-    get_models_by_tier,
     estimate_cost,
 )
 
@@ -53,21 +55,39 @@ class SpendLedger:
 
     One entry per paid video generation the provider accepted:
         {episode, sceneId, modelId, durationSec, costUsd, estimated, status, source, at}
-    status: "submitted" (billed, result pending), "ok" (clip saved) or "failed"
-    (billed, no clip). source: "generated", or "backfill" for a clip that existed
-    before the ledger did (its cost is an estimate for the assumed model).
+    status: "submitted" (billed, result pending), "ok" (clip saved), "failed"
+    (billed, no clip) or "uncertain" (the submit failed after it may have reached the
+    provider: counted, never retried). source: "generated", or "backfill" for a clip
+    that existed before the ledger did (its cost is an estimate for the assumed model).
+
+    Text, image and speech calls add {kind: llm|image|tts, what, modelId, episode,
+    units, costUsd, estimated, status: "ok", at} (episode null for project-level work).
+    Entries without `kind` are video generations.
+
+    Several instances may hold the same file (the spend meter, the scene generator, the
+    worker): every write re-reads the file under a per-file lock first, so none drops
+    another's entries.
     """
+
+    _locks: dict = {}
+    _locks_guard = threading.Lock()
 
     def __init__(self, project_dir: Path):
         self.path = Path(project_dir) / LEDGER_FILENAME
         self.entries: List[dict] = []
-        if self.path.exists():
-            try:
-                data = json.loads(self.path.read_text(encoding="utf-8"))
-                self.entries = list(data["entries"])
-            except Exception as e:
-                # Never silently restart from $0: that is how a budget gets spent twice.
-                raise RuntimeError(f"{self.path} exists but cannot be read: {e}") from e
+        with SpendLedger._locks_guard:
+            self._lock = SpendLedger._locks.setdefault(str(self.path.resolve()), threading.RLock())
+        self._reload()
+
+    def _reload(self) -> None:
+        if not self.path.exists():
+            return
+        try:
+            data = json.loads(self.path.read_text(encoding="utf-8"))
+            self.entries = list(data["entries"])
+        except Exception as e:
+            # Never silently restart from $0: that is how a budget gets spent twice.
+            raise RuntimeError(f"{self.path} exists but cannot be read: {e}") from e
 
     def total(self, episode: Optional[int] = None) -> float:
         """Total recorded spend (USD) for the project, or for one episode."""
@@ -75,6 +95,19 @@ class SpendLedger:
             e.get("costUsd", 0.0) for e in self.entries
             if episode is None or e.get("episode") == episode
         ), 4)
+
+    def episode_cost(self, episode: int, num_episodes: int) -> float:
+        """An episode's own spend plus its equal share of project-level spend (story, cast, worlds)."""
+        shared = sum(e.get("costUsd", 0.0) for e in self.entries if e.get("episode") is None)
+        return round(self.total(episode) + shared / max(1, num_episodes), 4)
+
+    def by_kind(self) -> dict:
+        """Spend per kind (video, llm, image, tts)."""
+        out: dict = {}
+        for e in self.entries:
+            kind = e.get("kind", "video")
+            out[kind] = round(out.get(kind, 0.0) + e.get("costUsd", 0.0), 6)
+        return out
 
     def entries_for(self, episode: int, scene_id: Optional[int] = None) -> List[dict]:
         return [
@@ -99,6 +132,7 @@ class SpendLedger:
     ) -> dict:
         """Append an entry and persist the ledger immediately."""
         entry = {
+            "id": uuid.uuid4().hex[:12],
             "episode": episode,
             "sceneId": scene_id,
             "modelId": model_id,
@@ -109,14 +143,46 @@ class SpendLedger:
             "source": source,
             "at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
-        self.entries.append(entry)
-        self.save()
+        with self._lock:
+            self._reload()
+            self.entries.append(entry)
+            self.save()
+        return entry
+
+    def record_usage(self, kind: str, model_id: str, what: str, episode: Optional[int], cost_usd: float,
+                     units: dict, estimated: bool, price_assumed: bool = False) -> dict:
+        """Append a priced text, image or speech call and persist (src/pricing.py calls this)."""
+        entry = {
+            "id": uuid.uuid4().hex[:12],
+            "kind": kind,
+            "what": what,
+            "modelId": model_id,
+            "episode": episode,
+            "units": units,
+            "costUsd": round(cost_usd, 6),
+            "estimated": bool(estimated),
+            "status": "ok",
+            "at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+        if price_assumed:
+            entry["priceAssumed"] = True
+        with self._lock:
+            self._reload()
+            self.entries.append(entry)
+            self.save()
         return entry
 
     def update(self, entry: dict, **fields) -> None:
-        """Update an entry returned by record() and persist."""
-        entry.update(fields)
-        self.save()
+        """Update an entry returned by record() (or read from this ledger) and persist."""
+        with self._lock:
+            before = dict(entry)
+            self._reload()
+            target = next((e for e in self.entries if e == before), None)
+            entry.update(fields)
+            if target is None:
+                raise RuntimeError(f"{self.path}: entry to update not found ({before.get('modelId')}, scene {before.get('sceneId')})")
+            target.update(fields)
+            self.save()
 
     def save(self) -> None:
         """Atomically write the ledger (same pattern as pipeline_state.save_state)."""
@@ -191,7 +257,7 @@ class BudgetGuard:
         Raises BudgetExceeded if even the cheapest model exceeds the budget
         and auto_downgrade is disabled.
         """
-        estimated = estimate_cost(model_id, duration, include_audio)
+        estimated = estimate_cost(model_id, clip_duration(model_id, duration), include_audio)
 
         if estimated <= self.remaining:
             return model_id
@@ -222,17 +288,17 @@ class BudgetGuard:
         duration: int,
         include_audio: bool,
     ) -> Optional[str]:
-        """Find a cheaper model in the same tier that fits the budget."""
+        """The priciest cheaper model in the same tier that fits the budget."""
         current = get_model(current_model_id)
         tier = current.tier
-        fallback_order = TIER_FALLBACK_ORDER.get(tier, [])
+        current_cost = estimate_cost(current_model_id, clip_duration(current_model_id, duration), include_audio)
 
-        # Try models after the current one in the fallback order
-        current_idx = fallback_order.index(current_model_id) if current_model_id in fallback_order else -1
-
-        for model_id in fallback_order[current_idx + 1:]:
-            cost = estimate_cost(model_id, duration, include_audio)
-            if cost <= self.remaining:
+        # The tier's fallback order is cheapest first: walk it from the most expensive down
+        for model_id in reversed(TIER_FALLBACK_ORDER.get(tier, [])):
+            if model_id == current.model_id:
+                continue
+            cost = estimate_cost(model_id, clip_duration(model_id, duration), include_audio)
+            if cost < current_cost and cost <= self.remaining:
                 logger.info(
                     f"[budget_guard] Downgrading within tier '{tier}': "
                     f"{current_model_id} -> {model_id} (${cost:.4f})"
@@ -248,7 +314,7 @@ class BudgetGuard:
     ) -> Optional[str]:
         """Find the cheapest model across all tiers that fits the budget."""
         for model_id in TIER_FALLBACK_ORDER.get("cheapest", []):
-            cost = estimate_cost(model_id, duration, include_audio)
+            cost = estimate_cost(model_id, clip_duration(model_id, duration), include_audio)
             if cost <= self.remaining:
                 logger.info(
                     f"[budget_guard] Downgrading to cheapest tier: "

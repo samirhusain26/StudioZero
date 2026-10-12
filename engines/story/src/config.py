@@ -61,16 +61,10 @@ class Config:
     # Gemini model for script generation (with Groq fallback)
     GEMINI_MODEL_NAME = _models.get("llm_model") or os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash")
     GEMINI_IMAGE_MODEL = _models.get("image_model") or os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
-    VEO_MODEL = _models.get("video_model") or os.getenv("VEO_MODEL", "veo-3.1-lite-generate-preview")
     TTS_MODEL = _models.get("tts_model") or os.getenv("TTS_MODEL", "gemini-2.5-flash-preview-tts")
 
     # fal.ai API key (for multi-model video generation)
     FAL_KEY = _get("FAL_KEY")
-
-    # Google Cloud Vertex AI (for Veo 3.1 animated pipeline)
-    VERTEX_PROJECT_ID = _get("VERTEX_PROJECT_ID")
-    VERTEX_LOCATION = _get("VERTEX_LOCATION") or "us-central1"
-    VERTEX_VEO_MODEL = os.getenv("VERTEX_VEO_MODEL", "veo-3.1")
 
     # Video generation model selection (from settings.json video_generation section)
     ACTIVE_VIDEO_MODEL = _video_gen.get("active_model") or os.getenv("ACTIVE_VIDEO_MODEL", "veo-3.1-fast")
@@ -78,22 +72,21 @@ class Config:
     VIDEO_MAX_BUDGET = float(_video_gen.get("max_budget", os.getenv("VIDEO_MAX_BUDGET", "10.0")))
     VIDEO_AUTO_DOWNGRADE = _video_gen.get("auto_downgrade", True)
 
-    # Google service account credentials for Drive and Sheets
-    DRIVE_APPLICATION_CREDENTIALS = os.getenv("DRIVE_APPLICATION_CREDENTIALS")
+    # Series audio policy (review B3): clips keep the model's native audio where the model
+    # has it (requested and priced); clips without audio get silence; the final episode
+    # always has one AAC 48 kHz stereo track. There is no narration or TTS step in a series.
+    SERIES_NATIVE_AUDIO = os.getenv("SERIES_NATIVE_AUDIO", "1") not in ("0", "false", "no")
 
-    # Google Drive folder IDs for batch runner uploads
-    DRIVE_VIDEO_FOLDER_ID = os.getenv("DRIVE_VIDEO_FOLDER_ID")
-    DRIVE_LOGS_FOLDER_ID = os.getenv("DRIVE_LOGS_FOLDER_ID")
+    # Recap music: "catalog" = a CC0 track from the motion engine's music catalog (local
+    # sources, licence recorded); "none" = narration only. assets/music is never used:
+    # its licences are unknown (contract v2 refuses unknown licences).
+    RECAP_MUSIC = os.getenv("RECAP_MUSIC", "catalog")
+    MUSIC_CATALOG = PROJECT_ROOT.parent / "motion" / "music" / "catalog.json"
 
-    # Google Sheet URL for batch processing queue
-    BATCH_SHEET_URL = os.getenv("BATCH_SHEET_URL")
+    # Caption font: an OFL font shipped with the engine (fonts/, licence next to it)
+    FONTS_DIR = PROJECT_ROOT / "fonts"
+    CAPTION_FONT = "Fraunces Black"  # family name inside fonts/fraunces-latin-900-normal.woff
 
-    # iCloud export path (optional, defaults to ~/Library/Mobile Documents/com~apple~CloudDocs/StudioZero/Videos)
-    ICLOUD_EXPORT_PATH = os.getenv(
-        "ICLOUD_EXPORT_PATH",
-        str(Path.home() / "Library" / "Mobile Documents" / "com~apple~CloudDocs" / "StudioZero" / "Videos")
-    )
-    
     @staticmethod
     def safe_title(name: str) -> str:
         """Sanitize a string for use in file/directory names."""

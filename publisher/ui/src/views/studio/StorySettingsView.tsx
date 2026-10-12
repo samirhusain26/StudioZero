@@ -130,7 +130,8 @@ function SettingsForm({ settings, saved, onEdit, onSaved }: { settings: StorySet
                   <strong>{m.name}</strong> <span className="muted">· {m.provider}</span>
                   <br />
                   <span className="muted">
-                    ${m.costPerSecondUsd}/s · {m.maxResolution} · up to {m.maxDurationSeconds}s · {m.audio ? 'audio' : 'no audio'}
+                    ${m.costPerSecondUsd}/s · {m.maxResolution} · {m.clipSeconds ? `${m.clipSeconds}s a shot` : `up to ${m.maxDurationSeconds}s`} ·{' '}
+                    {m.audio ? 'audio' : 'no audio'}
                     {m.referenceImages ? ' · reference images' : ''} · about {usd(m.episodeUsd)} an episode (6 shots)
                   </span>
                   {m.description ? (

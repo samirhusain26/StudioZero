@@ -170,7 +170,7 @@ Central registry of all supported video generation models.
 | Field | Type | Description |
 | :--- | :--- | :--- |
 | `model_id` | `str` | Unique model identifier (e.g. "kling-2.5-turbo-pro"). |
-| `provider` | `Literal["fal.ai", "vertex_ai"]` | API provider. |
+| `provider` | `Literal["fal.ai", "gemini_api"]` | API provider. |
 | `display_name` | `str` | Human-readable name. |
 | `endpoint_t2v` | `str` | Text-to-video endpoint identifier. |
 | `endpoint_i2v` | `Optional[str]` | Image-to-video endpoint. |

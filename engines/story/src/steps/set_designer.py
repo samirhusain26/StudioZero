@@ -21,6 +21,7 @@ from google.genai import types
 from src.config import Config
 from src.steps import StepContext, StepResult, slug_part
 from src.steps.director import load_director_shots
+from src.pricing import charge_genai
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +83,7 @@ def _generate_scene_start(
                 response_modalities=["IMAGE", "TEXT"],
             ),
         )
+        charge_genai(response, "image", Config.GEMINI_IMAGE_MODEL, "scene start image", prompt)
 
         for part in response.candidates[0].content.parts:
             if (

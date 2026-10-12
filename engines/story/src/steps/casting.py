@@ -22,6 +22,7 @@ from src.narrative import generate_character_blueprint
 from src.steps import StepContext, StepResult, slug_part
 from src.steps.writer import load_story, CharacterSeed
 from src.steps.screenwriter import load_all_episodes
+from src.pricing import charge_genai
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +94,7 @@ def _flesh_out_character(
             response_schema=schema,
         ),
     )
+    charge_genai(response, "llm", Config.GEMINI_MODEL_NAME, "character sheet", prompt)
 
     raw = json.loads(response.text)
     return CharacterSheet.model_validate(raw)

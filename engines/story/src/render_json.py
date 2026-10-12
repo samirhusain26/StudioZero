@@ -6,9 +6,18 @@ cover.jpg:
   recap:  output/final/{safe_title}/{safe_title}.mp4 + cover.jpg + script.json + render.json
   series: {project}/episodes/episode_N/final.mp4 + cover.jpg + render.json
 
-Costs are estimates (costEstimated=true): series counts the per-clip video spend from
-spend_ledger.json; LLM, image and TTS calls are not priced yet (token counts are kept
-in job.llmUsage where the SDK reports them).
+Before the probe, the MP4 is conformed to the batch contract's media rules (H.264
+yuv420p, AAC 48 kHz stereo, fast-start, at most 24 MB); a file that already meets them
+is not touched.
+
+costUsd comes from the project's spend_ledger.json (budget_guard.SpendLedger): every
+LLM, image, TTS and video call, priced by src/pricing.py and registry.json. It is an
+estimate (costEstimated=true): the ledger prices usage at list prices, not invoices.
+A series episode carries its own spend plus an equal share of the project-level work.
+
+episodeId here is the engine's work id (originals-recap-<title-year>,
+originals-series-<project>-ep<n>); the Originals playbook's staging step
+(tools/stage-story.mjs) assigns the contract id when it copies a render into a batch.
 """
 
 import hashlib
@@ -22,6 +31,7 @@ from typing import Dict, List, Optional
 
 import ffmpeg
 
+from src.budget_guard import LEDGER_FILENAME, SpendLedger
 from src.config import Config
 from src.video_models import load_registry_file
 
@@ -33,6 +43,8 @@ KIT_VERSION = load_registry_file()["kitVersion"]
 PROJECT = "originals"
 TMDB_NOTICE = "This product uses the TMDB API but is not endorsed or certified by TMDB"
 GROQ_FALLBACK_MODEL = "llama-3.3-70b-versatile"
+MAX_VIDEO_BYTES = 24_000_000  # contract/library_contract.py MAX_VIDEO_BYTES
+AUDIO_BITRATE = 192_000
 
 
 # ── Small helpers ───────────────────────────────────────────────────────────
@@ -81,6 +93,72 @@ def probe_video(path: Path) -> dict:
         "videoCodec": v.get("codec_name"),
         "audioCodec": a.get("codec_name") if a else None,
     }
+
+
+def mp4_faststart(path: Path) -> bool:
+    """True when the moov box precedes mdat (the contract's fast-start rule)."""
+    with open(path, "rb") as f:
+        while True:
+            header = f.read(8)
+            if len(header) < 8:
+                return False
+            size = int.from_bytes(header[:4], "big")
+            kind = header[4:8]
+            if kind == b"moov":
+                return True
+            if kind == b"mdat":
+                return False
+            if size == 1:
+                size = int.from_bytes(f.read(8), "big")
+                f.seek(size - 16, 1)
+            elif size == 0:
+                return False
+            else:
+                f.seek(size - 8, 1)
+
+
+def conform_for_contract(path: Path) -> List[str]:
+    """
+    Re-mux or re-encode `path` in place so it meets the contract's media rules. Only what
+    is off is redone: audio not AAC 48 kHz stereo, video not H.264 yuv420p, moov after
+    mdat, or more than 24 MB (then the video bitrate is set to fit). Returns what changed.
+    """
+    path = Path(path)
+    probe = ffmpeg.probe(str(path))
+    streams = probe.get("streams", [])
+    v = next(s for s in streams if s.get("codec_type") == "video")
+    a = next((s for s in streams if s.get("codec_type") == "audio"), None)
+    duration = float(probe["format"]["duration"])
+    fix_audio = a is not None and (a.get("codec_name") != "aac" or int(a.get("sample_rate") or 0) != 48000
+                                   or int(a.get("channels") or 0) != 2)
+    too_big = path.stat().st_size > MAX_VIDEO_BYTES
+    fix_video = v.get("codec_name") != "h264" or v.get("pix_fmt") != "yuv420p" or too_big
+    changes = (["audio"] if fix_audio else []) + (["video"] if fix_video else []) + \
+              ([] if mp4_faststart(path) else ["faststart"])
+    if not changes:
+        return []
+    tmp = path.with_suffix(".conform.mp4")
+    cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(path), "-map", "0:v:0"]
+    if a is not None:
+        cmd += ["-map", "0:a:0"]
+    if fix_video:
+        # Fit under the cap with 8% headroom for the container
+        kbps = int((MAX_VIDEO_BYTES * 0.92 * 8 / max(duration, 0.1) - AUDIO_BITRATE) / 1000)
+        kbps = max(500, min(kbps, 4000))
+        cmd += ["-c:v", "libx264", "-preset", "medium", "-b:v", f"{kbps}k", "-maxrate", f"{kbps}k",
+                "-bufsize", f"{2 * kbps}k", "-pix_fmt", "yuv420p"]
+    else:
+        cmd += ["-c:v", "copy"]
+    if a is not None:
+        cmd += ["-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2"] if fix_audio else ["-c:a", "copy"]
+    cmd += ["-movflags", "+faststart", str(tmp)]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        tmp.unlink(missing_ok=True)
+        raise RuntimeError(f"Could not conform {path.name} to the contract: {result.stderr[-400:]}")
+    tmp.replace(path)
+    logger.info(f"[render_json] Conformed {path.name} to the contract ({', '.join(changes)})")
+    return changes
 
 
 def has_audio_stream(path: Path) -> bool:
@@ -142,6 +220,9 @@ def write_render_json(
     """Probe the video, grab cover.jpg and write folder/render.json."""
     folder = Path(folder)
     video_file = Path(video_file)
+    conformed = conform_for_contract(video_file)
+    if conformed:
+        job = {**job, "conformed": conformed}
     video = {"file": video_file.relative_to(folder).as_posix(), **probe_video(video_file)}
 
     cover = None
@@ -189,13 +270,14 @@ def write_recap_render_json(
     movie_details: dict,
     script,
     scene_assets: list,
-    music_path: Optional[str],
+    music: Optional[dict],
     llm: Optional[dict],
     tts_model: Optional[str],
     asr_model: Optional[str],
     subtitles_burned: bool,
+    ledger_dir: Optional[Path] = None,
 ) -> Path:
-    """render.json for a recap, next to its final MP4."""
+    """render.json for a recap, next to its final MP4. `music` is src.music.pick_track's track or None."""
     folder = Path(final_video).parent
     title = movie_details.get("title") or movie_name
     year = str(movie_details.get("year") or "")
@@ -262,6 +344,8 @@ def write_recap_render_json(
                 path=Path(asset.poster_path),
             ))
         elif meta.get("fallback"):
+            # Only from a pre-2026-10-12 cache (assets/basevideos): no licence record, so the
+            # packager refuses it; re-render the recap to replace the clip.
             credits.append(credit(
                 "footage", f"Stock fallback clip {meta.get('fallback_file')} (scene {asset.index})", "unknown",
                 path=Path(asset.video_path),
@@ -277,11 +361,17 @@ def write_recap_render_json(
                 path=Path(asset.video_path),
             ))
 
-    if music_path:
-        # assets/music has no licence records yet: recorded honestly as unknown
-        credits.append(credit("music", Path(music_path).name, "unknown", path=Path(music_path)))
+    if music:
+        credits.append(credit(
+            "music", f"\"{music['title']}\" (background music)", music["license"],
+            creator=music["artist"], source_url=music["page"], path=Path(music["path"]),
+        ))
     if subtitles_burned:
-        credits.append(credit("font", "Arial Black (system font, captions)", "unknown"))
+        font = Config.FONTS_DIR / "fraunces-latin-900-normal.woff"
+        credits.append(credit(
+            "font", f"{Config.CAPTION_FONT} (captions)", "OFL-1.1", creator="The Fraunces Project Authors",
+            source_url="https://github.com/undercasetype/Fraunces", path=font,
+        ))
 
     has_footage = any(not a.poster_path for a in scene_assets)
     note = (
@@ -305,13 +395,16 @@ def write_recap_render_json(
         "genre": script.genre,
         "mood": script.overall_mood,
         "voice": voice,
-        "music": Path(music_path).name if music_path else None,
+        "music": music["id"] if music else None,
         "sceneCount": len(scene_assets),
         "llmProvider": llm.get("provider"),
         "llmUsage": llm.get("usage"),
         "subtitlesBurned": subtitles_burned,
     }
 
+    ledger = SpendLedger(Path(ledger_dir)) if ledger_dir else None
+    if ledger is not None and (Path(ledger_dir) / LEDGER_FILENAME).exists():
+        job["costByKind"] = ledger.by_kind()
     return write_render_json(
         folder,
         Path(final_video),
@@ -319,8 +412,8 @@ def write_recap_render_json(
         episode_id=make_episode_id("originals-recap", f"{title} {year}".strip()),
         job=job,
         models=models,
-        # TODO(costs): LLM tokens and TTS characters are not priced yet (docs/HEADLESS.md)
-        cost_usd=0.0,
+        # Script, narration and any other paid call of this recap, from its spend ledger
+        cost_usd=ledger.total() if ledger is not None else 0.0,
         cost_estimated=True,
         credits=credits,
         disclosure={
@@ -385,10 +478,10 @@ def write_series_render_json(project_dir: Path, episode_number: int, final_video
                 "image", f"Scene start {start.stem}", "generated", creator=Config.GEMINI_IMAGE_MODEL, path=start,
             ))
 
-    final_has_audio = has_audio_stream(Path(final_video))
+    native_audio = any(c["hasAudio"] for c in clips)
     ai_kinds = ["script", "image", "video"]
-    if final_has_audio:
-        ai_kinds.append("voice")  # native model audio (dialogue/sfx) made it into the final cut
+    if native_audio:
+        ai_kinds.append("voice")  # native model audio (dialogue, sound) made it into the final cut
 
     stylised = bool(shots.shots) and all(
         any(w in s.veo_prompt.lower() for w in _STYLISED_WORDS) for s in shots.shots
@@ -409,13 +502,19 @@ def write_series_render_json(project_dir: Path, episode_number: int, final_video
         "shotCount": len(shots.shots),
         "clips": clips,
         "projectSpendUsd": ledger.total(),
+        "costByKind": ledger.by_kind(),
         "maxBudgetUsd": Config.VIDEO_MAX_BUDGET,
+        "audio": {
+            "policy": "native" if Config.SERIES_NATIVE_AUDIO else "silent",
+            "clipsWithNativeAudio": sum(1 for c in clips if c["hasAudio"]),
+            "clips": len(clips),
+        },
     }
 
     note = (
         "Everything in this episode is AI-generated: the story and shot prompts (LLM), "
         "the character and set images, and the video clips"
-        + (" including their native audio." if final_has_audio else " (no audio track).")
+        + (" including their native audio." if native_audio else "; the soundtrack is silent.")
     )
 
     return write_render_json(
@@ -425,9 +524,9 @@ def write_series_render_json(project_dir: Path, episode_number: int, final_video
         episode_id=make_episode_id("originals-series", project_dir.name, f"ep{episode_number}"),
         job=job,
         models=models,
-        # Video spend from the ledger (billed attempts, failed ones included); LLM and
-        # image calls are not priced yet.
-        cost_usd=ledger.total(episode_number),
+        # This episode's text, image and video spend (billed failures included) plus its
+        # share of the project-level work (story, characters, worlds)
+        cost_usd=ledger.episode_cost(episode_number, max(1, len(story.episode_outlines))),
         cost_estimated=True,
         credits=[credit("text", f"Story and shot prompts for {story.project_title}", "generated",
                         creator=Config.GEMINI_MODEL_NAME)] + image_credits + clip_credits,

@@ -21,7 +21,9 @@ from tenacity import wait_none
 
 from src import cli
 from src.config import Config
-from src.render_json import TMDB_NOTICE, has_audio_stream, probe_video
+import ffmpeg
+
+from src.render_json import TMDB_NOTICE, has_audio_stream, mp4_faststart, probe_video
 
 FIXTURE_PROJECT = sx.ENGINE_DIR / "output" / "projects" / "Galactic_Garage"
 
@@ -83,7 +85,9 @@ class RecapSmokeTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.root = Path(tempfile.mkdtemp(dir=sx.TMP_ROOT, prefix="recap-"))
+        # The old untracked music folder must never be used (licence unknown)
         sx.make_tone_wav(cls.root / "assets" / "music" / "smoke_bed.wav", seconds=3.0)
+        catalog = sx.make_music_catalog(cls.root)
 
         from src.moviedbapi import MovieDBClient
         from src.narrative import StoryGenerator
@@ -94,6 +98,8 @@ class RecapSmokeTest(unittest.TestCase):
         s = cls.stack
         for name, value in _config_dirs(cls.root).items():
             s.enter_context(mock.patch.object(Config, name, value))
+        s.enter_context(mock.patch.object(Config, "MUSIC_CATALOG", catalog))
+        s.enter_context(mock.patch.object(Config, "RECAP_MUSIC", "catalog"))
         s.enter_context(mock.patch.object(MovieDBClient, "search_movie", sx.fake_search_movie))
         s.enter_context(mock.patch.object(MovieDBClient, "get_movie_details", sx.fake_get_movie_details))
         s.enter_context(mock.patch.object(MovieDBClient, "get_tmdb_metadata", sx.fake_get_tmdb_metadata))
@@ -123,12 +129,16 @@ class RecapSmokeTest(unittest.TestCase):
         self.assertEqual(sx.NETWORK_ATTEMPTS, [])
         self.assertTrue(self.video.exists())
 
-    def test_video_is_vertical_with_audio(self):
+    def test_video_meets_the_contract_media_rules(self):
         v = probe_video(self.video)
         self.assertEqual((v["width"], v["height"]), (1080, 1920))
         self.assertEqual(v["videoCodec"], "h264")
         self.assertEqual(v["audioCodec"], "aac")
         self.assertGreater(v["durationSeconds"], 3.0)
+        audio = next(st for st in ffmpeg.probe(str(self.video))["streams"] if st["codec_type"] == "audio")
+        self.assertEqual((int(audio["sample_rate"]), int(audio["channels"])), (48000, 2))
+        self.assertTrue(mp4_faststart(self.video))
+        self.assertLessEqual(self.video.stat().st_size, 24_000_000)
 
     def test_render_json_passes_checker(self):
         if not sx.node_available():
@@ -145,7 +155,14 @@ class RecapSmokeTest(unittest.TestCase):
         self.assertEqual(doc["cover"]["file"], "cover.jpg")
         self.assertTrue((self.folder / "cover.jpg").exists())
         self.assertTrue((self.folder / doc["job"]["script"]).exists())
-        self.assertEqual(doc["costUsd"], 0)
+        # Priced from the recap's spend ledger: the script call and every narration call
+        ledger = json.loads((self.root / "output" / "temp" / Config.safe_title(sx.SMOKE_TITLE) / "spend_ledger.json").read_text())
+        kinds = {e["kind"] for e in ledger["entries"]}
+        self.assertEqual(kinds, {"llm", "tts"})
+        self.assertGreater(doc["costUsd"], 0)
+        self.assertAlmostEqual(doc["costUsd"], round(sum(e["costUsd"] for e in ledger["entries"]), 4))
+        self.assertTrue(doc["costEstimated"])
+        self.assertEqual(set(doc["job"]["costByKind"]), {"llm", "tts"})
         self.assertEqual(
             {(m["role"], m["id"]) for m in doc["models"]},
             {("llm", Config.GEMINI_MODEL_NAME), ("tts", Config.TTS_MODEL), ("asr", "openai-whisper-base")},
@@ -153,12 +170,16 @@ class RecapSmokeTest(unittest.TestCase):
         by_license = {}
         for c in doc["credits"]:
             by_license.setdefault(c["license"], []).append(c)
+        self.assertNotIn("unknown", by_license)  # contract v2 refuses unknown licences
         pexels = by_license["Pexels"]
-        self.assertEqual(len(pexels), 2)  # scenes 0 and 1; scene 2 used the fallback clip
+        self.assertEqual(len(pexels), 3)  # scene 2 took generic Pexels footage, still credited
         self.assertTrue(all(c["sourceUrl"].startswith("https://www.pexels.com/") and c["creator"] for c in pexels))
-        unknown_titles = " ".join(c["title"] for c in by_license["unknown"])
-        self.assertIn("video7.mp4", unknown_titles)  # basevideos fallback: licence unknown
-        self.assertIn("smoke_bed.wav", unknown_titles)  # untracked music: licence unknown
+        music = by_license["CC0-1.0"]
+        self.assertEqual([(c["kind"], c["creator"], c["sourceUrl"]) for c in music],
+                         [("music", "Test Artist", "https://opengameart.org/content/smoke-bed")])
+        self.assertEqual(doc["job"]["music"], "test-smoke-bed")
+        if doc["job"]["subtitlesBurned"]:
+            self.assertEqual(by_license["OFL-1.1"][0]["kind"], "font")
         wiki = by_license["Wikipedia-CC-BY-SA"][0]
         self.assertEqual(wiki["sourceUrl"], "https://en.wikipedia.org/wiki/Smoke_Test_Film")
         posters = [c for c in by_license["TMDB"] if c["kind"] == "poster"]
@@ -166,6 +187,26 @@ class RecapSmokeTest(unittest.TestCase):
         self.assertIn(TMDB_NOTICE, posters[0]["attribution"])
         self.assertEqual(doc["disclosure"]["aiKinds"], ["script", "voice"])
         self.assertFalse(doc["disclosure"]["realisticSynthetic"])
+
+    def test_z_stages_packages_and_validates_as_contract_v2(self):
+        """The recap becomes a contract v2 Originals batch the validator accepts (media checks included)."""
+        if not sx.node_available():
+            self.skipTest("node not available")
+        result = sx.stage_package_validate(self.folder, Path(tempfile.mkdtemp(dir=sx.TMP_ROOT, prefix="lib-")), "2026-10-o901", 901)
+        self.assertEqual(result["stage"].returncode, 0, result["stage"].stdout + result["stage"].stderr)
+        self.assertIn('"episodeId":"originals-movie-recap-901"', result["stage"].stdout)
+        self.assertEqual(result["package"].returncode, 0, result["package"].stdout + result["package"].stderr)
+        batch = result["batch"]
+        self.assertEqual((batch["schemaVersion"], batch["project"]), (2, "originals"))
+        ep = batch["episodes"][0]
+        self.assertEqual(ep["episodeId"], "originals-movie-recap-901")
+        self.assertEqual(ep["contentId"], "originals:movie-recap:smoke-test-film-2001")
+        self.assertGreater(ep["render"]["costUsd"], 0)
+        self.assertIsNone(ep["publication"]["captions"]["x"])  # TMDB + Wikipedia attribution do not fit X
+        self.assertIn(TMDB_NOTICE, ep["publication"]["captions"]["instagram"])
+        # Staging again is a no-op
+        again = sx.run_node("tools/stage-story.mjs", "--batch=2026-10-o901", f"--dir={result['batchDir']}", str(self.folder))
+        self.assertIn('"staged":false', again.stdout)
 
 
 @unittest.skipUnless(sx.FFMPEG_SOURCE, "no working ffmpeg (system or Remotion-bundled)")
@@ -200,11 +241,12 @@ class FakeVideoProviders:
 
     Plan for Galactic_Garage episode 1 (active model wan-2.5, tier cheapest):
       scene 1  wan-2.5 ok
-      scene 2  wan-2.5 billed then fails while waiting -> fallback kling-2.5-turbo-pro ok
+      scene 2  wan-2.5 billed then fails while waiting -> veo-3.1-lite rejects (400, not billed)
+               -> kling-2.5-turbo-pro ok (fallback: the tier cheapest first)
       scene 3  kling submit refused once (never started) -> retried submit -> ok
       scene 4  kling download reset once -> download retried, no new submit -> ok
-      scene 5  kling and wan-2.2 reject the request (not billed) -> veo-3.1-lite ok, WITH audio
-    fal clips have no audio track (enable_audio=False), Veo clips have one: a B3 mix.
+      scene 5  kling and wan-2.5 reject the request (not billed) -> veo-3.1-lite ok, WITH audio
+    The fal models here have no audio, Veo clips have one: the B3 mix the editor must keep.
     """
 
     def __init__(self, prompts_to_scene: dict):
@@ -232,7 +274,7 @@ class FakeVideoProviders:
         if model == "kling-2.5-turbo-pro" and scene == 3 and not self.refused_once:
             self.refused_once = True
             raise ConnectionRefusedError("refused (fake)")
-        if scene == 5 and model in ("kling-2.5-turbo-pro", "wan-2.2"):
+        if scene == 5 and model in ("kling-2.5-turbo-pro", "wan-2.5"):
             raise RuntimeError("422 request rejected (fake)")
         self.submits.append((model, scene))
         request_id = f"req-{len(self.submits)}"
@@ -258,6 +300,10 @@ class FakeVideoProviders:
     # Gemini API (Veo)
     def gemini_submit(self, client, kwargs):
         scene = self._scene(kwargs["prompt"])
+        if scene == 2:
+            error = RuntimeError("400 invalid argument (fake, not billed)")
+            error.code = 400
+            raise error
         self.submits.append((client.model_id, scene))
         raw = mock.Mock(video_bytes=None, uri="https://generativelanguage.invalid/v.mp4")
         video = mock.Mock(video=raw)
@@ -370,10 +416,10 @@ class SeriesSmokeTest(unittest.TestCase):
         self.assertEqual(rows, [
             (1, "wan-2.5", "ok", 0.25),
             (2, "wan-2.5", "failed", 0.25),           # billed although it produced nothing
-            (2, "kling-2.5-turbo-pro", "ok", 0.35),   # fallback, duration clamped to 5 s
-            (3, "kling-2.5-turbo-pro", "ok", 0.7),
-            (4, "kling-2.5-turbo-pro", "ok", 0.7),
-            (5, "veo-3.1-lite", "ok", 0.4),
+            (2, "kling-2.5-turbo-pro", "ok", 0.35),   # fallback: current model first, then cheapest first
+            (3, "kling-2.5-turbo-pro", "ok", 0.35),   # each shot at the model's clip length (5 s)
+            (4, "kling-2.5-turbo-pro", "ok", 0.35),
+            (5, "veo-3.1-lite", "ok", 0.4),           # Veo always renders 8 s
         ])
 
     def test_4_render_json_passes_checker(self):
@@ -388,7 +434,7 @@ class SeriesSmokeTest(unittest.TestCase):
                          ("story", "series", "originals-series-galactic-garage-ep1"))
         self.assertEqual(doc["video"]["file"], "final.mp4")
         self.assertTrue((self.episode_dir / "cover.jpg").exists())
-        self.assertAlmostEqual(doc["costUsd"], 2.65, places=4)
+        self.assertAlmostEqual(doc["costUsd"], 1.95, places=4)
         self.assertTrue(doc["costEstimated"])
         self.assertEqual([m["id"] for m in doc["models"] if m["role"] == "video"],
                          ["wan-2.5", "kling-2.5-turbo-pro", "veo-3.1-lite"])
@@ -398,7 +444,8 @@ class SeriesSmokeTest(unittest.TestCase):
         self.assertEqual([c["hasAudio"] for c in doc["job"]["clips"]], [False] * 4 + [True])
         self.assertTrue(all(c["license"] == "generated" for c in doc["credits"]))
         self.assertFalse(doc["disclosure"]["realisticSynthetic"])  # 3D Pixar-style cartoon
-        self.assertEqual(doc["disclosure"]["aiKinds"][:3], ["script", "image", "video"])
+        self.assertEqual(doc["disclosure"]["aiKinds"], ["script", "image", "video", "voice"])  # clip 5's native audio
+        self.assertEqual(doc["job"]["audio"], {"policy": "native", "clipsWithNativeAudio": 1, "clips": 5})
 
     def test_6_resume_spends_nothing(self):
         submits_before = list(self.fake.submits)
@@ -409,16 +456,31 @@ class SeriesSmokeTest(unittest.TestCase):
         self.assertEqual(self._ledger(), ledger_before)
         self.assertEqual(sx.NETWORK_ATTEMPTS, [])
 
-    @unittest.expectedFailure
-    def test_7_b3_mixed_audio_clips_keep_audio(self):
-        """
-        Review B3 (not fixed): clips 1-4 have no audio track, clip 5 (Veo) has one. The
-        editor's stream-copy concat takes its streams from the first clip, so final.mp4
-        comes out silent and exit code 0. Remove expectedFailure once the editor
-        normalises audio tracks before concatenating.
-        """
-        self.assertTrue(has_audio_stream(self.episode_dir / "final.mp4"))
+    def test_7_b3_mixed_clips_keep_audio_and_size(self):
+        """Review B3: clips 1-4 are silent 360x640, clip 5 (Veo) has audio: the final keeps it, at 1080x1920."""
+        final = self.episode_dir / "final.mp4"
+        self.assertTrue(has_audio_stream(final))
+        v = probe_video(final)
+        self.assertEqual((v["width"], v["height"], v["fps"], v["audioCodec"]), (1080, 1920, "30/1", "aac"))
+        audio = next(st for st in ffmpeg.probe(str(final))["streams"] if st["codec_type"] == "audio")
+        self.assertEqual((int(audio["sample_rate"]), int(audio["channels"])), (48000, 2))
+        self.assertTrue(mp4_faststart(final))
+        # 5 clips of 1.5 s, each trimmed by 0.2 s
+        self.assertAlmostEqual(v["durationSeconds"], 5 * 1.3, delta=0.3)
 
+    def test_8_stages_packages_and_validates_as_contract_v2(self):
+        if not sx.node_available():
+            self.skipTest("node not available")
+        result = sx.stage_package_validate(self.episode_dir, Path(tempfile.mkdtemp(dir=sx.TMP_ROOT, prefix="lib-")), "2026-10-o902", 901)
+        self.assertEqual(result["stage"].returncode, 0, result["stage"].stdout + result["stage"].stderr)
+        self.assertEqual(result["package"].returncode, 0, result["package"].stdout + result["package"].stderr)
+        ep = result["batch"]["episodes"][0]
+        self.assertEqual(ep["episodeId"], "originals-animated-short-901")
+        self.assertEqual(ep["contentId"], "originals:animated-short:galactic-garage-ep1")
+        self.assertEqual(ep["projectData"]["series"], {"seriesId": "galactic-garage", "episode": 1})
+        self.assertTrue(ep["disclosure"]["aiGenerated"])
+        # No attribution licences in a series: every platform posts, X included
+        self.assertTrue(all(ep["publication"]["captions"].values()))
 
 if __name__ == "__main__":
     unittest.main()

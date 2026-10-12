@@ -39,11 +39,34 @@ def _load_step(step_name: str):
     return importlib.import_module(f"src.steps.{step_name}")
 
 
-# Reuse PipelineStatus from the stock footage pipeline for consistency
-from src.pipeline import PipelineStatus
+from src.status import PipelineStatus
+from src.budget_guard import SpendLedger
+from src.pricing import charging, set_episode
 
 
 def run_animation_pipeline(
+    project_title: str,
+    brief: str,
+    num_episodes: int = 1,
+    resume: bool = True,
+    progress_callback=None,
+    project_dir: Optional[Path] = None,
+    cancel_event=None,
+) -> Generator[PipelineStatus, None, Optional[str]]:
+    """Run the full animation pipeline; every text, image and video call is charged to the
+    project's spend_ledger.json (see _run_animation_pipeline for the steps)."""
+    Config.ensure_directories()
+    if project_dir is None:
+        project_dir = Config.TEMP_DIR / Config.safe_title(project_title)
+    project_dir = Path(project_dir)
+    project_dir.mkdir(parents=True, exist_ok=True)
+    with charging(SpendLedger(project_dir)):
+        return (yield from _run_animation_pipeline(
+            project_title, brief, num_episodes, resume, progress_callback, project_dir, cancel_event,
+        ))
+
+
+def _run_animation_pipeline(
     project_title: str,
     brief: str,
     num_episodes: int = 1,
@@ -67,13 +90,6 @@ def run_animation_pipeline(
         cancel_event:   Optional threading.Event (worker agent): checked before every step and, inside the
                         scene generator, before every scene; a cancelled step is not marked complete.
     """
-    Config.ensure_directories()
-
-    if project_dir is None:
-        safe_title = Config.safe_title(project_title)
-        project_dir = Config.TEMP_DIR / safe_title
-    project_dir.mkdir(parents=True, exist_ok=True)
-
     logger.info(
         f"[pipeline] Starting animation pipeline: '{project_title}' "
         f"— {num_episodes} episode(s), project dir: {project_dir}"
@@ -178,6 +194,7 @@ def run_animation_pipeline(
             message=f"--- Episode {ep_num}/{num_episodes} ---",
         )
 
+        set_episode(ep_num)  # text and image calls from here on belong to this episode
         ep_ctx = StepContext(
             project_dir=project_dir,
             gemini_client=gemini_client,

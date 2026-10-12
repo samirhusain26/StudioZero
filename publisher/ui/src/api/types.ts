@@ -1614,11 +1614,14 @@ export interface CatalogVideoModel {
   provider: string
   tier: string
   costPerSecondUsd: number
+  costPerSecondWithAudioUsd?: number | null
   maxResolution: string
   maxDurationSeconds: number
+  clipSeconds?: number
   audio: boolean
   referenceImages: boolean
   description: string
+  verifiedAt?: string
 }
 
 export interface CatalogEngine {
@@ -1800,6 +1803,8 @@ export interface StoryVideoModel {
   referenceImages: boolean
   description: string
   episodeUsd: number
+  clipSeconds?: number
+  available?: boolean
 }
 
 export type StoryTier = 'cheapest' | 'recommended' | 'high_fidelity'

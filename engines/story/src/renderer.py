@@ -3,7 +3,7 @@ import subprocess
 import os
 import tempfile
 from pathlib import Path
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, Optional, Tuple, TYPE_CHECKING
 
 import ffmpeg
 
@@ -552,8 +552,12 @@ class VideoRenderer:
             escaped_path = escaped_path.replace("]", "\\]")
             escaped_path = escaped_path.replace(",", "\\,")
             escaped_path = escaped_path.replace(";", "\\;")
-            # Use the ass filter (applied after scaling, before encoding)
-            video_filter += f",ass='{escaped_path}'"
+            # Use the ass filter (applied after scaling, before encoding) with the engine's
+            # OFL caption font as the fonts directory (credited in render.json)
+            fonts_dir = str(Config.FONTS_DIR)
+            for a, b in (("\\", "\\\\\\\\"), (":", "\\:"), ("[", "\\["), ("]", "\\]"), (",", "\\,"), (";", "\\;")):
+                fonts_dir = fonts_dir.replace(a, b)
+            video_filter += f",ass='{escaped_path}':fontsdir='{fonts_dir}'"
             logger.info(f"ASS subtitles enabled: {subtitle_path}")
             logger.debug(f"Escaped subtitle path: {escaped_path}")
 
@@ -566,7 +570,7 @@ class VideoRenderer:
             # - [voice] for final mix
             # - [voice_sc] for sidechain compression key signal
             filter_parts.append(
-                "[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,"
+                "[1:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,"
                 "asplit=2[voice][voice_sc]"
             )
 
@@ -575,7 +579,7 @@ class VideoRenderer:
             # Then apply base volume and format normalization
             filter_parts.append(
                 f"[{music_idx}:a]aloop=loop=-1:size=2e+09,"
-                f"aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,"
+                f"aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,"
                 f"volume={music_volume}[looped_music]"
             )
 
@@ -597,7 +601,7 @@ class VideoRenderer:
             audio_map = "[mixed_audio]"
         else:
             # No background music - just use voice
-            filter_parts.append("[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo[aout]")
+            filter_parts.append("[1:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[aout]")
             audio_map = "[aout]"
 
         filter_complex = ";\n".join(filter_parts)
@@ -613,10 +617,15 @@ class VideoRenderer:
             '-preset', 'medium',
             '-crf', '23',
             '-pix_fmt', 'yuv420p',
+            '-maxrate', '2400k',
+            '-bufsize', '4800k',
             '-c:a', 'aac',
             '-b:a', '192k',
+            '-ar', '48000',
+            '-ac', '2',
             '-t', str(duration),
             '-r', str(FPS),
+            '-movflags', '+faststart',
             output_path
         ])
 
@@ -630,85 +639,104 @@ class VideoRenderer:
             raise RuntimeError(f"Failed to render final video: {result.stderr[-500:]}")
 
 
-def assemble_veo_clips(clip_paths: List[str], output_filepath: str) -> str:
+_FILTERS: Optional[set] = None
+
+
+def _ffmpeg_filters() -> set:
+    """Filter names the local ffmpeg offers (cached)."""
+    global _FILTERS
+    if _FILTERS is None:
+        out = subprocess.run(["ffmpeg", "-hide_banner", "-filters"], capture_output=True, text=True).stdout
+        _FILTERS = {parts[1] for parts in (line.split() for line in out.splitlines())
+                    if len(parts) >= 3 and "->" in parts[2]}
+    return _FILTERS
+
+
+def _probe_clip(path: str) -> Tuple[float, bool]:
+    """(duration in seconds, has an audio stream)."""
+    probe = ffmpeg.probe(path)
+    streams = probe.get("streams", [])
+    duration = float(probe["format"].get("duration") or 0.0)
+    return duration, any(st.get("codec_type") == "audio" for st in streams)
+
+
+def normalize_clip(src: str, dst: str, trim_start: float = 0.0) -> bool:
     """
-    Concatenate Veo-generated MP4 clips into a single seamless vertical video.
+    Re-encode one generated clip to the episode format: 1080x1920 (scaled and centre-cropped),
+    30 fps, H.264 yuv420p, AAC 48 kHz stereo. A clip without audio gets a silent track, so
+    every segment has identical streams and the join never drops audio (review B3).
+    Returns True when the clip had its own (native) audio.
+    """
+    duration, has_audio = _probe_clip(src)
+    length = max(0.1, duration - trim_start)
+    vf = f"scale={OUTPUT_WIDTH}:{OUTPUT_HEIGHT}:force_original_aspect_ratio=increase,crop={OUTPUT_WIDTH}:{OUTPUT_HEIGHT}"
+    if "setsar" in _ffmpeg_filters():
+        vf += ",setsar=1"
+    cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error"]
+    if trim_start > 0:
+        cmd += ["-ss", f"{trim_start:.3f}"]
+    cmd += ["-i", src]
+    if not has_audio:
+        cmd += ["-f", "lavfi", "-t", f"{length:.3f}", "-i", "anullsrc=channel_layout=stereo:sample_rate=48000"]
+    cmd += ["-map", "0:v:0", "-map", "0:a:0" if has_audio else "1:a:0",
+            "-vf", vf, "-r", str(FPS),
+            "-c:v", "libx264", "-preset", "medium", "-crf", "21", "-maxrate", "2400k", "-bufsize", "4800k",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+            "-t", f"{length:.3f}", "-movflags", "+faststart", dst]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"Failed to normalise {Path(src).name}: {result.stderr[-500:]}")
+    return has_audio
 
-    Uses the FFmpeg concat demuxer with stream copy to preserve both native
-    video and audio tracks without re-encoding or desync. All Veo clips are
-    expected to share the same codec parameters (produced by the same model).
 
-    If clips have mismatched parameters, falls back to re-encoding to ensure
-    a valid output.
+def assemble_veo_clips(clip_paths: List[str], output_filepath: str, trim_start: float = 0.0) -> str:
+    """
+    Join generated clips into one vertical episode.
+
+    Every clip is first normalised (normalize_clip: same size, frame rate, codecs, and an
+    audio track in each), then the segments are joined with the concat demuxer and stream
+    copy, which is safe because their parameters are identical. Mixed clips (with and
+    without native audio, different resolutions) therefore keep their audio and size.
 
     Args:
         clip_paths: Ordered list of MP4 file paths to concatenate.
         output_filepath: Where to save the final assembled MP4.
+        trim_start: Seconds cut from the start of every clip (Veo's reference-image flash).
 
     Returns:
         The output_filepath where the assembled video was saved.
 
     Raises:
         ValueError: If clip_paths is empty.
-        RuntimeError: If FFmpeg concatenation fails.
+        RuntimeError: If FFmpeg fails.
     """
     if not clip_paths:
         raise ValueError("No clip paths provided for assembly")
 
     Path(output_filepath).parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=Path(output_filepath).parent) as tmp:
+        segments = []
+        for i, clip in enumerate(clip_paths):
+            seg = Path(tmp) / f"seg_{i:03d}.mp4"
+            native = normalize_clip(clip, str(seg), trim_start)
+            logger.info(f"Normalised {Path(clip).name} ({'native audio' if native else 'silence added'})")
+            segments.append(seg)
 
-    # Write concat list to a temp file next to the output
-    concat_list_path = Path(output_filepath).with_suffix(".concat.txt")
-    try:
-        with open(concat_list_path, "w") as f:
-            for clip in clip_paths:
-                escaped = clip.replace("'", "'\\''")
-                f.write(f"file '{escaped}'\n")
-
-        # First attempt: stream copy (fast, no quality loss, preserves audio sync)
+        concat_list_path = Path(tmp) / "concat.txt"
+        concat_list_path.write_text("".join(
+            "file '" + str(seg).replace("'", "'\\''") + "'\n" for seg in segments
+        ))
         cmd = [
-            "ffmpeg", "-y",
-            "-f", "concat",
-            "-safe", "0",
-            "-i", str(concat_list_path),
-            "-c", "copy",  # Copy both video and audio streams
-            "-movflags", "+faststart",
-            output_filepath,
+            "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+            "-f", "concat", "-safe", "0", "-i", str(concat_list_path),
+            "-c", "copy", "-movflags", "+faststart", output_filepath,
         ]
-
-        logger.info(f"Assembling {len(clip_paths)} Veo clips into {output_filepath}")
+        logger.info(f"Assembling {len(segments)} normalised clips into {output_filepath}")
         result = subprocess.run(cmd, capture_output=True, text=True)
-
         if result.returncode != 0:
-            # Fallback: re-encode to handle codec mismatches
-            logger.warning(
-                "Stream-copy concat failed, falling back to re-encode: "
-                f"{result.stderr[-200:]}"
-            )
-            cmd_reencode = [
-                "ffmpeg", "-y",
-                "-f", "concat",
-                "-safe", "0",
-                "-i", str(concat_list_path),
-                "-c:v", "libx264",
-                "-preset", "fast",
-                "-crf", "23",
-                "-pix_fmt", "yuv420p",
-                "-c:a", "aac",
-                "-b:a", "192k",
-                "-movflags", "+faststart",
-                "-r", str(FPS),
-                output_filepath,
-            ]
-            result2 = subprocess.run(cmd_reencode, capture_output=True, text=True)
-            if result2.returncode != 0:
-                logger.error(f"FFmpeg re-encode concat stderr: {result2.stderr}")
-                raise RuntimeError(f"Failed to assemble Veo clips: {result2.stderr[-500:]}")
+            logger.error(f"FFmpeg concat stderr: {result.stderr}")
+            raise RuntimeError(f"Failed to assemble clips: {result.stderr[-500:]}")
 
-        logger.info(f"Veo clips assembled: {output_filepath}")
-        return output_filepath
-
-    finally:
-        # Clean up temp concat file
-        if concat_list_path.exists():
-            concat_list_path.unlink()
+    logger.info(f"Clips assembled: {output_filepath}")
+    return output_filepath

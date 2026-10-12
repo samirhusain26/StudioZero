@@ -29,11 +29,11 @@ REPO_ROOT = ENGINE_DIR.parent.parent
 DUMMY_KEY = "dummy-not-a-key"
 
 # ── 1. Dummy keys, no model overrides from the environment ──────────────────
-for _key in ("GEMINI_API_KEY", "GROQ_API_KEY", "TMDB_API_KEY", "PEXELS_API_KEY", "FAL_KEY", "VERTEX_PROJECT_ID"):
+for _key in ("GEMINI_API_KEY", "GROQ_API_KEY", "TMDB_API_KEY", "PEXELS_API_KEY", "FAL_KEY"):
     os.environ[_key] = DUMMY_KEY
 for _key in (
     "GOOGLE_API_KEY", "GOOGLE_APPLICATION_CREDENTIALS", "GOOGLE_GENAI_USE_VERTEXAI",
-    "GEMINI_MODEL_NAME", "GEMINI_IMAGE_MODEL", "VEO_MODEL", "TTS_MODEL", "VERTEX_VEO_MODEL",
+    "GEMINI_MODEL_NAME", "GEMINI_IMAGE_MODEL", "TTS_MODEL", "SERIES_NATIVE_AUDIO", "RECAP_MUSIC",
     "ACTIVE_VIDEO_MODEL", "ACTIVE_VIDEO_TIER", "VIDEO_MAX_BUDGET",
 ):
     os.environ.pop(_key, None)
@@ -212,6 +212,9 @@ def fake_download_poster(self, poster_path, output_path):
     return make_image(output_path)
 
 
+SCRIPT_TOKENS = (4000, 2000)  # usage the fake script call reports (priced into the ledger)
+
+
 def fake_generate_script(self, movie_title, plot, callback=None):
     """A 3-scene VideoScript (the schema requires 6; model_construct skips that check)."""
     from src.narrative import Scene, VideoScript
@@ -232,7 +235,9 @@ def fake_generate_script(self, movie_title, plot, callback=None):
     ]
     self.last_provider = "gemini"
     self.last_model = self.gemini_model
-    self.last_usage = {"promptTokens": 0, "outputTokens": 0, "totalTokens": 0}
+    self.last_usage = {"promptTokens": SCRIPT_TOKENS[0], "outputTokens": SCRIPT_TOKENS[1], "totalTokens": sum(SCRIPT_TOKENS)}
+    from src.pricing import charge
+    charge("llm", self.gemini_model, "recap script", input_tokens=SCRIPT_TOKENS[0], output_tokens=SCRIPT_TOKENS[1])
     return VideoScript.model_construct(
         title=movie_title,
         genre="sci-fi",
@@ -247,19 +252,23 @@ def fake_generate_script(self, movie_title, plot, callback=None):
 
 def fake_generate_audio(text, output_path, voice="af_bella", speed=1.0, lang_code=None, mood=None):
     """Silent narration: 0.3 s per word, 1-2 s."""
+    from src.config import Config
     from src.pipeline import _create_silent_audio
+    from src.pricing import charge
     seconds = max(1.0, min(2.0, 0.3 * len(text.split())))
+    charge("tts", Config.TTS_MODEL, "narration", input_tokens=len(text) // 4, audio_seconds=seconds)
     return _create_silent_audio(str(output_path), duration_seconds=seconds), seconds
 
 
 def fake_download_video(queries, output_path=None):
-    """A generated clip with Pexels-like metadata; scene 2 takes the basevideos fallback path."""
+    """A generated clip with Pexels-like metadata; scene 2 found nothing and took generic Pexels footage."""
     n = int(Path(output_path).stem.split("_")[1])
     make_clip(output_path, seconds=1.0)
     if n == 2:
         return str(output_path), {
-            "width": None, "height": None, "duration": None, "pexels_url": None, "photographer": None,
-            "queries": queries, "fallback": True, "fallback_file": "video7.mp4", "failed_queries": [],
+            "width": 360, "height": 640, "duration": 1, "pexels_url": PEXELS_URL.format(n=2000 + n),
+            "photographer": "Generic Photographer", "query": "city lights at night", "enhanced_query": "city lights at night",
+            "generic": True, "failed_queries": ["'query 2 a': No videos found"],
         }
     return str(output_path), {
         "width": 360, "height": 640, "duration": 1,
@@ -310,6 +319,49 @@ def standin_render_from_scenes(self, scene_assets, output_path, subtitle_path=No
     ff("-i", str(work / "video.mp4"), "-i", str(work / "voice.wav"), "-map", "0:v", "-map", "1:a",
        "-c:v", "copy", "-c:a", "aac", "-shortest", str(output_path))
     return output_path
+
+
+def make_music_catalog(root) -> Path:
+    """A one-track CC0 catalog shaped like engines/motion/music/catalog.json, with its audio file."""
+    import hashlib
+    import json
+    root = Path(root)
+    audio = make_tone_wav(root / "motion" / "music" / "sources" / "test" / "smoke_bed.wav", seconds=3.0)
+    catalog = root / "motion" / "music" / "catalog.json"
+    catalog.write_text(json.dumps({"version": 1, "tracks": {"test-smoke-bed": {
+        "id": "test-smoke-bed", "title": "Smoke Bed", "artist": "Test Artist", "source": "test",
+        "file": "music/sources/test/smoke_bed.wav", "sha256": hashlib.sha256(Path(audio).read_bytes()).hexdigest(),
+        "license": "CC0-1.0", "page": "https://opengameart.org/content/smoke-bed", "calm": 0.4,
+    }}}))
+    return catalog
+
+
+def run_node(*args) -> subprocess.CompletedProcess:
+    """Run a repo Node tool from the repo root."""
+    return subprocess.run(["node", *args], cwd=REPO_ROOT, capture_output=True, text=True)
+
+
+def stage_package_validate(render_folder, batch_root, batch_id: str, number: int) -> dict:
+    """
+    tools/stage-story.mjs → review/originals.json (every check passed) → tools/package.mjs (which runs the
+    contract validator). Returns {"stage", "package", "batch", "batchDir"}.
+    """
+    import json
+    batch_dir = Path(batch_root) / batch_id
+    staged = run_node("tools/stage-story.mjs", f"--batch={batch_id}", f"--dir={batch_dir}", f"--number={number}", str(render_folder))
+    out = {"stage": staged, "batchDir": batch_dir, "package": None, "batch": None}
+    if staged.returncode != 0:
+        return out
+    review_file = batch_dir / "review" / "originals.json"
+    review = json.loads(review_file.read_text())
+    review["reviewer"] = "smoke-test"
+    for entry in review["episodes"].values():
+        entry["checks"] = {k: True for k in entry["checks"]}
+    review_file.write_text(json.dumps(review, indent=2))
+    out["package"] = run_node("tools/package.mjs", "--project=originals", f"--batch={batch_id}", f"--dir={batch_dir}")
+    if (batch_dir / "batch.json").exists():
+        out["batch"] = json.loads((batch_dir / "batch.json").read_text())
+    return out
 
 
 def check_render_json(path) -> subprocess.CompletedProcess:

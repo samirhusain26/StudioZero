@@ -17,7 +17,7 @@ StudioZero/
 │   ├── pipeline_state.py   # Persistence & State for Animation series
 │   ├── project_manager.py  # Project CRUD for the worker agent
 │   ├── video_models.py     # Central registry of all 11 video generation models
-│   ├── video_client.py     # Unified video client (fal.ai + Vertex AI routing)
+│   ├── video_client.py     # Unified video client (fal.ai + Gemini API routing)
 │   ├── budget_guard.py     # Per-project budget enforcement + auto-downgrade, spend ledger
 │   ├── render_json.py      # render.json + cover.jpg per final video (docs/HEADLESS.md)
 │   ├── steps/              # Modular Pipeline Steps (Animation Series)
@@ -32,7 +32,6 @@ StudioZero/
 │   ├── tools/              # CLI Utilities
 │   │   └── model_compare.py # Compare video outputs across models (HTML report)
 │   ├── narrative.py        # LLM Scripting, Validation, and Random Story logic
-│   ├── veo_client.py       # Vertex AI Veo 3.1 Integration
 │   ├── renderer.py         # FFmpeg Video & Audio Composition
 │   ├── subtitles.py        # Hormozi-style karaoke captions (ASS)
 │   ├── gemini_tts.py       # Google Gemini TTS Engine
@@ -46,7 +45,7 @@ StudioZero/
 │   ├── marketing.py        # Social media caption generation (Groq)
 │   └── logging_utils.py    # Centralized Logging
 ├── assets/
-│   ├── basevideos/         # Fallback portrait clips
+│   ├── basevideos/         # old local clips (ignored, licence unknown, never used)
 │   ├── music/              # Background tracks by genre
 │   └── creds/              # Service account credentials
 ├── output/
@@ -69,7 +68,7 @@ StudioZero/
 | **Language** | Python 3.10+ |
 | **LLM (Primary)** | Google Gemini 2.5 Flash |
 | **LLM (Fallback)** | Groq LLaMA 3.3 70B |
-| **Video Generation** | 11 models via Gemini API (Veo 3.1 Lite/Fast/Standard) + fal.ai (Kling, Seedance, Wan, Sora) |
+| **Video Generation** | 10 verified models via Gemini API (Veo 3.1 Lite/Fast/Standard) + fal.ai (Kling, Seedance, Wan) |
 | **Image Generation** | Gemini 2.0 Flash (Blueprints) |
 | **Text-to-Speech** | Google Gemini TTS |
 | **Rendering** | FFmpeg (H.264, libass, sidechain) |
@@ -87,7 +86,7 @@ Both production routes use Python generators that yield `PipelineStatus` objects
 The Animation route decomposes video generation into 8 discrete steps in `src/steps/`. Each step is isolated, making it easy to test, modify, or replace individual components (e.g., swapping the Screenwriter LLM or video generation model) without affecting the rest of the pipeline.
 
 ### Multi-Model Video Generation
-The `UnifiedVideoClient` (`src/video_client.py`) routes video generation to the correct provider (fal.ai or Vertex AI) based on the model registry (`src/video_models.py`). The `BudgetGuard` (`src/budget_guard.py`) enforces per-project budget caps and auto-downgrades to cheaper models when limits are reached.
+The `UnifiedVideoClient` (`src/video_client.py`) routes video generation to the correct provider (fal.ai or the Gemini API) based on the model registry (`src/video_models.py`). The `BudgetGuard` (`src/budget_guard.py`) enforces per-project budget caps and auto-downgrades to cheaper models when limits are reached.
 
 ### Crash-Resilient State
 The `PipelineState` model tracks every step's completion and artifact paths. This allows the Animation pipeline to resume from the exact point of failure, critical for long-running video generation tasks.

@@ -53,11 +53,11 @@ A production-grade, 8-step modular framework for multi-episode series with chara
 #### Phase 2: Production (Runs per episode)
 5.  **Director**: Combines episode scenes with character/world references to engineer final, optimized prompts for the active video model. Adapts prompt style per model family (Veo, Kling, Seedance, Wan, Sora).
 6.  **Set Designer**: Composites character references into world environments using Gemini Imagen, producing scene-appropriate starting frames. Images are cached by character+location and reused across episodes.
-7.  **Scene Generator**: Renders video clips via the active model (11 models supported across fal.ai and Vertex AI). Includes budget guard enforcement, model fallback, and a "retry gate" for failed scenes.
+7.  **Scene Generator**: Renders video clips via the active model (10 verified models across fal.ai and the Gemini API). Includes budget guard enforcement, model fallback, and a "retry gate" for failed scenes.
 8.  **Editor**: Assembles clips, syncs dialogue/music, and burns in Hormozi-style karaoke subtitles.
 
 ### Multi-Model Video Generation
-The Scene Generator supports 11 models across 3 tiers:
+The Scene Generator supports 10 verified models across 3 tiers (Sora 2 Pro is unverified and never called):
 *   **Budget**: Veo 3.1 Lite (Gemini API), Wan 2.5, Kling 2.5 Turbo Pro, Wan 2.2
 *   **Recommended**: Veo 3.1 Fast (Gemini API), Seedance 2.0 Fast, Seedance 1.5 Pro Fast
 *   **Premium**: Veo 3.1 (Gemini API), Kling 3.0 Pro, Seedance 2.0, Sora 2 Pro

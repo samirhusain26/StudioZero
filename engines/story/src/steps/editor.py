@@ -6,16 +6,14 @@ Output: episodes/episode_N/final.mp4 + cover.jpg + render.json, and a copy at
         output/final/{title}_ep{N}.mp4
 
 Trims the first 0.2s from each clip (removes the reference-image flash that
-Veo produces when image-to-video mode anchors on the input PNG), then
-concatenates all clips with stream copy.
+Veo produces when image-to-video mode anchors on the input PNG), normalises every
+clip to 1080x1920 / 30 fps / AAC 48 kHz stereo (silence where a clip has no audio:
+the series audio policy, Config.SERIES_NATIVE_AUDIO) and joins them (review B3).
 """
 
 import logging
 import shutil
-import subprocess
-import tempfile
 from pathlib import Path
-from typing import List
 
 from src.renderer import assemble_veo_clips
 from src.render_json import RENDER_JSON, write_series_render_json
@@ -27,27 +25,6 @@ logger = logging.getLogger(__name__)
 
 # Seconds to trim from the start of every Veo clip to remove the reference-image flash
 _TRIM_START = 0.2
-
-
-def _trim_clip(src: Path, dst: Path) -> bool:
-    """
-    Trim the first _TRIM_START seconds from src and write to dst using stream copy.
-    Returns True on success. On failure dst is left unwritten and False is returned.
-    """
-    cmd = [
-        "ffmpeg", "-y",
-        "-ss", str(_TRIM_START),
-        "-i", str(src),
-        "-c", "copy",
-        "-avoid_negative_ts", "make_zero",
-        "-movflags", "+faststart",
-        str(dst),
-    ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        logger.warning(f"[editor] Trim failed for {src.name}: {result.stderr[-200:]}")
-        return False
-    return True
 
 
 def run(ctx: StepContext) -> StepResult:
@@ -80,20 +57,11 @@ def run(ctx: StepContext) -> StepResult:
         f"{len(clip_paths)} clip(s) — {[p.name for p in clip_paths]}"
     )
 
-    with tempfile.TemporaryDirectory(dir=clips_dir) as tmp:
-        trimmed: List[str] = []
-        for clip in clip_paths:
-            dst = Path(tmp) / clip.name
-            if _trim_clip(clip, dst):
-                logger.info(f"[editor] Trimmed {_TRIM_START}s from {clip.name}")
-                trimmed.append(str(dst))
-            else:
-                trimmed.append(str(clip))  # fall back to original
-
-        output_path = assemble_veo_clips(
-            clip_paths=trimmed,
-            output_filepath=str(final_path),
-        )
+    output_path = assemble_veo_clips(
+        clip_paths=[str(p) for p in clip_paths],
+        output_filepath=str(final_path),
+        trim_start=_TRIM_START,
+    )
 
     if not output_path or not Path(output_path).exists():
         raise RuntimeError(

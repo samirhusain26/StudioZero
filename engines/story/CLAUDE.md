@@ -20,7 +20,7 @@
    - Pre-Production (once): Writer → Screenwriter → Casting → World Builder.
    - Production (per episode): Director → Set Designer → Scene Generator → Editor.
    - Persistence: State stored in `pipeline_state.json` per project.
-   - **Video Models**: Supports 11 models across 3 tiers (Budget/Recommended/Premium) via Gemini API (Veo 3.1 Lite/Fast/Standard) and fal.ai (Kling, Seedance, Wan, Sora). Model selection in Settings panel. Budget guard auto-downgrades when cost limits are reached.
+   - **Video Models**: Supports 10 verified models across 3 tiers (Budget/Recommended/Premium) via Gemini API (Veo 3.1 Lite/Fast/Standard) and fal.ai (Kling, Seedance, Wan); Sora 2 Pro is listed but unverified and never called. Model selection in Settings panel. Budget guard auto-downgrades when cost limits are reached.
 
 ## Code Style & Standards
 - **Naming**: `snake_case` for variables/functions, `PascalCase` for classes.
@@ -39,9 +39,13 @@
 - `src/pipeline_state.py`: Crash-resilient state persistence.
 - `src/steps/`: Modular steps for the animation series (writer, screenwriter, casting, world_builder, director, set_designer, scene_generator, editor).
 - `src/project_manager.py`: Project CRUD for the worker agent.
-- `src/video_models.py`: Loads and validates the 11 video models from `registry.json` (the single source, also read by the studio catalog).
+- `src/video_models.py`: Loads and validates the video models from `registry.json` (verified endpoints, per-model request maps, prices) (the single source, also read by the studio catalog).
 - `src/render_json.py`: Writes `render.json` + `cover.jpg` next to each final MP4 (engine → packager hand-off).
-- `src/video_client.py`: Unified client routing to Gemini API, fal.ai, or Vertex AI. Handles retries, cost tracking, model fallback.
+- `src/video_client.py`: Unified client routing to the Gemini API (Veo) or fal.ai; only models with a `verified` record in registry.json are called. Handles retries, uncertain submits, cost tracking, price-ordered fallback.
 - `src/budget_guard.py`: Per-project budget enforcement with auto-downgrade; `SpendLedger` persists spend in `spend_ledger.json`.
+- `src/pricing.py`: list prices (with sources) for Gemini/Groq text, image and TTS calls; charges every call into the active `spend_ledger.json`.
+- `src/music.py`: recap background music: a CC0 track from the motion engine's music catalog (licence recorded), or none.
+- `src/status.py`: `PipelineStatus`, shared by both routes.
+- `fonts/`: the OFL caption font (Fraunces Black) and its licence.
 - `src/tools/model_compare.py`: CLI utility to compare video outputs across models. Generates HTML report.
 - `src/config_mappings.py`: Music/voice/mood lookup tables.

@@ -11,6 +11,8 @@ from pathlib import Path
 from typing import List
 
 import pysubs2
+
+from src.config import Config
 from pysubs2 import SSAFile, SSAEvent, SSAStyle, Color
 
 
@@ -96,7 +98,8 @@ def _create_hormozi_style(subs: SSAFile) -> str:
     Creates and adds the Hormozi style to the subtitle file.
 
     Style settings:
-        - Font: Arial Black (fallback: Roboto-Bold)
+        - Font: Fraunces Black (OFL-1.1, engines/story/fonts; the renderer passes it to
+          libass as a fonts directory, so no system font is used)
         - FontSize: 80 (large for 1080p Hormozi style)
         - PrimaryColor: White
         - OutlineColor: Black
@@ -112,9 +115,9 @@ def _create_hormozi_style(subs: SSAFile) -> str:
     style_name = "Hormozi"
 
     style = SSAStyle(
-        fontname="Arial Black",
+        fontname=Config.CAPTION_FONT,
         fontsize=80,
-        bold=True,
+        bold=False,  # the face is already weight 900
         primarycolor=WHITE_SEMI,
         secondarycolor=WHITE_SEMI,
         outlinecolor=BLACK,
