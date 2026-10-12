@@ -8,7 +8,7 @@ import {readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync} from 'n
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {ROOT, STUDIO} from './lib.mjs';
-import {motionRenderJsonCore} from './render-json-core.mjs';
+import {motionRenderJsonCore, renderJsonText} from './render-json-core.mjs';
 
 const KIT = resolve(STUDIO, 'src/projects/scalargame');
 /** The render.json document for one validated job (input.json + status.json as written by episodes.mjs/render.mjs). */
@@ -34,7 +34,7 @@ export function writeRenderJsons(jobsDir, outDir = jobsDir) {
     if (status.state !== 'validated' || existsSync(target)) continue;
     const input = JSON.parse(readFileSync(resolve(jobsDir, id, 'input.json'), 'utf8'));
     mkdirSync(resolve(outDir, id), {recursive: true});
-    writeFileSync(target, JSON.stringify(motionRenderJson(input, status, beds), null, 1) + '\n');
+    writeFileSync(target, renderJsonText(motionRenderJson(input, status, beds)));
     written.push(id);
   }
   return written;

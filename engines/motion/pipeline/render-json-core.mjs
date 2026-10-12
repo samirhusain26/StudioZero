@@ -19,6 +19,9 @@ export const DATA = {
 };
 export const AI_BED = bed => bed.license === 'owner-supplied' && /AI-generated/.test(bed.rights ?? '');
 
+/** The render.json file text (render.mjs and the browser export write and hash exactly this). */
+export const renderJsonText = doc => JSON.stringify(doc, null, 1) + '\n';
+
 /**
  * The render.json document for one validated episode. `job` carries the renderer's own facts (render.sh: codeHash
  * and coverFrame from status.json; web: the UI bundle's commit); `fonts` are the style's FONT ids; `bed` is the

@@ -5,7 +5,7 @@
   "priority": "P0",
   "order": 0,
   "summary": "StudioZero's own shorts: movie and story recaps (stock footage, narration) and AI-animated series.",
-  "contract": {"schemaVersion": 2, "contentNamespaces": ["originals"], "note": "Needs contract v2 (Phase 4); no Originals batch is packaged before that."},
+  "contract": {"schemaVersion": 2, "contentNamespaces": ["originals"]},
   "sources": [
     {"kind": "api", "name": "TMDB", "use": "movie details and posters", "license": "TMDB", "attribution": "This product uses the TMDB API but is not endorsed or certified by TMDB"},
     {"kind": "api", "name": "Wikipedia", "use": "plot text", "license": "Wikipedia-CC-BY-SA"},
@@ -37,7 +37,7 @@
     {"id": "garbage", "name": "Script sanity", "how": "the reviewer reads the script: no hallucinated plot points, no spoiler-only hook, no unsafe content"},
     {"id": "visual-qa", "name": "Visual QA", "how": "contact sheet and spot checks of every clip; no broken frames, no unreadable subtitles"},
     {"id": "disclosure", "name": "AI disclosure", "how": "render.json disclosure matches the models used; realisticSynthetic set where real-looking"},
-    {"id": "contract", "name": "Batch contract", "how": "python3 contract/library_contract.py validate library/<batchId> (v2, Phase 4)"}
+    {"id": "contract", "name": "Batch contract", "how": "python3 contract/library_contract.py validate library/<batchId> (contract v2)"}
   ],
-  "packager": null
+  "packager": "projects/originals/package.mjs"
 }

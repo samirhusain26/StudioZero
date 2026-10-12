@@ -146,7 +146,7 @@ export function ExportContent({ manifest, store, device, commit }: { manifest: M
       const exports = await store.getExports(bundle.batchId)
       const byId = new Map(exports.map((e) => [e.episodeId, e]))
       const renders = bundle.jobs.map((job) => webRenderJson(bundle, job, (byId.get(job.episodeId) as NonNullable<ReturnType<typeof byId.get>>).files, commit))
-      const body = packageWebBatch(bundle, renders, { createdAt: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'), commit })
+      const body = await packageWebBatch(bundle, renders, { createdAt: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'), commit })
       const response = await api.importBatch(body)
       let current = initialUploadState(response)
       setUploads(current)

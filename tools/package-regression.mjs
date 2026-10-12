@@ -21,7 +21,7 @@ for (const batch of BATCHES) {
     mkdirSync(resolve(dst, folder), {recursive: true});
     for (const f of readdirSync(resolve(src, folder))) copyFileSync(resolve(src, folder, f), resolve(dst, folder, f), constants.COPYFILE_FICLONE);
   }
-  const status = await main(['--project=scalargame', `--batch=${batch}`, `--dir=${dst}`, `--created-at=${final.createdAt}`,
+  const status = await main(['--project=scalargame', `--batch=${batch}`, `--dir=${dst}`, `--schema=${final.schemaVersion}`, `--created-at=${final.createdAt}`,
     `--commit=${final.generator.repoCommit}`, `--dirty=${final.generator.dirty}`]);
   const diff = spawnSync('git', ['diff', '--no-index', '--exit-code', '--stat', resolve(src, 'batch.json'), resolve(dst, 'batch.json')], {stdio: 'inherit'});
   const ok = status === 0 && diff.status === 0;

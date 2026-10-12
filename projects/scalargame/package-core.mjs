@@ -1,8 +1,11 @@
 // Scalargame's packager core (pure: no Node or browser APIs), shared by package.mjs on the Mac and the Studio's
-// browser packaging (publisher/ui): contract v1 episodes from the motion engine's render.json files, the checked
+// browser packaging (publisher/ui): contract v1 or v2 episodes from the motion engine's render.json files, the checked
 // question set and this project's caption rules (project.json). The caller loads every input.
 // Captions, titles, alt text, polls and first comments are deterministic templates filled from episode metadata.
 // The answer appears only as one item of the complete choice list (the contract's spoiler rule); answerReply is null.
+// v2 adds the render block, credits and disclosure from render.json, and every required attribution (the World Bank
+// licence on Continuum) in each caption and the YouTube description (contract v2 attribution rule).
+import {renderBlock, requiredAttributions} from '../../tools/package-core.mjs';
 
 /** Pieces of every platform text, from the project manifest and the channel limits in studio.json. */
 function rules(project, studio) {
@@ -51,7 +54,8 @@ function parts(q) {
   throw new Error(`no caption template for ${q.format}`);
 }
 
-function captions(R, ep, q) {
+function captions(R, ep, q, attribution = '') {
+  const att = attribution ? `\n${attribution}` : '';
   const link = platform => `${R.SITE}/${ep.game}?${new URLSearchParams({utm_source: platform, utm_medium: 'organic_social', utm_campaign: R.CAMPAIGN, utm_content: ep.episodeId})}`;
   const measure = (platform, text) => {
     const final = text.replaceAll('{link}', link(platform));
@@ -61,13 +65,13 @@ function captions(R, ep, q) {
   const ask = p.choices ? `${p.choices} — comment your letter.` : 'Comment A or B.';
   const body = p.choices ? `${p.lead}\n\n${ask}` : `${p.lead}\n\n${ask}`;
   const variants = {
-    instagram: [`${body}\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).\n\n${tags}`],
-    tiktok: [`${body}\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com\n\n${tags}`],
-    facebook: [`${body}\n\nThe answer is at the end. Play a new puzzle: {link}\n\n${tags}`],
-    threads: [`${body}\n\nPlay a new puzzle: {link}`, `${p.short}\n${ask}\n{link}`],
+    instagram: [`${body}\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com (link in bio).${att}\n\n${tags}`],
+    tiktok: [`${body}\n\nThe answer is at the end of the video. Play a new puzzle at scalargame.com${att}\n\n${tags}`],
+    facebook: [`${body}\n\nThe answer is at the end. Play a new puzzle: {link}${att}\n\n${tags}`],
+    threads: [`${body}\n\nPlay a new puzzle: {link}${att}`, `${p.short}\n${ask}\n{link}${att}`],
     // Last resort for short limits: the choices stay in the video only (no choice list → no answer in the text).
-    x: [`${p.short} ${ask} {link}`, `${p.choices ? `${p.lead.split('\n')[0]} ${ask}` : `${p.short} ${ask}`} {link}`, `${p.title} Choices in the video — comment your letter. {link}`],
-    bluesky: [`${p.short}\n${ask}\n{link}`, `${p.choices ? `${p.lead.split('\n')[0]}\n${ask}` : `${p.short}\n${ask}`}\n{link}`, `${p.title}\nChoices in the video — comment your letter.\n{link}`],
+    x: [`${p.short} ${ask} {link}${att}`, `${p.choices ? `${p.lead.split('\n')[0]} ${ask}` : `${p.short} ${ask}`} {link}${att}`, `${p.title} Choices in the video — comment your letter. {link}${att}`],
+    bluesky: [`${p.short}\n${ask}\n{link}${att}`, `${p.choices ? `${p.lead.split('\n')[0]}\n${ask}` : `${p.short}\n${ask}`}\n{link}${att}`, `${p.title}\nChoices in the video — comment your letter.\n{link}${att}`],
   };
   const out = {};
   for (const [platform, options] of Object.entries(variants)) {
@@ -76,19 +80,21 @@ function captions(R, ep, q) {
   }
   let title = `${p.title}${R.TITLE_SUFFIX}`;
   if (title.length > R.TITLE_LIMIT) title = `${p.title.slice(0, R.TITLE_LIMIT - 9).trimEnd()}…${R.TITLE_SUFFIX}`;
-  const youtube = {title, description: `${body}\n\nThe answer is revealed at the end. Play a new puzzle at ${link('youtube')}\n\n${tags}`};
+  const youtube = {title, description: `${body}\n\nThe answer is revealed at the end. Play a new puzzle at ${link('youtube')}${att}\n\n${tags}`};
   const comment = p.choices ? `${p.choices} — comment your letter` : `A) Before  B) After — comment your letter`;
   return {captions: out, youtube, altText: p.alt, hashtags: R.HASHTAGS[q.game], poll: {question: p.poll, options: q.choices.map(c => c.poll ?? c.label)},
     firstComment: {instagram: comment, threads: comment, bluesky: null, x: null}};
 }
 
 /**
- * v1 batch fields from render.json documents (sorted by episodeId). Returns {generator, fields, episodes}.
+ * Batch fields from render.json documents (sorted by episodeId). Returns {generator, fields, episodes}.
  * `config` is the question set's CONFIG, `doc` its checked questions JSON, `verification` the independent source check
  * ({results: []} when dry), `verReport` its repo-relative path, `recipe(styleId)` the style recipe {styleId, game,
- * version, summary}.
+ * version, summary}. `schemaVersion` defaults to project.json's; v2 needs `renderHashes` ({episodeId: sha256 of the
+ * render.json file}).
  */
-export function scalargameEpisodes({renders, project, studio, config: CONFIG, setName, doc, beds, verification, verReport, recipe, dry}) {
+export function scalargameEpisodes({renders, project, studio, config: CONFIG, setName, doc, beds, verification, verReport, recipe, dry,
+  schemaVersion = project.contract.schemaVersion, renderHashes = {}}) {
   const R = rules(project, studio);
   const byKey = Object.fromEntries(doc.questions.map(q => [q.key, q]));
   const verified = Object.fromEntries(verification.results.map(r => [r.key, r]));
@@ -101,7 +107,7 @@ export function scalargameEpisodes({renders, project, studio, config: CONFIG, se
     if (!q) throw new Error(`${id}: ${job.contentKey} is not in ${setName}`);
     if (!styleRecipes.has(job.styleId)) styleRecipes.set(job.styleId, recipe(job.styleId));
     const ep = {episodeId: id, game: q.game};
-    const pub = captions(R, ep, q);
+    const pub = captions(R, ep, q, schemaVersion === 1 ? '' : requiredAttributions(render.credits).join('\n'));
     const choices = q.choices.map(c => ({key: c.key, label: c.label}));
     const aliases = q.format === 'missing-slot' ? [q.choices.find(c => c.key === q.answerKey).poll] : [];
     const answer = q.format === 'missing-slot' ? q.choices.find(c => c.key === q.answerKey).label : q.answer;
@@ -110,6 +116,27 @@ export function scalargameEpisodes({renders, project, studio, config: CONFIG, se
     if (!dry && !v) throw new Error(`${id}: ${q.key} has no result in ${verReport}`);
     if (!dry && v.status !== 'pass' && !v.resolution) throw new Error(`${id}: ${q.key} source check is ${v.status} with no written resolution`);
     const video = render.video, cover = render.cover;
+    if (schemaVersion === 2) {
+      const creative = {
+        hook: q.hook, question: q.prompt && q.format === 'before-after' ? `${q.prompt}. ${q.question}` : q.question,
+        clues: q.clues ?? (q.shown ? q.shown.map(s => s.label) : []), choices, answer, answerAliases: aliases, explanation: q.explanation,
+      };
+      episodes.push({
+        episodeId: id, contentId: q.questionId, revision: job.revision, format: q.format, language: project.captions.language,
+        render: renderBlock(render, dry ? '0'.repeat(64) : renderHashes[id]),
+        experimentId: CONFIG.experimentId, variantId: CONFIG.variantId ?? null, tags: [],
+        video: {file: `videos/${id}.mp4`, sha256: video.sha256, bytes: video.bytes, durationSeconds: video.durationSeconds,
+          width: video.width, height: video.height, fps: video.fps, videoCodec: video.videoCodec, audioCodec: video.audioCodec},
+        cover: {file: `covers/${id}.jpg`, sha256: cover.sha256, bytes: cover.bytes},
+        link: {url: `${R.SITE}/${q.game}`, utmCampaign: R.CAMPAIGN},
+        publication: {...pub, answerReply: null},
+        credits: render.credits, disclosure: render.disclosure,
+        eligibility: {status: 'qa-passed', notBefore: null, reviewBy: q.reviewBy, expiresAt: null},
+        projectData: {game: q.game, difficulty: q.difficulty, styleId: job.styleId, creative, evidence: evidenceOf(q, doc, v, verReport, CONFIG),
+          music: {trackId: `${bed.trackId}:${bed.bed}`, sha256: bed.sha256, license: bed.license}},
+      });
+      continue;
+    }
     episodes.push({
       episodeId: id, questionId: q.questionId, revision: job.revision, game: q.game, format: q.format, language: project.captions.language,
       difficulty: q.difficulty, styleId: job.styleId, experimentId: CONFIG.experimentId, variantId: CONFIG.variantId ?? null,
@@ -117,13 +144,7 @@ export function scalargameEpisodes({renders, project, studio, config: CONFIG, se
         hook: q.hook, question: q.prompt && q.format === 'before-after' ? `${q.prompt}. ${q.question}` : q.question,
         clues: q.clues ?? (q.shown ? q.shown.map(s => s.label) : []), choices, answer, answerAliases: aliases, explanation: q.explanation,
       },
-      evidence: {
-        sources: q.evidence.sources,
-        checks: {...q.evidence.checks, uniqueAnswer: true, snapshotId: doc.snapshotId, questionsHash: doc.questionsHash,
-          independentSourceCheck: v ? {status: v.status, resolution: v.resolution ?? null, report: verReport} : null,
-          rationale: q.rationale, ...(q.editorialNote ? {editorialNote: q.editorialNote} : {}), ...(q.sensitiveReview ? {sensitiveReview: q.sensitiveReview} : {})},
-        reviewer: CONFIG.reviewer,
-      },
+      evidence: evidenceOf(q, doc, v, verReport, CONFIG),
       music: {trackId: `${bed.trackId}:${bed.bed}`, sha256: bed.sha256, license: bed.license},
       video: {file: `videos/${id}.mp4`, sha256: video.sha256, bytes: video.bytes, durationSeconds: video.durationSeconds,
         width: video.width, height: video.height, fps: video.fps, videoCodec: video.videoCodec, audioCodec: video.audioCodec},
@@ -133,5 +154,19 @@ export function scalargameEpisodes({renders, project, studio, config: CONFIG, se
       eligibility: {status: 'qa-passed', notBefore: null, reviewBy: q.reviewBy, expiresAt: null},
     });
   }
+  if (schemaVersion === 2) {
+    const styles = [...styleRecipes.values()].map(r => ({styleId: r.styleId, engine: 'motion', version: r.version, summary: r.summary}));
+    return {generator: {}, fields: {styleRecipes: styles, projectData: {sourceSnapshotHash: doc.snapshotHash}}, episodes};
+  }
   return {generator: {assetKitVersion: 'kit-1'}, fields: {sourceSnapshotHash: doc.snapshotHash, styleRecipes: [...styleRecipes.values()]}, episodes};
+}
+
+function evidenceOf(q, doc, v, verReport, CONFIG) {
+  return {
+    sources: q.evidence.sources,
+    checks: {...q.evidence.checks, uniqueAnswer: true, snapshotId: doc.snapshotId, questionsHash: doc.questionsHash,
+      independentSourceCheck: v ? {status: v.status, resolution: v.resolution ?? null, report: verReport} : null,
+      rationale: q.rationale, ...(q.editorialNote ? {editorialNote: q.editorialNote} : {}), ...(q.sensitiveReview ? {sensitiveReview: q.sensitiveReview} : {})},
+    reviewer: CONFIG.reviewer,
+  };
 }

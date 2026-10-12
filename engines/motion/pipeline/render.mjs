@@ -11,6 +11,7 @@ import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {ROOT, STUDIO} from './lib.mjs';
 import {motionRenderJson, loadBeds} from './render-json.mjs';
+import {renderJsonText} from './render-json-core.mjs';
 
 const args = Object.fromEntries(process.argv.slice(2).map(a => { const [k, v = true] = a.replace(/^--/, '').split('='); return [k, v]; }));
 const batch = args.batch;
@@ -84,7 +85,7 @@ const ids = readdirSync(jobsDir).filter(d => existsSync(resolve(jobsDir, d, 'inp
 const kit = codeHash();
 const beds = loadBeds();
 // render.json (tools/RENDER_JSON.md) is what the packager reads; written once a job validates.
-const writeRender = (dir, input, status) => writeFileSync(resolve(dir, 'render.json'), JSON.stringify(motionRenderJson(input, status, beds), null, 1) + '\n');
+const writeRender = (dir, input, status) => writeFileSync(resolve(dir, 'render.json'), renderJsonText(motionRenderJson(input, status, beds)));
 const summary = [];
 mkdirSync(resolve(BATCH, 'videos'), {recursive: true}); mkdirSync(resolve(BATCH, 'covers'), {recursive: true});
 

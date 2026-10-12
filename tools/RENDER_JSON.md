@@ -1,6 +1,6 @@
 # `render.json` (engine → packager, version 1)
 
-Every engine writes one `render.json` per rendered episode, in the folder that holds the episode's MP4 and cover. It is the only thing the shared packager (`tools/package.mjs`) reads from an engine; engines never write `batch.json`. It is not part of the batch contract (`contract/BATCH_CONTRACT.md`): contract v2 (Phase 4) copies `models`, `costUsd`, `credits` and `disclosure` into each episode and stamps `render.renderSha256` = sha256 of this file.
+Every engine writes one `render.json` per rendered episode, in the folder that holds the episode's MP4 and cover. It is the only thing the shared packager (`tools/package.mjs`) reads from an engine; engines never write `batch.json`. It is not part of the batch contract (`contract/BATCH_CONTRACT.md`): contract v2 copies `models`, `costUsd`, `credits` and `disclosure` into each episode, copies `job.renderer` to `render.renderer`, and stamps `render.renderSha256` = sha256 of this file. The motion engine writes (and the Studio's browser export hashes) exactly `renderJsonText(doc)` from `engines/motion/pipeline/render-json-core.mjs`, so both give the same hash for the same document.
 
 Check a file: `node tools/render-json.mjs <render.json>...` (exit 1 on any error; the packager runs the same check).
 
