@@ -167,6 +167,8 @@ class InstagramAdapter:
         parent = payload.get('parent') or {}
         if not row or row['media'] != str(parent.get('remoteId') or ''):
             return {'status': 'uncertain'}
+        if row['comment']:
+            return self._confirm_known_comment(job, row, parent)
         data = self.call('GET', row['media'] + '/comments', {'fields': 'id,text,username,timestamp', 'limit': '50'})
         dispatched = dt.datetime.fromisoformat(job['dispatched_at']) if job.get('dispatched_at') else None
         matches = []
@@ -187,6 +189,25 @@ class InstagramAdapter:
             self.ledger.db.execute('UPDATE instagram_comments SET comment=? WHERE job=?', (str(matches[0]['id']), job['id']))
         return {'status': 'confirmed', 'remoteId': str(matches[0]['id']), 'permalink': parent.get('permalink'),
                 'publishedAt': matches[0]['timestamp']}
+
+    def _confirm_known_comment(self, job, row, parent):
+        # Instagram Login never lists the account's own comments under its media, and GET /{comment-id} answers
+        # 200 with no fields. The id came from this job's own create response, so the receipt is: that object
+        # still exists (an unknown or deleted id answers 400) and the parent counts at least one comment.
+        try:
+            self.call('GET', row['comment'], {'fields': 'id'})
+        except PublishError as error:
+            if error.category == 'rejected':
+                return {'status': 'uncertain'}
+            raise
+        media = self.call('GET', row['media'], {'fields': 'id,comments_count'})
+        count = media.get('comments_count')
+        if (str(media.get('id', '')) != row['media'] or not isinstance(count, int) or isinstance(count, bool)
+                or count < 1 or not job.get('dispatched_at')):
+            return {'status': 'uncertain'}
+        # The comment's own timestamp is not readable; the create call was made at dispatch.
+        return {'status': 'confirmed', 'remoteId': row['comment'], 'permalink': parent.get('permalink'),
+                'publishedAt': job['dispatched_at']}
 
     def _recent_match(self, job, payload):
         account_id = str(self.config['channels']['instagram']['accountId'])

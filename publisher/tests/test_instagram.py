@@ -138,6 +138,56 @@ class InstagramTests(unittest.TestCase):
                 (Path(directory)/'INSTAGRAM_ACCESS_TOKEN').unlink()
                 (Path(directory)/'INSTAGRAM_ACCESS_TOKEN').symlink_to(alias)
                 with self.assertRaises(PublishError): token()
+    def comment_setup(self, comment='18000000000000555', count=1, exists=True, listed=()):
+        # Instagram Login: GET /{comment-id} answers {} (or 400 when unknown), the comments list omits own comments.
+        calls = []
+        def call(method, path, params, token):
+            calls.append((method, path, params))
+            if path == 'me': return {'id': OWNER, 'user_id': ACCOUNT, 'username': 'studiozeroflow'}
+            if method == 'POST': raise AssertionError('reconcile must never post')
+            if path == comment:
+                if not exists: raise PublishError('rejected')
+                return {}
+            if path == '900': return {'id': '900', 'comments_count': count}
+            if path == '900/comments': return {'data': list(listed)}
+            raise AssertionError(path)
+        self.adapter.transport = call
+        with self.ledger.db:
+            self.ledger.db.execute('INSERT INTO instagram_comments(job,media,comment) VALUES(?,?,?)', ('j1', '900', comment))
+        payload = {'caption': 'A) Spain  B) Japan — comment your letter', 'companion': {'parentEpisode': 'e1'}, 'kind': 'comment',
+                   'parent': {'remoteId': '900', 'permalink': 'https://www.instagram.com/reel/900/'}}
+        return calls, payload
+
+    def test_known_comment_confirms_from_object_and_parent_count(self):
+        calls, payload = self.comment_setup()
+        result = self.adapter.reconcile(self.job, payload)
+        self.assertEqual(result, {'status': 'confirmed', 'remoteId': '18000000000000555',
+                                  'permalink': 'https://www.instagram.com/reel/900/', 'publishedAt': self.job['dispatched_at']})
+        self.assertFalse(any(m == 'POST' for m, _, _ in calls))
+
+    def test_known_comment_missing_or_uncounted_stays_uncertain(self):
+        for options in ({'exists': False}, {'count': 0}, {'count': None}, {'count': True}):
+            with self.subTest(**options):
+                self.ledger.db.execute('DELETE FROM instagram_comments')
+                calls, payload = self.comment_setup(**options)
+                self.assertEqual(self.adapter.reconcile(self.job, payload), {'status': 'uncertain'})
+                self.assertFalse(any(m == 'POST' for m, _, _ in calls))
+
+    def test_known_comment_other_errors_propagate_and_unknown_id_uses_the_list(self):
+        calls, payload = self.comment_setup()
+        def broken(method, path, params, token):
+            if path == 'me': return {'id': OWNER, 'user_id': ACCOUNT, 'username': 'studiozeroflow'}
+            raise PublishError('uncertain')
+        self.adapter.transport = broken
+        with self.assertRaises(PublishError): self.adapter.reconcile(self.job, payload)
+        # A lost create response leaves no id: only an exact own-account match in the list may confirm.
+        self.ledger.db.execute('DELETE FROM instagram_comments')
+        calls, payload = self.comment_setup(comment=None)
+        self.assertEqual(self.adapter.reconcile(self.job, payload), {'status': 'uncertain'})
+        self.assertIn(('GET', '900/comments', {'fields': 'id,text,username,timestamp', 'limit': '50'}), calls)
+        with self.assertRaises(PublishError): self.adapter.publish(self.job, payload)
+        self.assertFalse(any(m == 'POST' for m, _, _ in calls))
+
     def test_router_preserves_buffer_until_configured_and_holds_wrong_account(self):
         from types import SimpleNamespace
         from threads_adapter import Router
