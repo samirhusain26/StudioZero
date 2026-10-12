@@ -159,7 +159,8 @@ class BufferAdapter:
                 "mode":"shareNow","schedulingType":"automatic","needsApproval":False,"saveToDraft":False,
                 "metadata":payload.get("metadata",{}),"source":"scalar-social"}
         if thread:
-            post["metadata"] = {**(post["metadata"] or {}), "twitter":{"thread":[{"text":payload["caption"],"assets":post["assets"]}]+[{"text":t} for t in thread]}}
+            metadata = post["metadata"] or {}
+            post["metadata"] = {**metadata, "twitter":{**(metadata.get("twitter") or {}), "thread":[{"text":payload["caption"],"assets":post["assets"]}]+[{"text":t} for t in thread]}}
         data = self.call("mutation($input:CreatePostInput!){createPost(input:$input){__typename ... on PostActionSuccess{post{"+FIELDS+"}}}}", {"input":post})["createPost"]
         if data["__typename"] != "PostActionSuccess":
             # No retry for union errors; schema/format/permission must be reviewed.

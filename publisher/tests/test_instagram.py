@@ -57,6 +57,16 @@ class InstagramTests(unittest.TestCase):
         self.verify_patch.stop(); self.ledger.db.close(); self.tmp.cleanup()
     def create_container(self): self.adapter.publish(self.job, self.payload)
 
+    def test_ai_label_only_when_the_job_applies_it(self):
+        self.create_container()
+        create = next(params for m, path, params in self.remote.calls if m == 'POST' and path.endswith('/media'))
+        self.assertNotIn('is_ai_generated', create)
+        self.remote.calls.clear(); self.ledger.db.execute('DELETE FROM instagram_reels')
+        self.job['id'] = 'j2'
+        self.payload['disclosure'] = {'aiGenerated': True, 'realisticSynthetic': False, 'label': 'applied', 'field': 'x'}
+        self.create_container()
+        create = next(params for m, path, params in self.remote.calls if m == 'POST' and path.endswith('/media'))
+        self.assertEqual(create['is_ai_generated'], 'true')
     def test_direct_identity_does_not_reuse_buffer_channel_id(self):
         self.job['account'] = 'a00000000000000000000002'
         with self.assertRaises(PublishError): self.adapter.publish(self.job, self.payload)

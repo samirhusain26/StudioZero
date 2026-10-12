@@ -136,7 +136,9 @@ class InstagramAdapter:
         account_id = str(self.config['channels']['instagram']['accountId'])
         result = self.call('POST', account_id + '/media', {
             'media_type': 'REELS', 'video_url': payload['media']['url'],
-            'caption': payload['caption'], 'share_to_feed': 'true'})
+            'caption': payload['caption'], 'share_to_feed': 'true',
+            # AI info label (Content Publishing API, 2026-06-22), only for v2 episodes that declare AI content.
+            **({'is_ai_generated': 'true'} if (payload.get('disclosure') or {}).get('label') == 'applied' else {})})
         container = str(result.get('id', ''))
         if not container.isdecimal():
             raise PublishError('uncertain')

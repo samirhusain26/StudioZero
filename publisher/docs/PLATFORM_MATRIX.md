@@ -53,3 +53,19 @@ Checked 6 October 2026 against official developer documentation (public pages on
 | Bluesky (direct) | ≤ 60 s used | — | 300 graphemes | [video launch post](https://bsky.social/about/blog/09-11-2024-video) (60 s, 25 videos/day); later 3-minute increase seen only second-hand: unverified, so 60 s is used |
 | TikTok (Buffer) | 3 s – 10 min | 23–60 | 2,200, 5 hashtags; 25 posts / 24 h | [Buffer TikTok](https://support.buffer.com/en-us/articles/using-tiktok-with-buffer-oGEroY9Of2), [Content Posting API](https://developers.tiktok.com/doc/content-posting-api-reference-direct-post) |
 | Buffer API | — | — | Free: 100 req / 15 min, 250 / 24 h, 3,000 / 30 days (runner keeps 80 / 200 / 2,400) | [API limits](https://developers.buffer.com/guides/api-limits.html); Buffer documents no per-platform media validation |
+
+## AI labels (contract v2 `disclosure`), checked 12 October 2026
+
+The publisher maps each v2 episode's `disclosure` to the platform's own label where its API has one, and records the outcome in the job payload (`disclosure.label`: `applied`, `not-needed` or `not-supported`, with the field it set). v1 episodes declare nothing, so their payloads are unchanged (YouTube keeps `isAiGenerated: false`). Mapping in `ui_schedule.AI_LABELS`.
+
+| Platform | Route | Field | Follows | Source |
+|---|---|---|---|---|
+| Instagram | direct | `is_ai_generated=true` on `POST /{ig-user-id}/media` (container) | `aiGenerated` | Instagram Platform changelog, "AI Info Label", 2026-06-22 (both login types) |
+| YouTube | Buffer | `metadata.youtube.isAiGenerated` | `realisticSynthetic` (YouTube's altered-or-synthetic label is for realistic content) | Buffer API changelog 2026-06-09; `YoutubePostMetadataInput` reference |
+| TikTok | Buffer | `metadata.tiktok.isAiGenerated` (video posts only) | `aiGenerated` | Buffer API changelog 2026-06-09; `TiktokPostMetadata` reference |
+| X | Buffer | `metadata.twitter.isAiGenerated` (original posts only) | `aiGenerated` | Buffer API changelog 2026-06-09; Buffer support, "Flagging posts as AI-generated" |
+| Facebook | direct (`video_reels`) | none in the Reels publishing parameters | — | Meta Video API, Reels publishing guide (only Page *stories* take `is_ai_generated`) |
+| Threads | direct | none in `POST /{threads-user-id}/threads` | — | Threads API publishing reference |
+| Bluesky | direct | none (self-labels cover adult content only) | — | Bluesky moderation docs |
+
+The labels have not been exercised in a live post yet: the first AI-generated episode is the live test, after the owner's OK. If a platform rejects the field, the job fails `rejected` (no retry) and shows in Activity.

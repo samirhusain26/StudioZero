@@ -158,6 +158,41 @@ if __name__ == '__main__':
     unittest.main()
 
 
+class LabelTests(unittest.TestCase):
+    def payloads(self, ep):
+        video = v2_record(ep) if 'contentId' in ep else None
+        if video is None:
+            from test_ui_schedule import record
+            video = record(1)
+        cfg = config()
+        draft = us.generate(inputs(platforms=ALL), [video], {}, cfg)
+        return {j['platform']: us.manifest_payload(j, video, cfg, 'd' * 64) for j in posts(draft)}
+
+    def test_v1_payloads_are_unchanged(self):
+        out = self.payloads(episode(1))
+        self.assertTrue(all('disclosure' not in p for p in out.values()))
+        self.assertFalse(out['youtube']['metadata']['youtube']['isAiGenerated'])
+        self.assertEqual(out['tiktok']['metadata'], {})
+
+    def test_ai_generated_originals(self):
+        out = self.payloads(originals_v2(1))
+        labels = {p: (v['disclosure']['label'], v['disclosure']['field']) for p, v in out.items()}
+        self.assertEqual({p: l for p, (l, _) in labels.items()}, {
+            'instagram': 'applied', 'facebook': 'not-supported', 'threads': 'not-supported', 'x': 'applied',
+            'youtube': 'not-needed', 'bluesky': 'not-supported', 'tiktok': 'applied'})
+        self.assertEqual(out['tiktok']['metadata'], {'tiktok': {'isAiGenerated': True}})
+        self.assertEqual(out['x']['metadata'], {'twitter': {'isAiGenerated': True}})
+        self.assertFalse(out['youtube']['metadata']['youtube']['isAiGenerated'])  # not realistic: no YouTube label
+        e = originals_v2(2, 'animated-short')
+        e['disclosure'].update(aiKinds=['script', 'video'], realisticSynthetic=True)
+        self.assertTrue(self.payloads(e)['youtube']['metadata']['youtube']['isAiGenerated'])
+
+    def test_no_ai_content_needs_no_label(self):
+        out = self.payloads(scalargame_v2(1))
+        self.assertEqual({v['disclosure']['label'] for v in out.values()}, {'not-needed'})
+        self.assertEqual(out['tiktok']['metadata'], {})
+
+
 class MixTests(unittest.TestCase):
     def videos(self, scalar=6, originals=3):
         return ([v2_record(scalargame_v2(n, ('scalar', 'continuum')[n % 2]), n) for n in range(1, scalar + 1)]

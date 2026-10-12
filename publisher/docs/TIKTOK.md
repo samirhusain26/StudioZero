@@ -26,8 +26,8 @@ documents this hobby project does not have.
   scalargame.com as text.
 - **"Your brand" label** (More options → Ad settings → Disclose commercial content): a choice for a free hobby game,
   not a requirement. Buffer cannot set it; it can be turned on in the app after a post.
-- **AI label**: the music is Gemini-generated; the publisher sends no `isAiGenerated` value (YouTube is the same).
-  To turn it on, add `'tiktok': {'isAiGenerated': True}` metadata in `ui_schedule.manifest_payload`.
+- **AI label**: contract v2 episodes that declare AI content get `metadata.tiktok.isAiGenerated: true` through
+  Buffer (`PLATFORM_MATRIX.md` "AI labels"); v1 episodes declare nothing and get no label.
 - Trending sounds, polls, alt text and TikTok "Promote" are not available through Buffer.
 
 ## Owner steps (Pi, over SSH as scout)

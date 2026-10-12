@@ -64,6 +64,17 @@ COMPANIONS = {
                'reason': 'TikTok has no comment API'},
 }
 
+# AI disclosure labels (contract v2 `disclosure`), verified against the current docs on 2026-10-12
+# (publisher/docs/PLATFORM_MATRIX.md "AI labels"): platform -> (field the publisher sets, disclosure key it follows).
+# YouTube's altered-or-synthetic label is for realistic content only, so it follows realisticSynthetic.
+# Facebook Reels (video_reels), Threads and Bluesky have no AI-label field: the job records "not-supported".
+AI_LABELS = {
+    'instagram': ('is_ai_generated (media container)', 'aiGenerated'),
+    'youtube': ('metadata.youtube.isAiGenerated (Buffer)', 'realisticSynthetic'),
+    'tiktok': ('metadata.tiktok.isAiGenerated (Buffer)', 'aiGenerated'),
+    'x': ('metadata.twitter.isAiGenerated (Buffer)', 'aiGenerated'),
+}
+
 INPUT_KEYS = ('timezone', 'startDate', 'endDate', 'platforms', 'minGapHours', 'staggerMinutes',
               'ordering', 'mix', 'companions', 'edits', 'carryOnly')
 PROJECT = re.compile(r'[a-z][a-z0-9]*')
@@ -836,14 +847,34 @@ def manifest_payload(job, video, config, draft_sha):
     if not base:
         raise ValueError('Media base URL is not configured')
     metadata = {}
+    label = ai_label(video['episode'], job['platform'])
     if job['platform'] == 'instagram':
         metadata = {'instagram': {'type': 'reel', 'shouldShareToFeed': True}}
     elif job['platform'] == 'youtube':
         metadata = {'youtube': {'title': job['youtube']['title'], 'description': job['text'], 'categoryId': '27',
                                 'privacy': 'public', 'madeForKids': False, 'license': 'youtube',
-                                'notifySubscribers': True, 'embeddable': True, 'isAiGenerated': False}}
+                                'notifySubscribers': True, 'embeddable': True,
+                                'isAiGenerated': bool(label and label['label'] == 'applied')}}
+    elif job['platform'] in ('tiktok', 'x') and label and label['label'] == 'applied':
+        metadata = {'tiktok' if job['platform'] == 'tiktok' else 'twitter': {'isAiGenerated': True}}
     return {'episode': episode, 'kind': 'post', 'format': 'self-contained', 'caption': job['text'],
             'link': job['link'], 'previous': None,
             'media': {'url': f"{base.rstrip('/')}/library/{job['videoSha256']}.mp4", 'sha256': job['videoSha256'],
                       'bytes': video['bytes'], 'rightsReviewed': True},
-            'metadata': metadata, 'thread': job['thread'], 'approval': approval}
+            'metadata': metadata, 'thread': job['thread'], 'approval': approval,
+            **({'disclosure': label} if label else {})}
+
+
+def ai_label(episode, platform):
+    """The AI label a v2 post carries on `platform`, recorded in the job payload: label "applied" (the publisher
+    sets `field`), "not-needed" (the disclosure does not call for it) or "not-supported" (no API field).
+    None for v1 episodes: their disclosure is not declared, so nothing changes for them."""
+    disclosure = episode.get('disclosure') if 'contentId' in episode else None
+    if not isinstance(disclosure, dict):
+        return None
+    record = {'aiGenerated': disclosure.get('aiGenerated') is True, 'realisticSynthetic': disclosure.get('realisticSynthetic') is True}
+    route = AI_LABELS.get(platform)
+    if route is None:
+        return {**record, 'label': 'not-supported' if record['aiGenerated'] else 'not-needed', 'field': None}
+    field, key = route
+    return {**record, 'label': 'applied' if record[key] else 'not-needed', 'field': field}
