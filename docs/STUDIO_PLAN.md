@@ -414,9 +414,10 @@ All four Phase 1 follow-ups are done (2026-10-12; §14). Open owner decisions ar
 
 Phase 5 was the last planned phase. What is left is owner decisions, deferred work and watching.
 
+**Owner direction (2026-10-12):** Scalargame marketing videos are the main work. No Originals video is generated until the owner asks; the Originals pipeline stays wired up and tested at $0 (`library/_briefs/2026-10-o01.md` is on hold). ffmpeg 9.0.2 with libass now runs on the Mac (rebuilt from the `homebrew-ffmpeg/ffmpeg` tap formula the owner trusted). When Originals resume: Gemini AI Studio credits were depleted on 2026-10-12, and the Groq fallback model `llama-3.3-70b-versatile` is no longer available to the key (candidate: `openai/gpt-oss-120b`).
+
 **Owner decisions (open)**
-- The first Originals batch: approve `library/_briefs/2026-10-o01.md` (two recaps at about $0.02 each and the existing animated short), each paid run separately.
-- A working ffmpeg on the Mac (recaps cannot render without it): Homebrew's ffmpeg 8.1 is installed but its `libvpx.12.dylib` is missing; `brew reinstall ffmpeg` most likely fixes it.
+- The first Originals batch (on hold): `library/_briefs/2026-10-o01.md` (two recaps at about $0.02 each and the existing animated short), each paid run separately.
 - Mix targets for both projects (`projects/*/project.json` `mix.target`): without them Originals post only after the whole Scalargame backlog; once any project has one, a project without one is not scheduled.
 - Originals budget (`budget.monthlyUsd`, today $0 with per-run approval).
 - Recap attribution wording (shorter texts would let recaps post on X and Bluesky) and CC BY-SA ShareAlike for narration adapted from Wikipedia (brief questions 4–5).
@@ -424,7 +425,7 @@ Phase 5 was the last planned phase. What is left is owner decisions, deferred wo
 - Laptop worker set-up (Tailscale Serve + `scripts/agent-token.py --send-to-pi`); whether job inputs travel through the Pi (§15 proposal B); Safari 26 and phone export checks.
 
 **Deferred / known debt**
-- The real recap renderer (ducking, captions) has never run on this Mac's toolchain; the smoke test uses a stand-in until a full ffmpeg exists (`RealRendererTest` then runs).
+- The real recap renderer now runs in the $0 suite (ffmpeg 9.0.2 with libass); it has not yet rendered real footage.
 - Recap caption style: `PlayResX/Y` are landscape (1920x1080) on a portrait video; check the first real recap's captions in the contact sheet.
 - Series have no narration step (the B3 policy is native audio or silence); a TTS narrator for series is a feature, not a fix.
 - Old projects' LLM and image spend before 2026-10-12 is not in their ledgers (video is backfilled).
