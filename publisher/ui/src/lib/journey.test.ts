@@ -74,7 +74,7 @@ describe('journey: one progress model for the loop', () => {
     const d = dashboardFixture()
     const empty = { ...d, standing: { ...d.standing, lastBatch: null, awaitingReview: 0, openFeedback: 0 } }
     const first = run(empty)
-    expect(first.focus).toMatchObject({ step: 'make', title: 'Make the first batch', action: { label: 'Make a batch →', to: 'library/make' } })
+    expect(first.focus).toMatchObject({ step: 'make', title: 'Make the first batch', action: { label: 'Make a batch →', to: 'studio/make' } })
     expect(states(first)).toEqual({ make: 'current', upload: 'todo', review: 'todo', schedule: 'todo', post: 'blocked', learn: 'todo' })
     expect(first.steps.find((s) => s.id === 'make')?.fact).toBe('No batch from the Mac yet')
 
@@ -92,7 +92,7 @@ describe('journey: one progress model for the loop', () => {
 
   it('Make the next batch when the runway is empty, the batch is stale, or the next batch was started here', () => {
     const empty = run(steady({ nextPosts: [] }))
-    expect(empty.focus).toMatchObject({ step: 'make', title: 'Make the next batch (2026-10-b02)', action: { to: 'library/make' } })
+    expect(empty.focus).toMatchObject({ step: 'make', title: 'Make the next batch (2026-10-b02)', action: { to: 'studio/make' } })
     expect(empty.focus.detail).toMatch(/next 14 days/)
     expect(states(empty)).toMatchObject({ make: 'current', schedule: 'todo' })
     expect(empty.steps.find((s) => s.id === 'schedule')?.fact).toBe('Approved, but nothing in the next 14 days')
@@ -124,7 +124,7 @@ describe('journey: one progress model for the loop', () => {
 
   it('Learn is current with open feedback or a retro newer than the last brief', () => {
     const feedback = run(steady({ openFeedback: 1 }))
-    expect(feedback.focus).toMatchObject({ step: 'learn', title: 'Carry feedback into the next batch', action: { to: 'library/make' } })
+    expect(feedback.focus).toMatchObject({ step: 'learn', title: 'Carry feedback into the next batch', action: { to: 'studio/make' } })
     expect(feedback.focus.detail).toMatch(/^1 open feedback note\./)
     expect(states(feedback)).toMatchObject({ learn: 'current', post: 'done' })
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { emptyMake, MAKE_KEY_PREFIX, makeComplete, pruneMake, readMake, writeMake } from './makeChecklist'
+import { emptyMake, MAKE_KEY_PREFIX, makeComplete, PROJECT_MAKE_PREFIX, pruneMake, readMake, readProjectChecks, writeMake, writeProjectChecks } from './makeChecklist'
 
 function memoryStorage(): Storage {
   const data = new Map<string, string>()
@@ -54,5 +54,19 @@ describe('Make checklist (browser-local, per batch id)', () => {
     }
     expect(() => writeMake(emptyMake('2026-10-b02'), blocked)).not.toThrow()
     expect(readMake('2026-10-b02', null)).toEqual(emptyMake('2026-10-b02'))
+  })
+
+  it('keeps one checklist per other project, for its current batch id only, and is not pruned', () => {
+    const s = memoryStorage()
+    const known = ['rights', 'contract', 'finalize']
+    expect(readProjectChecks('originals', '2026-11-originals-01', known, s)).toEqual([])
+    writeProjectChecks('originals', '2026-11-originals-01', ['contract', 'nope', 'rights'], s)
+    expect(readProjectChecks('originals', '2026-11-originals-01', known, s)).toEqual(['rights', 'contract'])
+    expect(readProjectChecks('originals', '2026-11-originals-02', known, s)).toEqual([])
+    pruneMake('2026-10-b02', s)
+    expect(s.getItem(`${PROJECT_MAKE_PREFIX}originals`)).not.toBeNull()
+    s.setItem(`${PROJECT_MAKE_PREFIX}originals`, '{bad')
+    expect(readProjectChecks('originals', '2026-11-originals-01', known, s)).toEqual([])
+    expect(readProjectChecks('originals', 'x', known, null)).toEqual([])
   })
 })

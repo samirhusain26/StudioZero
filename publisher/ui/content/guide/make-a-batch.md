@@ -2,14 +2,14 @@
 
 Batches are made on the Mac by Claude Code with the `/video-batch` skill. You steer with the brief and approve at each checkpoint; Claude does the rest.
 
-1. Open Terminal and start Claude in the marketing folder (Claude's memory is kept per folder, so always start here):
+1. Open Terminal and start Claude in the StudioZero folder (Claude's memory is kept per folder, so always start here):
 
 ```bash
-cd ~/Personal/code_projects/scalargame/marketing
+cd ~/Personal/code_projects/StudioZero
 claude
 ```
 
-2. Paste the prompt from this Pi's Library › Make a batch ([Next batch](#next-batch)), or type it yourself:
+2. Paste the prompt from this Pi's Studio › Make a batch ([Next batch](#next-batch)), or type it yourself:
 
 ```text
 /video-batch brief 2026-11-b02

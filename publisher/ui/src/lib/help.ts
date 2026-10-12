@@ -22,6 +22,14 @@ export const SCREEN_HELP = {
       'The autopilot schedules and posts approved videos by itself. Pause is in Settings.',
     ],
   },
+  studio: {
+    anchor: 'studio',
+    lines: [
+      'Studio is the Make step for every project: Originals and Scalargame.',
+      'Each project shows its formats, budget, mix and how far its approved schedule reaches.',
+      'Make a batch builds the prompt for Claude from what the engines can make.',
+    ],
+  },
   library: {
     anchor: 'upload-a-batch',
     lines: [
@@ -57,8 +65,8 @@ export const SCREEN_HELP = {
   make: {
     anchor: 'make-a-batch',
     lines: [
-      'Videos are made on the Mac by Claude; this page walks you through it, top to bottom.',
-      'Download feedback.json and copy the prompt, then follow the checkpoints on the Mac.',
+      'Pick the project with the chips; videos are made by Claude, this page walks you through it, top to bottom.',
+      'Choose the mix from the catalog, copy the prompt, then follow the checkpoints on the Mac.',
       'Upload the finalized folder in step 4. After posting, add the retro in step 5.',
     ],
   },

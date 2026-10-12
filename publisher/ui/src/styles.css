@@ -224,7 +224,7 @@ video {
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .nav-link {
@@ -1740,7 +1740,12 @@ progress {
   white-space: nowrap;
 }
 
-.chip-btn[aria-pressed='true'] {
+a.chip-btn {
+  text-decoration: none;
+}
+
+.chip-btn[aria-pressed='true'],
+a.chip-btn[aria-current='page'] {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-text);

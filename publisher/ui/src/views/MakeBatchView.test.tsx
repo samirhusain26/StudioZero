@@ -216,7 +216,7 @@ describe('Make a batch', () => {
       '4Upload ithere on the Pi',
       '5Retro, after postingon the Mac',
     ])
-    expect(screen.getByText('cd ~/Personal/code_projects/scalargame/marketing && claude')).toBeInTheDocument()
+    expect(screen.getByText('cd ~/Personal/code_projects/StudioZero && claude')).toBeInTheDocument()
     expect(screen.getByText('/video-batch retro 2026-10-b01')).toBeInTheDocument()
     expect(document.querySelectorAll('.btn-primary')).toHaveLength(1)
     const list = screen.getByTestId('make-checklist')

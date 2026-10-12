@@ -37,7 +37,7 @@ Each video is at most 24 MB, and uploads are refused below 2 GB free. To free sp
 
 ## Post and account stats
 
-The Pi reads how each post did at 1 h, 24 h, 3 days, 7 days and 30 days after it went out, and logs each account once a day (followers, views, engagements, link clicks). It only reads; it never posts. The numbers show under each post in an episode's review screen and in Library › Make a batch → How the posts did.
+The Pi reads how each post did at 1 h, 24 h, 3 days, 7 days and 30 days after it went out, and logs each account once a day (followers, views, engagements, link clicks). It only reads; it never posts. The numbers show under each post in an episode's review screen and in Studio › Make a batch → How the posts did.
 
 At the top of How the posts did, the **Post stats** panel has the controls:
 

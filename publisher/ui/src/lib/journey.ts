@@ -39,7 +39,7 @@ export type StepState = 'todo' | 'current' | 'done' | 'blocked'
 
 export interface StepAction {
   label: string
-  /** Route path without `#/`, e.g. `library/make` or `settings#activation`. */
+  /** Route path without `#/`, e.g. `studio/make` or `settings#activation`. */
   to: string
 }
 
@@ -104,7 +104,7 @@ function makeFocus(standing: Standing | null | undefined, make: MakeProgress | n
       action: { label: 'Upload in the Library →', to: 'library' },
     }
   }
-  return { step: 'make', title, detail, action: { label: 'Make a batch →', to: 'library/make' } }
+  return { step: 'make', title, detail, action: { label: 'Make a batch →', to: 'studio/make' } }
 }
 
 /** The one current step and its action (priorities above). */
@@ -183,7 +183,7 @@ export function currentFocus({ standing, hasApprovedSchedule, paused, update, ma
       step: 'learn',
       title: 'Carry feedback into the next batch',
       detail: `${standing.openFeedback > 0 ? `${plural(standing.openFeedback, 'open feedback note')}` : 'The last retro is newer than the last brief'}. Use it for the next brief when you are ready.`,
-      action: { label: 'Make a batch →', to: 'library/make' },
+      action: { label: 'Make a batch →', to: 'studio/make' },
     }
   }
   return { step: 'post', title: 'Nothing needs you right now', detail: 'Posts go out on schedule. Check back after the next ones.', action: null }
@@ -256,6 +256,7 @@ export function journey(args: { dashboard: DashboardResponse | null | undefined;
 
 /** Screens and the steps they belong to (first listed = the default when none of them is current). */
 export const SCREEN_STEPS = {
+  studio: ['make'],
   make: ['make', 'learn'],
   library: ['upload', 'review'],
   episode: ['review'],

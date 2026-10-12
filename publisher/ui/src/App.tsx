@@ -8,6 +8,7 @@ import { ScheduleView } from './views/schedule/ScheduleView'
 import { ActivityView } from './views/ActivityView'
 import { SettingsView } from './views/SettingsView'
 import { MakeBatchView } from './views/MakeBatchView'
+import { StudioView } from './views/studio/StudioView'
 import { GuideView } from './views/GuideView'
 import { AppNav } from './components/AppNav'
 import { StepLine } from './components/StepLine'
@@ -104,7 +105,7 @@ export function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signedIn])
 
-  /** Go to a route path such as `library/make` or `settings#activation` (without `#/`). */
+  /** Go to a route path such as `studio/make` or `settings#activation` (without `#/`). */
   const navigate = useCallback((path: string) => {
     if (window.location.hash !== `#/${path}`) window.location.hash = `/${path}`
     else requestAnimationFrame(() => heading.current?.focus())
@@ -167,8 +168,9 @@ export function App() {
           {view === 'library' && episode ? (
             <EpisodeDetailView key={`${episode.episodeId}@${episode.revision}`} episodeId={episode.episodeId} revision={episode.revision} />
           ) : null}
-          {view === 'library' && route.make ? <MakeBatchView /> : null}
-          {view === 'library' && !episode && !route.make ? <LibraryView /> : null}
+          {view === 'studio' && route.make ? <MakeBatchView key={route.project ?? ''} project={route.project} /> : null}
+          {view === 'studio' && !route.make ? <StudioView /> : null}
+          {view === 'library' && !episode ? <LibraryView /> : null}
           {view === 'schedule' ? <ScheduleView queue={Boolean(route.queue)} /> : null}
           {view === 'guide' ? <GuideView anchor={route.anchor} /> : null}
           {view === 'settings' ? <SettingsView onSignOut={signOut} /> : null}

@@ -43,7 +43,7 @@ describe('nextStep (priority order)', () => {
   it('2: no batch at all → make the first batch', () => {
     expect(nextStep({ standing: standing({ lastBatch: null, nextPosts: [] }), hasApprovedSchedule: false, update: null, now })).toMatchObject({
       step: 'make',
-      target: 'library/make',
+      target: 'studio/make',
       title: 'Make the first batch',
     })
   })
@@ -61,10 +61,10 @@ describe('nextStep (priority order)', () => {
     expect(nextStep({ standing: stale, hasApprovedSchedule: true, update: null, now })).toMatchObject({
       step: 'make',
       title: 'Make the next batch (2026-10-b02)',
-      target: 'library/make',
+      target: 'studio/make',
     })
     const far = standing({ nextPosts: [{ at: '2026-11-20T13:00:00Z', platform: 'x', episodeId: 'e' }] })
-    expect(nextStep({ standing: far, hasApprovedSchedule: true, update: null, now }).target).toBe('library/make')
+    expect(nextStep({ standing: far, hasApprovedSchedule: true, update: null, now }).target).toBe('studio/make')
     expect(nextStep({ standing: standing({ nextPosts: [] }), hasApprovedSchedule: true, update: null, now }).detail).toMatch(/next 14 days/)
   })
 

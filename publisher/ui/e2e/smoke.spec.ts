@@ -55,6 +55,19 @@ test.describe('Scalar publishing UI smoke', () => {
     await expect(platforms.getByTestId('platform-row').first().getByRole('img')).toHaveCount(3)
     await checkLayout(page, 'home')
 
+    // Studio: one card per catalog project; Make a batch builds the prompt from the catalog, per project.
+    await open(page, 'Studio')
+    await expect(page.getByTestId('studio-project')).toHaveCount(2)
+    await checkLayout(page, 'studio')
+    await page.getByRole('link', { name: 'Make a Scalargame batch →' }).click()
+    await expect(page.getByRole('heading', { level: 1, name: 'Make a batch' })).toBeVisible()
+    await expect(page.getByTestId('prompt-builder')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Copy prompt for Claude' })).toBeEnabled()
+    await checkLayout(page, 'make')
+    await page.getByRole('group', { name: 'Project' }).getByRole('link', { name: 'Originals' }).click()
+    await expect(page.getByText(/cannot be uploaded yet/)).toBeVisible()
+    await checkLayout(page, 'make originals')
+
     // Library: chips instead of selects; one tap on a card opens its review screen with a playable video.
     await open(page, 'Library')
     await expect(page.getByRole('group', { name: 'Show' }).getByRole('button', { name: /^To review/ })).toHaveAttribute('aria-pressed', 'true')
@@ -83,7 +96,7 @@ test.describe('Scalar publishing UI smoke', () => {
 
     // Make a batch: the Mac step shown as numbered steps with a local checklist.
     await page.goto('/#/next-batch')
-    await expect(page).toHaveURL(/#\/library\/make$/)
+    await expect(page).toHaveURL(/#\/studio\/make$/)
     await expect(page.getByRole('heading', { level: 1, name: 'Make a batch' })).toBeVisible()
     await expect(page.getByTestId('make-checklist').getByRole('checkbox')).toHaveCount(5)
     await checkLayout(page, 'make a batch')

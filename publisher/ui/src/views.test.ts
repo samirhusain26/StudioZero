@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { episodeHash, guideHash, routeFromHash, screenOf, VIEWS, viewFromHash } from './views'
 
 describe('hash routes', () => {
-  it('has the five sections in tab order', () => {
-    expect(VIEWS.map((v) => v.label)).toEqual(['Home', 'Library', 'Schedule', 'Activity', 'Settings'])
+  it('has the six sections in tab order', () => {
+    expect(VIEWS.map((v) => v.label)).toEqual(['Home', 'Studio', 'Library', 'Schedule', 'Activity', 'Settings'])
   })
 
   it('parses section hashes, defaulting to Home', () => {
@@ -19,16 +19,22 @@ describe('hash routes', () => {
     expect(routeFromHash('#/dashboard')).toEqual({ view: 'home', redirect: '#/home' })
     expect(routeFromHash('#/history')).toEqual({ view: 'activity', tab: 'posts', redirect: '#/activity?tab=posts' })
     expect(routeFromHash('#/activation')).toEqual({ view: 'settings', section: 'activation', redirect: '#/settings#activation' })
-    expect(routeFromHash('#/next-batch')).toEqual({ view: 'library', make: true, redirect: '#/library/make' })
+    expect(routeFromHash('#/next-batch')).toEqual({ view: 'studio', make: true, redirect: '#/studio/make' })
+    expect(routeFromHash('#/library/make')).toEqual({ view: 'studio', make: true, redirect: '#/studio/make' })
     // The redirect targets parse to the same routes without a further redirect.
-    for (const old of ['#/dashboard', '#/history', '#/activation', '#/next-batch']) {
+    for (const old of ['#/dashboard', '#/history', '#/activation', '#/next-batch', '#/library/make']) {
       const { redirect, ...route } = routeFromHash(old)
       expect(routeFromHash(redirect ?? '')).toEqual(route)
     }
   })
 
   it('parses sub-routes: make, activity posts tab, settings sections', () => {
-    expect(routeFromHash('#/library/make')).toEqual({ view: 'library', make: true })
+    expect(routeFromHash('#/studio/make')).toEqual({ view: 'studio', make: true })
+    expect(routeFromHash('#/studio/make?project=originals')).toEqual({ view: 'studio', make: true, project: 'originals' })
+    expect(routeFromHash('#/studio/make?project=Bad<x>')).toEqual({ view: 'studio', make: true })
+    expect(routeFromHash('#/studio')).toEqual({ view: 'studio' })
+    expect(routeFromHash('#/studio/nope')).toEqual({ view: 'studio' })
+    expect(screenOf(routeFromHash('#/studio'))).toBe('studio')
     expect(routeFromHash('#/schedule/queue')).toEqual({ view: 'schedule', queue: true })
     expect(screenOf(routeFromHash('#/schedule/queue'))).toBe('queue')
     expect(routeFromHash('#/activity?tab=posts')).toEqual({ view: 'activity', tab: 'posts' })
@@ -38,7 +44,7 @@ describe('hash routes', () => {
     expect(routeFromHash('#/settings#update')).toEqual({ view: 'settings', section: 'update' })
     expect(routeFromHash('#/settings#Bad<x>')).toEqual({ view: 'settings' })
     expect(routeFromHash('#/home#platforms')).toEqual({ view: 'home', section: 'platforms' })
-    expect(screenOf(routeFromHash('#/library/make'))).toBe('make')
+    expect(screenOf(routeFromHash('#/studio/make'))).toBe('make')
     expect(screenOf(routeFromHash(episodeHash('a', 1)))).toBe('episode')
     expect(screenOf(routeFromHash('#/settings#update'))).toBe('settings')
   })

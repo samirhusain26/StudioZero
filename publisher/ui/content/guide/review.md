@@ -20,7 +20,7 @@ For each episode:
 
 ## Feedback
 
-Feedback is a few quick tags plus an optional note (up to 2,000 characters) on one episode revision. Press Feedback on the review screen. It feeds the next batch through Library › Make a batch ([Next batch](#next-batch)).
+Feedback is a few quick tags plus an optional note (up to 2,000 characters) on one episode revision. Press Feedback on the review screen. It feeds the next batch through Studio › Make a batch ([Next batch](#next-batch)).
 
 | Tag | Use it when |
 |---|---|

@@ -1,8 +1,12 @@
 import { isActivityTab, type ActivityTab } from './lib/activityFilters'
 
-/** The five sections (docs/PI_UI_REDESIGN_PLAN.md §2), in tab-bar / sidebar order. Icons are plain text glyphs. */
+/**
+ * The six sections (docs/PI_UI_REDESIGN_PLAN.md §2; Studio added by docs/STUDIO_PLAN.md §1 decision 5), in tab-bar /
+ * sidebar order. Icons are plain text glyphs.
+ */
 export const VIEWS = [
   { id: 'home', label: 'Home', icon: '⌂' },
+  { id: 'studio', label: 'Studio', icon: '✎' },
   { id: 'library', label: 'Library', icon: '▣' },
   { id: 'schedule', label: 'Schedule', icon: '▦' },
   { id: 'activity', label: 'Activity', icon: '≡' },
@@ -12,14 +16,17 @@ export const VIEWS = [
 export type ViewId = (typeof VIEWS)[number]['id']
 
 /**
- * A parsed hash route. Sub-routes: `#/library/make`, `#/library/episode/<episodeId>/<revision>`, `#/schedule/queue`,
+ * A parsed hash route. Sub-routes: `#/studio/make[?project=<id>]`, `#/library/episode/<episodeId>/<revision>`, `#/schedule/queue`,
  * `#/activity?tab=<posts|uploads|approvals|system>`, `#/settings#<section>`, `#/home#platforms` and `#/guide/<anchor>` (the guide is opened from the help icon,
- * not a tab). `redirect` is set for an old hash (`#/dashboard`, `#/history`, `#/activation`, `#/next-batch`):
+ * not a tab). `redirect` is set for an old hash (`#/dashboard`, `#/history`, `#/activation`, `#/next-batch`, `#/library/make`):
  * the address bar is replaced with it.
  */
 export interface Route {
   view: ViewId | 'guide'
+  /** Studio › Make a batch. */
   make?: true
+  /** Studio › Make a batch for one catalog project (default: the page's own choice). */
+  project?: string
   queue?: true
   episode?: { episodeId: string; revision: number }
   tab?: Exclude<ActivityTab, 'all'>
@@ -29,12 +36,13 @@ export interface Route {
 }
 
 const ANCHOR = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const PROJECT = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 const OLD: Record<string, { route: Route; hash: string }> = {
   dashboard: { route: { view: 'home' }, hash: '#/home' },
   history: { route: { view: 'activity', tab: 'posts' }, hash: '#/activity?tab=posts' },
   activation: { route: { view: 'settings', section: 'activation' }, hash: '#/settings#activation' },
-  'next-batch': { route: { view: 'library', make: true }, hash: '#/library/make' },
+  'next-batch': { route: { view: 'studio', make: true }, hash: '#/studio/make' },
 }
 
 function isView(id: string): id is ViewId {
@@ -58,8 +66,15 @@ export function routeFromHash(hash: string): Route {
   const [first = '', ...rest] = path.split('/')
   const old = OLD[first]
   if (old && rest.length === 0) return { ...old.route, redirect: old.hash }
+  if (first === 'studio') {
+    if (rest.length === 1 && rest[0] === 'make') {
+      const project = new URLSearchParams(query).get('project') ?? ''
+      return PROJECT.test(project) && project.length <= 40 ? { view: 'studio', make: true, project } : { view: 'studio', make: true }
+    }
+    return { view: 'studio' }
+  }
   if (first === 'library') {
-    if (rest.length === 1 && rest[0] === 'make') return { view: 'library', make: true }
+    if (rest.length === 1 && rest[0] === 'make') return { view: 'studio', make: true, redirect: '#/studio/make' }
     if (rest[0] === 'episode' && rest.length === 3) {
       const episodeId = decode(rest[1] ?? '')
       const revision = rest[2] ?? ''
@@ -90,16 +105,18 @@ export function guideHash(anchor: string): string {
 }
 
 /** The screen a route shows, for titles, the step line and the help icon. */
-export type Screen = 'home' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
+export type Screen = 'home' | 'studio' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
 
 export function screenOf(route: Route): Screen {
-  if (route.view === 'library') return route.episode ? 'episode' : route.make ? 'make' : 'library'
+  if (route.view === 'studio') return route.make ? 'make' : 'studio'
+  if (route.view === 'library') return route.episode ? 'episode' : 'library'
   if (route.view === 'schedule' && route.queue) return 'queue'
   return route.view
 }
 
 export const SCREEN_TITLES: Record<Screen, string> = {
   home: 'Home',
+  studio: 'Studio',
   library: 'Library',
   make: 'Make a batch',
   episode: 'Episode',

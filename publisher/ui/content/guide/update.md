@@ -16,7 +16,7 @@ Once only, before Update can work, the Pi's code must become a git checkout with
 1. On the Mac, copy the repo's `publisher/` and `contract/` folders to a staging folder on the Pi:
 
 ```bash
-cd ~/Personal/code_projects/scalargame/marketing
+cd ~/Personal/code_projects/StudioZero
 COPYFILE_DISABLE=1 tar --no-xattrs -czf - --exclude node_modules --exclude dist publisher contract | ssh scalar-pi 'mkdir -p ~/.scalar-social-staging/git-bootstrap && tar -xzf - -C ~/.scalar-social-staging/git-bootstrap'
 ```
 

@@ -1,4 +1,4 @@
-import { useId, useMemo, useState, type ReactNode } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { api } from '../api/client'
 import type { Catalog, NextBatchInfo } from '../api/types'
 import { CopyBlock } from '../components/CopyBlock'
@@ -21,6 +21,7 @@ import {
   groupFeedback,
   tagLabel,
 } from '../lib/nextBatch'
+import { projectsInOrder } from '../lib/catalog'
 import { accountRow, metricsSummary } from '../lib/postMetrics'
 import { buildPlanBrief, buildPlanPrompt, defaultPlan, planProblems, type BatchPlan } from '../lib/promptBuilder'
 import { copyText, saveTextFile } from '../lib/saveFile'
@@ -30,34 +31,60 @@ import { AddBatchFlow } from './library/AddBatchFlow'
 import { BatchNotesPanel } from './library/BatchNotesPanel'
 import { FunnelTable } from './library/FunnelTable'
 import { PostStatsPanel } from './library/PostStatsPanel'
+import { MakeStep as Step } from '../components/MakeStep'
+import { PlanMakeContent } from './studio/PlanMakeContent'
 import { PromptBuilderForm } from './studio/PromptBuilderForm'
 
-const MAC_FOLDER = 'cd ~/Personal/code_projects/scalargame/marketing && claude'
+const MAC_FOLDER = 'cd ~/Personal/code_projects/StudioZero && claude'
 
 /**
- * Library › Make a batch (docs/PI_UI_REDESIGN_PLAN.md §4.7): the Mac step, shown in the UI. Steps 1, 2 and 4 are
- * live on the Pi; step 3 is numbered instructions with a browser-local checklist; step 5 is the retro.
+ * Studio › Make a batch, per catalog project. Scalargame (docs/PI_UI_REDESIGN_PLAN.md §4.7): the Mac step, shown in
+ * the UI; steps 1, 2 and 4 are live on the Pi, step 3 is numbered instructions with a browser-local checklist, step 5
+ * is the retro. Projects without games (Originals): PlanMakeContent.
  */
-export function MakeBatchView() {
-  const next = useApi(api.nextBatch)
+export function MakeBatchView({ project }: { project?: string | undefined }) {
   const catalog = useApi(api.catalog)
+  const projects = catalog.data ? projectsInOrder(catalog.data) : []
+  const chosen = projects.find((p) => p.id === project) ?? projects.find((p) => p.games?.length) ?? projects[0]
+  return (
+    <div className="stack-lg">
+      <p className="review-nav">
+        <a href="#/studio">← Studio</a>
+      </p>
+      <ScreenHelp id="make" />
+      <ErrorNotice error={catalog.error} title="Studio catalog unavailable" />
+      {catalog.data && chosen ? (
+        <>
+          <div className="chip-row" role="group" aria-label="Project">
+            {projects.map((p) => (
+              <a key={p.id} className="chip-btn" href={`#/studio/make?project=${encodeURIComponent(p.id)}`} aria-current={p.id === chosen.id ? 'page' : undefined}>
+                {p.name}
+              </a>
+            ))}
+          </div>
+          {chosen.games?.length ? <ScalargameMake catalog={catalog.data} /> : <PlanMakeContent key={chosen.id} catalog={catalog.data} project={chosen} />}
+        </>
+      ) : catalog.loading ? (
+        <Loading />
+      ) : null}
+    </div>
+  )
+}
+
+function ScalargameMake({ catalog }: { catalog: Catalog }) {
+  const next = useApi(api.nextBatch)
   // Only for fromCommit in feedback.json; a failure here is not shown.
   const update = useApi(() => api.updateStatus())
   const { dashboard, reload } = useJourney()
   const lastBatchId = dashboard?.standing?.lastBatch?.batchId ?? null
   return (
-    <div className="stack-lg">
-      <p className="review-nav">
-        <a href="#/library">← Library</a>
-      </p>
-      <ScreenHelp id="make" />
+    <>
       <ErrorNotice error={next.error} title="Next batch unavailable" />
-      <ErrorNotice error={catalog.error} title="Studio catalog unavailable" />
-      {next.data && catalog.data ? (
+      {next.data ? (
         <MakeBatchContent
           key={next.data.nextBatchId}
           info={next.data}
-          catalog={catalog.data}
+          catalog={catalog}
           fromCommit={update.data?.runningCommit ?? null}
           lastBatchId={lastBatchId}
           onChanged={() => {
@@ -65,28 +92,13 @@ export function MakeBatchView() {
             reload()
           }}
         />
-      ) : next.loading || catalog.loading ? (
+      ) : next.loading ? (
         <Loading />
       ) : null}
-    </div>
+    </>
   )
 }
 
-function Step({ n, title, where, children, testId }: { n: number; title: string; where: 'Pi' | 'Mac'; children: ReactNode; testId?: string }) {
-  const id = useId()
-  return (
-    <section className="card stack" aria-labelledby={id} data-testid={testId}>
-      <h2 id={id} className="make-step-title">
-        <span className="loop-num" aria-hidden="true">
-          {n}
-        </span>
-        {title}
-        <span className={`where where-${where.toLowerCase()}`}>{where === 'Mac' ? 'on the Mac' : 'here on the Pi'}</span>
-      </h2>
-      {children}
-    </section>
-  )
-}
 
 export function MakeBatchContent({
   info,
@@ -145,7 +157,7 @@ export function MakeBatchContent({
     const doc = buildFeedbackExport({ info, brief, fromCommit, exportedAt: new Date() })
     saveTextFile(fileName, feedbackJson(doc))
     started()
-    setStatus(`Saved ${fileName}. On the Mac, put it in marketing/library/_inbox/.`)
+    setStatus(`Saved ${fileName}. On the Mac, put it in library/_inbox/ in the StudioZero folder.`)
   }
   const markUsed = async () => {
     setBusy(true)
@@ -341,7 +353,7 @@ export function MakeBatchContent({
               </button>
             </div>
             <p className="hint">
-              On the Mac, put it in <code>marketing/library/_inbox/</code> (not in git; it may name answers).
+              On the Mac, put it in <code>library/_inbox/</code> in the StudioZero folder (not in git; it may name answers).
             </p>
           </Step>
 
@@ -410,7 +422,7 @@ export function MakeBatchContent({
           <Step n={3} title="Let Claude make it" where="Mac" testId="make-checklist">
             <ol className="steps">
               <li>
-                Open Terminal and start Claude in the marketing folder:
+                Open Terminal and start Claude in the StudioZero folder:
                 <CopyBlock label="On the Mac" code={MAC_FOLDER} />
               </li>
               <li>

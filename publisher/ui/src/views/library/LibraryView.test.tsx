@@ -39,7 +39,7 @@ describe('Library list', () => {
     const data = libraryFixture()
     const { rerender } = render(<LibraryBrowser data={{ ...data, episodes: [] }} onChanged={vi.fn()} />)
     expect(screen.getByText(/Nothing to review yet/)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Make a batch →' })).toHaveAttribute('href', '#/library/make')
+    expect(screen.getByRole('link', { name: 'Make a batch →' })).toHaveAttribute('href', '#/studio/make')
     rerender(<LibraryBrowser data={{ ...data, episodes: data.episodes.filter((e) => e.status === 'approved') }} onChanged={vi.fn()} />)
     expect(screen.getByText(/Nothing to review\. 1 approved: they are ready for the Schedule\./)).toBeInTheDocument()
   })

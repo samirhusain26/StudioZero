@@ -3,8 +3,8 @@
 Do this from the Mac's browser (Tailscale on), once the batch is finalized.
 
 1. Open the Pi UI (the Pi's Tailscale Serve address, `https://<pi>.<tailnet>.ts.net`) and sign in with your passcode. The browser remembers the sign-in for up to 90 days; sign out revokes that browser session.
-2. Library (or step 4 of Library › Make a batch).
-3. Drop the whole folder `scalargame/marketing/library/<batchId>/` anywhere on the Library page, or choose it. The page lists what it expects.
+2. Library (or step 4 of Studio › Make a batch).
+3. Drop the whole folder `StudioZero/library/<batchId>/` anywhere on the Library page, or choose it. The page lists what it expects.
 4. Press Upload batch.
 
 What happens: the browser checks `READY_FOR_UPLOAD` against `batch.json`, sends `batch.json`, then each listed video and cover in its own request. Each file is hashed while it streams and matched to `batch.json`. The `review/` folder is never sent. Files already on the Pi are skipped. Every video is measured again on the Pi; a platform it does not suit is switched off for that video, with the reason.
@@ -23,7 +23,7 @@ Nothing is approved by uploading. Next: [Review episodes](#review-episodes).
 
 ## Batch notes
 
-Each batch can carry two notes: its brief (`library/_briefs/<batchId>.md`) and its retro (`library/_retros/<batchId>.md`). Add them in step 5 of Library › Make a batch after uploading. Each note is plain text up to 64 KB. Notes may name answers, so they stay behind the spoiler toggle, and they are never published. Make a batch ([Next batch](#next-batch)) shows the latest brief and retro so the next batch can build on them.
+Each batch can carry two notes: its brief (`library/_briefs/<batchId>.md`) and its retro (`library/_retros/<batchId>.md`). Add them in step 5 of Studio › Make a batch after uploading. Each note is plain text up to 64 KB. Notes may name answers, so they stay behind the spoiler toggle, and they are never published. Make a batch ([Next batch](#next-batch)) shows the latest brief and retro so the next batch can build on them.
 
 ## Failed upload
 

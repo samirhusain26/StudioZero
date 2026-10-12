@@ -2,22 +2,22 @@
 
 Scalargame's social videos are short quiz clips. They are made in batches on the Mac, checked by you, uploaded to this Pi, approved here, and posted by the Pi on a schedule you approve. Only videos you approved are ever posted. After the one-time activation the [autopilot](#autopilot) schedules and publishes them by itself; Settings › Pause publishing stops everything.
 
-The loop, start to finish. The Pi UI uses the same six steps everywhere (Home shows where you are): **Make → Upload → Review → Schedule → Post → Learn**, then the next batch.
+The Pi UI has six sections: Home, **[Studio](#studio)** (making batches for every project), Library, Schedule, Activity and Settings. The loop, start to finish. The Pi UI uses the same six steps everywhere (Home shows where you are): **Make → Upload → Review → Schedule → Post → Learn**, then the next batch.
 
-1. **Make a batch on the Mac.** Open Claude Code in `scalargame/marketing` and run `/video-batch brief <batchId>` (or paste the prompt from Library › [Make a batch](#next-batch)). Claude writes and checks the questions, renders the videos and stops at each [checkpoint](#checkpoints) for your OK. See [Make a batch](#make-a-batch).
+1. **Make a batch on the Mac.** Open Claude Code in `StudioZero` and run `/video-batch brief <batchId>` (or paste the prompt from Studio › [Make a batch](#next-batch)). Claude writes and checks the questions, renders the videos and stops at each [checkpoint](#checkpoints) for your OK. See [Make a batch](#make-a-batch).
 2. **Finalize.** After your approval Claude runs `finalize`, which writes `READY_FOR_UPLOAD`. The batch folder is now frozen. See [Finalize](#finalize).
-3. **Upload.** Here: Library → drop (or choose) the folder `scalargame/marketing/library/<batchId>/` → Upload batch. Add the brief and retro as [Batch notes](#batch-notes). See [Upload a batch](#upload-a-batch).
+3. **Upload.** Here: Library → drop (or choose) the folder `StudioZero/library/<batchId>/` → Upload batch. Add the brief and retro as [Batch notes](#batch-notes). See [Upload a batch](#upload-a-batch).
 4. **Review and approve content.** Watch each episode, leave [feedback](#feedback), approve the ones that are ready. See [Review episodes](#review-episodes).
 5. **Schedule.** The [autopilot](#autopilot) adds a 21-day draft and approves it whenever fewer than 7 days are left. To change the plan, generate a draft yourself, check it and approve it. See [Schedule](#schedule).
 6. **Post.** Publishing follows the approved schedule by itself (the one-time [activation](#activation) was done on 2026-10-09). Pause in Settings stops it.
-7. **Learn.** Your feedback and the last retro become the next brief: Library › Make a batch → Download feedback.json into `library/_inbox/` on the Mac, then Copy prompt for Claude. See [Next batch](#next-batch).
+7. **Learn.** Your feedback and the last retro become the next brief: Studio › Make a batch → Download feedback.json into `library/_inbox/` on the Mac, then Copy prompt for Claude. See [Next batch](#next-batch).
 8. **Keep the Pi up to date.** After Claude's code changes are pushed to GitHub: Settings › Update. See [Update the Pi](#update-the-pi).
 
 Home's loop card always shows the one next step, and every screen says which step it is ("Step 3 of 6 · Review"). The ? in the header opens this guide at the section for the screen you are on.
 
 ## Where things live
 
-On the Mac (repo `~/Personal/code_projects/scalargame/marketing`, its own git repo inside the game folder):
+On the Mac (repo `~/Personal/code_projects/StudioZero`, the studio repo next to the game folder):
 
 | Path | What |
 |---|---|

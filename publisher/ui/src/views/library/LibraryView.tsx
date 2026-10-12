@@ -85,7 +85,7 @@ export function LibraryView() {
       <ScreenHelp id="library" />
       <div className="actions">
         {/* Primary only when there is nothing to review: then making the next batch is the way forward. */}
-        <a className={`btn${data && toReview === 0 ? ' btn-primary' : ''}`} href="#/library/make">
+        <a className={`btn${data && toReview === 0 ? ' btn-primary' : ''}`} href="#/studio/make">
           + Make a batch
         </a>
       </div>
@@ -162,14 +162,14 @@ export function LibraryBrowser({ data, onChanged }: { data: LibraryResponse; onC
       {actions.status}
       {data.episodes.length === 0 ? (
         <p>
-          Nothing to review yet. <a href="#/library/make">Make a batch →</a>
+          Nothing to review yet. <a href="#/studio/make">Make a batch →</a>
         </p>
       ) : shown.length === 0 ? (
         state.filter === 'review' ? (
           <p>
             Nothing to review{state.batchId ? ' in this batch' : ''}.{' '}
             {counts.approved ? `${counts.approved} approved: they are ready for the Schedule. ` : ''}
-            <a href="#/library/make">Make a batch →</a>
+            <a href="#/studio/make">Make a batch →</a>
           </p>
         ) : (
           <p>Nothing here. Pick another chip above.</p>

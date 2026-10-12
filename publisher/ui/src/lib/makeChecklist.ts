@@ -110,3 +110,28 @@ export function pruneMake(nextBatchId: string, storage: Storage | null = safeLoc
 export function makeComplete(progress: MakeProgress | null | undefined): boolean {
   return Boolean(progress?.checks.includes('finalize'))
 }
+
+/**
+ * Projects other than Scalargame (whose batch ids are not bNN): one browser-local checklist per project, for its
+ * current batch id only. Checks come from the project's catalog checks plus `finalize`.
+ */
+export const PROJECT_MAKE_PREFIX = 'studio-make-'
+
+export function readProjectChecks(project: string, batchId: string, known: readonly string[], storage: Storage | null = safeLocal()): string[] {
+  try {
+    const raw = storage?.getItem(PROJECT_MAKE_PREFIX + project)
+    const data = raw ? (JSON.parse(raw) as { batchId?: unknown; checks?: unknown }) : null
+    if (!data || data.batchId !== batchId || !Array.isArray(data.checks)) return []
+    return known.filter((k) => (data.checks as unknown[]).includes(k))
+  } catch {
+    return []
+  }
+}
+
+export function writeProjectChecks(project: string, batchId: string, checks: readonly string[], storage: Storage | null = safeLocal()): void {
+  try {
+    storage?.setItem(PROJECT_MAKE_PREFIX + project, JSON.stringify({ batchId, checks }))
+  } catch {
+    // Storage blocked: the checklist only lasts while this page stays open.
+  }
+}

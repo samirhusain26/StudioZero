@@ -15,10 +15,10 @@ test.describe('Keyboard', () => {
     await page.getByRole('button', { name: 'Sign in' }).click()
     await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible()
 
-    // The five sections are links in visual order, each reachable with Tab.
+    // The six sections are links in visual order, each reachable with Tab.
     const nav = page.getByRole('navigation', { name: 'Sections' })
     const labels = await nav.getByRole('link').allTextContents()
-    expect(labels.map((l) => l.replace(/^\W+/, ''))).toEqual(['Home', 'Library', 'Schedule', 'Activity', 'Settings'])
+    expect(labels.map((l) => l.replace(/^\W+/, ''))).toEqual(['Home', 'Studio', 'Library', 'Schedule', 'Activity', 'Settings'])
     await nav.getByRole('link', { name: 'Library', exact: true }).focus()
     await page.keyboard.press('Enter')
     await expect(page.getByRole('heading', { level: 1, name: 'Library' })).toBeFocused()

@@ -177,7 +177,7 @@ function TimersBlock({ data }: { data: DashboardResponse }) {
   )
 }
 
-/** Hourly post stats reads (GET /api/metrics/status): state only; the controls live in Library › Make a batch. */
+/** Hourly post stats reads (GET /api/metrics/status): state only; the controls live in Studio › Make a batch. */
 export function PostStatsSystem({ zone }: { zone: string }) {
   const { data, error } = useApi(api.getMetricsStatus)
   const run = data?.lastRun ?? null
@@ -218,7 +218,7 @@ export function PostStatsSystem({ zone }: { zone: string }) {
           </dl>
         ) : null}
         <p className="hint">
-          Switch hourly reads and ask for a read in <a href="#/library/make">Library › Make a batch</a>, under How the posts did.
+          Switch hourly reads and ask for a read in <a href="#/studio/make">Studio › Make a batch</a>, under How the posts did.
         </p>
       </section>
     </details>

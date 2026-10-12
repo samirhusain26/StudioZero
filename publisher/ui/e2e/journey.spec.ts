@@ -22,8 +22,8 @@ test.describe('First-time owner journey', () => {
     await expect(loop.getByTestId('next-step')).toContainText(/^Step [1-6] · /)
 
     // Make: the Mac step is shown as numbered steps; the prompt and the checklist live here.
-    await page.getByRole('navigation', { name: 'Sections' }).getByRole('link', { name: 'Library', exact: true }).click()
-    await page.getByRole('link', { name: '+ Make a batch' }).click()
+    await page.getByRole('navigation', { name: 'Sections' }).getByRole('link', { name: 'Studio', exact: true }).click()
+    await page.getByRole('link', { name: 'Make a Scalargame batch →' }).click()
     await expect(page.getByRole('heading', { level: 1, name: 'Make a batch' })).toBeVisible()
     await expect(page.getByRole('heading', { level: 2, name: /Let Claude make it.*on the Mac/ })).toBeVisible()
     for (const name of [/Checkpoint 0/, /Checkpoint 1/, /Checkpoint 3/, /Finalize/]) await page.getByRole('checkbox', { name }).check()

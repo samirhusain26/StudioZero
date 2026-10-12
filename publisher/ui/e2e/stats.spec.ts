@@ -16,7 +16,7 @@ test.describe('Post stats controls', () => {
     await page.getByRole('button', { name: 'Sign in' }).click()
     await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible()
 
-    await page.goto('/#/library/make')
+    await page.goto('/#/studio/make')
     await expect(page.getByRole('heading', { level: 1, name: 'Make a batch' })).toBeVisible()
     await page.getByText('How the posts did', { exact: true }).click()
     const panel = page.getByTestId('post-stats')

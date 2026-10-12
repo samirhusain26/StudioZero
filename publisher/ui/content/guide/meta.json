@@ -1,7 +1,8 @@
 {
-  "updated": "2026-10-09",
+  "updated": "2026-10-12",
   "order": [
     "overview",
+    "studio",
     "make-a-batch",
     "upload",
     "review",
@@ -14,6 +15,7 @@
   ],
   "screens": {
     "home": "how-it-works",
+    "studio": "studio",
     "library": "upload-a-batch",
     "make": "next-batch",
     "episode": "review-episodes",
