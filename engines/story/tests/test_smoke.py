@@ -293,7 +293,9 @@ class FakeVideoProviders:
             self.refused_once = True
             raise ConnectionRefusedError("refused (fake)")
         if scene == 5 and model in ("kling-2.5-turbo-pro", "wan-2.5"):
-            raise RuntimeError("422 request rejected (fake)")
+            error = RuntimeError("422 request rejected (fake)")
+            error.status_code = 422
+            raise error
         self.submits.append((model, scene))
         request_id = f"req-{len(self.submits)}"
         self.jobs[request_id] = (model, scene)

@@ -1,7 +1,7 @@
 // node --test tools/tests/*.test.mjs — staging story renders into an Originals batch (tools/stage-story.mjs).
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync} from 'node:fs';
+import {mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, symlinkSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
@@ -81,4 +81,18 @@ test('refuses unknown licences, finalized batches and misnamed folders', () => {
   writeFileSync(resolve(done, 'READY_FOR_UPLOAD'), '');
   assert.throws(() => stage({batchId: '2026-11-o04', batchDir: done, folders: [render(resolve(root, 'f'))], library: lib}), /finalized/);
   assert.throws(() => stage({batchId: '2026-11-o05', batchDir: resolve(lib, 'elsewhere'), folders: [], library: lib}), /must be named/);
+  for (const number of ['abc', '-1', '0', '10000'])
+    assert.throws(() => stage({batchId: '2026-11-o06', batchDir: resolve(lib, '2026-11-o06'), folders: [render(resolve(root, `n${number}`))], number, library: lib}), /--number/);
+});
+
+test('render files must stay inside the render folder', () => {
+  const {root, lib} = library();
+  const dir = render(resolve(root, 'esc'));
+  const doc = JSON.parse(readFileSync(resolve(dir, 'render.json'), 'utf8'));
+  writeFileSync(resolve(root, 'secret.txt'), 'not a script');
+  writeFileSync(resolve(dir, 'render.json'), JSON.stringify({...doc, job: {...doc.job, script: '../secret.txt'}}));
+  assert.throws(() => stage({batchId: '2026-11-o07', batchDir: resolve(lib, '2026-11-o07'), folders: [dir], library: lib}), /job.script/);
+  symlinkSync(resolve(root, 'secret.txt'), resolve(dir, 'link.json'));
+  writeFileSync(resolve(dir, 'render.json'), JSON.stringify({...doc, job: {...doc.job, script: 'link.json'}}));
+  assert.throws(() => stage({batchId: '2026-11-o08', batchDir: resolve(lib, '2026-11-o08'), folders: [dir], library: lib}), /outside the render folder/);
 });

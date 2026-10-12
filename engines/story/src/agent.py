@@ -41,6 +41,7 @@ from src.budget_guard import SpendLedger
 from src.config import Config
 from src.project_manager import Project, create_project, delete_project, get_project, get_project_dir, list_projects, update_project
 from src import estimates
+from src.pricing import charging
 from src.estimates import SHOTS_PER_EPISODE
 from src.video_models import available_models, clip_duration, estimate_episode_cost, get_model
 
@@ -608,6 +609,9 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
 
     @app.put("/studio/settings")
     def save_settings(body: SettingsBody, _: None = Depends(auth)) -> dict:
+        if state["busy"].locked():
+            # A run uses the models and budget its confirmed estimate was made with
+            raise HTTPException(409, "A run is in progress; change settings after it stops.")
         if body.llm_model and body.llm_model not in LLM_MODELS or body.image_model and body.image_model not in IMAGE_MODELS \
                 or body.tts_model and body.tts_model not in TTS_MODELS:
             raise HTTPException(422, "Unknown model.")
@@ -641,7 +645,8 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
             raise HTTPException(403, "Paid calls are switched off on this worker.")
         if body.confirm is None or body.confirm.token != "idea-llm-call" or body.confirm.estimateUsd != 0:
             raise HTTPException(428, "Confirm the Gemini call first (one short LLM request, unpriced).")
-        return state["runner"].random_idea()
+        with charging(None):  # never charged to a project that happens to be running (well under a cent)
+            return state["runner"].random_idea()
 
     @app.exception_handler(HTTPException)
     def errors(_request: Request, exc: HTTPException) -> JSONResponse:

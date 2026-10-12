@@ -348,7 +348,8 @@ def stage_package_validate(render_folder, batch_root, batch_id: str, number: int
     """
     import json
     batch_dir = Path(batch_root) / batch_id
-    staged = run_node("tools/stage-story.mjs", f"--batch={batch_id}", f"--dir={batch_dir}", f"--number={number}", str(render_folder))
+    staged = run_node("tools/stage-story.mjs", f"--batch={batch_id}", f"--dir={batch_dir}", f"--number={number}",
+                      f"--library={batch_root}", str(render_folder))
     out = {"stage": staged, "batchDir": batch_dir, "package": None, "batch": None}
     if staged.returncode != 0:
         return out

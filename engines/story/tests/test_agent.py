@@ -318,6 +318,19 @@ class SettingsTests(AgentTestCase):
         Path(smoke_support.os.environ["STORY_SETTINGS_FILE"]).unlink()
         Config.reload_settings()
 
+    def test_settings_are_locked_while_a_run_is_in_progress(self):
+        pid = self.series()
+        self.assertEqual(self.confirmed_run(pid).status_code, 200)
+        self.assertTrue(self.runner.started.wait(5))
+        r = self.call("PUT", "/studio/settings", json={"active_model": "veo-3.1", "max_budget": 900})
+        self.assertEqual(r.status_code, 409, r.text)
+        self.call("POST", f"/studio/projects/{pid}/cancel")
+        self.runner.gate.set()
+        self.assertTrue(wait_until(lambda: not self.call("GET", f"/studio/projects/{pid}").json()["running"]))
+        self.assertEqual(self.call("PUT", "/studio/settings", json={"max_budget": 10}).status_code, 200)
+        Path(smoke_support.os.environ["STORY_SETTINGS_FILE"]).unlink()
+        Config.reload_settings()
+
     def test_unverified_models_are_neither_listed_nor_accepted(self):
         tiers = self.call("GET", "/studio/settings").json()["tiers"]
         listed = {m["id"] for models in tiers.values() for m in models}

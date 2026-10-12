@@ -1,10 +1,11 @@
 // Stage finished story-engine renders into an Originals batch (the Originals playbook's "stage" step).
-//   node tools/stage-story.mjs --batch=<batchId> [--dir=<batch dir>] [--number=<n>] <render folder>...
+//   node tools/stage-story.mjs --batch=<batchId> [--dir=<batch dir>] [--number=<n>] [--library=<dir>] <render folder>...
 // A render folder is what the story engine wrote: a recap's output/final/<title>/ or a series episode's
 // <project>/episodes/episode_<n>/ (render.json + the MP4 + cover.jpg). For each one this:
 //   - checks render.json (tools/RENDER_JSON.md) and refuses an unknown licence (contract v2 refuses it too);
 //   - assigns the contract episode id originals-<format>-<nnn>: the next number not used anywhere in library/
-//     (batch.json episodes and staged jobs, scratch batches in library/_dev included), or --number for the first;
+//     (batch.json episodes and staged jobs, scratch batches in library/_dev included; --library= another folder, for
+//     tests), or --number (1–9999) for the first;
 //   - copies the MP4 and cover to review/jobs/<id>/{render.mp4, cover.jpg}, videos/<id>.mp4 and covers/<id>.jpg,
 //     and a recap's script.json next to them (for the script check);
 //   - writes review/jobs/<id>/render.json: the engine's document with the contract id, the staged file names and
@@ -12,7 +13,7 @@
 //   - adds the episode to review/originals.json with every check false (the playbook's checkpoints set them).
 // Staging the same render twice is a no-op (matched on the video's sha256). Never writes into a finalized batch.
 import {readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, copyFileSync, realpathSync} from 'node:fs';
-import {resolve, relative, basename} from 'node:path';
+import {resolve, relative, basename, sep} from 'node:path';
 import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {checkRender} from './render-json-core.mjs';
@@ -22,6 +23,13 @@ export const ROOT = resolve(import.meta.dirname, '..');
 const CHECKS = ['rights', 'garbage', 'visualQa'];
 const sha = p => createHash('sha256').update(readFileSync(p)).digest('hex');
 const readJson = p => JSON.parse(readFileSync(p, 'utf8'));
+/** A render's file, which must stay inside its folder (no absolute path, no `..`, no symlink out of it). */
+function inside(folder, rel, what) {
+  if (typeof rel !== 'string' || !rel || rel.startsWith('/') || rel.split(/[\\/]/).includes('..')) throw new Error(`${what}: not a relative path inside the render folder`);
+  const root = realpathSync(folder), path = realpathSync(resolve(folder, rel));
+  if (!path.startsWith(root + sep)) throw new Error(`${what}: points outside the render folder`);
+  return path;
+}
 const finalized = dir => existsSync(dir) && [dir, realpathSync(dir)].some(d => existsSync(resolve(d, 'READY_FOR_UPLOAD')));
 
 /** Every originals-<format>-<nnn> number already used under `library` (batch.json episodes and staged jobs). */
@@ -66,6 +74,7 @@ export function stage({batchId, batchDir, folders, number = null, library = reso
   const reviewPath = resolve(batchDir, 'review/originals.json');
   const review = existsSync(reviewPath) ? readJson(reviewPath) : {reviewer: null, experimentId: null, episodes: {}};
   const out = [];
+  if (number !== null && !/^[1-9]\d{0,3}$/.test(String(number))) throw new Error('--number must be a whole number from 1 to 9999');
   let next = number === null ? null : Number(number);
   for (const folder of folders) {
     const render = readJson(resolve(folder, 'render.json'));
@@ -75,7 +84,7 @@ export function stage({batchId, batchDir, folders, number = null, library = reso
     (render.credits ?? []).forEach((c, i) => { if (c?.license === 'unknown') errors.push(`credits[${i}] (${c.title}) has an unknown licence`); });
     if (!render.cover) errors.push('no cover');
     if (errors.length) throw new Error(`${relative(ROOT, resolve(folder))}/render.json: ${errors.join('; ')}`);
-    const video = resolve(folder, render.video.file), cover = resolve(folder, render.cover.file);
+    const video = inside(folder, render.video.file, 'video.file'), cover = inside(folder, render.cover.file, 'cover.file');
     if (sha(video) !== render.video.sha256) throw new Error(`${render.video.file} differs from its render.json`);
     if (sha(cover) !== render.cover.sha256) throw new Error(`${render.cover.file} differs from its render.json`);
     if (staged.has(render.video.sha256)) {
@@ -97,8 +106,8 @@ export function stage({batchId, batchDir, folders, number = null, library = reso
     copyFileSync(video, resolve(batchDir, 'videos', `${episodeId}.mp4`));
     copyFileSync(cover, resolve(batchDir, 'covers', `${episodeId}.jpg`));
     const jobFields = {...render.job, workId: render.episodeId};
-    if (render.job?.script && existsSync(resolve(folder, render.job.script))) {
-      copyFileSync(resolve(folder, render.job.script), resolve(job, 'script.json'));
+    if (render.job?.script && existsSync(resolve(folder, String(render.job.script)))) {
+      copyFileSync(inside(folder, render.job.script, 'job.script'), resolve(job, 'script.json'));
       jobFields.script = 'script.json';
     }
     const doc = {...render, episodeId, job: jobFields, video: {...render.video, file: 'render.mp4'}, cover: {...render.cover, file: 'cover.jpg'}};
@@ -115,9 +124,10 @@ export function stage({batchId, batchDir, folders, number = null, library = reso
 export function main(argv) {
   const args = Object.fromEntries(argv.filter(a => a.startsWith('--')).map(a => { const [k, v = true] = a.slice(2).split('='); return [k, v]; }));
   const folders = argv.filter(a => !a.startsWith('--'));
-  if (!folders.length) throw new Error('usage: node tools/stage-story.mjs --batch=<batchId> [--dir=<batch dir>] [--number=<n>] <render folder>...');
+  if (!folders.length) throw new Error('usage: node tools/stage-story.mjs --batch=<batchId> [--dir=<batch dir>] [--number=<n>] [--library=<dir>] <render folder>...');
   const batchDir = resolve(ROOT, args.dir ?? `library/${args.batch}`);
-  const result = stage({batchId: args.batch, batchDir, folders, number: args.number ?? null});
+  const result = stage({batchId: args.batch, batchDir, folders, number: args.number ?? null,
+    ...(args.library ? {library: resolve(ROOT, args.library)} : {})});
   for (const r of result) console.log(JSON.stringify(r));
   return 0;
 }

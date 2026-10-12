@@ -103,6 +103,32 @@ class VideoClientRetryTest(unittest.TestCase):
         self.assertFalse(self.client.attempts[-1]["submitted"])
         self.assertEqual(self.client.get_total_cost(), 0.0)
 
+    def test_fal_sdk_submit_posts_exactly_once(self):
+        """fal_client retries requests on its own (timeouts, dropped connections, 408/409/429); a paid
+        submit must go out once. The real SDK runs; only its single-request primitive is replaced."""
+        import httpx
+        import fal_client.client as sdk
+        posts = []
+
+        def request(client, method, url, **kwargs):
+            posts.append((method, url))
+            raise httpx.ReadTimeout("timed out after the request was sent")
+
+        with mock.patch.object(sdk, "_request", request), mock.patch.object(sdk.time, "sleep", lambda s: None):
+            self.assertIsNone(self._generate())
+        self.assertEqual(len(posts), 1, posts)
+        self.assertEqual(sdk.MAX_ATTEMPTS, 10)  # restored for the SDK's other (free) calls
+        attempt = self.client.attempts[-1]
+        self.assertTrue(attempt["submitted"] and attempt["uncertain"])
+        self.assertEqual(self.client.get_total_cost(), 0.25)
+
+    def test_unexplained_submit_error_is_counted(self):
+        # Not a refusal, not a 4xx: the job may exist, so it is counted
+        fake = FakeFal(submit_errors=[KeyError("request_id")])
+        fake.install(self, self.client)
+        self.assertIsNone(self._generate())
+        self.assertTrue(self.client.attempts[-1]["uncertain"])
+
     def test_unverified_model_is_never_called(self):
         client = UnifiedVideoClient("sora-2-pro")
         fake = FakeFal()
@@ -233,7 +259,9 @@ class FallbackBudgetTest(unittest.TestCase):
             raise VideoGenerationError("model failed (billed)")
 
         def gemini_submit(kwargs):
-            raise RuntimeError("400 rejected (fake, not billed)")
+            error = RuntimeError("400 rejected (fake, not billed)")
+            error.code = 400
+            raise error
 
         for name, fn in (("_fal_submit", submit), ("_fal_wait", wait), ("_gemini_submit", gemini_submit),
                          ("_fal_upload", lambda p: "u"), ("_fal_download", lambda u, o: None)):

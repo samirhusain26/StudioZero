@@ -14,6 +14,8 @@ LLM, image and TTS calls are in the same ledger (kind llm/image/tts, priced by
 src/pricing.py), so the budget and render.json's costUsd count them too.
 """
 
+import contextlib
+import fcntl
 import json
 import logging
 import os
@@ -65,8 +67,9 @@ class SpendLedger:
     Entries without `kind` are video generations.
 
     Several instances may hold the same file (the spend meter, the scene generator, the
-    worker): every write re-reads the file under a per-file lock first, so none drops
-    another's entries.
+    worker, or the CLI and the worker in two processes): every write re-reads the file under
+    a per-file lock (a thread lock plus flock on spend_ledger.json.lock) first, so none drops
+    another's entries. Updates find their entry by its id.
     """
 
     _locks: dict = {}
@@ -78,6 +81,18 @@ class SpendLedger:
         with SpendLedger._locks_guard:
             self._lock = SpendLedger._locks.setdefault(str(self.path.resolve()), threading.RLock())
         self._reload()
+
+    @contextlib.contextmanager
+    def _locked(self):
+        """Thread lock plus an advisory file lock, so another process's writes are not lost."""
+        with self._lock:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            with open(self.path.with_name(LEDGER_FILENAME + ".lock"), "a") as handle:
+                fcntl.flock(handle, fcntl.LOCK_EX)
+                try:
+                    yield
+                finally:
+                    fcntl.flock(handle, fcntl.LOCK_UN)
 
     def _reload(self) -> None:
         if not self.path.exists():
@@ -143,7 +158,7 @@ class SpendLedger:
             "source": source,
             "at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
-        with self._lock:
+        with self._locked():
             self._reload()
             self.entries.append(entry)
             self.save()
@@ -166,7 +181,7 @@ class SpendLedger:
         }
         if price_assumed:
             entry["priceAssumed"] = True
-        with self._lock:
+        with self._locked():
             self._reload()
             self.entries.append(entry)
             self.save()
@@ -174,10 +189,10 @@ class SpendLedger:
 
     def update(self, entry: dict, **fields) -> None:
         """Update an entry returned by record() (or read from this ledger) and persist."""
-        with self._lock:
+        with self._locked():
             before = dict(entry)
             self._reload()
-            target = next((e for e in self.entries if e == before), None)
+            target = next((e for e in self.entries if (e.get("id") == before["id"] if before.get("id") else e == before)), None)
             entry.update(fields)
             if target is None:
                 raise RuntimeError(f"{self.path}: entry to update not found ({before.get('modelId')}, scene {before.get('sceneId')})")

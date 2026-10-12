@@ -20,6 +20,7 @@ import logging
 import mimetypes
 import os
 import socket
+import threading
 import time
 import urllib.request
 from pathlib import Path
@@ -62,17 +63,29 @@ try:
     _TRANSIENT_ERRORS += (httpx.TransportError,)
 except ImportError:
     pass
+try:
+    from fal_client.auth import MissingCredentialsError  # raised before any request is made
+    _SUBMIT_NOT_STARTED_ERRORS += (MissingCredentialsError,)
+except ImportError:
+    pass
 
 
 def _submit_may_have_reached_provider(exc: BaseException) -> bool:
-    """True when a failed submit may still have started a paid job (count it, never retry)."""
+    """
+    True when a failed submit may still have started a paid job (count it, never retry). Only a
+    request that provably never left (connection refused, DNS failure, missing credentials) or a
+    4xx rejection other than 408 counts as not started; anything else is counted.
+    """
     if isinstance(exc, _SUBMIT_NOT_STARTED_ERRORS):
         return False
     response = getattr(exc, "response", None)
     status = getattr(exc, "status_code", None) or getattr(response, "status_code", None) or getattr(exc, "code", None)
     if isinstance(status, int) and not isinstance(status, bool):
-        return status >= 500 or status == 408  # a 4xx rejection starts no job
-    return isinstance(exc, _TRANSIENT_ERRORS)
+        return not (400 <= status < 500 and status != 408)
+    return True
+
+
+_FAL_SUBMIT_LOCK = threading.Lock()
 
 
 _RETRY_ATTEMPTS = 3
@@ -392,8 +405,22 @@ class UnifiedVideoClient:
         return self._get_fal_client().upload_file(path)
 
     def _fal_submit(self, endpoint: str, arguments: dict) -> str:
-        """Start a paid fal.ai job and return its request id."""
-        handle = self._get_fal_client().submit(endpoint, arguments=arguments)
+        """
+        Start a paid fal.ai job and return its request id: exactly one POST. fal_client retries
+        its requests internally (timeouts, dropped connections, 408/409/429, up to MAX_ATTEMPTS),
+        which could queue and bill the same job several times; the submit runs with that set to 1,
+        and _submit_paid decides what a failure means.
+        """
+        fal = self._get_fal_client()
+        sdk = getattr(fal, "client", None)
+        if not isinstance(getattr(sdk, "MAX_ATTEMPTS", None), int):
+            raise VideoGenerationError("fal_client changed: cannot switch off its submit retries; not submitting")
+        with _FAL_SUBMIT_LOCK:
+            saved, sdk.MAX_ATTEMPTS = sdk.MAX_ATTEMPTS, 1
+            try:
+                handle = fal.submit(endpoint, arguments=arguments)
+            finally:
+                sdk.MAX_ATTEMPTS = saved
         return handle.request_id
 
     def _fal_wait(self, endpoint: str, request_id: str):
