@@ -1,6 +1,6 @@
 # StudioZero studio plan (running record)
 
-Status: **Phase 1 done apart from owner follow-ups** (2026-10-11): StudioZero is public on GitHub, the Pi updates from it, the layout move is shipped. Next: owner follow-ups (§13), then Phase 2. See §12.
+Status: **Phase 2 done** (2026-10-12): owner follow-ups closed; manifests, render.json from both engines, shared packager (byte-identical regression), catalog, story $0 smoke path, Instagram first comments auto-confirm. Next: **Phase 3** (unified UI), prompt `docs/prompts/PHASE3_SESSION.md`. See §9, §14.
 
 Resume rule: read this file, then the section for the current phase. Locked owner decisions (§1) are not re-argued. The original brief is `docs/prompts/STUDIOZERO_CONSOLIDATION.md` in the marketing repo (untracked there; it moves here in Phase 1).
 
@@ -234,13 +234,26 @@ Never committed: credentials, tokens, passcodes, deploy keys, `.env*`, `env.yaml
 - [x] Game repo: cf46e1d drops the `/marketing/` ignores (exact revert of 8830163's config lines) and adds the Marketing section to CLAUDE/AGENTS; **not pushed** (needs owner OK; local lint/Vitest not run: the game repo has no node_modules on this Mac, CI runs them)
 - [x] CHECKPOINT 2 (owner: push + protect, game repo push, fix the Pi and cut over now, accept the `scout` name)
 - [x] Branch protection on StudioZero `main` (no force-push/deletion, admins included); `legacy-final` tag pushed
-- [ ] Owner OK pending: move the deploy key to StudioZero (read-only); archive `scalargame-marketing-plan`; remove the Pi's rollback copy
+- [x] Deploy key on StudioZero (read-only, push probe refused, update check green); `scalargame-marketing-plan` archived; the Pi's rollback copy removed (2026-10-12)
 - [x] Pi cutover 2026-10-11 23:03Z (`migrate-origin.sh`): dry run green, swap, check green, units/PAUSED/config/schedule unchanged; first normal update through StudioZero (17894f6) delivered
 - [x] All suites green; `check.mjs` reproduces `5ab19d44…`; regression diff clean; safety check green; local = GitHub = Pi
-- [~] CLAUDE/AGENTS rewritten; memory copied to the StudioZero memory folder (pointer left in the old one); `~/CLAUDE.md` projects table update proposed at CHECKPOINT 2
+- [x] CLAUDE/AGENTS rewritten; memory copied to the StudioZero memory folder (pointer left in the old one); `~/CLAUDE.md` projects-table row applied (2026-10-12)
+- [x] Old Mac folders deleted after checking the backups (2026-10-12); post-cutover clean-up d983053 (bootstrap and guide name StudioZero)
 
-### Phase 2 — layout, manifests, packager · Phase 3 — Studio tab, agent, proxy, prompt builder · Phase 4 — contract v2 + publisher · Phase 5 — Originals back online
-As in the brief; not started.
+### Phase 2 — layout, manifests, packager (no behaviour change; contract stays v1)
+- [x] Owner follow-ups (§13) done: deploy key, archive, rollback copy, old folders, `~/CLAUDE.md`, bootstrap/guide clean-up (d983053)
+- [x] `studio.json`; `projects/originals/project.json`, `projects/scalargame/project.json` (formats, sources, link/CTA policy, caption defaults, budget, mix share, checks)
+- [x] Placement rule applied: the quiz kit moved `engines/motion/src/episodes/` → `engines/motion/src/projects/scalargame/` (stills byte-identical before/after; `codeHash` paths changed, so older jobs read `staleKit`, as expected). The Scalargame pipeline stays in `engines/motion/pipeline/` (optional move skipped: its render/QA half is engine work; its content now lives in `projects/scalargame/`)
+- [x] `render.json` v1 (`tools/RENDER_JSON.md`, checker `tools/render-json.mjs` + `node --test` cases); motion writes it on validation (`render.mjs` → `pipeline/render-json.mjs`)
+- [x] Shared packager `tools/package.mjs` (+ `projects/scalargame/package.mjs`); `batch.mjs` is a wrapper; validates after writing; `--created-at/--commit/--dirty` pins
+- [x] Packager regression `tools/package-regression.mjs`: both finalized 2026-10 batches re-packaged byte-identical and valid (finalized folders only read)
+- [x] Catalog `tools/export-catalog.mjs` → committed `publisher/catalog.json`; `--check` runs in `check:static` (and `build:static` regenerates it)
+- [x] Instagram first comments auto-confirm (ea31a8e): see §14
+- [x] Story engine: venv (python3.12, requirements only), `--headless` for both routes, mocked $0 smoke test (34 tests), `render.json` per recap/episode, `registry.json` (single source for video models), B4/B6/B8 fixed, B2/B10 partly (see §14)
+- [x] Docs, skill, agent, memory; all checks green; local = GitHub = Pi
+
+### Phase 3 — Studio tab, agent, proxy, prompt builder · Phase 4 — contract v2 + publisher · Phase 5 — Originals back online
+As in the brief; not started. Session prompt for Phase 3: `docs/prompts/PHASE3_SESSION.md`.
 
 ## 10. CHECKPOINT 1 answers (2026-10-11)
 
@@ -278,7 +291,21 @@ As in the brief; not started.
 
 ## 13. Owner follow-ups
 
-1. Move the Pi's deploy key from `scalargame-marketing-plan` to StudioZero (read-only), then archive (never delete) `scalargame-marketing-plan`; afterwards the Pi's rollback copy can go.
-2. Confirm deletion of `~/Personal/code_projects/StudioZero-old-2026-10` and `~/Personal/code_projects/scalargame-marketing-old-2026-10` (both fully backed up in `~/Personal/backups/2026-10-studiozero/`).
-3. Proposed `~/CLAUDE.md` projects-table row for StudioZero (not applied).
-4. Publisher fix (Phase 2): Instagram first comments cannot auto-confirm (the comments edge does not list the account's own comments).
+All four Phase 1 follow-ups are done (2026-10-12; §14). Open owner decisions are listed at the end of §14.
+
+## 14. Phase 2 log
+
+- **Owner follow-ups (2026-10-12)**: the Pi's read-only key (`scalar-social-update@scout`) is attached to StudioZero only; on the Pi `ugit push --dry-run origin HEAD:refs/heads/readonly-probe` answers "marked as read only" and a queued update check is green (origin StudioZero, behind 0). `scalargame-marketing-plan` archived (private, read-only; history kept). Rollback copy `/opt/scalar-social/repo.pre-studiozero-20261011T224347Z` removed. `StudioZero-old-2026-10` and `scalargame-marketing-old-2026-10` deleted after checking that every file is in the backup, on GitHub (213dc9e, `legacy-final`) or newer in this repo. `~/CLAUDE.md` row applied. d983053: `bootstrap-git.sh` clones StudioZero; guide pages and `SELF_UPDATE.md` name it; the updater still accepts the old names.
+- **Instagram first comments** (ea31a8e; verified: today's stuck comment `ceb17a17…` confirmed by itself at the 02:00Z tick with its permalink): a read-only diagnostic on the Pi (GET only, on a copy of the ledger) showed that with the Instagram Login token `GET /{media}/comments` returns no own comments, `GET /{comment-id}` answers 200 with an empty object for an existing comment (no field is readable) and 400 (code 100, subcode 33) for an unknown one, and the media's `comments_count` is correct. Reconcile now confirms a comment whose id came from this job's own create response when that object exists and the parent counts at least one comment; `publishedAt` is the dispatch time. Unknown, deleted or uncounted stays `uncertain`; other errors propagate; reconcile never posts; a lost create response (no id) still needs an exact own-account match in the list. 3 new tests.
+- **Layout**: quiz kit → `engines/motion/src/projects/scalargame/`; two stills of `sample-props.json` byte-identical before and after; `check.mjs` reproduces `5ab19d44…` with a clean diff.
+- **render.json** (`tools/RENDER_JSON.md`): engine → packager format with video/cover hashes, models, `costUsd`/`costEstimated`, per-asset `credits` (licence list from contract v2 §5.2 plus `unknown`), `disclosure`. Motion: music bed (CC0 artist and page, or the owner's Gemini track as licence `owner` with `aiKinds: [music]`), the style's OFL fonts, procedural SFX, Natural Earth (Scalar, Tectonic) or World Bank CC BY 4.0 (Continuum).
+- **Packager**: `tools/package.mjs` reads `review/jobs/*/render.json`, checks each, calls the project module (`projects/scalargame/package.mjs`: the caption templates moved out of `batch.mjs`; site, campaign, hashtags from `project.json`, caption limits from `studio.json`), checks the delivered files' hashes, writes `batch.json`, runs the validator. `--dry` output equals the old script's (24 episodes; only `createdAt`/`dirty` differ).
+- **Regression**: `node tools/package-regression.mjs` derives render.json from the finalized jobs into a temp copy, clones the media (APFS clone; the validator refuses symlinks and wants the folder named after the batch), re-packages with the finalized `createdAt`/`repoCommit`/`dirty`, validates (1 pre-existing `dirty_generator` warning each) and `git diff --no-index --exit-code` → both byte-identical.
+- **Catalog**: `publisher/catalog.json` (projects, engines with templates + timings, styles, 96 beds (6 owner beds `retired`), story routes, default models, 11 video models, tiers; channels). Deterministic; the exporter refuses a project format its engine cannot render.
+- **Story engine** (`engines/story`; details `engines/story/docs/HEADLESS.md`): venv python3.12 from `requirements.txt` (no new dependency; `google.api_core` became an optional import in `gemini_tts.py`). `python -m src.cli --headless --route recap|series …`. Smoke test `.venv/bin/python -m unittest discover -s tests -v`: 34 tests, 1 skipped (`RealRendererTest`: no ffmpeg here can run the recap renderer's filter graph; the Remotion-bundled ffmpeg lacks `setsar`, `fps`, `loop`, `asplit`, `aloop`, `sidechaincompress`, `ass`; the smoke run uses a test-only stand-in renderer), 1 expected failure (B3). Every key is `dummy-not-a-key`, `.env` and `output/settings.json` are not read (`STORY_SETTINGS_FILE`), sockets and DNS raise; recap stubs TMDB/Wikipedia/LLM/TTS/Pexels/Whisper; series copies the `Galactic_Garage` fixture to a temp dir and stubs only the provider network calls, so the real retry/fallback/budget/ledger code runs. Each run's `render.json` passes `node tools/render-json.mjs`.
+- **Story render.json**: recap in `output/final/<safe_title>/` (new layout: mp4 + `cover.jpg` + `script.json` + `render.json`; the old dashboard's finals list no longer shows recaps), `episodeId` `originals-recap-<slug>[-<year>]`, models llm (or the Groq fallback)/tts/asr, credits Pexels (photographer, page), TMDB (with the notice), Wikipedia (article URL), and `unknown` for the stock fallback clips, the untracked music and the caption font; `costUsd` 0 with `costEstimated: true` (no LLM/TTS price tables yet; token usage recorded in `job.llmUsage`). Series per episode in `episodes/episode_N/`, models = the video models that actually made clips (from the ledger), `costUsd` = ledger estimate incl. billed failures, `realisticSynthetic` from the shot prompts (defaults to true unless clearly stylised).
+- **Story bugs** (§3.5, appendix §2). Fixed: **B4** per-project `spend_ledger.json` (each billed attempt recorded at submit with the model that ran; `BudgetGuard` starts from the ledger; existing clips backfilled once; a corrupt ledger raises; Veo costed at 8 s); **B6** submit / wait / download split (submit retried only when the request provably never started; wait and download retried without re-submitting; fallback re-checks the budget; billed failures count); **B8** descriptions match prices. Partly: **B2** (`server.py`: Pause stops at the next step boundary, `/run` answers 409 while the old thread lives); **B10** (key sent as a header, error state reset). **Still open, blocking any paid run**: **B1** (dashboard recap review gate regenerates the script, paid); **B2** rest (a running `scene_generator` step renders every remaining scene); **B3** (no series TTS; mixed audio/no-audio clips concat to a silent final, mixed resolutions stream-copied); **B5** (settings reload; `FAL_KEY` not exported); **B7** rest; **B8** rest (Seedance endpoints unverified, fallback order not by price, `change_model` global); **B9**; LLM, image and TTS spend not in the ledger; a submit that times out after sending is neither retried nor counted (spend can be under-counted). Phase 3's studio agent replaces `server.py` (B1/B2/B5 there).
+
+**Pi note:** the publisher still reports `ok: false` until about 22:45Z on 10-12 because the YouTube slot of 10-11 20:00Z expired (`missed_slot`) while the earlier uncertain YouTube job held the queue; it clears by itself (`missedLast24h`).
+
+**Owner decisions (open):** target mix shares per project and an Originals monthly budget (both manifests say `target: null`, Originals `monthlyUsd: 0`, per-run approval); a full ffmpeg (with libass and the standard filters) for real recap renders (a system package, needs your OK).

@@ -10,7 +10,7 @@ StudioZero is the studio behind the @studiozeroflow social accounts. Three nouns
 - **Project**: why and for whom (sources, fact and rights rules, voice, call to action, link policy, budget, mix share). `originals` (P0, the story engine's recaps and shorts) and `scalargame` (P1, quiz videos for scalargame.com).
 - **Channel**: where. The @studiozeroflow accounts, owned by the publisher only.
 
-Every project follows one flow: Brief → Make (engine, Mac) → Check → Package (`batch.json`) → Approve (Pi, owner) → Schedule → Post → Learn. The **publisher** runs on a Raspberry Pi (stdlib Python, systemd units, a private React management UI) and posts approved videos; the **contract** (`batch.json` per batch, one validator on both sides) is the only interface between Mac and Pi. Batches live in `library/`.
+Every project follows one flow: Brief → Make (engine, Mac) → Check → Package (`batch.json`) → Approve (Pi, owner) → Schedule → Post → Learn. Root `studio.json` lists projects, engines and channels; each project has `projects/<p>/project.json` (formats, sources, link and call-to-action policy, caption defaults, budget, mix share, required checks). Engines write one `render.json` per episode (`tools/RENDER_JSON.md`) and never `batch.json`; the shared packager `tools/package.mjs` turns `render.json` + the project's captions into `batch.json`. Placement rule: code that must build with an engine's toolchain lives in that engine under `src/projects/<project>/`; content and rules live in `projects/<project>/`. The **publisher** runs on a Raspberry Pi (stdlib Python, systemd units, a private React management UI) and posts approved videos; the **contract** (`batch.json` per batch, one validator on both sides) is the only interface between Mac and Pi. Batches live in `library/`.
 
 This repository is **public**. Read the public-safety rules below before every commit. The consolidation is in progress: `docs/STUDIO_PLAN.md` is the running plan (phases, decisions, status); resume from it.
 
@@ -22,25 +22,33 @@ README.md  LICENSE  CREDITS.md   entry point; MIT for code with an asset/brand c
 docs/                            STUDIO_PLAN (running plan), PUBLIC_SAFETY, plan/ (Pi cutover design, story engine review),
                                  prompts/ (the consolidation brief), marketing plans: REBUILD_PLAN, REBUILD_CONTRACTS,
                                  PI_UI_REDESIGN_PLAN, AUTOPILOT_PLAN, AUDIO_CORPUS_PLAN, MARKETING_VIDEO_PLAN, UPLOAD_PLAN (historical)
-tools/public_safety_check.py     run before every push (stdlib)
+studio.json                      projects, engines, channels (public facts only)
+projects/                        originals/project.json; scalargame/{project.json, package.mjs (captions, links, v1 episodes)}
+tools/                           public_safety_check.py (run before every push, stdlib); package.mjs (shared packager) +
+                                 package-regression.mjs; render-json.mjs + RENDER_JSON.md (engine → packager format);
+                                 export-catalog.mjs (→ publisher/catalog.json)
 engines/motion/                  motion engine, Mac only. Its own Node project (package.json, tsconfig, remotion.config.ts)
   src/                           index.ts, Root.tsx (one composition: LibraryEpisode), fonts.ts, kit/sfx.tsx
-  src/episodes/                  episode kit-1: LibraryEpisode, timing, kit/, styles/, templates/<game>/, types, sample-props.json
+  src/projects/scalargame/       Scalargame's quiz kit-1: LibraryEpisode, timing, kit/, styles/, templates/<game>/, types, sample-props.json
   public/                        sfx/ (procedural WAVs), episodes/fonts (OFL), episodes/music (cut beds + beds.json)
-  pipeline/                      Scalargame: snapshot → candidates → check → pack → episodes → render → batch → review (.mjs), music tools, README.md
+  pipeline/                      Scalargame: snapshot → candidates → check → pack → episodes → render (+ render.json) → batch (→ tools/package.mjs) → review (.mjs), music tools, README.md
   render/                        render.sh (the only way to ship an MP4), master_audio.py, check_sync.py, qa_media.py, contact.py
   tools/                         make_sfx.py (public/sfx), make_calm_sfx.py
   music/                         TRACKS.md, rights.json, catalog.json; sources/ (ignored, Mac only)
   node_modules/ .venv/ .audio-work/ out/ sfx/sources/   ignored local toolchains, scratch audio, renders, downloaded packs
 engines/story/                   story engine, Mac only (run commands from here)
   src/                           the package: cli.py, headless.py, pipeline.py (recap), animation_pipeline.py + steps/ (series),
-                                 video_models.py / video_client.py / budget_guard.py (multi-model video), server.py (old dashboard, until Phase 3)
+                                 video_models.py / video_client.py / budget_guard.py (multi-model video, per-project spend ledger),
+                                 render_json.py, server.py (old dashboard, until Phase 3)
+  registry.json                  routes, default model names, video models, tiers (read by video_models.py and the catalog)
+  tests/                         unittest: mocked $0 smoke test of both routes (network blocked), billing/budget/registry tests
   static/                        the old dashboard's front end (retired after the Phase 3 parity check)
-  docs/  requirements.txt  .env.template   engine docs; .env, assets/, output/ are local and ignored
+  docs/  requirements.txt  .env.template   engine docs (HEADLESS.md: headless CLI, smoke test, render.json); .env, assets/, output/, .venv/ are local and ignored
 publisher/                       Pi. Everything the Pi runs
   app/                           runtime: runner, adapters, ui_server + ui_* modules, approval, activation, autopilot, operations, metrics,
                                  identities.py (channel ID pins read from the Pi config) (stdlib Python 3.13)
   app/static/                    committed UI bundle + MANIFEST.json (built on the Mac, served on the Pi; never hand-edit)
+  catalog.json                   generated by tools/export-catalog.mjs (never hand-edit; served at /api/catalog from Phase 3)
   ui/                            management UI source (React 19, Vite, strict TS); scripts/build-static.mjs builds app/static
   deploy/                        installers (sudo), systemd units, sync-pi.sh (Mac-side), migrate-origin.sh (one-time repo move)
   tests/                         Python tests for app/ (+ fixtures/)
@@ -54,7 +62,7 @@ library/                         <batchId>/ (only batch.json tracked), _sources/
 ## Mac, Pi, shared
 
 - **Mac (engines/motion/)**: question generation and checking, music beds, rendering, QA, `batch.json`, review sheet, finalize. Needs `engines/motion/node_modules` (`npm ci`) and `engines/motion/.venv` (numpy, scipy, librosa, soundfile, pyloudnorm, Pillow).
-- **Mac (engines/story/)**: `python -m src.cli` from `engines/story` (venv from `requirements.txt`, keys in `engines/story/.env`). Paid generation (Gemini, Veo, fal.ai) only with the owner's explicit OK for that run, with a cost estimate. There is no mocked smoke path yet (Phase 2).
+- **Mac (engines/story/)**: `.venv/bin/python -m src.cli` from `engines/story` (venv python3.12 from `requirements.txt`, keys in `engines/story/.env`). Paid generation (Gemini, Veo, fal.ai) only with the owner's explicit OK for that run, with a cost estimate. The mocked $0 smoke test runs both routes with every key dummy and sockets blocked. System ffmpeg is broken: the tests use the Remotion-bundled ffmpeg, which lacks the recap renderer's filters (`setsar`, `fps`, `loop`, `asplit`, `aloop`, `sidechaincompress`, `ass`), so the real recap renderer test is skipped until a full ffmpeg is installed. Open bugs that block any paid run: `docs/STUDIO_PLAN.md` §14.
 - **Pi (publisher/)**: runs from a git checkout at `/opt/scalar-social/repo` (partial + sparse: `publisher/`, `contract/`), updated from the UI (Settings → Update; design in `publisher/docs/SELF_UPDATE.md`). State in `/var/lib/scalar-social`, config and credentials in `/etc/scalar-social` (the channel ID pins under `identities` in `config.json`, the UI's tailnet origin in `ui.env`), UI on `127.0.0.1:8765` behind Tailscale Serve. Python is stdlib only. No npm build on the Pi: it serves the committed `publisher/app/static`. Unit or `pi-package*.json` changes are applied automatically after a completed update (`apply-units.sh --auto`). The Mac reaches the Pi as `ssh scalar-pi` (an alias in the owner's ssh config); agents (Claude, Codex) may use it without asking. Publishing runs on autopilot (`docs/AUTOPILOT_PLAN.md`): `scalar-social-autopilot.timer` (05:15, 17:15 Pi time) refills the schedule when fewer than 7 days remain and activates it. A pause in the UI (`/var/lib/scalar-social/PAUSED`) stops it. Runtime names stay `scalar-social`.
 - **Shared (contract/)**: the `ui_*` modules add `<repo>/contract` to `sys.path`.
 - **Game data**: `engines/motion/pipeline/lib.mjs` `GAME_DIR` = `$SCALARGAME_DIR`, else `../scalargame` next to this repo (whichever has `src/games/registry.ts`). Only `snapshot.mjs` reads the game repo (committed files only); everything else reads `library/_sources/<snapshot>/`.
@@ -70,10 +78,12 @@ python3 -m unittest discover -s publisher/tests -p 'test_*.py'
 python3 -m unittest discover -s contract/tests -p 'test_*.py'
 (cd publisher/ui && npm run typecheck && npm run lint && npm test && npm run build)
 (cd engines/motion && ./node_modules/.bin/tsc --noEmit)
+node --test tools/tests/*.test.mjs                  # render.json checker
+node tools/package-regression.mjs                   # packager regression: both 2026-10 batches re-packaged byte-identical + valid
 
-# UI bundle for the Pi: rebuild after any publisher/ui change, and check before committing
-(cd publisher/ui && npm run build:static)
-(cd publisher/ui && npm run check:static)
+# UI bundle and studio catalog for the Pi: rebuild after any publisher/ui, manifest or engine-registry change, and check before committing
+(cd publisher/ui && npm run build:static)            # also runs node tools/export-catalog.mjs
+(cd publisher/ui && npm run check:static)            # also runs node tools/export-catalog.mjs --check
 
 # Contract
 python3 contract/library_contract.py validate library/<batchId>
@@ -85,7 +95,8 @@ node engines/motion/pipeline/candidates.mjs --snapshot=<id> --today=<date>
 node engines/motion/pipeline/check.mjs                      # no --set: the 2026-10 regression (questionsHash 5ab19d44…), byte-identical output
 node engines/motion/pipeline/episodes.mjs --batch=<batchId>
 node engines/motion/pipeline/render.mjs --batch=<batchId>   # resumable; --only=a,b; --rerender
-node engines/motion/pipeline/batch.mjs --batch=<batchId>    # --dry checks captions → library/_dev/batch-dry.json
+node engines/motion/pipeline/batch.mjs --batch=<batchId>    # = node tools/package.mjs --project=scalargame …; validates; --dry checks captions → library/_dev/batch-dry.json
+node tools/render-json.mjs <render.json>...                 # check render.json files
 node engines/motion/pipeline/review.mjs --batch=<batchId>
 
 # Pi: after pushing main, bring the Pi to the same commit (check → UPDATE TO <sha> → apply, as Settings → Update)
@@ -101,8 +112,11 @@ publisher/deploy/sync-pi.sh
 ./node_modules/.bin/remotion still src/index.ts LibraryEpisode out.png --props=<props.json> --frame=<n>
 npm run studio                                       # Remotion Studio (.claude/launch.json "remotion-studio")
 
-# Story engine (from engines/story; paid steps need the owner's OK)
-python -m src.cli                                    # interactive: recap (title) or series (brief, episodes)
+# Story engine (from engines/story; paid steps need the owner's OK; details: engines/story/docs/HEADLESS.md)
+.venv/bin/python -m unittest discover -s tests -v    # mocked $0 smoke test of both routes + billing tests
+.venv/bin/python -m src.cli                          # interactive: recap (title) or series (brief, episodes)
+.venv/bin/python -m src.cli --headless --route recap --title "<title>" [--offline]                    # PAID unless --offline
+.venv/bin/python -m src.cli --headless --route series --title "<t>" --brief "<b>" --episodes N        # PAID
 ```
 
 Gotchas: run Remotion from `engines/motion/` (it resolves `public/` from the working directory's project). Use `./node_modules/.bin/remotion`, not `npx remotion` (the shell hook intercepts it). System ffmpeg is broken: use `remotion ffmpeg` / `remotion ffprobe` (the contract validator falls back to it). Ship MP4s only through `render/render.sh`. Keep `engines/motion/src/fonts.ts` (Fraunces 700 for Whenabouts). `render.mjs` stamps a `codeHash` over the kit paths (paths included), so any move or edit there marks earlier jobs `staleKit`. The shell hook (rtk) rewrites `git`, `grep`, `find` and `diff` output in agent shells: use `/usr/bin/git` etc. when exact output matters.
