@@ -239,3 +239,35 @@ class V2FolderTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class HostileInputTests(unittest.TestCase):
+    """Security review 2026-10-12: hostile values are reported, never raised, and URLs are strict."""
+    def test_urls_are_strict(self):
+        for url in ('\x01https://www.scalargame.com/scalar', 'https://evil.example:99999/x', 'https://[x', 'https://x\x00y/',
+                    'https://www.scalargame.com/a‮b', 'https://www.scalargame.com/a b', 'https://user@www.scalargame.com/x'):
+            e = scalargame_v2(1)
+            e['link']['url'] = url
+            self.assertIn('episodes[0].link.url', paths(check(document_v2([e]))), repr(url))
+        self.assertTrue(lc._https('https://xn--bcher-kva.example/path'))
+
+    def test_wrong_kinds_do_not_raise(self):
+        data = document_v2()
+        data['styleRecipes'].append({'styleId': ['x'], 'engine': 'motion', 'version': 1, 'summary': 's'})
+        data['episodes'].append(copy.deepcopy(data['episodes'][0]))
+        data['episodes'][1]['episodeId'] = ['x']
+        data['episodes'][0]['projectData']['styleId'] = ['x']
+        self.assertFalse(check(data).ok)
+        e = originals_v2(1)
+        e['credits'][0]['kind'] = ['footage']
+        self.assertFalse(check(document_v2([e], 'originals')).ok)
+
+    def test_float_schema_version_and_long_attribution(self):
+        data = document_v2()
+        data['schemaVersion'] = 2.0
+        self.assertFalse(check(data).ok)  # not dispatched to v2; the v1 rules refuse it
+        e = originals_v2(1)
+        e['credits'][2]['attribution'] = 'x' * 600
+        report = check(document_v2([e], 'originals'))
+        self.assertIn('episodes[0].credits[2].attribution', paths(report))
+        self.assertTrue(all(len(x['message']) < 300 for x in report.errors))

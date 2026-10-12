@@ -158,6 +158,43 @@ if __name__ == '__main__':
     unittest.main()
 
 
+class AttributionEditTests(unittest.TestCase):
+    def draft(self, edits=None, first=True):
+        e = originals_v2(1)
+        e['publication']['captions']['instagram'] = 'A film in 60 seconds.'
+        e['publication']['firstComment'] = {'instagram': f'{TMDB}. {WIKI}.'}
+        return us.generate(inputs(first=first, edits=edits or {}), [v2_record(e)], {}, config())
+
+    def test_removing_the_comment_that_carries_it_blocks(self):
+        draft = self.draft()
+        self.assertEqual(draft['blocking'], [])
+        comment = next(j for j in draft['jobs'] if j['kind'] == 'comment')
+        removed = self.draft({comment['key']: {'remove': True}})
+        self.assertTrue(any('required attribution' in b for b in removed['blocking']), removed['blocking'])
+
+    def test_editing_the_comment_away_blocks(self):
+        comment = next(j for j in self.draft()['jobs'] if j['kind'] == 'comment')
+        edited = self.draft({comment['key']: {'text': 'Seen it?'}})
+        self.assertTrue(any('required attribution' in b for b in edited['blocking']))
+
+
+class HostileImportTests(MixedLibraryTests):
+    def test_wrong_kinds_are_refused_not_raised(self):
+        data = document_v2()
+        data['episodes'][0]['projectData']['creative']['choices'] = [{'key': 'A', 'label': ['x']}, 3]
+        data['styleRecipes'].append({'styleId': {'a': 1}, 'engine': 'motion', 'version': 1, 'summary': 's'})
+        result = ul.import_batch_json(self.index, self.state, json.dumps(data).encode(), NOW)
+        self.assertEqual(result['status'], 'rejected')
+
+    def test_bad_catalog_targets_fall_back_to_round_robin(self):
+        import autopilot
+        for target in (2, -1, 'x', float('nan')):
+            catalog = {'projects': [{'id': 'scalargame', 'mix': {'target': target}}]}
+            self.assertIsNone(autopilot.catalog_mix(catalog), target)
+        self.assertIsNone(autopilot.catalog_mix({'projects': [{'id': 'Bad-Name', 'mix': {'target': 1}}]}))
+        self.assertIsNone(autopilot.catalog_mix({'projects': 'x'}))
+
+
 class LabelTests(unittest.TestCase):
     def payloads(self, ep):
         video = v2_record(ep) if 'contentId' in ep else None

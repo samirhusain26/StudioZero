@@ -23,7 +23,7 @@ docs/                            STUDIO_PLAN (running plan), PUBLIC_SAFETY, plan
                                  prompts/ (the consolidation brief), marketing plans: REBUILD_PLAN, REBUILD_CONTRACTS,
                                  PI_UI_REDESIGN_PLAN, AUTOPILOT_PLAN, AUDIO_CORPUS_PLAN, MARKETING_VIDEO_PLAN, UPLOAD_PLAN (historical)
 studio.json                      projects, engines, channels (public facts only)
-projects/                        originals/project.json; scalargame/{project.json, package.mjs (captions, links, v1 episodes)}
+projects/                        <p>/{project.json, package.mjs + package-core.mjs (contract v2 episodes; scalargame: captions, links)}
 tools/                           public_safety_check.py (run before every push, stdlib); package.mjs (shared packager) +
                                  package-regression.mjs; render-json.mjs + RENDER_JSON.md (engine → packager format);
                                  export-catalog.mjs (→ publisher/catalog.json)
@@ -54,7 +54,7 @@ publisher/                       Pi. Everything the Pi runs
   tests/                         Python tests for app/ (+ fixtures/)
   docs/                          operator guide (PI_UI), publishing plan, platform matrix, schedule, measurement, self-update, TikTok
   profile-assets/  config.example.json (placeholders only)  pi-package.json  pi-package-lock.json
-contract/                        shared: library_contract.py (validate/finalize), BATCH_CONTRACT.md (v1), tests/
+contract/                        shared: library_contract.py (validate/finalize; v1 and v2), projects/<p>.py (v2 project rules), BATCH_CONTRACT.md, tests/
 library/                         <batchId>/ (only batch.json tracked), _sources/<snapshot>/ (tracked, frozen), _templates/ _briefs/ _retros/ (tracked notes), _inbox/ _dev/ (ignored)
 .claude/                         skills/video-batch/ (Scalargame batch skill), agents/fact-checker.md, launch.json
 ```
@@ -136,7 +136,7 @@ Gotchas: run Remotion from `engines/motion/` (it resolves `public/` from the wor
 - Pi access is open to agents: inspect, update, restart services, run `publisher/deploy` scripts with sudo, fix what is broken. Code reaches the Pi only through GitHub: commit on main → `git push origin main` → `publisher/deploy/sync-pi.sh`. Local main, GitHub main and the Pi stay on the same commit. Never edit files in `/opt/scalar-social/repo` or change git config on the Pi. Whoever can push to `main` decides what root runs on the Pi.
 - Autopilot schedules and publishes approved library videos. Agents never pause, cancel or re-approve the live schedule unless asked; only the owner resumes. Approving episodes, finalizing and uploading batches stay with the owner: ask before each.
 - Never start paid generation (Veo, fal.ai, Gemini video/image/TTS) without the owner's explicit OK for that run, with a cost estimate.
-- Contract changes need owner approval (`contract/BATCH_CONTRACT.md`), a validator update and tests. A batch must never become invalid retroactively.
+- Contract changes need owner approval (`contract/BATCH_CONTRACT.md`), a validator update and tests; a new project needs a module in `contract/projects/` (a contract change). A batch must never become invalid retroactively. The packager writes every required attribution into the text that posts; the Pi only verifies it and publishes the approved text unchanged.
 - No new dependencies without asking. Pi Python stays stdlib only.
 - Pushing `main` is approved for shipping `publisher/` or `contract/` changes; other pushes only when the owner asks. Never force-push or rewrite history.
 

@@ -514,8 +514,17 @@ function NoteMeta({ label, note, zone }: { label: string; note: BatchNote | null
 }
 
 /** How the episode was made: engine, renderer, models, cost, AI disclosure and every credited asset (contract v2). */
+/** Where `{link}` points (v2 link.url, v1 scalargame.com + deepLink), shown as text so the owner sees it before approving. */
+export function linkTarget(episode: Rec): string | null {
+  const link = rec(episode.link)
+  if (link) return str(link.url)
+  const deep = str(rec(episode.publication)?.deepLink)
+  return deep ? `https://www.scalargame.com${deep}` : null
+}
+
 function MadeWith({ entry }: { entry: LibraryEpisode }) {
   const d = entry.disclosure
+  const target = linkTarget(entry.episode as unknown as Rec)
   return (
     <details className="disclosure" data-testid="made-with">
       <summary>Made with</summary>
@@ -532,6 +541,8 @@ function MadeWith({ entry }: { entry: LibraryEpisode }) {
             <dd>{entry.models.map((m) => `${m.role}: ${m.id}`).join(' · ')}</dd>
           </>
         ) : null}
+        <dt>Link</dt>
+        <dd>{target ? <code className="break">{target}</code> : 'None (captions carry no link)'}</dd>
         <dt>Cost</dt>
         <dd>{entry.costUsd === null ? 'Not recorded' : `$${entry.costUsd.toFixed(2)}`}</dd>
         <dt>AI content</dt>

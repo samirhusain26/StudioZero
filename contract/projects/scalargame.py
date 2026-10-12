@@ -47,7 +47,7 @@ def check_episode(episode, path, styles, report, today):
         report.error(path + '.contentId', f'Use {game}:<id> for a {game} episode', 'namespace')
     if data['difficulty'] not in lc.DIFFICULTIES:
         report.error(dpath + '.difficulty', 'Use approachable, moderate or challenging')
-    if data['styleId'] not in styles:
+    if not isinstance(data['styleId'], str) or data['styleId'] not in styles:
         report.error(dpath + '.styleId', 'Must name a styleRecipe of this batch')
 
     creative, cpath = data['creative'], dpath + '.creative'

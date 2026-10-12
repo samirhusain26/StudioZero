@@ -76,7 +76,7 @@ def check_episode(episode, path, styles, report, today):
             report.error(dpath + '.series.episode', 'Positive integer required')
 
     credits = episode['credits'] if isinstance(episode['credits'], list) else []
-    kinds = {c.get('kind') for c in credits if isinstance(c, dict)}
+    kinds = {c.get('kind') for c in credits if isinstance(c, dict) and isinstance(c.get('kind'), str)}
     if recap and 'footage' not in kinds:
         report.error(path + '.credits', 'A recap credits its footage', 'credits')
     return {}

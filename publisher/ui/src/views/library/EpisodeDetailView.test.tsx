@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { EpisodeDetail, LibraryEpisode } from '../../api/types'
 import { PLATFORMS } from '../../api/types'
-import { EpisodeDetailContent } from './EpisodeDetailView'
+import { EpisodeDetailContent, linkTarget } from './EpisodeDetailView'
 
 const { api } = vi.hoisted(() => ({ api: { saveFeedback: vi.fn(), clearFeedback: vi.fn(), approveContent: vi.fn() } }))
 vi.mock('../../api/client', async (importOriginal) => ({ ...(await importOriginal<typeof import('../../api/client')>()), api }))
@@ -189,5 +189,13 @@ describe('Review actions', () => {
     expect(screen.getByRole('link', { name: 'Done: back to the Library' })).toHaveAttribute('href', '#/library')
     rerender(<EpisodeDetailContent episodeId="scalar-clues-001" revision={1} detail={detail()} entry={entry({ problems: [{ code: 'media', path: 'video', message: 'Bad' }] })} zone="UTC" />)
     expect(screen.getByRole('button', { name: 'Approve' })).toBeDisabled()
+  })
+})
+
+describe('link target', () => {
+  it('shows where {link} points for v1 and v2 episodes', () => {
+    expect(linkTarget({ publication: { deepLink: '/scalar' } })).toBe('https://www.scalargame.com/scalar')
+    expect(linkTarget({ contentId: 'originals:x', link: { url: 'https://example.org/watch', utmCampaign: 'o' } })).toBe('https://example.org/watch')
+    expect(linkTarget({ contentId: 'originals:x', link: null, publication: {} })).toBeNull()
   })
 })

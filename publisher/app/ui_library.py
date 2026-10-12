@@ -324,7 +324,10 @@ def import_batch_json(index, state, raw_bytes, now):
         data = json.loads(raw_text)
     except (UnicodeDecodeError, json.JSONDecodeError, RecursionError):
         return refuse('json', 'batch.json', "This isn't a readable batch.json (invalid JSON).")
-    report = lc.validate_document(data, now=now, origin='mac')
+    try:
+        report = lc.validate_document(data, now=now, origin='mac')
+    except (TypeError, ValueError, AttributeError, KeyError, RecursionError):
+        return refuse('shape', 'batch.json', "This batch.json has values of the wrong kind (for example a list where text belongs).")
     episodes = data.get('episodes') if isinstance(data, dict) and isinstance(data.get('episodes'), list) else []
     result['warnings'] = [e['message'] for e in report.warnings]
     result['warningItems'] = list(report.warnings)

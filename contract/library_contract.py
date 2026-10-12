@@ -189,7 +189,7 @@ def validate_document(data, *, now=None, origin='mac', report=None):
     report = report or Report()
     now = now or dt.datetime.now(dt.timezone.utc)
     today = now.astimezone(dt.timezone.utc).date()
-    if isinstance(data, dict) and data.get('schemaVersion') == 2 and not isinstance(data.get('schemaVersion'), bool):
+    if isinstance(data, dict) and type(data.get('schemaVersion')) is int and data['schemaVersion'] == 2:
         return validate_document_v2(data, today=today, origin=origin, report=report)
     if not _keys(report, 'batch', data, ('schemaVersion', 'batchId', 'createdAt', 'generator',
                                          'sourceSnapshotHash', 'styleRecipes', 'episodes')):
@@ -535,6 +535,7 @@ LICENSES = ('CC0-1.0', 'CC-BY-4.0', 'CC-BY-SA-4.0', 'OFL-1.1', 'Pexels', 'Pixaba
             'owner', 'generated', 'public-domain')
 NEEDS_ATTRIBUTION = ('CC-BY-4.0', 'CC-BY-SA-4.0', 'TMDB', 'Wikipedia-CC-BY-SA')
 TMDB_NOTICE = 'This product uses the TMDB API but is not endorsed or certified by TMDB'
+ATTRIBUTION_LIMIT = 500
 AI_KINDS = ('script', 'voice', 'image', 'video', 'music', 'sfx')
 TAG = re.compile(r'[a-z0-9]+(-[a-z0-9]+)*')
 CONTENT_ID = re.compile(r'([a-z][a-z0-9-]*):[A-Za-z0-9][A-Za-z0-9:._-]{0,119}')
@@ -560,10 +561,21 @@ def project_module(name):
     return _PROJECT_MODULES[name]
 
 
+_OWNERS = {}
+
+
 def namespace_owners():
     """{contentId namespace: project}; a namespace claimed by two projects is a contract error."""
+    names = project_names()
+    if names not in _OWNERS:
+        _OWNERS.clear()
+        _OWNERS[names] = _namespace_owners(names)
+    return _OWNERS[names]
+
+
+def _namespace_owners(names):
     owners = {}
-    for name in project_names():
+    for name in names:
         for namespace in project_module(name).NAMESPACES:
             if owners.setdefault(namespace, name) != name:
                 raise RuntimeError(f'contentId namespace {namespace!r} is claimed by {owners[namespace]} and {name}')
@@ -621,9 +633,20 @@ def episode_view(episode):
             'credits': credits, 'disclosure': None, 'tags': [], 'creative': episode.get('creative')}
 
 
+PRINTABLE_URL = re.compile(r'[!-~]{1,2000}')
+
+
 def _https(value):
-    url = urllib.parse.urlsplit(value) if isinstance(value, str) and not re.search(r'\s', value) else None
-    return bool(url and url.scheme == 'https' and url.hostname)
+    """An https URL of printable ASCII (no spaces or control characters; IDN hosts in their xn-- form) that
+    survives a parse round trip and has a valid port."""
+    if not isinstance(value, str) or not PRINTABLE_URL.fullmatch(value):
+        return False
+    try:
+        url = urllib.parse.urlsplit(value)
+        url.port  # raises ValueError when out of range or not a number
+    except ValueError:
+        return False
+    return url.scheme == 'https' and bool(url.hostname) and urllib.parse.urlunsplit(url) == value
 
 
 def _positive_int(value):
@@ -668,7 +691,8 @@ def validate_document_v2(data, *, today, origin='mac', report):
                 report.error(path + '.version', 'Positive integer required')
             if not _is_str(recipe['summary']):
                 report.error(path + '.summary', 'Required text')
-            styles[recipe['styleId']] = recipe
+            if _is_str(recipe['styleId']):
+                styles[recipe['styleId']] = recipe
     module.check_batch(data['projectData'], 'batch.projectData', styles, report)
     episodes = data['episodes']
     if not isinstance(episodes, list) or not episodes:
@@ -677,8 +701,8 @@ def validate_document_v2(data, *, today, origin='mac', report):
     seen = set()
     for i, episode in enumerate(episodes):
         validate_episode_v2(episode, f'episodes[{i}]', module, owners, styles, today, report, origin)
-        episode_id = episode.get('episodeId') if isinstance(episode, dict) else None
-        if episode_id in seen:
+        episode_id = episode.get('episodeId') if isinstance(episode, dict) and isinstance(episode.get('episodeId'), str) else None
+        if episode_id is not None and episode_id in seen:
             report.error(f'episodes[{i}].episodeId', 'Duplicate episodeId in batch')
         seen.add(episode_id)
     return report
@@ -835,8 +859,8 @@ def _credits_v2(report, path, credits):
             report.error(cpath + '.sourceUrl', 'HTTPS URL or null')
         if credit['license'] not in LICENSES:
             report.error(cpath + '.license', 'Unknown licence; the asset cannot be used until its licence is known', 'license')
-        if credit['attribution'] is not None and not _is_str(credit['attribution']):
-            report.error(cpath + '.attribution', 'Text or null')
+        if credit['attribution'] is not None and (not _is_str(credit['attribution']) or len(credit['attribution']) > ATTRIBUTION_LIMIT):
+            report.error(cpath + '.attribution', f'Text of at most {ATTRIBUTION_LIMIT} characters, or null')
         if credit['license'] in NEEDS_ATTRIBUTION and not _is_str(credit['attribution']):
             report.error(cpath + '.attribution', f"{credit['license']} needs attribution text", 'attribution')
         if credit['license'] == 'TMDB' and TMDB_NOTICE not in str(credit['attribution'] or ''):
@@ -970,7 +994,8 @@ def required_attributions(credits):
     attribution, and the TMDB notice whenever a credit is TMDB."""
     texts = []
     for credit in credits if isinstance(credits, list) else []:
-        if isinstance(credit, dict) and credit.get('license') in NEEDS_ATTRIBUTION and _is_str(credit.get('attribution')):
+        if (isinstance(credit, dict) and credit.get('license') in NEEDS_ATTRIBUTION and _is_str(credit.get('attribution'))
+                and len(credit['attribution']) <= ATTRIBUTION_LIMIT):
             texts.append(credit['attribution'].strip())
         if isinstance(credit, dict) and credit.get('license') == 'TMDB':
             texts.append(TMDB_NOTICE)
@@ -998,7 +1023,8 @@ def _attribution_v2(report, path, episode, publication):
     for platform in posting:
         for text in missing_attributions(episode, platform):
             where = 'youtube.description' if platform == 'youtube' else f'captions.{platform}'
-            report.error(f'{path}.publication.{where}', f'Missing required attribution: {text!r}', 'attribution')
+            shown = text if len(text) <= 80 else text[:77] + '…'
+            report.error(f'{path}.publication.{where}', f'Missing required attribution: {shown!r}', 'attribution')
 
 
 def ffprobe_command():

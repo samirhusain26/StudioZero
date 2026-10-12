@@ -539,17 +539,25 @@ def _edit_errors(job, text, video):
         limit = lc.CAPTION_LIMITS[platform] if job['kind'] == 'post' else lc.COMMENT_LIMITS[platform]
         lc._text_checks(report, 'text', episode, platform, text, limit, terms, labels, answers,
                         platform in lc.LINK_PLATFORMS)
-    if 'contentId' in episode and job['kind'] in ('post', 'comment'):
-        publication = copy.deepcopy(episode['publication'])
-        if job['kind'] == 'comment':
-            publication['firstComment'] = {**(publication.get('firstComment') or {}), platform: text}
-        elif platform == 'youtube':
-            publication['youtube'] = {**publication['youtube'], 'description': text}
-        else:
-            publication['captions'] = {**publication['captions'], platform: text}
-        for missing in lc.missing_attributions({**episode, 'publication': publication}, platform):
-            report.error('text', f'Keep the required attribution: {missing!r}', 'attribution')
     return [e['message'] for e in report.errors]
+
+
+def _posted_attribution_gaps(jobs, by_id):
+    """Contract v2: after edits and removals, every new post must still carry its required attributions in what
+    actually goes out: its own text (and X thread items), plus first-comment jobs of this draft under it."""
+    gaps = []
+    for job in jobs:
+        video = by_id.get((job['episodeId'], job['revision']))
+        if job['kind'] != 'post' or job['carried'] or video is None or 'contentId' not in video['episode']:
+            continue
+        texts = [job['text'] or '', *(job.get('thread') or [])]
+        texts += [c['text'] or '' for c in jobs if c['parentKey'] == job['key'] and c['kind'] == 'comment']
+        published = '\n'.join(texts)
+        missing = [t for t in lc.required_attributions(video['episode'].get('credits')) if t not in published]
+        if missing:
+            shown = missing[0] if len(missing[0]) <= 80 else missing[0][:77] + '…'
+            gaps.append((job, f'Keep the required attribution: {shown!r}'))
+    return gaps
 
 
 def generate(inputs, videos, history, config, base_manifest=None, base_manifest_sha256=None):
@@ -788,6 +796,11 @@ def generate(inputs, videos, history, config, base_manifest=None, base_manifest_
             unfilled.append({'platform': j['platform'], 'slotLocal': j['slotLocal'], 'slotUtc': j['slotUtc'],
                              'reason': 'Removed by edit'})
     jobs = [j for j in jobs if j['key'] not in removed]
+    for job, message in _posted_attribution_gaps(jobs, by_id):
+        job['warnings'].append(message)
+        line = f"{LABELS[job['platform']]} {job['slotLocal']}: {message}"
+        warn(line)
+        blocking.append(line)
 
     if core['ledgerMissing']:
         warn('No publisher ledger was found, so posting history could not be checked')

@@ -66,11 +66,20 @@ def verify_channels(config_path, state, out=print):
 def catalog_mix(catalog):
     """{project: target share} from the studio catalog when any project has a target, else None (game round-robin,
     exactly as before targets existed). A project without a target gets share 0."""
-    projects = [p for p in (catalog or {}).get('projects') or [] if isinstance(p, dict) and isinstance(p.get('id'), str)]
-    targets = {p['id']: (p.get('mix') or {}).get('target') for p in projects}
+    import ui_schedule
+    projects = (catalog or {}).get('projects') if isinstance(catalog, dict) else None
+    if not isinstance(projects, list):
+        return None
+    projects = [p for p in projects if isinstance(p, dict) and isinstance(p.get('id'), str)]
+    targets = {p['id']: (p.get('mix') if isinstance(p.get('mix'), dict) else {}).get('target') for p in projects}
     if all(t is None for t in targets.values()):
         return None
-    return {k: t if isinstance(t, (int, float)) and not isinstance(t, bool) else 0 for k, t in targets.items()}
+    mix = {k: t if isinstance(t, (int, float)) and not isinstance(t, bool) else 0 for k, t in targets.items()}
+    # A mix the generator would refuse falls back to the round-robin, so refill never stops on a bad target.
+    if (not all(ui_schedule.PROJECT.fullmatch(k) and 0 <= v <= 1 for k, v in mix.items()) or not sum(mix.values()) > 0
+            or len(mix) > 20):
+        return None
+    return mix
 
 
 def recommended_inputs(config, today, catalog=None):
