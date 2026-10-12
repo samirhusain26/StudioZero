@@ -87,9 +87,10 @@ def _recorded_model_id(project_dir: Path) -> Optional[str]:
     return None
 
 
-def _backfill_existing_clips(ctx: StepContext, ledger: SpendLedger, shots, clips_dir: Path) -> None:
-    """Record clips rendered before the ledger existed, so the budget counts them."""
-    assumed_model = _recorded_model_id(ctx.project_dir) or Config.ACTIVE_VIDEO_MODEL
+def backfill_existing_clips(project_dir: Path, episode_number: int, ledger: SpendLedger, shots, clips_dir: Path) -> None:
+    """Record clips rendered before the ledger existed, so the budget and render.json count them
+    (also called by render_json when only the editor re-runs on an old project)."""
+    assumed_model = _recorded_model_id(project_dir) or Config.ACTIVE_VIDEO_MODEL
     try:
         assumed_cfg = get_model(assumed_model)
     except KeyError:
@@ -98,16 +99,16 @@ def _backfill_existing_clips(ctx: StepContext, ledger: SpendLedger, shots, clips
         clip_path = clips_dir / f"scene_{shot.scene_id}.mp4"
         if not (clip_path.exists() and clip_path.stat().st_size > 0):
             continue
-        if ledger.clip_entry(ctx.episode_number, shot.scene_id):
+        if ledger.clip_entry(episode_number, shot.scene_id):
             continue
-        pending = [e for e in ledger.entries_for(ctx.episode_number, shot.scene_id) if e.get("status") == "submitted"]
+        pending = [e for e in ledger.entries_for(episode_number, shot.scene_id) if e.get("status") == "submitted"]
         if pending:
             # Billed and downloaded, but the run stopped before the entry was closed
             ledger.update(pending[-1], status="ok")
             continue
         cost = estimate_cost(assumed_model, assumed_cfg.max_duration_sec, False)
         ledger.record(
-            episode=ctx.episode_number,
+            episode=episode_number,
             scene_id=shot.scene_id,
             model_id=assumed_cfg.model_id,
             duration_sec=assumed_cfg.max_duration_sec,
@@ -129,7 +130,7 @@ def run(ctx: StepContext) -> StepResult:
 
     # Project-wide spend ledger: the budget covers every episode and every earlier run
     ledger = SpendLedger(ctx.project_dir)
-    _backfill_existing_clips(ctx, ledger, shots, clips_dir)
+    backfill_existing_clips(ctx.project_dir, ctx.episode_number, ledger, shots, clips_dir)
 
     # Initialize video client and budget guard with the configured model
     model_id = Config.ACTIVE_VIDEO_MODEL

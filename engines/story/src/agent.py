@@ -40,8 +40,9 @@ from pydantic import BaseModel, Field
 from src.budget_guard import SpendLedger
 from src.config import Config
 from src.project_manager import Project, create_project, delete_project, get_project, get_project_dir, list_projects, update_project
-from src.pricing import AUDIO_TOKENS_PER_SECOND, image_cost, text_cost, tts_cost
-from src.video_models import available_models, clip_duration, estimate_cost, estimate_episode_cost, get_model
+from src import estimates
+from src.estimates import SHOTS_PER_EPISODE
+from src.video_models import available_models, clip_duration, estimate_episode_cost, get_model
 
 logger = logging.getLogger(__name__)
 
@@ -51,10 +52,6 @@ ROUTES = {"recap": "movie", "series": "animation-series"}  # API route name -> p
 MODES = {v: k for k, v in ROUTES.items()}
 EVENTS_MAX = 2000
 EVENT_TEXT_MAX = 2000
-SHOTS_PER_EPISODE = 6  # estimate for episodes whose director step has not run yet (video_models.estimate_episode_cost)
-CAST_SIZE = 3  # characters and locations assumed before the writer has run
-IMAGE_PROMPT_TOKENS = 1500  # prompt plus reference images sent with an image request
-NARRATION_WORDS_PER_SECOND = 2.5
 PROJECT_ID = r"[A-Za-z0-9_-]{1,120}"
 PRIVATE_FILES = {"spend_ledger.json", "project.json", "pipeline_state.json"}
 FILE_TYPES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".mp4": "video/mp4",
@@ -278,56 +275,15 @@ def create_app(token: Optional[str] = None, runner: Optional[Runner] = None, all
                 out.extend({"episode": ep, "scene": None} for _ in range(SHOTS_PER_EPISODE))
         return out
 
-    def text_line(what: str, calls: int, tokens_in: int, tokens_out: int) -> dict:
-        usd, assumed = text_cost(Config.GEMINI_MODEL_NAME, calls * tokens_in, calls * tokens_out)
-        return {"what": f"{what} ({Config.GEMINI_MODEL_NAME}{', price assumed' if assumed else ''})", "usd": round(usd, 4)}
-
-    def image_line(what: str, images: int) -> dict:
-        usd, assumed = image_cost(Config.GEMINI_IMAGE_MODEL, images * IMAGE_PROMPT_TOKENS, images)
-        return {"what": f"{what} ({Config.GEMINI_IMAGE_MODEL}{', price assumed' if assumed else ''})", "usd": round(usd, 4)}
-
     def estimate(p: Project) -> dict:
-        """Upper-end estimate of the next run: list prices (src/pricing.py, registry.json) times typical usage."""
+        """Upper-end estimate of the next run (src/estimates.py: list prices times typical usage)."""
         route = MODES.get(p.mode, p.mode)
         unpriced: List[str] = []
-        lines: List[dict] = []
         if route == "series":
-            model_id = video_model(p)
-            model = get_model(model_id)
-            audio = Config.SERIES_NATIVE_AUDIO and model.has_audio
-            st = pipeline_state(p) or {}
-            done = lambda step: bool((st.get("series_steps") or {}).get(step, {}).get("completed"))  # noqa: E731
-            episodes = int(p.params.get("num_episodes", 1))
-            todo_eps = [ep for ep in range(1, episodes + 1)
-                        if not ((st.get("episodes") or {}).get(str(ep), {}).get("steps", {}).get("director", {}).get("completed"))]
-            if not done("writer") or not done("screenwriter"):
-                lines.append(text_line("Story and episode scripts", 2, 6000, 6000))
-            if not done("casting"):
-                lines += [text_line(f"Character sheets (about {CAST_SIZE})", CAST_SIZE, 3000, 1500),
-                          image_line(f"Character reference images (about {CAST_SIZE})", CAST_SIZE)]
-            if not done("world_builder"):
-                lines += [text_line(f"Location layouts (about {CAST_SIZE})", CAST_SIZE, 3000, 1500),
-                          image_line(f"Location reference images (about {CAST_SIZE})", CAST_SIZE)]
-            if todo_eps:
-                lines += [text_line(f"Shot lists for {len(todo_eps)} episode(s)", len(todo_eps), 8000, 4000),
-                          image_line(f"Scene start images (about {SHOTS_PER_EPISODE} per episode)", SHOTS_PER_EPISODE * len(todo_eps))]
-            scenes = remaining_scenes(p)
-            per = estimate_cost(model_id, clip_duration(model_id), audio)
-            if scenes:
-                lines.append({"what": f"{len(scenes)} video clip(s) with {model.display_name}, {clip_duration(model_id)} s each"
-                                      + (" with native audio" if audio else ""), "usd": round(per * len(scenes), 4)})
+            lines = estimates.series_lines(video_model(p), int(p.params.get("num_episodes", 1)),
+                                           pipeline_state(p), len(remaining_scenes(p)))
         else:
-            approved = p.step_data.get("approved_script")
-            if approved:
-                words = sum(len(str(sc.get("narration", "")).split()) for sc in approved.get("scenes", [])) + 12  # + ending
-                seconds = words / NARRATION_WORDS_PER_SECOND
-                usd, assumed = tts_cost(Config.TTS_MODEL, words * 2 + 200 * len(approved.get("scenes", [])),
-                                        int(seconds * AUDIO_TOKENS_PER_SECOND))
-                lines.append({"what": f"Narration, about {seconds:.0f} s ({Config.TTS_MODEL}{', price assumed' if assumed else ''})",
-                              "usd": round(usd, 4)})
-            else:
-                lines.append(text_line("Recap script", 1, 5000, 3000))
-                unpriced += ["then, after you approve the script, the narration (estimated on the next run)"]
+            lines, unpriced = estimates.recap_lines(p.step_data.get("approved_script"))
         total = round(sum(l["usd"] for l in lines), 4)
         fingerprint = json.dumps({"p": p.id, "u": p.updated_at, "l": lines, "m": video_model(p)}, sort_keys=True)
         sig = hmac.new(state["secret"], f"{fingerprint}|{total}".encode(), hashlib.sha256).hexdigest()[:32]

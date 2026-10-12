@@ -442,6 +442,9 @@ def write_series_render_json(project_dir: Path, episode_number: int, final_video
     shots = load_director_shots(episode_dir)
     ledger = SpendLedger(project_dir)
     clips_dir = episode_dir / "clips"
+    # Clips made before the ledger existed get a backfilled estimate (never "unknown" at $0)
+    from src.steps.scene_generator import backfill_existing_clips
+    backfill_existing_clips(project_dir, episode_number, ledger, shots, clips_dir)
 
     outline = next((o for o in story.episode_outlines if o.episode_number == episode_number), None)
 

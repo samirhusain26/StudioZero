@@ -48,6 +48,15 @@ It makes no paid or networked call: API keys are `dummy-not-a-key`, `.env` and `
 
 **ffmpeg caveat.** System ffmpeg on the owner's Mac is broken (missing Homebrew dylibs), so the tests put a shim on `PATH` that runs the Remotion-bundled ffmpeg from `../motion/node_modules/@remotion/compositor-*` (falling back to `remotion ffmpeg`). That build has no `setsar`, `fps`, `loop`, `asplit`, `aloop`, `sidechaincompress` or `ass` filters, so it cannot run the recap renderer's filter graph: the recap smoke test then swaps `VideoRenderer.render_from_scenes` for a test-only stand-in (scale/crop + concat, no music ducking, no captions), and `RealRendererTest` is skipped with the list of missing filters. With a full ffmpeg (with libass) on `PATH`, both run for real. The renderer itself already skips caption burn-in when libass is missing. Series assembly (scale/crop, libx264/aac, concat) and the contract conform step run on the bundled ffmpeg.
 
+## Cost estimate before a paid run ($0)
+
+```bash
+.venv/bin/python -m src.cli --headless --route recap --title "<title>" --estimate
+.venv/bin/python -m src.cli --headless --route series --title "<t>" --brief "<b>" --episodes N --video-model <id> --estimate
+```
+
+Prints the priced lines and the total (`src/estimates.py`, the same figures the worker shows before it asks for a confirmation) and exits without any network call. `--video-model` picks a verified model for a series run (refused when the model is not verified in `registry.json`). A CLI recap runs script and narration in one go, so its estimate covers both; the worker stops after the script for review and estimates each half separately.
+
 ## Story worker agent (Studio › Story jobs)
 
 `src/agent.py` is the engine's API for the Pi UI (it replaced the old dashboard, `src/server.py` + `static/`, in Phase 3). It runs on this laptop, listens on `127.0.0.1:8911` only, and is reached solely through the Pi's studio proxy (`publisher/app/studio_proxy.py`), which forwards the UI's `/api/studio/*` after the UI's own sign-in. Keys stay in this folder's `.env`.

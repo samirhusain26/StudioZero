@@ -77,6 +77,24 @@ class HeadlessCliArgsTest(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 cli.main(["--headless", "--route", "series", "--title", "X"])
 
+    def test_estimate_prints_priced_lines_and_spends_nothing(self):
+        self.addCleanup(setattr, Config, "ACTIVE_VIDEO_MODEL", Config.ACTIVE_VIDEO_MODEL)
+        code, out = _run_cli(["--headless", "--route", "series", "--title", "X", "--brief", "y", "--episodes", "2",
+                              "--video-model", "kling-2.5-turbo-pro", "--estimate"])
+        self.assertEqual(code, 0)
+        doc = json.loads(out)
+        self.assertEqual(doc["videoModel"], "kling-2.5-turbo-pro")
+        self.assertIn("12 video clip(s) with Kling 2.5 Turbo Pro, 5 s each", [l["what"].split(" (")[0] for l in doc["lines"]])
+        self.assertAlmostEqual(doc["estimateUsd"], round(sum(l["usd"] for l in doc["lines"]), 4))
+        code, out = _run_cli(["--headless", "--route", "recap", "--title", "X", "--estimate"])
+        self.assertEqual([l["what"].split(" (")[0].split(",")[0] for l in json.loads(out)["lines"]], ["Recap script", "Narration"])
+        self.assertEqual(sx.NETWORK_ATTEMPTS, [])
+
+    def test_unverified_video_model_is_refused(self):
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                cli.main(["--headless", "--route", "series", "--title", "X", "--brief", "y", "--video-model", "sora-2-pro", "--estimate"])
+
 
 @unittest.skipUnless(sx.FFMPEG_SOURCE, "no working ffmpeg (system or Remotion-bundled)")
 class RecapSmokeTest(unittest.TestCase):
@@ -467,6 +485,29 @@ class SeriesSmokeTest(unittest.TestCase):
         self.assertTrue(mp4_faststart(final))
         # 5 clips of 1.5 s, each trimmed by 0.2 s
         self.assertAlmostEqual(v["durationSeconds"], 5 * 1.3, delta=0.3)
+
+    def test_9_editor_only_rerun_backfills_old_clips(self):
+        """An old project (clips made before the ledger, no spend_ledger.json): re-running only the editor still
+        records the model that made the clips and an estimated cost, never "unknown" at $0. Spends nothing."""
+        project = self.root / "projects" / "Old_Garage"
+        shutil.copytree(FIXTURE_PROJECT, project, ignore=lambda d, n: ({"final.mp4", "render.json", "cover.jpg"} & set(n))
+                        if Path(d).name == "episode_1" else ({"spend_ledger.json"} & set(n)) if Path(d) == FIXTURE_PROJECT else set())
+        state_file = project / "pipeline_state.json"
+        state = json.loads(state_file.read_text())
+        state["episodes"]["1"]["steps"]["editor"].update(completed=False, completed_at=None, error=None, artifact_paths=[])
+        state_file.write_text(json.dumps(state, indent=2))
+        submits = list(self.fake.submits)
+        code, log = _run_cli(["--headless", "--route", "series", "--title", "Galactic Garage", "--brief", "x",
+                              "--episodes", "1", "--project-dir", str(project)])
+        self.assertEqual(code, 0, log[-3000:])
+        self.assertEqual(self.fake.submits, submits)
+        doc = json.loads((project / "episodes" / "episode_1" / "render.json").read_text())
+        video = [m["id"] for m in doc["models"] if m["role"] == "video"]
+        self.assertTrue(video and "unknown" not in video, video)
+        self.assertGreater(doc["costUsd"], 0)
+        ledger = json.loads((project / "spend_ledger.json").read_text())["entries"]
+        self.assertTrue(ledger and all(e["source"] == "backfill" for e in ledger))
+        self.assertEqual(sx.NETWORK_ATTEMPTS, [])
 
     def test_8_stages_packages_and_validates_as_contract_v2(self):
         if not sx.node_available():

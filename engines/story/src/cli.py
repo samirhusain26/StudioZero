@@ -281,8 +281,26 @@ def _parse_args(argv=None):
     parser.add_argument("--no-resume", action="store_true", help="series: start fresh instead of resuming")
     parser.add_argument("--offline", action="store_true", help="recap: replay output/temp/<title>/pipeline_cache.json, no API calls")
     parser.add_argument("--clean", action="store_true", help="recap: delete the temp folder after rendering")
+    parser.add_argument("--video-model", help="series: video model for this run (a verified model in registry.json)")
+    parser.add_argument("--estimate", action="store_true", help="print the run's cost estimate and exit ($0, no network)")
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser, parser.parse_args(argv)
+
+
+def print_estimate(args) -> int:
+    """The cost estimate the owner approves before a paid run (src/estimates.py)."""
+    import json
+    from src import estimates
+    if args.route == "recap":
+        if args.offline:
+            lines = []
+        else:
+            lines, _ = estimates.recap_lines(whole_run=True)
+    else:
+        lines = estimates.series_lines(Config.ACTIVE_VIDEO_MODEL, args.episodes)
+    print(json.dumps({"route": args.route, "title": args.title, "videoModel": Config.ACTIVE_VIDEO_MODEL if args.route == "series" else None,
+                      "lines": lines, "estimateUsd": estimates.total(lines)}, indent=2))
+    return 0
 
 
 def run_headless(args) -> int:
@@ -322,6 +340,17 @@ def main(argv=None):
             parser.error("--route series needs --brief (or --project-dir of an existing project)")
         if not 1 <= args.episodes <= 10:
             parser.error("--episodes must be between 1 and 10")
+    if args.video_model:
+        from src.video_models import get_model
+        try:
+            model = get_model(args.video_model)
+        except KeyError:
+            parser.error(f"unknown video model {args.video_model}")
+        if not model.available:
+            parser.error(f"{args.video_model} is not verified in registry.json and is never called")
+        Config.ACTIVE_VIDEO_MODEL = model.model_id
+    if args.estimate:
+        return print_estimate(args)
     return run_headless(args)
 
 

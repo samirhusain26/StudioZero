@@ -15,7 +15,7 @@ from src.budget_guard import BudgetExceeded, BudgetGuard, SpendLedger
 from src.config import Config
 from src.steps import StepContext
 from src.steps.director import DirectorShot, DirectorShots
-from src.steps.scene_generator import _backfill_existing_clips
+from src.steps.scene_generator import backfill_existing_clips
 
 
 def _shot(scene_id: int) -> DirectorShot:
@@ -66,8 +66,8 @@ class SpendLedgerTest(unittest.TestCase):
         shots = DirectorShots(episode_number=1, shots=[_shot(1), _shot(2), _shot(3)])
 
         ledger = SpendLedger(self.project)
-        _backfill_existing_clips(ctx, ledger, shots, clips)
-        _backfill_existing_clips(ctx, ledger, shots, clips)  # idempotent
+        backfill_existing_clips(ctx.project_dir, ctx.episode_number, ledger, shots, clips)
+        backfill_existing_clips(ctx.project_dir, ctx.episode_number, ledger, shots, clips)  # idempotent
 
         rows = [(e["sceneId"], e["modelId"], e["status"], e["source"], e["costUsd"]) for e in SpendLedger(self.project).entries]
         self.assertEqual(rows, [(1, "veo-3.1-lite", "ok", "backfill", 0.4), (2, "veo-3.1-lite", "ok", "backfill", 0.4)])
@@ -75,7 +75,7 @@ class SpendLedgerTest(unittest.TestCase):
         # A clip whose billed entry was never closed (crash after download) is not counted twice
         (clips / "scene_3.mp4").write_bytes(b"x")
         ledger.record(episode=1, scene_id=3, model_id="wan-2.5", duration_sec=5, cost_usd=0.25)
-        _backfill_existing_clips(ctx, ledger, shots, clips)
+        backfill_existing_clips(ctx.project_dir, ctx.episode_number, ledger, shots, clips)
         self.assertEqual([(e["sceneId"], e["status"]) for e in ledger.entries_for(1, 3)], [(3, "ok")])
         self.assertEqual(ledger.total(), 1.05)
         with mock.patch.object(Config, "VIDEO_MAX_BUDGET", 1.5):

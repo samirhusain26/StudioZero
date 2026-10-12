@@ -24,7 +24,7 @@ docs/                            STUDIO_PLAN (running plan), PUBLIC_SAFETY, plan
                                  PI_UI_REDESIGN_PLAN, AUTOPILOT_PLAN, AUDIO_CORPUS_PLAN, MARKETING_VIDEO_PLAN, UPLOAD_PLAN (historical)
 studio.json                      projects, engines, channels (public facts only)
 projects/                        <p>/{project.json, package.mjs + package-core.mjs (contract v2 episodes; scalargame: captions, links)}
-tools/                           public_safety_check.py (run before every push, stdlib); package.mjs (shared packager) +
+tools/                           public_safety_check.py (run before every push, stdlib); stage-story.mjs (story render → batch); package.mjs (shared packager) +
                                  package-regression.mjs; render-json.mjs + RENDER_JSON.md (engine → packager format);
                                  export-catalog.mjs (→ publisher/catalog.json)
 engines/motion/                  motion engine, Mac only. Its own Node project (package.json, tsconfig, remotion.config.ts)
@@ -56,7 +56,8 @@ publisher/                       Pi. Everything the Pi runs
   profile-assets/  config.example.json (placeholders only)  pi-package.json  pi-package-lock.json
 contract/                        shared: library_contract.py (validate/finalize; v1 and v2), projects/<p>.py (v2 project rules), BATCH_CONTRACT.md, tests/
 library/                         <batchId>/ (only batch.json tracked), _sources/<snapshot>/ (tracked, frozen), _templates/ _briefs/ _retros/ (tracked notes), _inbox/ _dev/ (ignored)
-.claude/                         skills/video-batch/ (Scalargame batch skill), agents/fact-checker.md, launch.json
+.claude/                         skills/video-batch/ (Scalargame batch skill), skills/originals/ (Originals playbook), agents/fact-checker.md,
+                                 agents/originals-fact-checker.md, launch.json
 ```
 
 ## Mac, Pi, shared
@@ -117,6 +118,8 @@ npm run studio                                       # Remotion Studio (.claude/
 .venv/bin/python -m src.cli                          # interactive: recap (title) or series (brief, episodes)
 .venv/bin/python -m src.cli --headless --route recap --title "<title>" [--offline]                    # PAID unless --offline
 .venv/bin/python -m src.cli --headless --route series --title "<t>" --brief "<b>" --episodes N        # PAID
+.venv/bin/python -m src.cli --headless --route recap|series … --estimate        # $0: the run's cost estimate
+node tools/stage-story.mjs --batch=<batchId> <render folder>...   # (repo root) stage story renders into an Originals batch
 .venv/bin/python -m src.agent                       # story worker agent for Studio › Story jobs (setup: docs/HEADLESS.md; paid runs off unless STUDIO_AGENT_ALLOW_PAID=1)
 ```
 
@@ -126,6 +129,8 @@ Gotchas: run Remotion from `engines/motion/` (it resolves `public/` from the wor
 
 - **`/video-batch`** (`.claude/skills/video-batch/SKILL.md`): Scalargame's batch playbook: `brief <batchId>` runs brief → write → check → pack (Checkpoint 1) → pilots (Checkpoint 2) → render → review → package (Checkpoint 3) → finalize (owner approval only) → retro; `status <batchId>` is read-only; `retro <batchId>` writes `library/_retros/<batchId>.md`. Counts, games, formats and styles come from the brief via the set's `CONFIG` (`engines/motion/pipeline/README.md`); the safety rules are fixed.
 - **`fact-checker` agent** (`.claude/agents/fact-checker.md`): independent live-source verification; writes only `library/<batchId>/review/source-verification.json` for an unfinalized batch.
+- **`/originals`** (`.claude/skills/originals/SKILL.md`): the Originals playbook: `brief <batchId>` (`YYYY-MM-oNN`) runs brief with per-run cost estimates (Checkpoint 0) → make (story engine; every paid run approved with its estimate) → stage (`tools/stage-story.mjs`) → check (script against its sources, rights, visual QA, disclosure; Checkpoint 1) → package (`tools/package.mjs --project=originals`; Checkpoint 2) → finalize (owner approval only) → retro; `status`, `retro` as above. Brief template `library/_templates/ORIGINALS_BRIEF.md`.
+- **`originals-fact-checker` agent** (`.claude/agents/originals-fact-checker.md`): checks each recap script against its plot sources; writes only `review/source-verification.json` for an unfinalized batch.
 - **Notes**: `library/_templates/{BRIEF,RETRO}.md`; briefs `library/_briefs/<batchId>.md`; retros `library/_retros/<batchId>.md`; the Pi's `feedback-<batchId>.json` goes in `library/_inbox/` (ignored).
 - **Owner guide**: `publisher/ui/content/guide/*.md` + `meta.json` (anchors fixed by `docs/REBUILD_CONTRACTS.md` §4), bundled into the UI (Pi UI → Guide); rebuild `publisher/app/static` after editing. `OWNER_GUIDE.md` is the short Mac-side pointer.
 
