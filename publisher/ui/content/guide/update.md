@@ -26,7 +26,7 @@ COPYFILE_DISABLE=1 tar --no-xattrs -czf - --exclude node_modules --exclude dist 
 sudo bash ~/.scalar-social-staging/git-bootstrap/publisher/deploy/bootstrap-git.sh
 ```
 
-3. The script prints a public key and waits. Open https://github.com/samirhusain26/scalargame-marketing-plan/settings/keys → Add deploy key, title `scalar-social-update@scout`, paste the key, leave **Allow write access unticked**, save, then press Enter in the script. (If you rename the repository to `scalargame-marketing` later, nothing breaks: GitHub redirects the old name and the Pi accepts both.)
+3. The script prints a public key and waits. Open https://github.com/samirhusain26/StudioZero/settings/keys → Add deploy key, title `scalar-social-update@scout`, paste the key, leave **Allow write access unticked**, save, then press Enter in the script.
 4. The script checks the key works, clones, and then proves the key is read-only: GitHub must refuse a test push with "marked as read only". If GitHub accepts it, the script stops and asks you to add the key again without write access; if the push fails for another reason (network, wrong repository name), it stops and asks you to re-run.
 5. If the media tool packages (`pi-package*.json`) differ from the ones installed, the script says so and asks `Continue with the npm reinstall? [y/N]`. Answer `y` to reinstall them (a few minutes), or `N` to stop before any service changes and run it again later.
 6. If anything fails after the services were changed, the script prints the exact commands to go back to the old copied install. Running it again is safe: a half-finished copy of the code is set aside and fetched again.

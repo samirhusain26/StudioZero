@@ -19,10 +19,10 @@ UUSER=scalar-social-update
 # update unit makes. Neither scalar-social nor the update user can change anything there.
 UPD=/etc/scalar-social-update
 KEY=$UPD/deploy_key
-# The GitHub repository's current name. A later rename to scalargame-marketing is optional: GitHub redirects the
-# old name, and the updater accepts both.
-ORIGIN=git@github.com-scalar:samirhusain26/scalargame-marketing-plan.git
-KEYS_URL=https://github.com/samirhusain26/scalargame-marketing-plan/settings/keys
+# The public StudioZero repository (it replaced the private, now archived scalargame-marketing-plan; the updater
+# still accepts the old names so an old checkout keeps verifying).
+ORIGIN=git@github.com-scalar:samirhusain26/StudioZero.git
+KEYS_URL=https://github.com/samirhusain26/StudioZero/settings/keys
 STAMP=$(date -u +%Y%m%dT%H%M%SZ)
 BACKUP=/var/backups/scalar-social/pre-git-$STAMP
 LOW_MEMORY=(-c pack.threads=1 -c pack.windowMemory=32m -c core.deltaBaseCacheLimit=16m -c core.packedGitLimit=64m -c core.packedGitWindowSize=16m)

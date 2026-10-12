@@ -45,4 +45,4 @@ On the Pi (SSH alias `scalar-pi`; this UI at the Pi's Tailscale Serve address, `
 | `/var/backups/scalar-social` | Root-only copies of service files taken before installs |
 | `~/.scalar-social-staging/` (the login user's home) | Folders you copy from the Mac before running a one-time install script |
 
-On GitHub: `samirhusain26/scalargame-marketing-plan`. Renaming it to `scalargame-marketing` is optional: GitHub redirects the old name and the Pi accepts both, so nothing breaks either way.
+On GitHub: `samirhusain26/StudioZero` (public). It replaced the private `scalargame-marketing-plan`, which is archived (read-only) and kept for its history.

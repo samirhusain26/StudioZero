@@ -28,7 +28,7 @@ The service's first step renames `request.json` to `request.taken.json` (the upd
 
 ## Sequence
 
-Check (`POST /api/system/update/check`): the UI queues `{action: "check"}` (202). The unit fetches `origin main` (`pack.threads=1`, small window/delta caches, no tags), then records in `status.check`: `head`, `origin` (full SHAs), `behind`/`ahead` (`rev-list --count`), `diverged` (`ahead > 0` or HEAD not an ancestor), `dirty` (`status --porcelain --ignored`: tracked changes, untracked files, and ignored bytecode (`__pycache__/`, `*.py[co]`) under `publisher/` or `contract/`, which Python would execute; other ignored files do not count), `branchOk` (`symbolic-ref` = `main`), `originOk` (`remote get-url` is exactly `git@github.com-scalar:samirhusain26/<name>(.git)` for `scalargame-marketing-plan`, the private repository bootstrap cloned, `scalargame-marketing`, or `StudioZero`, the public repository that replaces it; see [Moving the checkout to another GitHub repository](#moving-the-checkout-to-another-github-repository)), up to 30 incoming commits, and the changed files under `publisher/` and `contract/` with flags for units (`publisher/deploy/*.service|path|timer|conf`), `pi-package*.json`, `contract/` and the UI (`publisher/ui/`, `publisher/app/static/`).
+Check (`POST /api/system/update/check`): the UI queues `{action: "check"}` (202). The unit fetches `origin main` (`pack.threads=1`, small window/delta caches, no tags), then records in `status.check`: `head`, `origin` (full SHAs), `behind`/`ahead` (`rev-list --count`), `diverged` (`ahead > 0` or HEAD not an ancestor), `dirty` (`status --porcelain --ignored`: tracked changes, untracked files, and ignored bytecode (`__pycache__/`, `*.py[co]`) under `publisher/` or `contract/`, which Python would execute; other ignored files do not count), `branchOk` (`symbolic-ref` = `main`), `originOk` (`remote get-url` is exactly `git@github.com-scalar:samirhusain26/<name>(.git)` for `StudioZero`, the public repository, or the old names `scalargame-marketing-plan` (the private repository it replaced, now archived) and `scalargame-marketing`; see [Moving the checkout to another GitHub repository](#moving-the-checkout-to-another-github-repository)), up to 30 incoming commits, and the changed files under `publisher/` and `contract/` with flags for units (`publisher/deploy/*.service|path|timer|conf`), `pi-package*.json`, `contract/` and the UI (`publisher/ui/`, `publisher/app/static/`).
 
 Apply (`POST /api/system/update/start {confirm: "UPDATE TO <sha>"}`): the server re-validates against the last check (≤ 15 min old, fetch succeeded, HEAD unchanged since, clean, not diverged, right branch and origin, behind > 0, sha = `check.origin`) and queues `{action: "apply", sha}` (202). The unit then:
 
@@ -77,14 +77,14 @@ Phases: `idle, checking, checked, staging, waiting, switching, switched, restart
 
 ## Moving the checkout to another GitHub repository
 
-The code moves from the private `scalargame-marketing-plan` to the public `StudioZero`, whose history is unrelated (old StudioZero commits, then one import commit of this tree). The updater cannot follow that: its check marks HEAD `diverged` (HEAD is not an ancestor of the new `main`) and the switch is `--ff-only`, so a re-pointed `origin` would refuse every update. `migrate-origin.sh` replaces the checkout instead, once:
+The code moved (2026-10-11) from the private `scalargame-marketing-plan` to the public `StudioZero`, whose history is unrelated (old StudioZero commits, then one import commit of this tree). The updater cannot follow that: its check marks HEAD `diverged` (HEAD is not an ancestor of the new `main`) and the switch is `--ff-only`, so a re-pointed `origin` would refuse every update. `migrate-origin.sh` replaces the checkout instead, once:
 
 1. The updater already accepts both origins (shipped through the normal flow first), so either checkout keeps updating.
 2. `--commit <sha> --dry-run`: clones StudioZero partial + sparse into `/opt/scalar-social/repo.next` as `scalar-social-update` with the same root-owned ssh config, key and pinned host keys; proves `publisher/` and `contract/` are byte-identical to the running checkout (git tree hashes and `diff -r`), the bundle matches its MANIFEST, and the key cannot push; then removes the clone.
 3. Without `--dry-run`, it also snapshots unit states, `PAUSED` and the config/approved-schedule hashes, stops `scalar-social-update.path`, waits for a quiet minute (at least 30 minutes from an autopilot run and the daily post time, clear of the quarter-hour ticks), takes `runner.lock`, swaps the folders with `mv --exchange` (the path never disappears), moves the previous checkout to `/opt/scalar-social/repo.pre-studiozero-<stamp>` (root-only), records `units-applied.json` at the new HEAD (the `publisher/` bytes are unchanged, so no unit apply is due), restarts the UI and runs an update check against the new origin. Any failure after the swap swaps back. It never runs `apply-units.sh`, which would re-enable timers.
 4. `--rollback /opt/scalar-social/repo.pre-studiozero-<stamp>` swaps back the same way.
 
-`/etc/scalar-social`, `/etc/scalar-social-update`, `/var/lib/scalar-social`, channels and timers are untouched. The deploy key stays attached to the old repository until the move is verified (a public repository is readable with any key); then the owner moves it to StudioZero as read-only. Deleting the old repository would delete its deploy keys: archive it instead.
+`/etc/scalar-social`, `/etc/scalar-social-update`, `/var/lib/scalar-social`, channels and timers are untouched. The deploy key stayed attached to the old repository until the move was verified (a public repository is readable with any key); then it moved to StudioZero as read-only, and the old repository was archived, not deleted (2026-10-12).
 
 ## Owner commands (on the Pi)
 
@@ -100,7 +100,7 @@ tmux new -s bootstrap
 #    state folders, backups, units, update path unit
 sudo bash ~/.scalar-social-staging/git-bootstrap/publisher/deploy/bootstrap-git.sh
 #    It prints the public key and waits: add it at
-#    https://github.com/samirhusain26/scalargame-marketing-plan/settings/keys  (Add deploy key, write access OFF)
+#    https://github.com/samirhusain26/StudioZero/settings/keys  (Add deploy key, write access OFF)
 #    then press Enter; it verifies `ssh -F /etc/scalar-social-update/ssh_config -T git@github.com-scalar` as
 #    scalar-social-update, clones into /opt/scalar-social/repo.new-<ts> and moves it into place only after checking
 #    it (clean, on main, UI bundle = MANIFEST.json, every file the units reference), and stops unless GitHub refuses
