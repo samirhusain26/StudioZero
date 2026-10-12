@@ -64,3 +64,19 @@ export function formatRenderable(catalog: Catalog, format: CatalogFormat): boole
   if (format.route) return engine.routes.some((r) => r.id === format.route && r.formats.includes(format.id))
   return Boolean(engine.templates?.some((t) => t.format === format.id))
 }
+
+/**
+ * Mix targets as schedule shares (mirrors publisher/app/autopilot.catalog_mix): null while every project's target is
+ * null, so the draft keeps the game round-robin order; otherwise a project without a target gets share 0.
+ */
+export function catalogMix(catalog: Catalog): Record<string, number> | null {
+  if (catalog.projects.every((p) => p.mix.target === null)) return null
+  return Object.fromEntries(catalog.projects.map((p) => [p.id, p.mix.target ?? 0]))
+}
+
+/** "scalargame 75% · originals 25%" */
+export function mixLabel(mix: Record<string, number>): string {
+  return Object.entries(mix)
+    .map(([project, share]) => `${project} ${Math.round(share * 100)}%`)
+    .join(' · ')
+}

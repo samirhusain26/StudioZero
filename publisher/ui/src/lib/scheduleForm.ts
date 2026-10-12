@@ -18,6 +18,8 @@ export interface ScheduleForm {
   platforms: Record<Platform, PlatformForm>
   staggerMinutes: string
   ordering: OrderingRule
+  /** Shares per project for the project-mix ordering (from the catalog's mix targets); null when none are set. */
+  mix: Record<string, number> | null
   firstComment: boolean
   answerReply: boolean
 }
@@ -58,9 +60,16 @@ function addDays(dateKey: string, days: number): string {
   return date.toISOString().slice(0, 10)
 }
 
-/** The recommended form, starting the day after `today` (YYYY-MM-DD in the suggested zone); blocked platforms stay out. */
-export function recommendedScheduleForm(today: string, blocked: ReadonlySet<Platform>): ScheduleForm {
+/**
+ * The recommended form, starting the day after `today` (YYYY-MM-DD in the suggested zone); blocked platforms stay out.
+ * With mix targets (catalogMix) the content order is the project mix, as autopilot.recommended_inputs does.
+ */
+export function recommendedScheduleForm(today: string, blocked: ReadonlySet<Platform>, mix: Record<string, number> | null = null): ScheduleForm {
   const form = emptyScheduleForm()
+  if (mix) {
+    form.ordering = 'project-mix'
+    form.mix = mix
+  }
   form.timezone = SUGGESTED_TIMEZONE
   form.startDate = addDays(today, 1)
   form.endDate = addDays(today, RECOMMENDED_DAYS)
@@ -79,8 +88,13 @@ export function recommendedScheduleForm(today: string, blocked: ReadonlySet<Plat
  * visible fields). Only built when Generate or Customize is tapped; until then nothing is form state.
  * With the default start (tomorrow) it equals recommendedScheduleForm exactly, so the draft hash is the same.
  */
-export function presetForm(today: string, blocked: ReadonlySet<Platform>, overrides: { startDate?: string; timezone?: string } = {}): ScheduleForm {
-  const form = recommendedScheduleForm(today, blocked)
+export function presetForm(
+  today: string,
+  blocked: ReadonlySet<Platform>,
+  overrides: { startDate?: string; timezone?: string } = {},
+  mix: Record<string, number> | null = null,
+): ScheduleForm {
+  const form = recommendedScheduleForm(today, blocked, mix)
   const zone = overrides.timezone?.trim()
   if (zone) form.timezone = zone
   if (overrides.startDate && DATE.test(overrides.startDate)) {
@@ -109,6 +123,7 @@ export function emptyScheduleForm(): ScheduleForm {
     platforms,
     staggerMinutes: '',
     ordering: 'game-round-robin',
+    mix: null,
     firstComment: false,
     answerReply: false,
   }
@@ -150,6 +165,7 @@ export function buildScheduleInputs(form: ScheduleForm): InputsResult {
     }
     minGapHours[p] = gap
   }
+  if (form.ordering === 'project-mix' && !form.mix) errors.push('The project mix needs target shares in the project manifests (none are set).')
   const stagger = Number(form.staggerMinutes)
   if (!form.staggerMinutes.trim() || !Number.isInteger(stagger) || stagger < 0) errors.push('Stagger must be a whole number of minutes ≥ 0 (0 = none).')
 
@@ -164,6 +180,7 @@ export function buildScheduleInputs(form: ScheduleForm): InputsResult {
       minGapHours,
       staggerMinutes: stagger,
       ordering: form.ordering,
+      ...(form.ordering === 'project-mix' && form.mix ? { mix: form.mix } : {}),
       companions: { firstComment: form.firstComment, answerReply: form.answerReply },
       edits: {},
     },

@@ -5,7 +5,7 @@ recorded gets it from a confirmed post on its current account (configure_paused.
 
 refill (scalar-social): when fewer than RUNWAY_DAYS remain in the approved schedule, generates the recommended draft
 (the UI's "Recommended" preset: every verified platform, daily, one post at its set time, first comment and answer
-reply) and requests its approval exactly as the UI's Approve button does. The approve units deploy and verify the
+reply; the project mix from the catalog's targets once the owner sets them, else game round-robin) and requests its approval exactly as the UI's Approve button does. The approve units deploy and verify the
 media, bind the hash and run activate.py --auto. Nothing happens while the owner has paused publishing in the UI, an
 approval is pending, or the draft is blocked or empty (the library is used up: render a new batch).
 """
@@ -63,17 +63,30 @@ def verify_channels(config_path, state, out=print):
     return recorded
 
 
-def recommended_inputs(config, today):
-    """The UI's recommended form as generator inputs, starting tomorrow; platforms that cannot post stay out."""
+def catalog_mix(catalog):
+    """{project: target share} from the studio catalog when any project has a target, else None (game round-robin,
+    exactly as before targets existed). A project without a target gets share 0."""
+    projects = [p for p in (catalog or {}).get('projects') or [] if isinstance(p, dict) and isinstance(p.get('id'), str)]
+    targets = {p['id']: (p.get('mix') or {}).get('target') for p in projects}
+    if all(t is None for t in targets.values()):
+        return None
+    return {k: t if isinstance(t, (int, float)) and not isinstance(t, bool) else 0 for k, t in targets.items()}
+
+
+def recommended_inputs(config, today, catalog=None):
+    """The UI's recommended form as generator inputs, starting tomorrow; platforms that cannot post stay out.
+    With mix targets in the catalog the content order is the project mix."""
     import ui_schedule
     start = today + dt.timedelta(days=1)
+    mix = catalog_mix(catalog)
     channels = config.get('channels') or {}
     included = [p for p in ui_schedule.PLATFORM_ORDER if not ui_schedule._exclusion(p, channels.get(p))]
     return {'timezone': SUGGESTED_TIMEZONE, 'startDate': start.isoformat(),
             'endDate': (start + dt.timedelta(days=RECOMMENDED_DAYS - 1)).isoformat(),
             'platforms': {p: {'include': True, 'weekdays': [0, 1, 2, 3, 4, 5, 6], 'times': [RECOMMENDED_TIMES[p]],
                               'maxPerDay': 1} for p in included},
-            'minGapHours': {p: 2 for p in included}, 'staggerMinutes': 0, 'ordering': 'game-round-robin',
+            'minGapHours': {p: 2 for p in included}, 'staggerMinutes': 0,
+            **({'ordering': 'project-mix', 'mix': mix} if mix else {'ordering': 'game-round-robin'}),
             'companions': {'firstComment': True, 'answerReply': True}, 'edits': {}}
 
 
@@ -84,6 +97,15 @@ def runway(manifest, zone, today):
         return None, -1
     last = max(slots).astimezone(zone).date()
     return last, (last - today).days
+
+
+def catalog():
+    """The studio catalog (mix targets), or None when it cannot be read: then the order stays game round-robin."""
+    import ui_catalog
+    try:
+        return ui_catalog.read()[1]
+    except ui_catalog.CatalogError:
+        return None
 
 
 def refill(config_path, state, now=None, out=print):
@@ -107,7 +129,7 @@ def refill(config_path, state, now=None, out=print):
         return f'Runway ok: the approved schedule runs to {last} ({left} days left); nothing to do.'
     ending = f'ends {last}' if last else 'is empty'
     today = now.astimezone(ZoneInfo(SUGGESTED_TIMEZONE)).date()
-    inputs = recommended_inputs(config, today)
+    inputs = recommended_inputs(config, today, catalog())
     normalized = ui_schedule.validate_inputs(inputs, config, today)
     history = ui_schedule.ledger_history(state/'ledger.sqlite3', config, now)
     channels = config.get('channels') or {}

@@ -827,7 +827,7 @@ export interface PlatformScheduleInput {
   maxPerDay: number
 }
 
-export type OrderingRule = 'game-round-robin'
+export type OrderingRule = 'game-round-robin' | 'project-mix'
 
 /** Per-job edit applied by the generator (key = DraftJob.key). */
 export type DraftEdit = { text: string } | { remove: true }
@@ -849,6 +849,8 @@ export interface ScheduleInputs {
   /** Same video on several platforms in one UTC slot: later platforms shift by k × this. */
   staggerMinutes: number
   ordering: OrderingRule
+  /** project-mix only: share 0–1 per project (catalog mix targets; a project without one gets 0 and is left out). */
+  mix?: Record<string, number>
   companions: {
     /** Schedule own first comments/replies where a route exists. */
     firstComment: boolean

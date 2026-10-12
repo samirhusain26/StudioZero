@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { realCatalog } from '../test/catalog'
-import { bedsFor, catalogFormats, catalogGames, formatRenderable, projectsInOrder, stylesFor } from './catalog'
+import { bedsFor, catalogFormats, catalogGames, catalogMix, formatRenderable, mixLabel, projectsInOrder, stylesFor } from './catalog'
 
 describe('catalog lookups', () => {
   const catalog = realCatalog()
@@ -29,5 +29,15 @@ describe('catalog lookups', () => {
     expect(formatRenderable(catalog, { id: 'nope', name: 'Nope', engine: 'motion', route: null })).toBe(false)
     expect(formatRenderable(catalog, { id: 'movie-recap', name: 'x', engine: 'story', route: 'series' })).toBe(false)
     expect(formatRenderable(catalog, { id: 'x', name: 'x', engine: 'nope', route: null })).toBe(false)
+  })
+})
+
+describe('mix targets', () => {
+  it('has no mix while every target is null; a project without a target gets 0 once any is set', () => {
+    const catalog = realCatalog()
+    expect(catalogMix(catalog)).toBeNull()
+    const set = { ...catalog, projects: catalog.projects.map((p) => ({ ...p, mix: { ...p.mix, target: p.id === 'scalargame' ? 0.8 : null } })) }
+    expect(catalogMix(set)).toEqual({ originals: 0, scalargame: 0.8 })
+    expect(mixLabel({ scalargame: 0.75, originals: 0.25 })).toBe('scalargame 75% · originals 25%')
   })
 })

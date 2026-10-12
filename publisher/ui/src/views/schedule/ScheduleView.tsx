@@ -11,6 +11,7 @@ import { Time } from '../../components/Time'
 import { useApi } from '../../hooks/useApi'
 import { useJourney } from '../../hooks/useJourney'
 import { approvalResultText } from '../../lib/approvalResult'
+import { catalogMix, mixLabel } from '../../lib/catalog'
 import { platformName, shortHash } from '../../lib/format'
 import {
   buildScheduleInputs,
@@ -265,7 +266,9 @@ export function NewDraft({ channels, busy, onGenerate }: { channels: ChannelSumm
   const [customized, setCustomized] = useState<ScheduleForm | null>(null)
   const blocked = blockedSet(channels)
   const included = PLATFORMS.filter((p) => !blocked.has(p)).sort((a, b) => RECOMMENDED_TIMES[a].localeCompare(RECOMMENDED_TIMES[b]))
-  const preset = () => presetForm(day, blocked, { startDate, timezone })
+  const catalog = useApi(api.catalog)
+  const mix = catalog.data ? catalogMix(catalog.data) : null
+  const preset = () => presetForm(day, blocked, { startDate, timezone }, mix)
 
   const generate = () => {
     const built = buildScheduleInputs(preset())
@@ -312,7 +315,7 @@ export function NewDraft({ channels, busy, onGenerate }: { channels: ChannelSumm
         </div>
       </div>
       <p>
-        Recommended plan: one post per platform per day for {RECOMMENDED_DAYS} days.
+        Recommended plan: one post per platform per day for {RECOMMENDED_DAYS} days{mix ? `, content by project mix (${mixLabel(mix)})` : ''}.
         <span className="block muted" data-testid="preset-times">
           {included.map((p) => `${platformName(p)} ${RECOMMENDED_TIMES[p]}`).join(' · ')}
         </span>
@@ -334,7 +337,7 @@ export function NewDraft({ channels, busy, onGenerate }: { channels: ChannelSumm
         }}
       >
         <summary>Customize</summary>
-        {customized ? <GeneratorForm channels={channels} busy={busy} onGenerate={onGenerate} initial={customized} /> : null}
+        {customized ? <GeneratorForm channels={channels} busy={busy} onGenerate={onGenerate} initial={customized} mix={mix} /> : null}
       </details>
       {errors.length ? (
         <div className="notice notice-error" role="alert">

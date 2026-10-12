@@ -25,7 +25,7 @@ UTC = dt.timezone.utc
 PLATFORM_ORDER = ('instagram', 'facebook', 'threads', 'x', 'youtube', 'bluesky', 'tiktok')
 LABELS = {'instagram': 'Instagram', 'facebook': 'Facebook', 'threads': 'Threads', 'x': 'X',
           'youtube': 'YouTube', 'bluesky': 'Bluesky', 'tiktok': 'TikTok'}
-ORDERINGS = ('game-round-robin',)
+ORDERINGS = ('game-round-robin', 'project-mix')
 PROVIDER_DAILY_CAPS = {'facebook': 30, 'instagram': 25, 'threads': 250, 'bluesky': 25, 'tiktok': 25}
 BUFFER_DAILY_CAP = 40          # posts/day shared by every Buffer-routed channel (≈200 calls)
 PAGES_DEPLOYMENT_LIMIT = 120   # per 31 days (prepare.deploy_site)
@@ -65,7 +65,9 @@ COMPANIONS = {
 }
 
 INPUT_KEYS = ('timezone', 'startDate', 'endDate', 'platforms', 'minGapHours', 'staggerMinutes',
-              'ordering', 'companions', 'edits', 'carryOnly')
+              'ordering', 'mix', 'companions', 'edits', 'carryOnly')
+PROJECT = re.compile(r'[a-z][a-z0-9]*')
+NOT_IN_MIX = 'Its project has no share in the content mix'
 X_THREAD_SKIPPED = 'X first comment skipped: Buffer thread posting with video is not yet verified (choices stay in the caption)'
 TIME = re.compile(r'([01]\d|2[0-3]):[0-5]\d')
 ZONE_NAME = re.compile(r'[A-Za-z0-9_+\-]+(/[A-Za-z0-9_+\-]+)*')
@@ -177,7 +179,16 @@ def _normalize(inputs):
     if not _int(stagger) or not 0 <= stagger <= MAX_STAGGER:
         raise ValueError(f'Stagger must be 0–{MAX_STAGGER} minutes')
     if inputs.get('ordering') not in ORDERINGS:
-        raise ValueError('Choose a content order (game round-robin)')
+        raise ValueError('Choose a content order (game round-robin or project mix)')
+    mix = inputs.get('mix')
+    if inputs['ordering'] == 'project-mix':
+        if (not isinstance(mix, dict) or not mix or len(mix) > 20
+                or not all(isinstance(k, str) and PROJECT.fullmatch(k) and _number(v) and 0 <= v <= 1 for k, v in mix.items())
+                or not sum(mix.values()) > 0):
+            raise ValueError('The project mix needs a share from 0 to 1 per project, and at least one above 0')
+        mix = {k: int(v) if float(v).is_integer() else v for k, v in sorted(mix.items())}
+    elif mix is not None:
+        raise ValueError('A project mix needs the project-mix ordering')
     companions = inputs.get('companions')
     if (not isinstance(companions, dict) or set(companions) != {'firstComment', 'answerReply'}
             or not all(isinstance(v, bool) for v in companions.values())):
@@ -198,8 +209,8 @@ def _normalize(inputs):
             raise ValueError('Each edit is either {"text": "…"} with new text or {"remove": true}')
     return {'timezone': inputs['timezone'], 'startDate': start.isoformat(), 'endDate': end.isoformat(),
             'platforms': norm_platforms, 'minGapHours': norm_gaps, 'staggerMinutes': stagger,
-            'ordering': inputs['ordering'], 'companions': dict(companions), 'edits': norm_edits,
-            'carryOnly': carry_only}
+            'ordering': inputs['ordering'], **({'mix': mix} if mix is not None else {}),
+            'companions': dict(companions), 'edits': norm_edits, 'carryOnly': carry_only}
 
 
 def validate_inputs(inputs, config, today):
@@ -323,6 +334,27 @@ def round_robin(videos):
         buckets = [[v for v in items if v.get('difficulty') == d] for d in lc.DIFFICULTIES]
         per_game.append(_interleave(buckets) + [v for v in items if v.get('difficulty') not in lc.DIFFICULTIES])
     return _interleave(per_game) + [v for v in videos if v.get('game') not in lc.GAMES]
+
+
+def project_mix(videos, mix):
+    """Content order by project share (docs/STUDIO_PLAN.md §5, mix policy): each project's own queue in game
+    round-robin order, interleaved so that every prefix of the order is as close to the shares as it can be
+    (smooth weighted round-robin; ties by project name). Projects with share 0 or no share are left out."""
+    queues = {p: round_robin([v for v in videos if lc.project_of(v['episode']) == p])
+              for p, share in sorted(mix.items()) if share > 0}
+    queues = {p: q for p, q in queues.items() if q}
+    credit, picked, out = {p: 0.0 for p in queues}, {p: 0 for p in queues}, []
+    while queues:
+        total = sum(mix[p] for p in queues)
+        for p in queues:
+            credit[p] += mix[p]
+        best = max(sorted(queues), key=lambda p: credit[p])
+        credit[best] -= total
+        out.append(queues[best][picked[best]])
+        picked[best] += 1
+        if picked[best] == len(queues[best]):
+            del queues[best]
+    return out
 
 
 def _exclusion(platform, channel):
@@ -556,9 +588,17 @@ def generate(inputs, videos, history, config, base_manifest=None, base_manifest_
     day_counts = {p: collections.Counter(t.astimezone(zone).date().isoformat() for t in times[p]) for p in PLATFORM_ORDER}
     buffer_group = [p for p in PLATFORM_ORDER if (channels.get(p) or {}).get('route') == 'buffer']
 
-    order = round_robin(videos)
+    mix = inputs.get('mix')
+    order = project_mix(videos, mix) if inputs['ordering'] == 'project-mix' else round_robin(videos)
     threads_ok = THREADS_REPLY_SCOPE in ((channels.get('threads') or {}).get('observedScopes') or [])
     static = {}
+    if mix is not None:
+        listed = {id(v) for v in order}
+        for p in active:
+            for video in videos:
+                if id(video) not in listed:
+                    ineligible.append({'platform': p, 'episodeId': video['episodeId'], 'revision': video['revision'],
+                                       'questionId': video['questionId'], 'reason': NOT_IN_MIX})
     for p in active:
         for i, video in enumerate(order):
             reason = _static_reason(video, p) or _attribution_reason(video, p, inputs['companions']['firstComment'], threads_ok)
@@ -755,8 +795,16 @@ def generate(inputs, videos, history, config, base_manifest=None, base_manifest_
         'warnings': warnings, 'blocking': blocking,
         'summary': {'requested': requested, 'filled': sum(j['kind'] == 'post' and not j['carried'] for j in jobs),
                     'companions': sum(j['kind'] != 'post' and not j['carried'] for j in jobs),
-                    'carried': sum(j['carried'] for j in jobs), 'removed': len(removed)},
+                    'carried': sum(j['carried'] for j in jobs), 'removed': len(removed),
+                    **({'byProject': _by_project(jobs, by_id)} if mix is not None else {})},
     }
+
+
+def _by_project(jobs, by_id):
+    """New posts per project (project-mix drafts only)."""
+    counts = collections.Counter(lc.project_of(by_id[(j['episodeId'], j['revision'])]['episode'])
+                                 for j in jobs if j['kind'] == 'post' and not j['carried'] and (j['episodeId'], j['revision']) in by_id)
+    return dict(sorted(counts.items()))
 
 
 def draft_sha256(draft):

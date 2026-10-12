@@ -156,3 +156,61 @@ class ScheduleTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class MixTests(unittest.TestCase):
+    def videos(self, scalar=6, originals=3):
+        return ([v2_record(scalargame_v2(n, ('scalar', 'continuum')[n % 2]), n) for n in range(1, scalar + 1)]
+                + [v2_record(originals_v2(n), 100 + n) for n in range(1, originals + 1)])
+
+    def test_no_targets_is_exactly_today(self):
+        import autopilot
+        catalog = json.loads((ROOT/'publisher/catalog.json').read_text())
+        self.assertTrue(all(p['mix']['target'] is None for p in catalog['projects']))
+        self.assertIsNone(autopilot.catalog_mix(catalog))
+        today = dt.date(2026, 10, 12)
+        self.assertEqual(autopilot.recommended_inputs(config(), today, catalog), autopilot.recommended_inputs(config(), today))
+        self.assertEqual(autopilot.recommended_inputs(config(), today, catalog)['ordering'], 'game-round-robin')
+        self.assertNotIn('mix', us._normalize(inputs()))
+        a = us.generate(inputs(end='2026-10-20'), self.videos(), {}, config())
+        self.assertNotIn('byProject', a['summary'])
+
+    def test_targets_fill_slots_by_share(self):
+        inp = inputs(end='2026-10-19')
+        inp.update(ordering='project-mix', mix={'scalargame': 0.75, 'originals': 0.25})
+        draft = us.generate(inp, self.videos(), {}, config())
+        projects = [lc.project_of(j_episode) for j_episode in
+                    (next(v['episode'] for v in self.videos() if v['episodeId'] == j['episodeId']) for j in posts(draft))]
+        self.assertEqual(projects, ['scalargame', 'originals', 'scalargame', 'scalargame', 'scalargame', 'originals', 'scalargame', 'scalargame'])
+        self.assertEqual(draft['summary']['byProject'], {'originals': 2, 'scalargame': 6})
+        again = us.generate(copy.deepcopy(inp), list(reversed(self.videos())), {}, config())
+        self.assertEqual(us.draft_sha256(draft), us.draft_sha256(again))
+
+    def test_a_project_runs_out_and_the_other_fills(self):
+        inp = inputs(end='2026-10-16')
+        inp.update(ordering='project-mix', mix={'scalargame': 0.5, 'originals': 0.5})
+        draft = us.generate(inp, self.videos(scalar=4, originals=1), {}, config())
+        self.assertEqual(draft['summary']['byProject'], {'originals': 1, 'scalargame': 4})
+
+    def test_share_zero_or_missing_is_left_out(self):
+        inp = inputs(end='2026-10-16')
+        inp.update(ordering='project-mix', mix={'scalargame': 1, 'originals': 0})
+        draft = us.generate(inp, self.videos(scalar=2, originals=2), {}, config())
+        self.assertEqual(draft['summary']['byProject'], {'scalargame': 2})
+        self.assertEqual({i['reason'] for i in draft['ineligible'] if i['questionId'].startswith('originals:')}, {us.NOT_IN_MIX})
+        import autopilot
+        self.assertEqual(autopilot.catalog_mix({'projects': [{'id': 'scalargame', 'mix': {'target': 0.8}},
+                                                             {'id': 'originals', 'mix': {'target': None}}]}),
+                         {'scalargame': 0.8, 'originals': 0})
+
+    def test_mix_inputs_are_checked(self):
+        for bad in ({'ordering': 'game-round-robin', 'mix': {'scalargame': 1}}, {'ordering': 'project-mix'},
+                    {'ordering': 'project-mix', 'mix': {'scalargame': 2}}, {'ordering': 'project-mix', 'mix': {'scalargame': 0}},
+                    {'ordering': 'project-mix', 'mix': {'Bad Name': 1}}):
+            inp = inputs()
+            inp.update(bad)
+            with self.assertRaises(ValueError):
+                us._normalize(inp)
+        inp = inputs()
+        inp.update(ordering='project-mix', mix={'scalargame': 1.0, 'originals': 0.25})
+        self.assertEqual(us._normalize(inp)['mix'], {'originals': 0.25, 'scalargame': 1})

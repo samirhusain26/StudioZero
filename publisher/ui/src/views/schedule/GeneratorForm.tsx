@@ -14,18 +14,22 @@ import {
   type ScheduleForm,
 } from '../../lib/scheduleForm'
 import { localDateKey } from '../../lib/time'
+import { mixLabel } from '../../lib/catalog'
 
 export function GeneratorForm({
   channels,
   busy,
   onGenerate,
   initial,
+  mix = null,
 }: {
   channels: ChannelSummary[]
   busy: boolean
   onGenerate: (inputs: ScheduleInputs) => void
   /** Customize opens the form already filled with the recommended plan; without it the form starts empty. */
   initial?: ScheduleForm
+  /** Project shares from the catalog's mix targets (catalogMix); null when none are set. */
+  mix?: Record<string, number> | null
 }) {
   const [form, setForm] = useState<ScheduleForm>(() => initial ?? emptyScheduleForm())
   const [errors, setErrors] = useState<string[]>([])
@@ -55,7 +59,7 @@ export function GeneratorForm({
           className="btn"
           onClick={() => {
             const blocked = new Set(channels.filter((c) => c.blockedReason).map((c) => c.platform))
-            setForm(recommendedScheduleForm(localDateKey(new Date().toISOString(), SUGGESTED_TIMEZONE), blocked))
+            setForm(recommendedScheduleForm(localDateKey(new Date().toISOString(), SUGGESTED_TIMEZONE), blocked, mix))
             setErrors([])
           }}
         >
@@ -126,8 +130,16 @@ export function GeneratorForm({
           </div>
           <div className="field">
             <label htmlFor="g-order">Content ordering</label>
-            <select id="g-order" value={form.ordering} onChange={(e) => setForm({ ...form, ordering: e.target.value as ScheduleForm['ordering'] })}>
+            <select
+              id="g-order"
+              value={form.ordering}
+              onChange={(e) => {
+                const ordering = e.target.value as ScheduleForm['ordering']
+                setForm({ ...form, ordering, mix: ordering === 'project-mix' ? mix : null })
+              }}
+            >
               <option value="game-round-robin">Game round-robin (scalar → continuum → whenabouts → tectonic), interleaved difficulty</option>
+              {mix ? <option value="project-mix">Project mix ({mixLabel(mix)}), each project in game round-robin order</option> : null}
             </select>
           </div>
         </div>

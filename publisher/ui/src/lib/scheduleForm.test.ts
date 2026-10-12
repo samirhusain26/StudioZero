@@ -131,3 +131,15 @@ describe('draft grouping', () => {
     expect(fillSummary({ summary: { requested: 24, filled: 18 } })).toBe('18 of 24 requested slots fillable')
   })
 })
+
+describe('project mix', () => {
+  it('the recommended form keeps game round-robin without targets and sends the mix with them', () => {
+    const plain = buildScheduleInputs(recommendedScheduleForm('2026-10-12', new Set()))
+    expect(plain.ok && plain.inputs.ordering).toBe('game-round-robin')
+    expect(plain.ok && 'mix' in plain.inputs).toBe(false)
+    const mixed = buildScheduleInputs(presetForm('2026-10-12', new Set(), {}, { scalargame: 0.75, originals: 0.25 }))
+    expect(mixed.ok && [mixed.inputs.ordering, mixed.inputs.mix]).toEqual(['project-mix', { scalargame: 0.75, originals: 0.25 }])
+    const form = { ...recommendedScheduleForm('2026-10-12', new Set()), ordering: 'project-mix' as const }
+    expect(buildScheduleInputs(form)).toEqual({ ok: false, errors: ['The project mix needs target shares in the project manifests (none are set).'] })
+  })
+})
