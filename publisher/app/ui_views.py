@@ -1,6 +1,6 @@
 """Pure shape functions: existing ui_* module outputs -> the HTTP contract in publisher/ui/src/api/types.ts.
 
-No I/O, no clock (callers pass `now`), no state. Field names, nesting, enums and nullability follow
+No I/O (apart from reading the committed catalog once at import), no clock (callers pass `now`), no state. Field names, nesting, enums and nullability follow
 types.ts exactly; anything a module returns that the contract does not name is dropped here, so
 internal fields (payload snapshots, file paths) never reach the browser. Texts stay plain language;
 nothing here ever offers "post again" for dispatching, accepted or uncertain jobs.
@@ -12,10 +12,18 @@ import json
 import re
 from zoneinfo import ZoneInfo
 
+import ui_catalog
+
 PLATFORMS = ('instagram', 'facebook', 'threads', 'x', 'youtube', 'bluesky', 'tiktok')
 LABELS = {'instagram': 'Instagram', 'facebook': 'Facebook', 'threads': 'Threads', 'x': 'X',
           'youtube': 'YouTube', 'bluesky': 'Bluesky', 'tiktok': 'TikTok'}
-GAMES = ('scalar', 'continuum', 'whenabouts', 'tectonic')
+# From publisher/catalog.json (projects' games), read once at import: the catalog ships with this code. An
+# unreadable catalog never stops the UI or autopilot (which imports this module): games then show as unknown
+# and GET /api/catalog answers 503.
+try:
+    GAMES = ui_catalog.games(ui_catalog.read()[1])
+except ui_catalog.CatalogError:
+    GAMES = ()
 LEDGER_STATUSES = ('ready', 'dispatching', 'accepted', 'uncertain', 'confirmed', 'failed', 'expired', 'blocked')
 HISTORY_STATUSES = LEDGER_STATUSES + ('cancelled',)
 UNRESOLVED = ('dispatching', 'accepted', 'uncertain')

@@ -39,6 +39,7 @@ import updater  # noqa: E402
 STARTED_HEAD = updater.running_commit(updater.REPO) if __name__ == '__main__' else None
 import ui_sessions  # noqa: E402
 import library_contract  # noqa: E402
+import ui_catalog  # noqa: E402
 import ui_views  # noqa: E402
 
 VERSION = 'ui-2026.10.06'
@@ -121,7 +122,7 @@ def load_passcode():
 class UiApp:
     def __init__(self, state, config_path, static_dir, passcode, allowed_origins, *, clock=time.time,
                  media_key=None, show=None, probe=None, frame_grabber=None, run=None, repo=None, running=None,
-                 update_state=None):
+                 update_state=None, catalog_path=None):
         import ui_health
         import ui_library
         self.state, self.config_path = Path(state), Path(config_path)
@@ -147,6 +148,8 @@ class UiApp:
         self.repo, self.running = Path(repo) if repo else updater.REPO, running
         # The update user's folder (status.json, units-applied.json; this process writes only its inbox/).
         self.update_state = Path(update_state) if update_state else self.state.parent/'scalar-social-update'
+        # publisher/catalog.json in this checkout (Mac-generated, committed): GET /api/catalog.
+        self.catalog = ui_catalog.Cache(catalog_path or ui_catalog.PATH)
 
     # --- state helpers -------------------------------------------------------------
     def config(self):
@@ -400,7 +403,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.finish_body()
         length = raw.length if raw.path is not None else len(raw.body)
         self.send_response(raw.status)
-        if raw.status != 204:  # 204 carries no body and no Content-Length
+        if raw.status not in (204, 304):  # 204 and 304 carry no body and no Content-Length
             self.send_header('Content-Type', raw.content_type)
             self.send_header('Content-Length', str(length))
         for key, value in raw.headers.items():
@@ -507,6 +510,18 @@ class Handler(http.server.BaseHTTPRequestHandler):
                    headers={**headers, 'Content-Range': f'bytes {start}-{end}/{size}'})
 
     # --- endpoints (bodies shaped by ui_views to publisher/ui/src/api/types.ts) ----------------------
+    def get_catalog(self, query):
+        try:
+            raw, _catalog, sha = self.app.catalog.get()
+        except ui_catalog.CatalogError:
+            raise ApiError(503, 'The studio catalog is unavailable on this Pi.',
+                           'Run Settings → Update; if it repeats, check the UI service log on the Pi.') from None
+        etag = f'"{sha}"'
+        headers = {'Cache-Control': 'private, no-cache', 'ETag': etag}
+        if etag in (tag.strip() for tag in self.headers.get('If-None-Match', '').split(',')):
+            return Raw(b'', 'application/json', 304, headers)
+        return Raw(raw, 'application/json; charset=utf-8', headers=headers)
+
     def now(self):
         return dt.datetime.fromtimestamp(self.app.clock(), dt.timezone.utc)
 
@@ -1187,6 +1202,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 NAME = r'([a-z0-9-]+)'
 ROUTES = [
+    ('GET', r'/api/catalog', 'get_catalog'),
     ('GET', r'/api/dashboard', 'get_dashboard'),
     ('GET', r'/api/library', 'get_library'),
     ('POST', r'/api/library/batches', 'post_batch'),

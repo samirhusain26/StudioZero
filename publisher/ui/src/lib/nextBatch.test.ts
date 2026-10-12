@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import type { FeedbackItem, NextBatchInfo } from '../api/types'
 import { FEEDBACK_TAGS } from '../api/types'
-import { buildBriefTemplate, buildCopyPrompt, buildFeedbackExport, feedbackFileName, feedbackJson, groupFeedback, TAG_LABELS } from './nextBatch'
+import { buildBriefTemplate, buildCopyPrompt, buildFeedbackExport, feedbackFileName, feedbackJson, groupFeedback, placeholderMix, TAG_LABELS } from './nextBatch'
+import { SAFETY_LINES } from './promptSafety'
+
+const MIX = placeholderMix(['scalar', 'continuum', 'whenabouts', 'tectonic'], ['progressive-clues', 'head-to-head'])
 
 const item = (over: Partial<FeedbackItem>): FeedbackItem => ({
   episodeId: 'scalar-clues-001',
@@ -43,11 +46,13 @@ describe('TAG_LABELS', () => {
 
 describe('buildBriefTemplate', () => {
   it('has every section, prefilled from feedback and the last retro', () => {
-    const brief = buildBriefTemplate(info())
+    const brief = buildBriefTemplate(info(), { mix: MIX })
     const headings = brief.split('\n').filter((l) => l.startsWith('#'))
     expect(headings).toEqual(['# Brief: 2026-11-b02', '## Goals', '## Mix', '## What worked', '## What to fix', '## Avoid', '## Experiments', '## Last retro'])
     expect(brief).toContain('Batch id: 2026-11-b02')
-    expect(brief).toContain('- Games: <choose from scalar, continuum, whenabouts, tectonic>')
+    expect(brief).toContain('## Mix\n- Games: <choose from scalar, continuum, whenabouts, tectonic>\n- Formats: <choose from progressive-clues, head-to-head>\n- Episodes: <how many>\n')
+    expect(brief).toContain('## Goals\n- <what this batch should achieve>\n')
+    expect(brief).toContain('## Experiments\n- <one thing to try>\n')
     const section = (name: string) => (brief.split(`## ${name}\n`)[1]?.split('\n\n')[0] ?? '').trimEnd()
     expect(section('What worked')).toBe('- scalar-clues-001 rev 1 (scalar / progressive-clues / scalar-v1): Great reveal — Loved the ending.')
     expect(section('What to fix')).toBe(
@@ -62,7 +67,7 @@ describe('buildBriefTemplate', () => {
   })
 
   it('explains empty sections instead of leaving them blank', () => {
-    const brief = buildBriefTemplate(info({ openFeedback: [], lastRetro: null }))
+    const brief = buildBriefTemplate(info({ openFeedback: [], lastRetro: null }), { mix: MIX })
     expect(brief).toContain('## What worked\n- No “keep” or “great reveal” feedback yet.')
     expect(brief).toContain('## What to fix\n- No fixes requested.')
     expect(brief).toContain('## Avoid\n- Nothing marked “drop”.')
@@ -71,10 +76,11 @@ describe('buildBriefTemplate', () => {
 })
 
 describe('buildCopyPrompt', () => {
-  it('is exactly the §3 hand-off text', () => {
+  it('is exactly the §3 hand-off text, ending with the fixed safety lines', () => {
     expect(buildCopyPrompt('2026-11-b02', '# Brief\n\nGoals')).toBe(
-      '/video-batch brief 2026-11-b02\n\n# Brief\n\nGoals\n\nFeedback file: library/_inbox/feedback-2026-11-b02.json',
+      `/video-batch brief 2026-11-b02\n\n# Brief\n\nGoals\n\nFeedback file: library/_inbox/feedback-2026-11-b02.json\n\n${SAFETY_LINES.join('\n')}`,
     )
+    expect(SAFETY_LINES.join(' ')).toMatch(/finalize or upload.*approval.*frozen sources.*Credit every.*Paid generation only within.*budget.*cost estimate/)
   })
 })
 

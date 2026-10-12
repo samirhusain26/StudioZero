@@ -131,7 +131,11 @@ export interface Standing {
 <brief markdown as edited on the page>
 
 Feedback file: library/_inbox/feedback-<nextBatchId>.json
+
+<the fixed safety lines (publisher/ui/src/lib/promptSafety.ts)>
 ```
+
+Since Phase 3 the brief is prefilled from the Studio prompt builder's choices (formats, counts, difficulty mix, styles, music, pilots, experiment; all from `GET /api/catalog`) and every prompt ends with the fixed safety lines: no finalize or upload without the owner's approval, facts only from frozen sources, credits required, paid generation only within budget after a confirmed cost estimate.
 
 "Download feedback.json" saves `feedback-<nextBatchId>.json`. The owner puts it in `marketing/library/_inbox/`, which is gitignored.
 

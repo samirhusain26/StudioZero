@@ -47,14 +47,11 @@ export type CommentPlatform = (typeof COMMENT_PLATFORMS)[number]
 export const ANSWER_REPLY_PLATFORMS = ['instagram', 'threads', 'bluesky'] as const
 export type AnswerReplyPlatform = (typeof ANSWER_REPLY_PLATFORMS)[number]
 
-export const GAMES = ['scalar', 'continuum', 'whenabouts', 'tectonic'] as const
-export type Game = (typeof GAMES)[number]
+/** A game id from the catalog (`GET /api/catalog`, projects[].games[].id); Scalargame's four today. */
+export type Game = string
 
-export const FORMATS = [
-  'progressive-clues', 'candidate-elimination', 'head-to-head', 'missing-slot',
-  'guess-the-year', 'before-after', 'missing-country', 'neighbor-clues',
-] as const
-export type Format = (typeof FORMATS)[number]
+/** A format id from the catalog (projects[].formats[].id). */
+export type Format = string
 
 export const DIFFICULTIES = ['approachable', 'moderate', 'challenging'] as const
 export type Difficulty = (typeof DIFFICULTIES)[number]
@@ -1450,3 +1447,136 @@ export const ENDPOINTS = {
   saveBatchNote: 'PUT /api/library/batches/<batchId>/notes/(brief|retro)',
   nextBatch: 'GET /api/next-batch',
 } as const
+
+// ---------------------------------------------------------------------------
+// GET /api/catalog: publisher/catalog.json as committed (tools/export-catalog.mjs on the Mac).
+// Served byte for byte with an ETag; the UI derives games, formats, styles and beds from it.
+// ---------------------------------------------------------------------------
+
+export interface CatalogFormat {
+  id: string
+  name: string
+  engine: string
+  route: string | null
+  /** Scalargame: the game this format belongs to, and the short form used in episode ids. */
+  game?: string
+  short?: string
+}
+
+export interface CatalogGame {
+  id: string
+  name: string
+  deepLink: string
+}
+
+export interface CatalogCheck {
+  id: string
+  name: string
+}
+
+export interface CatalogProject {
+  id: string
+  name: string
+  priority: string
+  order: number
+  summary: string
+  contractSchemaVersion: number
+  formats: CatalogFormat[]
+  games?: CatalogGame[]
+  link: { required: boolean; site: string | null; note?: string; path?: string; inText?: string[]; bioOnly?: string[] }
+  callToAction: { engage?: string; play?: string; rule?: string }
+  captions: { language: string; hashtags: Record<string, string[]>; firstComment: unknown; poll: boolean; youtubeTitleSuffix: string }
+  budget: { monthlyUsd: number; perRunApproval?: boolean; note?: string }
+  mix: { share: number; target: number | null; note?: string }
+  checks: CatalogCheck[]
+}
+
+export interface CatalogTemplate {
+  format: string
+  component: string
+  durationSeconds: number
+  revealSeconds: number
+}
+
+export interface CatalogStyle {
+  id: string
+  game: string
+  version: number
+  summary: string
+}
+
+export interface CatalogBed {
+  id: string
+  game: string
+  durationSeconds: number
+  revealSeconds: number
+  title: string
+  artist: string | null
+  license: string
+  sourceUrl: string | null
+  /** Retired beds (the owner's local-only tracks) are never offered and never served. */
+  retired: boolean
+}
+
+export interface CatalogRouteInput {
+  name: string
+  type: 'string' | 'integer'
+  required: boolean
+  description: string
+}
+
+export interface CatalogRoute {
+  id: string
+  name: string
+  description: string
+  inputs: CatalogRouteInput[]
+  paidServices: string[]
+  freeServices: string[]
+  localTools: string[]
+  formats: string[]
+}
+
+export interface CatalogVideoModel {
+  id: string
+  name: string
+  provider: string
+  tier: string
+  costPerSecondUsd: number
+  maxResolution: string
+  maxDurationSeconds: number
+  audio: boolean
+  referenceImages: boolean
+  description: string
+}
+
+export interface CatalogEngine {
+  id: string
+  name: string
+  summary: string
+  kitVersion: string
+  routes: CatalogRoute[]
+  templates?: CatalogTemplate[]
+  styles?: CatalogStyle[]
+  beds?: CatalogBed[]
+  defaultModels?: Record<string, string>
+  tierDefaults?: Record<string, string>
+  fallbackOrder?: Record<string, string[]>
+  videoModels?: CatalogVideoModel[]
+}
+
+export interface CatalogChannel {
+  id: string
+  name: string
+  profileUrl: string | null
+  captionLimit: number
+  firstComment: boolean
+  linkInText: boolean
+}
+
+export interface Catalog {
+  catalogVersion: 1
+  studio: { name: string; summary: string; flow: string[] }
+  projects: CatalogProject[]
+  engines: CatalogEngine[]
+  channels: CatalogChannel[]
+}

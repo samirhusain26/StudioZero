@@ -4,7 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from '../api/client'
 import type { FeedbackItem, MetricsStatus, NextBatchInfo } from '../api/types'
 import { FEEDBACK_TAGS } from '../api/types'
+import { SAFETY_LINES } from '../lib/promptSafety'
+import { realCatalog } from '../test/catalog'
 import { MakeBatchContent } from './MakeBatchView'
+
+const catalog = realCatalog()
 
 const empty: NextBatchInfo = { nextBatchId: '2026-11-b02', openFeedback: [], lastBrief: null, lastRetro: null, performance: [], accounts: [], funnel: [], tags: [...FEEDBACK_TAGS] }
 
@@ -50,7 +54,7 @@ describe('Make a batch', () => {
         },
       ],
     }
-    render(<MakeBatchContent info={info} fromCommit={null} onChanged={vi.fn()} />)
+    render(<MakeBatchContent catalog={catalog} info={info} fromCommit={null} onChanged={vi.fn()} />)
     const how = screen.getByText('How the posts did').closest('details') as HTMLElement
     const sections = [...how.querySelectorAll('h3')].map((h) => h.textContent)
     expect(sections).toEqual(['Post stats', 'Per video', 'Accounts, last 7 days', 'Performance'])
@@ -61,7 +65,7 @@ describe('Make a batch', () => {
   })
 
   it('explains the next action when there is nothing yet', () => {
-    render(<MakeBatchContent info={empty} fromCommit={null} onChanged={vi.fn()} />)
+    render(<MakeBatchContent catalog={catalog} info={empty} fromCommit={null} onChanged={vi.fn()} />)
     expect(screen.getByText(/No open feedback yet/)).toBeInTheDocument()
     expect(screen.getByText(/No retro uploaded yet\. After a batch has posted/)).toBeInTheDocument()
     expect(screen.getByText('No brief uploaded yet. Add BRIEF.md to a batch in step 5.')).toBeInTheDocument()
@@ -76,7 +80,7 @@ describe('Make a batch', () => {
       { platform: 'instagram', followers: 1200, followersChange: 35, days: 7, totals: { impressions: 6300, engagements: 315, engagement_rate: 0.05 }, status: 'ok' },
       { platform: 'facebook', followers: null, followersChange: null, days: 0, totals: {}, status: 'authorization' },
     ]
-    render(<MakeBatchContent info={{ ...empty, accounts }} fromCommit={null} onChanged={vi.fn()} />)
+    render(<MakeBatchContent catalog={catalog} info={{ ...empty, accounts }} fromCommit={null} onChanged={vi.fn()} />)
     const row = screen.getByRole('rowheader', { name: 'Instagram' }).closest('tr')
     expect(row).toHaveTextContent('1.2k (+35)6.3k3155.0%—')
     expect(screen.getByText('Stats need the insights permission for this account')).toBeInTheDocument()
@@ -85,7 +89,7 @@ describe('Make a batch', () => {
   it('copies exactly the hand-off prompt with the edited brief, kept across hide and show', async () => {
     const user = userEvent.setup()
     const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
-    render(<MakeBatchContent info={empty} fromCommit={null} onChanged={vi.fn()} />)
+    render(<MakeBatchContent catalog={catalog} info={empty} fromCommit={null} onChanged={vi.fn()} />)
     expect(screen.queryByLabelText('Brief (Markdown)')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Show brief (may contain answers)' }))
     const brief = screen.getByLabelText('Brief (Markdown)')
@@ -98,17 +102,61 @@ describe('Make a batch', () => {
     expect((screen.getByLabelText('Brief (Markdown)') as HTMLTextAreaElement).value).toBe('Make 12 episodes.')
     await user.click(screen.getByRole('button', { name: 'Copy prompt for Claude' }))
     await waitFor(() =>
-      expect(writeText).toHaveBeenCalledWith('/video-batch brief 2026-11-b02\n\nMake 12 episodes.\n\nFeedback file: library/_inbox/feedback-2026-11-b02.json'),
+      expect(writeText).toHaveBeenCalledWith(`/video-batch brief 2026-11-b02\n\nMake 12 episodes.\n\nFeedback file: library/_inbox/feedback-2026-11-b02.json\n\n${SAFETY_LINES.join('\n')}`),
     )
     expect(screen.getByText(/Prompt copied/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Reset to template' }))
     expect((screen.getByLabelText('Brief (Markdown)') as HTMLTextAreaElement).value).toContain('## What to fix')
   })
 
+  it('builds the brief from catalog choices and blocks the copy while a choice is invalid', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
+    render(<MakeBatchContent catalog={catalog} info={empty} fromCommit={null} onChanged={vi.fn()} />)
+    const builder = screen.getByTestId('prompt-builder')
+    expect(within(builder).getAllByRole('row')).toHaveLength(9)
+    const clues = within(builder).getByLabelText('Progressive clues (scalar): episodes')
+    await user.clear(clues)
+    await user.type(clues, '5')
+    expect(within(builder).getByLabelText('Progressive clues (scalar): approachable')).toHaveValue(2)
+    await user.clear(within(builder).getByLabelText('Progressive clues (scalar): challenging'))
+    expect(screen.getByTestId('plan-problems')).toHaveTextContent('Progressive clues: the difficulty mix must add up to 5.')
+    expect(screen.getByRole('button', { name: 'Copy prompt for Claude' })).toBeDisabled()
+    await user.type(within(builder).getByLabelText('Progressive clues (scalar): challenging'), '1')
+    expect(screen.queryByTestId('plan-problems')).not.toBeInTheDocument()
+    const music = within(builder).getByLabelText('Head to head (continuum): music') as HTMLSelectElement
+    expect([...music.options].map((o) => o.value)).toContain('continuum-20-holizna-clouds')
+    expect([...music.options].some((o) => o.value === 'continuum-20')).toBe(false)
+    await user.selectOptions(music, 'continuum-20-holizna-clouds')
+    await user.click(screen.getByRole('button', { name: 'Copy prompt for Claude' }))
+    await waitFor(() => expect(writeText).toHaveBeenCalled())
+    const prompt = writeText.mock.calls[0]?.[0] ?? ''
+    expect(prompt).toContain('- scalar / progressive-clues: 5 (approachable 2, moderate 2, challenging 1)')
+    expect(prompt).toContain('head-to-head → continuum-20-holizna-clouds')
+    expect(prompt.endsWith(SAFETY_LINES.join('\n'))).toBe(true)
+  })
+
+  it('saves and applies presets in this browser only', async () => {
+    const user = userEvent.setup()
+    window.localStorage.clear()
+    render(<MakeBatchContent catalog={catalog} info={empty} fromCommit={null} onChanged={vi.fn()} />)
+    const builder = screen.getByTestId('prompt-builder')
+    await user.type(within(builder).getByLabelText('Goal'), 'Shorter hooks')
+    await user.type(within(builder).getByLabelText('Save these choices as'), 'Hooks')
+    await user.click(within(builder).getByRole('button', { name: 'Save preset' }))
+    expect(within(builder).getByText(/Saved “Hooks” in this browser/)).toBeInTheDocument()
+    await user.clear(within(builder).getByLabelText('Goal'))
+    await user.selectOptions(within(builder).getByLabelText('Preset'), 'Hooks')
+    await user.click(within(builder).getByRole('button', { name: 'Apply' }))
+    expect(within(builder).getByLabelText('Goal')).toHaveValue('Shorter hooks')
+    expect(window.localStorage.getItem('studio-prompt-presets')).not.toContain('2026-11-b02')
+    window.localStorage.clear()
+  })
+
   it('copies the template prompt while the brief is hidden', async () => {
     const user = userEvent.setup()
     const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
-    render(<MakeBatchContent info={empty} fromCommit={null} onChanged={vi.fn()} />)
+    render(<MakeBatchContent catalog={catalog} info={empty} fromCommit={null} onChanged={vi.fn()} />)
     await user.click(screen.getByRole('button', { name: 'Copy prompt for Claude' }))
     await waitFor(() => expect(writeText).toHaveBeenCalled())
     const prompt = writeText.mock.calls[0]?.[0] ?? ''
@@ -126,7 +174,7 @@ describe('Make a batch', () => {
         item({ episodeId: 'tectonic-neighbors-003', tags: ['hook-weak'], note: '' }),
       ],
     }
-    render(<MakeBatchContent info={info} fromCommit={null} onChanged={vi.fn()} />)
+    render(<MakeBatchContent catalog={catalog} info={info} fromCommit={null} onChanged={vi.fn()} />)
     expect(screen.queryByText('The answer was Bolivia.')).not.toBeInTheDocument()
     expect(screen.getAllByText('Note hidden')).toHaveLength(1)
     expect(screen.getByText('Great reveal')).toBeInTheDocument()
@@ -147,7 +195,7 @@ describe('Make a batch', () => {
       ...empty,
       lastBrief: { batchId: '2026-10-b01', kind: 'brief', text: '# Brief\nInclude Bolivia.', sha256: 'b'.repeat(64), bytes: 24, uploadedAt: '2026-10-10T09:00:00Z' },
     }
-    render(<MakeBatchContent info={info} fromCommit={null} onChanged={vi.fn()} />)
+    render(<MakeBatchContent catalog={catalog} info={info} fromCommit={null} onChanged={vi.fn()} />)
     expect(screen.getByText(/Brief: batch 2026-10-b01 · uploaded/)).toBeInTheDocument()
     expect(screen.queryByText('Include Bolivia.')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Show last brief (may contain answers)' }))
@@ -159,7 +207,7 @@ describe('Make a batch', () => {
   it('is the Mac step shown in the UI: numbered steps, labelled on the Mac, with a local checklist', async () => {
     window.localStorage.clear()
     const user = userEvent.setup()
-    render(<MakeBatchContent info={empty} fromCommit={null} onChanged={vi.fn()} lastBatchId="2026-10-b01" />)
+    render(<MakeBatchContent catalog={catalog} info={empty} fromCommit={null} onChanged={vi.fn()} lastBatchId="2026-10-b01" />)
     const headings = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
     expect(headings).toEqual([
       '1Carry feedback overhere on the Pi',
@@ -186,7 +234,7 @@ describe('Make a batch', () => {
     const user = userEvent.setup()
     URL.createObjectURL = vi.fn(() => 'blob:x')
     URL.revokeObjectURL = vi.fn()
-    render(<MakeBatchContent info={empty} fromCommit={null} onChanged={vi.fn()} />)
+    render(<MakeBatchContent catalog={catalog} info={empty} fromCommit={null} onChanged={vi.fn()} />)
     await user.click(screen.getByRole('button', { name: 'Download feedback-2026-11-b02.json' }))
     expect(JSON.parse(window.localStorage.getItem('scalar-make-2026-11-b02') ?? '{}')).toEqual({ started: true, checks: [] })
   })

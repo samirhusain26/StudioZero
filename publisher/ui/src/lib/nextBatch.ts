@@ -3,7 +3,8 @@
  * "Copy prompt for Claude" text and the feedback.json export.
  */
 import type { AccountStats, FeedbackItem, FeedbackTag, NextBatchInfo, PostMetrics } from '../api/types'
-import { FEEDBACK_TAGS, FORMATS, GAMES } from '../api/types'
+import { FEEDBACK_TAGS } from '../api/types'
+import { SAFETY_LINES } from './promptSafety'
 
 export const TAG_LABELS: Record<FeedbackTag, string> = {
   keep: 'Keep',
@@ -44,8 +45,20 @@ function section(items: FeedbackItem[], tags: readonly FeedbackTag[], empty: str
   return matching.length ? matching.map((i) => itemLine(i, tags)) : [`- ${empty}`]
 }
 
+/** The brief's sections that the Studio prompt builder fills; placeholders otherwise. */
+export interface BriefChoices {
+  goals?: string[]
+  mix: string[]
+  experiments?: string[]
+}
+
+/** The "## Mix" placeholder lines, with the choices taken from the catalog. */
+export function placeholderMix(games: readonly string[], formats: readonly string[]): string[] {
+  return [`- Games: <choose from ${games.join(', ')}>`, `- Formats: <choose from ${formats.join(', ')}>`, '- Episodes: <how many>']
+}
+
 /** The editable draft brief, prefilled from open feedback and the last retro. */
-export function buildBriefTemplate(info: Pick<NextBatchInfo, 'nextBatchId' | 'openFeedback' | 'lastRetro'>): string {
+export function buildBriefTemplate(info: Pick<NextBatchInfo, 'nextBatchId' | 'openFeedback' | 'lastRetro'>, choices: BriefChoices): string {
   const items = info.openFeedback
   // Notes without any tag still matter: list them under "What to fix".
   const untagged = items.filter((i) => i.tags.length === 0 && oneLine(i.note))
@@ -58,12 +71,10 @@ export function buildBriefTemplate(info: Pick<NextBatchInfo, 'nextBatchId' | 'op
     `Batch id: ${info.nextBatchId}`,
     '',
     '## Goals',
-    '- <what this batch should achieve>',
+    ...(choices.goals?.length ? choices.goals : ['- <what this batch should achieve>']),
     '',
     '## Mix',
-    `- Games: <choose from ${GAMES.join(', ')}>`,
-    `- Formats: <choose from ${FORMATS.join(', ')}>`,
-    '- Episodes: <how many>',
+    ...choices.mix,
     '',
     '## What worked',
     ...section(items, WORKED, 'No “keep” or “great reveal” feedback yet.'),
@@ -75,7 +86,7 @@ export function buildBriefTemplate(info: Pick<NextBatchInfo, 'nextBatchId' | 'op
     ...section(items, AVOID, 'Nothing marked “drop”.'),
     '',
     '## Experiments',
-    '- <one thing to try>',
+    ...(choices.experiments?.length ? choices.experiments : ['- <one thing to try>']),
     '',
     '## Last retro',
     retro
@@ -85,9 +96,9 @@ export function buildBriefTemplate(info: Pick<NextBatchInfo, 'nextBatchId' | 'op
   ].join('\n')
 }
 
-/** Exactly the text "Copy prompt for Claude" puts on the clipboard (§3). */
+/** Exactly the text "Copy prompt for Claude" puts on the clipboard (§3), ending with the fixed safety lines. */
 export function buildCopyPrompt(nextBatchId: string, brief: string): string {
-  return `/video-batch brief ${nextBatchId}\n\n${brief}\n\nFeedback file: library/_inbox/feedback-${nextBatchId}.json`
+  return `/video-batch brief ${nextBatchId}\n\n${brief}\n\nFeedback file: library/_inbox/feedback-${nextBatchId}.json\n\n${SAFETY_LINES.join('\n')}`
 }
 
 export function feedbackFileName(nextBatchId: string): string {

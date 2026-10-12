@@ -1,6 +1,6 @@
 import { useId, useMemo, useState, type ReactNode } from 'react'
 import { api } from '../api/client'
-import type { NextBatchInfo } from '../api/types'
+import type { Catalog, NextBatchInfo } from '../api/types'
 import { CopyBlock } from '../components/CopyBlock'
 import { ErrorNotice } from '../components/ErrorNotice'
 import { Loading } from '../components/Loading'
@@ -15,8 +15,6 @@ import { useJourney } from '../hooks/useJourney'
 import { formatBytes, platformName } from '../lib/format'
 import { MAKE_CHECKPOINTS, readMake, writeMake, type CheckpointId, type MakeProgress } from '../lib/makeChecklist'
 import {
-  buildBriefTemplate,
-  buildCopyPrompt,
   buildFeedbackExport,
   feedbackFileName,
   feedbackJson,
@@ -24,6 +22,7 @@ import {
   tagLabel,
 } from '../lib/nextBatch'
 import { accountRow, metricsSummary } from '../lib/postMetrics'
+import { buildPlanBrief, buildPlanPrompt, defaultPlan, planProblems, type BatchPlan } from '../lib/promptBuilder'
 import { copyText, saveTextFile } from '../lib/saveFile'
 import { deviceTimeZone } from '../lib/time'
 import { episodeHash, guideHash } from '../views'
@@ -31,6 +30,7 @@ import { AddBatchFlow } from './library/AddBatchFlow'
 import { BatchNotesPanel } from './library/BatchNotesPanel'
 import { FunnelTable } from './library/FunnelTable'
 import { PostStatsPanel } from './library/PostStatsPanel'
+import { PromptBuilderForm } from './studio/PromptBuilderForm'
 
 const MAC_FOLDER = 'cd ~/Personal/code_projects/scalargame/marketing && claude'
 
@@ -40,6 +40,7 @@ const MAC_FOLDER = 'cd ~/Personal/code_projects/scalargame/marketing && claude'
  */
 export function MakeBatchView() {
   const next = useApi(api.nextBatch)
+  const catalog = useApi(api.catalog)
   // Only for fromCommit in feedback.json; a failure here is not shown.
   const update = useApi(() => api.updateStatus())
   const { dashboard, reload } = useJourney()
@@ -51,10 +52,12 @@ export function MakeBatchView() {
       </p>
       <ScreenHelp id="make" />
       <ErrorNotice error={next.error} title="Next batch unavailable" />
-      {next.data ? (
+      <ErrorNotice error={catalog.error} title="Studio catalog unavailable" />
+      {next.data && catalog.data ? (
         <MakeBatchContent
           key={next.data.nextBatchId}
           info={next.data}
+          catalog={catalog.data}
           fromCommit={update.data?.runningCommit ?? null}
           lastBatchId={lastBatchId}
           onChanged={() => {
@@ -62,7 +65,7 @@ export function MakeBatchView() {
             reload()
           }}
         />
-      ) : next.loading ? (
+      ) : next.loading || catalog.loading ? (
         <Loading />
       ) : null}
     </div>
@@ -87,19 +90,25 @@ function Step({ n, title, where, children, testId }: { n: number; title: string;
 
 export function MakeBatchContent({
   info,
+  catalog,
   fromCommit,
   onChanged,
   lastBatchId = null,
 }: {
   info: NextBatchInfo
+  catalog: Catalog
   fromCommit: string | null
   onChanged: () => void
   lastBatchId?: string | null
 }) {
   const id = useId()
   const zone = deviceTimeZone()
-  const template = useMemo(() => buildBriefTemplate(info), [info])
-  const [brief, setBrief] = useState(template)
+  const [plan, setPlan] = useState<BatchPlan>(() => defaultPlan(catalog, 'scalargame', info.nextBatchId))
+  const template = useMemo(() => buildPlanBrief(catalog, plan, info), [catalog, plan, info])
+  // The brief follows the choices until the owner edits it by hand; Reset goes back to following them.
+  const [edited, setEdited] = useState<string | null>(null)
+  const brief = edited ?? template
+  const problems = planProblems(catalog, plan)
   const [status, setStatus] = useState('')
   const [showRetro, setShowRetro] = useState(false)
   const [showLastBrief, setShowLastBrief] = useState(false)
@@ -128,7 +137,7 @@ export function MakeBatchContent({
   }
 
   const copy = async () => {
-    const ok = await copyText(buildCopyPrompt(batchId, brief))
+    const ok = await copyText(buildPlanPrompt(catalog, plan, brief))
     started()
     setStatus(ok ? 'Prompt copied. Paste it into Claude Code on the Mac (step 3).' : 'Copy failed: select the brief and copy it by hand.')
   }
@@ -337,7 +346,15 @@ export function MakeBatchContent({
           </Step>
 
           <Step n={2} title="Write the brief" where="Pi">
-            <p>Prefilled from the open feedback and the last retro. Say what to change, keep, try or avoid.</p>
+            <p>Choose the mix from the formats, styles and music the studio has; the brief is prefilled from them, the open feedback and the last retro.</p>
+            <PromptBuilderForm
+              catalog={catalog}
+              plan={plan}
+              onChange={(next) => {
+                setPlan(next)
+                started()
+              }}
+            />
             <div className="actions">
               <RevealToggle
                 revealed={showBrief}
@@ -346,7 +363,7 @@ export function MakeBatchContent({
                 showLabel="Show brief (may contain answers)"
                 hideLabel="Hide brief"
               />
-              <button type="button" className="btn btn-quiet" onClick={() => setBrief(template)} disabled={brief === template}>
+              <button type="button" className="btn btn-quiet" onClick={() => setEdited(null)} disabled={edited === null}>
                 Reset to template
               </button>
             </div>
@@ -359,7 +376,7 @@ export function MakeBatchContent({
                     rows={18}
                     value={brief}
                     onChange={(e) => {
-                      setBrief(e.target.value)
+                      setEdited(e.target.value)
                       started()
                     }}
                     className="brief-text"
@@ -367,11 +384,22 @@ export function MakeBatchContent({
                 </div>
               ) : null}
             </div>
+            {problems.length ? (
+              <div className="notice notice-warn" data-testid="plan-problems">
+                <p>Fix these first:</p>
+                <ul>
+                  {problems.map((p) => (
+                    <li key={p}>{p}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
             <div className="actions">
-              <button type="button" className="btn btn-primary" onClick={() => void copy()}>
+              <button type="button" className="btn btn-primary" onClick={() => void copy()} disabled={problems.length > 0}>
                 Copy prompt for Claude
               </button>
             </div>
+            <p className="hint">The prompt ends with the fixed safety lines: nothing is finalized, uploaded or paid for without your OK.</p>
             <p role="status" aria-live="polite" className="muted">
               {status}
             </p>
