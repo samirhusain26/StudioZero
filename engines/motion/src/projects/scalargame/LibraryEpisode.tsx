@@ -2,7 +2,7 @@
 // SFX cue sheet derived from the shared timing. Props come from library/<batch>/review/jobs/<episodeId>/input.json.
 import React from 'react';
 import {AbsoluteFill, Audio, staticFile, type CalculateMetadataFunction} from 'remotion';
-import {Sfx} from '../kit/sfx';
+import {Sfx} from '../../kit/sfx';
 import {libraryFontsReady} from './fonts';
 import {STYLES} from './styles';
 import {TEMPLATES} from './templates';

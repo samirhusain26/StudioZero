@@ -1,4 +1,4 @@
-import type {SfxName} from '../../kit/sfx';
+import type {SfxName} from '../../../kit/sfx';
 import type {LibraryEpisodeProps, StyleTokens, Timing} from '../types';
 
 export type TemplateProps = {ep: LibraryEpisodeProps; s: StyleTokens; t: Timing};

@@ -111,7 +111,7 @@ def master(out, name, target=TARGET):
 
 LIB_TARGET = -20.0
 LIB_FADE_IN = 0.25
-# (duration, reveal) per game, from the formats each game uses (src/episodes/timing.ts)
+# (duration, reveal) per game, from the formats each game uses (src/projects/scalargame/timing.ts)
 GAME_BEDS = {'scalar': [(24, 14)], 'continuum': [(20, 10), (22, 12)], 'whenabouts': [(22, 12)], 'tectonic': [(22, 12), (24, 14)]}
 
 

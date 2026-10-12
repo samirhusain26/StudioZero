@@ -2,13 +2,15 @@
 //   node engines/motion/pipeline/render.mjs --batch=<batchId> [--dir=<batch dir>] [--only=id1,id2] [--rerender]
 // Each job (library/<batch>/review/jobs/<episodeId>/) has an immutable input.json + props.json (episodes.mjs) and a
 // status.json with every attempt. A job is marked `validated` only after its MP4 and cover pass every check; only then
-// are they copied to videos/<id>.mp4 and covers/<id>.jpg. Failed or partial work stays in the job folder.
+// are they copied to videos/<id>.mp4 and covers/<id>.jpg, and render.json (tools/RENDER_JSON.md) is written next to
+// render.mp4 for the packager. Failed or partial work stays in the job folder.
 // Rendering never runs once the batch has READY_FOR_UPLOAD.
 import {readFileSync, writeFileSync, existsSync, readdirSync, copyFileSync, mkdirSync, statSync, openSync, readSync, closeSync} from 'node:fs';
 import {resolve, relative} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {ROOT, STUDIO} from './lib.mjs';
+import {motionRenderJson, loadBeds} from './render-json.mjs';
 
 const args = Object.fromEntries(process.argv.slice(2).map(a => { const [k, v = true] = a.replace(/^--/, '').split('='); return [k, v]; }));
 const batch = args.batch;
@@ -23,7 +25,7 @@ const MAX_BYTES = 24_000_000;
 // Everything that changes pixels or sound: the kit, templates, styles, fonts, beds, render script.
 function walk(dir) { return readdirSync(dir, {withFileTypes: true}).flatMap(e => e.isDirectory() ? walk(resolve(dir, e.name)) : [resolve(dir, e.name)]); }
 function codeHash() {
-  const files = [...walk(resolve(STUDIO, 'src/episodes')), ...walk(resolve(STUDIO, 'public/episodes')), resolve(STUDIO, 'src/kit/sfx.tsx'), resolve(STUDIO, 'src/fonts.ts'), resolve(STUDIO, 'src/Root.tsx'),
+  const files = [...walk(resolve(STUDIO, 'src/projects/scalargame')), ...walk(resolve(STUDIO, 'public/episodes')), resolve(STUDIO, 'src/kit/sfx.tsx'), resolve(STUDIO, 'src/fonts.ts'), resolve(STUDIO, 'src/Root.tsx'),
     ...walk(resolve(STUDIO, 'public/sfx')), resolve(STUDIO, 'render/render.sh')].filter(p => !p.endsWith('.DS_Store')).sort();
   const h = createHash('sha256');
   for (const p of files) h.update(relative(ROOT, p)).update(sha(p));
@@ -80,6 +82,9 @@ const jobsDir = resolve(BATCH, 'review/jobs');
 const only = args.only ? new Set(String(args.only).split(',')) : null;
 const ids = readdirSync(jobsDir).filter(d => existsSync(resolve(jobsDir, d, 'input.json')) && (!only || only.has(d))).sort();
 const kit = codeHash();
+const beds = loadBeds();
+// render.json (tools/RENDER_JSON.md) is what the packager reads; written once a job validates.
+const writeRender = (dir, input, status) => writeFileSync(resolve(dir, 'render.json'), JSON.stringify(motionRenderJson(input, status, beds), null, 1) + '\n');
 const summary = [];
 mkdirSync(resolve(BATCH, 'videos'), {recursive: true}); mkdirSync(resolve(BATCH, 'covers'), {recursive: true});
 
@@ -93,6 +98,7 @@ for (const id of ids) {
   const save = () => writeFileSync(statusPath, JSON.stringify(status, null, 1) + '\n');
   if (status.state === 'validated' && !args.rerender) {
     const ok = existsSync(resolve(BATCH, `videos/${id}.mp4`)) && sha(resolve(BATCH, `videos/${id}.mp4`)) === status.video.sha256;
+    if (ok && !existsSync(resolve(dir, 'render.json'))) writeRender(dir, input, status);
     summary.push({id, state: ok ? 'validated (kept)' : 'validated but delivery file changed!', staleKit: status.codeHash !== kit});
     continue;
   }
@@ -123,6 +129,7 @@ for (const id of ids) {
     video: {file: `videos/${id}.mp4`, sha256: sha(resolve(BATCH, `videos/${id}.mp4`)), ...check.measures},
     cover: {file: `covers/${id}.jpg`, sha256: sha(resolve(BATCH, `covers/${id}.jpg`)), bytes: coverBytes}});
   save();
+  writeRender(dir, input, status);
   summary.push({id, state: 'validated', mb: +(check.measures.bytes / 1e6).toFixed(1), lufs: check.measures.loudnessLufs, tp: check.measures.truePeakDbtp});
 }
 console.log(JSON.stringify({batch, kitHash: kit.slice(0, 16), jobs: summary}, null, 1));

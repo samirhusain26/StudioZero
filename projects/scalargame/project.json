@@ -1,0 +1,73 @@
+{
+  "projectVersion": 1,
+  "id": "scalargame",
+  "name": "Scalargame",
+  "priority": "P1",
+  "order": 1,
+  "summary": "Short quiz videos for scalargame.com: one question from a frozen snapshot of the game's data, a thinking pause, the reveal and a reviewed fact.",
+  "contract": {"schemaVersion": 1, "contentNamespaces": ["scalar", "continuum", "whenabouts", "tectonic"]},
+  "sources": [
+    {
+      "kind": "game-repo",
+      "path": "../scalargame",
+      "override": "SCALARGAME_DIR",
+      "rule": "Committed files only, read by engines/motion/pipeline/snapshot.mjs into library/_sources/<snapshot>/ (frozen). Everything after the snapshot reads the snapshot, never the live repo.",
+      "snapshots": "library/_sources"
+    },
+    {"kind": "reference", "name": "World Bank Open Data", "license": "CC-BY-4.0", "attribution": "World Bank Open Data (CC BY 4.0)"},
+    {"kind": "reference", "name": "CIA World Factbook", "license": "public-domain"},
+    {"kind": "reference", "name": "Natural Earth", "license": "public-domain", "attribution": "Made with Natural Earth"}
+  ],
+  "games": [
+    {"id": "scalar", "name": "Scalar", "deepLink": "/scalar"},
+    {"id": "continuum", "name": "Continuum", "deepLink": "/continuum"},
+    {"id": "whenabouts", "name": "Whenabouts", "deepLink": "/whenabouts"},
+    {"id": "tectonic", "name": "Tectonic", "deepLink": "/tectonic"}
+  ],
+  "formats": [
+    {"id": "progressive-clues", "name": "Progressive clues", "game": "scalar", "engine": "motion", "route": null, "short": "clues"},
+    {"id": "candidate-elimination", "name": "Candidate elimination", "game": "scalar", "engine": "motion", "route": null, "short": "elimination"},
+    {"id": "head-to-head", "name": "Head to head", "game": "continuum", "engine": "motion", "route": null, "short": "headtohead"},
+    {"id": "missing-slot", "name": "Missing slot", "game": "continuum", "engine": "motion", "route": null, "short": "slot"},
+    {"id": "guess-the-year", "name": "Guess the year", "game": "whenabouts", "engine": "motion", "route": null, "short": "year"},
+    {"id": "before-after", "name": "Before or after", "game": "whenabouts", "engine": "motion", "route": null, "short": "beforeafter"},
+    {"id": "missing-country", "name": "Missing country", "game": "tectonic", "engine": "motion", "route": null, "short": "missing"},
+    {"id": "neighbor-clues", "name": "Neighbor clues", "game": "tectonic", "engine": "motion", "route": null, "short": "neighbors"}
+  ],
+  "link": {
+    "required": true,
+    "site": "https://www.scalargame.com",
+    "path": "/<game>",
+    "utm": {"source": "<platform>", "medium": "organic_social", "campaign": "social_library_v1", "content": "<episodeId>"},
+    "inText": ["facebook", "threads", "x", "bluesky", "youtube"],
+    "bioOnly": ["instagram", "tiktok"]
+  },
+  "callToAction": {
+    "engage": "comment your letter",
+    "play": "Play a new puzzle at scalargame.com",
+    "rule": "The answer appears in text only as one item of the complete choice list (spoiler rule); answerReply stays null."
+  },
+  "captions": {
+    "language": "en",
+    "hashtags": {
+      "scalar": ["#geography", "#quiz", "#countries", "#trivia", "#scalargame"],
+      "continuum": ["#geography", "#quiz", "#worldfacts", "#trivia", "#scalargame"],
+      "whenabouts": ["#history", "#quiz", "#trivia", "#onthisday", "#scalargame"],
+      "tectonic": ["#geography", "#maps", "#quiz", "#trivia", "#scalargame"]
+    },
+    "firstComment": ["instagram", "threads"],
+    "poll": true,
+    "youtubeTitleSuffix": " #shorts"
+  },
+  "budget": {"monthlyUsd": 0, "note": "Motion renders use no paid APIs."},
+  "mix": {"share": 1.0, "target": null, "note": "All scheduled posts are Scalargame until Originals has approved batches; the owner sets target shares before the Phase 4 mix policy."},
+  "checks": [
+    {"id": "deterministic", "name": "Deterministic question checks", "how": "node engines/motion/pipeline/check.mjs --set=<set>"},
+    {"id": "independent-source", "name": "Independent live-source check", "how": "fact-checker agent → library/<batchId>/review/source-verification.json; every concern or fail needs a written resolution"},
+    {"id": "media-qa", "name": "Media QA", "how": "engines/motion/pipeline/render.mjs (codec, size, fps, duration, loudness −14 LUFS ± 2, true peak ≤ −1 dBTP, silence, black frames, fast-start)"},
+    {"id": "contract", "name": "Batch contract", "how": "python3 contract/library_contract.py validate library/<batchId>"},
+    {"id": "owner-checkpoints", "name": "Owner checkpoints", "how": "question pack (1), pilots (2), batch review (3), finalize; /video-batch skill"}
+  ],
+  "packager": "projects/scalargame/package.mjs",
+  "pipeline": "engines/motion/pipeline (README.md)"
+}

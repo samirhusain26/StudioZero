@@ -22,7 +22,7 @@ export const CONFIG = {
 export const QUESTIONS = [ /* curated from candidates */ ];
 ```
 
-`beds: 'calm'` gives each new episode the least recently used track (library-wide) among its game's calm beds of the right length, so music rotates across episodes and batches; a frozen episode keeps its bed. The 2026-10 Gemini beds (`scalar-24`, `continuum-20`, …) are retired: use them only if the brief asks. Only `styles`/`beds` that exist (`engines/motion/src/episodes/styles/<id>.ts`, `engines/motion/public/episodes/music/beds.json`) work; new ones are template/music work with a pilot. New formats need a contract change first (`contract/BATCH_CONTRACT.md`, owner approval, validator and tests). Template work follows `library/_dev/TEMPLATE_BRIEF.md` (its paths predate the move: `src/library` is now `engines/motion/src/episodes`).
+`beds: 'calm'` gives each new episode the least recently used track (library-wide) among its game's calm beds of the right length, so music rotates across episodes and batches; a frozen episode keeps its bed. The 2026-10 Gemini beds (`scalar-24`, `continuum-20`, …) are retired: use them only if the brief asks. Only `styles`/`beds` that exist (`engines/motion/src/projects/scalargame/styles/<id>.ts`, `engines/motion/public/episodes/music/beds.json`) work; new ones are template/music work with a pilot. New formats need a contract change first (`contract/BATCH_CONTRACT.md`, owner approval, validator and tests). Template work follows `library/_dev/TEMPLATE_BRIEF.md` (its paths predate the move: `src/library` is now `engines/motion/src/episodes`).
 
 ## Episode IDs
 

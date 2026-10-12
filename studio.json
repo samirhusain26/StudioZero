@@ -1,0 +1,52 @@
+{
+  "studioVersion": 1,
+  "name": "StudioZero",
+  "summary": "The studio behind the @studiozeroflow accounts: engines make videos, projects decide what and why, the Pi publisher posts approved batches.",
+  "flow": ["brief", "make", "check", "package", "approve", "schedule", "post", "learn"],
+  "projects": [
+    {"id": "originals", "manifest": "projects/originals/project.json"},
+    {"id": "scalargame", "manifest": "projects/scalargame/project.json"}
+  ],
+  "engines": [
+    {
+      "id": "motion",
+      "name": "Motion",
+      "summary": "Remotion (React) motion graphics: deterministic templates, styles and music beds; no paid APIs.",
+      "path": "engines/motion",
+      "toolchain": "node",
+      "kitVersion": "kit-1",
+      "routes": [],
+      "registries": {
+        "templates": "engines/motion/src/projects/scalargame/templates/index.ts",
+        "styles": "engines/motion/src/projects/scalargame/styles",
+        "timing": "engines/motion/src/projects/scalargame/timing.ts",
+        "beds": "engines/motion/public/episodes/music/beds.json"
+      },
+      "renderJson": "review/jobs/<episodeId>/render.json"
+    },
+    {
+      "id": "story",
+      "name": "Story",
+      "summary": "Python story pipeline: recaps from stock footage and narration, and AI-animated series.",
+      "path": "engines/story",
+      "toolchain": "python",
+      "kitVersion": "story-1",
+      "routes": ["recap", "series"],
+      "registries": {
+        "routes": "engines/story/registry.json",
+        "models": "engines/story/registry.json"
+      },
+      "renderJson": "next to each final MP4"
+    }
+  ],
+  "channels": [
+    {"id": "instagram", "name": "Instagram", "profileUrl": "https://www.instagram.com/studiozeroflow/", "captionLimit": 2200, "firstComment": true, "linkInText": false},
+    {"id": "facebook", "name": "Facebook", "profileUrl": null, "captionLimit": 2200, "firstComment": false, "linkInText": true},
+    {"id": "threads", "name": "Threads", "profileUrl": "https://www.threads.com/@studiozeroflow", "captionLimit": 500, "firstComment": true, "linkInText": true},
+    {"id": "x", "name": "X", "profileUrl": "https://x.com/StudioZeroFlow", "captionLimit": 280, "firstComment": false, "linkInText": true},
+    {"id": "bluesky", "name": "Bluesky", "profileUrl": null, "captionLimit": 300, "firstComment": false, "linkInText": true},
+    {"id": "youtube", "name": "YouTube Shorts", "profileUrl": "https://www.youtube.com/@StudioZeroflow", "captionLimit": 5000, "titleLimit": 100, "firstComment": false, "linkInText": true},
+    {"id": "tiktok", "name": "TikTok", "profileUrl": "https://www.tiktok.com/@studiozeroflow", "captionLimit": 2200, "firstComment": false, "linkInText": false}
+  ],
+  "notes": "Channel routes, account IDs and credentials live only in the Pi config (/etc/scalar-social); this file holds public facts. Contract v1 is current; v2 (docs/STUDIO_PLAN.md §5) lands in Phase 4."
+}

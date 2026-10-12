@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:static": "tsc -b && node scripts/build-static.mjs",
-    "check:static": "node scripts/build-static.mjs --check",
+    "build:static": "tsc -b && node scripts/build-static.mjs && node ../../tools/export-catalog.mjs",
+    "check:static": "node scripts/build-static.mjs --check && node ../../tools/export-catalog.mjs --check",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest run",

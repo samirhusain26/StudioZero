@@ -2,10 +2,10 @@ import React from 'react';
 import { Composition } from 'remotion';
 // Fraunces 700 (Whenabouts body text) is only registered here; the episode fonts cover the other weights.
 import './fonts';
-import { LibraryEpisode, calculateLibraryMetadata } from './episodes/LibraryEpisode';
-import { FPS } from './episodes/timing';
-import type { LibraryEpisodeProps } from './episodes/types';
-import librarySample from './episodes/sample-props.json';
+import { LibraryEpisode, calculateLibraryMetadata } from './projects/scalargame/LibraryEpisode';
+import { FPS } from './projects/scalargame/timing';
+import type { LibraryEpisodeProps } from './projects/scalargame/types';
+import librarySample from './projects/scalargame/sample-props.json';
 
 export const Root: React.FC = () => (
   <>

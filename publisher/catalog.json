@@ -1,0 +1,1750 @@
+{
+ "catalogVersion": 1,
+ "studio": {
+  "name": "StudioZero",
+  "summary": "The studio behind the @studiozeroflow accounts: engines make videos, projects decide what and why, the Pi publisher posts approved batches.",
+  "flow": [
+   "brief",
+   "make",
+   "check",
+   "package",
+   "approve",
+   "schedule",
+   "post",
+   "learn"
+  ]
+ },
+ "projects": [
+  {
+   "id": "originals",
+   "name": "Originals",
+   "priority": "P0",
+   "order": 0,
+   "summary": "StudioZero's own shorts: movie and story recaps (stock footage, narration) and AI-animated series.",
+   "contractSchemaVersion": 2,
+   "formats": [
+    {
+     "id": "movie-recap",
+     "name": "Movie recap",
+     "engine": "story",
+     "route": "recap"
+    },
+    {
+     "id": "story-recap",
+     "name": "Story recap",
+     "engine": "story",
+     "route": "recap"
+    },
+    {
+     "id": "animated-short",
+     "name": "Animated short",
+     "engine": "story",
+     "route": "series"
+    }
+   ],
+   "link": {
+    "required": false,
+    "site": null,
+    "note": "No link by default; a format may add one later."
+   },
+   "callToAction": {
+    "engage": "Follow for the next one",
+    "rule": "No spoilers in the hook; recaps credit their sources."
+   },
+   "captions": {
+    "language": "en",
+    "hashtags": {
+     "movie-recap": [
+      "#movierecap",
+      "#moviesummary",
+      "#film",
+      "#shorts"
+     ],
+     "story-recap": [
+      "#storytime",
+      "#recap",
+      "#shorts"
+     ],
+     "animated-short": [
+      "#animation",
+      "#shortfilm",
+      "#aianimation",
+      "#shorts"
+     ]
+    },
+    "firstComment": [],
+    "poll": false,
+    "youtubeTitleSuffix": " #shorts"
+   },
+   "budget": {
+    "monthlyUsd": 0,
+    "perRunApproval": true,
+    "note": "No paid generation without the owner's explicit OK for that run, with a cost estimate. The owner sets a monthly budget before Phase 5."
+   },
+   "mix": {
+    "share": 0,
+    "target": null,
+    "note": "Nothing scheduled until Originals has approved batches; the owner sets target shares before the Phase 4 mix policy."
+   },
+   "checks": [
+    {
+     "id": "rights",
+     "name": "Rights"
+    },
+    {
+     "id": "garbage",
+     "name": "Script sanity"
+    },
+    {
+     "id": "visual-qa",
+     "name": "Visual QA"
+    },
+    {
+     "id": "disclosure",
+     "name": "AI disclosure"
+    },
+    {
+     "id": "contract",
+     "name": "Batch contract"
+    }
+   ]
+  },
+  {
+   "id": "scalargame",
+   "name": "Scalargame",
+   "priority": "P1",
+   "order": 1,
+   "summary": "Short quiz videos for scalargame.com: one question from a frozen snapshot of the game's data, a thinking pause, the reveal and a reviewed fact.",
+   "contractSchemaVersion": 1,
+   "formats": [
+    {
+     "id": "progressive-clues",
+     "name": "Progressive clues",
+     "game": "scalar",
+     "engine": "motion",
+     "route": null,
+     "short": "clues"
+    },
+    {
+     "id": "candidate-elimination",
+     "name": "Candidate elimination",
+     "game": "scalar",
+     "engine": "motion",
+     "route": null,
+     "short": "elimination"
+    },
+    {
+     "id": "head-to-head",
+     "name": "Head to head",
+     "game": "continuum",
+     "engine": "motion",
+     "route": null,
+     "short": "headtohead"
+    },
+    {
+     "id": "missing-slot",
+     "name": "Missing slot",
+     "game": "continuum",
+     "engine": "motion",
+     "route": null,
+     "short": "slot"
+    },
+    {
+     "id": "guess-the-year",
+     "name": "Guess the year",
+     "game": "whenabouts",
+     "engine": "motion",
+     "route": null,
+     "short": "year"
+    },
+    {
+     "id": "before-after",
+     "name": "Before or after",
+     "game": "whenabouts",
+     "engine": "motion",
+     "route": null,
+     "short": "beforeafter"
+    },
+    {
+     "id": "missing-country",
+     "name": "Missing country",
+     "game": "tectonic",
+     "engine": "motion",
+     "route": null,
+     "short": "missing"
+    },
+    {
+     "id": "neighbor-clues",
+     "name": "Neighbor clues",
+     "game": "tectonic",
+     "engine": "motion",
+     "route": null,
+     "short": "neighbors"
+    }
+   ],
+   "games": [
+    {
+     "id": "scalar",
+     "name": "Scalar",
+     "deepLink": "/scalar"
+    },
+    {
+     "id": "continuum",
+     "name": "Continuum",
+     "deepLink": "/continuum"
+    },
+    {
+     "id": "whenabouts",
+     "name": "Whenabouts",
+     "deepLink": "/whenabouts"
+    },
+    {
+     "id": "tectonic",
+     "name": "Tectonic",
+     "deepLink": "/tectonic"
+    }
+   ],
+   "link": {
+    "required": true,
+    "site": "https://www.scalargame.com",
+    "path": "/<game>",
+    "utm": {
+     "source": "<platform>",
+     "medium": "organic_social",
+     "campaign": "social_library_v1",
+     "content": "<episodeId>"
+    },
+    "inText": [
+     "facebook",
+     "threads",
+     "x",
+     "bluesky",
+     "youtube"
+    ],
+    "bioOnly": [
+     "instagram",
+     "tiktok"
+    ]
+   },
+   "callToAction": {
+    "engage": "comment your letter",
+    "play": "Play a new puzzle at scalargame.com",
+    "rule": "The answer appears in text only as one item of the complete choice list (spoiler rule); answerReply stays null."
+   },
+   "captions": {
+    "language": "en",
+    "hashtags": {
+     "scalar": [
+      "#geography",
+      "#quiz",
+      "#countries",
+      "#trivia",
+      "#scalargame"
+     ],
+     "continuum": [
+      "#geography",
+      "#quiz",
+      "#worldfacts",
+      "#trivia",
+      "#scalargame"
+     ],
+     "whenabouts": [
+      "#history",
+      "#quiz",
+      "#trivia",
+      "#onthisday",
+      "#scalargame"
+     ],
+     "tectonic": [
+      "#geography",
+      "#maps",
+      "#quiz",
+      "#trivia",
+      "#scalargame"
+     ]
+    },
+    "firstComment": [
+     "instagram",
+     "threads"
+    ],
+    "poll": true,
+    "youtubeTitleSuffix": " #shorts"
+   },
+   "budget": {
+    "monthlyUsd": 0,
+    "note": "Motion renders use no paid APIs."
+   },
+   "mix": {
+    "share": 1,
+    "target": null,
+    "note": "All scheduled posts are Scalargame until Originals has approved batches; the owner sets target shares before the Phase 4 mix policy."
+   },
+   "checks": [
+    {
+     "id": "deterministic",
+     "name": "Deterministic question checks"
+    },
+    {
+     "id": "independent-source",
+     "name": "Independent live-source check"
+    },
+    {
+     "id": "media-qa",
+     "name": "Media QA"
+    },
+    {
+     "id": "contract",
+     "name": "Batch contract"
+    },
+    {
+     "id": "owner-checkpoints",
+     "name": "Owner checkpoints"
+    }
+   ]
+  }
+ ],
+ "engines": [
+  {
+   "id": "motion",
+   "name": "Motion",
+   "summary": "Remotion (React) motion graphics: deterministic templates, styles and music beds; no paid APIs.",
+   "kitVersion": "kit-1",
+   "routes": [],
+   "templates": [
+    {
+     "format": "progressive-clues",
+     "component": "ProgressiveClues",
+     "durationSeconds": 24,
+     "revealSeconds": 14
+    },
+    {
+     "format": "candidate-elimination",
+     "component": "CandidateElimination",
+     "durationSeconds": 24,
+     "revealSeconds": 14
+    },
+    {
+     "format": "head-to-head",
+     "component": "HeadToHead",
+     "durationSeconds": 20,
+     "revealSeconds": 10
+    },
+    {
+     "format": "missing-slot",
+     "component": "MissingSlot",
+     "durationSeconds": 22,
+     "revealSeconds": 12
+    },
+    {
+     "format": "guess-the-year",
+     "component": "GuessTheYear",
+     "durationSeconds": 22,
+     "revealSeconds": 12
+    },
+    {
+     "format": "before-after",
+     "component": "BeforeAfter",
+     "durationSeconds": 22,
+     "revealSeconds": 12
+    },
+    {
+     "format": "missing-country",
+     "component": "MissingCountry",
+     "durationSeconds": 22,
+     "revealSeconds": 12
+    },
+    {
+     "format": "neighbor-clues",
+     "component": "NeighborClues",
+     "durationSeconds": 24,
+     "revealSeconds": 14
+    }
+   ],
+   "styles": [
+    {
+     "id": "scalar-notebook-1",
+     "game": "scalar",
+     "version": 1,
+     "summary": "Field notebook on a graph-paper desk: paper #FAFAF9, charcoal #18181B ink, teal #14B8A6 accent, thermal green #22C55E / orange #F97316. Fraunces 900 headlines and clue text, Geist Mono labels and numbers. Sharp-cornered white index cards (3 px ink border, hard 8 px offset shadow, orange header rule, teal number tab) are dealt in from off-frame with a decelerating slide-and-settle; a tally card counts the countries that still fit (195 → … → 1) on an honest zero-based bar. Reveal = a speckled green rubber stamp slammed onto the pile, then a ruled locator card (orthographic, answer in teal, neighbours paper with ink outlines). Candidate checklists tick/cross per clue with thermal green/orange marks."
+    },
+    {
+     "id": "continuum-poster-1",
+     "game": "continuum",
+     "version": 1,
+     "summary": "Swiss data poster: cream #F7F3EC paper with a faint 90 px print grid and a pink/black spine bleeding off the left edge; black #111 type and 3–6 px rules, one hot-pink #F472B6 accent used as fills (with black text) for the subject and the answer. Montserrat 900 headlines, Montserrat 600–800 copy, IBM Plex Mono 700 figures. Head-to-head: two stacked white A/B cards with identical hatched empty tracks; at the reveal both bars grow together from one labelled zero line on one linear scale (axis 0 → nice round max), values count up to the exact text, winner turns pink with a check. Missing-slot: an ordinal ladder (equal rungs, “rank order · not to scale”) of two anchors with three dashed A/B/C insertion gaps; the pink target card drops into its gap on the downbeat, then values count up and thin bars grow from the ladder’s left edge, which becomes a labelled zero line. Ease-out entries ≤ 0.5 s, no camera moves, calm think window, source line always visible."
+    },
+    {
+     "id": "whenabouts-almanac-1",
+     "game": "whenabouts",
+     "version": 1,
+     "summary": "Almanac: parchment #F4ECD8 with a soft vignette, laid-paper lines and a double-rule page frame; sepia ink #2B1D0E; highlighter yellow #EAB308 as fill only, deep ochre #A16207 for accent text. Fraunces italic 900 headlines, Geist Mono for years and labels. Typographic event card (double rule, vector fleurons, no photos). A horizontal ruler timeline pans in unlabelled, then carries the A/B/C year marks (or the pinned anchor). Calm ease-out entries; anticipation wind-up; the reveal is a year odometer rolling to the answer (or the “?” token gliding onto its side of the anchor at an honest distance), followed by a single pan/zoom of the ruler and a yellow highlight on the correct mark."
+    },
+    {
+     "id": "tectonic-ocean-1",
+     "game": "tectonic",
+     "version": 1,
+     "summary": "Low-poly ocean: deep navy #0B1F33 full-frame depth gradient with a faint static triangular facet mesh; maps sit in a rounded card of lighter shallow-water navy. Neighbors are muted sand #E8D5B0, other land is dim slate #4A5966 and unlabelled, the answer is warm orange #F2A154 with a subtle low-poly facet overlay. Nunito 900 for the question, 800 for map labels (white with navy halo). Canonical globe rings in one orthographic projection centred on the target, cropped to the generator window. Neighbors drift in radially (0.5 s ease-out); the gap is a dashed white outline pulsing softly; before the reveal a shadow gathers, then the answer piece drops in with a spring and a soft drop shadow, the label pops, and the camera pulls back (span ×2.2, same centre, ease-in-out)."
+    }
+   ],
+   "beds": [
+    {
+     "id": "continuum-20",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Midday Market Rush",
+     "artist": null,
+     "license": "owner-supplied",
+     "sourceUrl": null,
+     "retired": true
+    },
+    {
+     "id": "continuum-20-holizna-clouds",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Clouds",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-holizna-morning-coffee",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Morning Coffee",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-holizna-opinions",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Opinions",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chill-beats-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-holizna-puppy-love",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Puppy Love",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-a-cup-of-tea",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "A cup of tea",
+     "artist": "TAD",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lofi-compilation",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-advertisements",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Advertisements",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chillout-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-ambienttrack-1",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "ambienttrack 1",
+     "artist": "annandistance",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/feel-good-slow-ambient-track-with-a-beat",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-boredom",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Boredom",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/relaxing-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-cat-caffe",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Cat caffe",
+     "artist": "TAD",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lofi-compilation",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-childhood",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Childhood",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chillout-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-dreams",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Dreams",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chillout-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-lofihiphop",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "lofihiphop",
+     "artist": "omfgdude",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lofi-hip-hop",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-morning-rain",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Morning rain",
+     "artist": "TAD",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lofi-compilation",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-slow-stride-loop",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "Slow Stride Loop",
+     "artist": "isaiah658",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/slow-stride",
+     "retired": false
+    },
+    {
+     "id": "continuum-20-oga-you-loved-me-once",
+     "game": "continuum",
+     "durationSeconds": 20,
+     "revealSeconds": 10,
+     "title": "You Loved Me Once",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/relaxing-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Midday Market Rush",
+     "artist": null,
+     "license": "owner-supplied",
+     "sourceUrl": null,
+     "retired": true
+    },
+    {
+     "id": "continuum-22-holizna-clouds",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Clouds",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-holizna-morning-coffee",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Morning Coffee",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-holizna-opinions",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Opinions",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chill-beats-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-holizna-puppy-love",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Puppy Love",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-a-cup-of-tea",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "A cup of tea",
+     "artist": "TAD",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lofi-compilation",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-advertisements",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Advertisements",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chillout-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-ambienttrack-1",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "ambienttrack 1",
+     "artist": "annandistance",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/feel-good-slow-ambient-track-with-a-beat",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-boredom",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Boredom",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/relaxing-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-cat-caffe",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Cat caffe",
+     "artist": "TAD",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lofi-compilation",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-childhood",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Childhood",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chillout-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-dreams",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Dreams",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chillout-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-lofihiphop",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "lofihiphop",
+     "artist": "omfgdude",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lofi-hip-hop",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-morning-rain",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Morning rain",
+     "artist": "TAD",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lofi-compilation",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-slow-stride-loop",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Slow Stride Loop",
+     "artist": "isaiah658",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/slow-stride",
+     "retired": false
+    },
+    {
+     "id": "continuum-22-oga-you-loved-me-once",
+     "game": "continuum",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "You Loved Me Once",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/relaxing-instrumentals-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Skipping Downstairs",
+     "artist": null,
+     "license": "owner-supplied",
+     "sourceUrl": null,
+     "retired": true
+    },
+    {
+     "id": "scalar-24-holizna-blue-skies",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Blue Skies",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-holizna-creature-comforts",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Creature Comforts",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-holizna-first-snow",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "First Snow",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-holizna-laundry-on-the-wire",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Laundry On The Wire",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-holizna-shut-up-or-shut-in",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Shut up, or shut in",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/sad-lo-fi-lofi-collectioni",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-a-small-fire-will-do",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "a small fire will do",
+     "artist": "Trex0n",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/a-small-fire-will-do-calming-loop",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-cozy-puzzle-in-game-1",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "cozy puzzle in-game 1",
+     "artist": "MintoDog",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/cozy-puzzle-in-game-1",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-hot-spring-town",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "hot spring town",
+     "artist": "Kistol",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/hot-springs-town",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-quiet-village-1",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Quiet Village 1",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/quiet-village-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-quiet-village-2",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Quiet Village 2",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/quiet-village-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-quiet-village-3",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Quiet Village 3",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/quiet-village-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-quiet-village-4",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Quiet Village 4",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/quiet-village-collection",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-town1-home-town",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Town1 - Home Town",
+     "artist": "SubspaceAudio",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/jrpg-pack-2-towns",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-town2-where-time-stands-still",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Town2 - Where Time Stands Still",
+     "artist": "SubspaceAudio",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/jrpg-pack-2-towns",
+     "retired": false
+    },
+    {
+     "id": "scalar-24-oga-urban-shop",
+     "game": "scalar",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "urban shop",
+     "artist": "MintoDog",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/urban-shop",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "The Pocket Heist",
+     "artist": null,
+     "license": "owner-supplied",
+     "sourceUrl": null,
+     "retired": true
+    },
+    {
+     "id": "tectonic-22-holizna-2-hour-delay",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "2 Hour Delay",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-holizna-dream-pop",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Dream Pop",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chill-beats-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-holizna-everything-you-ever-dreamed",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Everything You Ever Dreamed",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-holizna-families",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Families",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chill-beats-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-holizna-letting-go-of-the-past",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Letting Go Of The Past",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-holizna-new-shoes",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "New Shoes",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-holizna-snow-drift",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Snow Drift",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-holizna-so-broke",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "So Broke",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-holizna-whatever",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Whatever",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-oga-krank-space-atmo",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "krank-space-atmo",
+     "artist": "legoluft",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/atmospheric-puzzles",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-oga-lifewave2k",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "lifeWave2k",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/calm-ambient-3-lifewave-2k",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-oga-song18",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "song18",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/crystal-cave-song18",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-oga-synthwave-15k",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Synthwave 15k",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/calm-ambient-2-synthwave-15k",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-oga-synthwave-4k",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Synthwave 4k",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/calm-ambient-1-synthwave-4k",
+     "retired": false
+    },
+    {
+     "id": "tectonic-22-oga-tylersong3-normal",
+     "game": "tectonic",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "TylerSong3 Normal",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/aquaria",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "The Pocket Heist",
+     "artist": null,
+     "license": "owner-supplied",
+     "sourceUrl": null,
+     "retired": true
+    },
+    {
+     "id": "tectonic-24-holizna-2-hour-delay",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "2 Hour Delay",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-holizna-dream-pop",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Dream Pop",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chill-beats-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-holizna-everything-you-ever-dreamed",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Everything You Ever Dreamed",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-holizna-families",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Families",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chill-beats-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-holizna-letting-go-of-the-past",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Letting Go Of The Past",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-holizna-new-shoes",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "New Shoes",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/happy-lo-fi-lofi-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-holizna-snow-drift",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Snow Drift",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-holizna-so-broke",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "So Broke",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-holizna-whatever",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Whatever",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-oga-krank-space-atmo",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "krank-space-atmo",
+     "artist": "legoluft",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/atmospheric-puzzles",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-oga-lifewave2k",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "lifeWave2k",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/calm-ambient-3-lifewave-2k",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-oga-song18",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "song18",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/crystal-cave-song18",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-oga-synthwave-15k",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Synthwave 15k",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/calm-ambient-2-synthwave-15k",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-oga-synthwave-4k",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "Synthwave 4k",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/calm-ambient-1-synthwave-4k",
+     "retired": false
+    },
+    {
+     "id": "tectonic-24-oga-tylersong3-normal",
+     "game": "tectonic",
+     "durationSeconds": 24,
+     "revealSeconds": 14,
+     "title": "TylerSong3 Normal",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/aquaria",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Golden Question",
+     "artist": null,
+     "license": "owner-supplied",
+     "sourceUrl": null,
+     "retired": true
+    },
+    {
+     "id": "whenabouts-22-holizna-come-again",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Come Again",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-holizna-glad-to-be-stuck-inside",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Glad To Be Stuck Inside",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/lo-fi-and-chill-collection",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-holizna-old-age",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Old Age",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/chill-beats-collection",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-holizna-yesterday",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Yesterday",
+     "artist": "HoliznaCC0",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/sad-lo-fi-lofi-collectioni",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-beginning-4",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Beginning 4",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/title-screens-beginnings-collection",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-beginning-5",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Beginning 5",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/title-screens-beginnings-collection",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-beginning-7",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Beginning 7",
+     "artist": "Holizna",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/title-screens-beginnings-collection",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-calm2-childhood-friends",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Calm2 - Childhood Friends",
+     "artist": "SubspaceAudio",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/jrpg-pack-4-calm",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-calm3-peaceful-days",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Calm3 - Peaceful Days",
+     "artist": "SubspaceAudio",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/jrpg-pack-4-calm",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-calm4-sand-castles",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Calm4 - Sand Castles",
+     "artist": "SubspaceAudio",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/jrpg-pack-4-calm",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-calm5-summer-memories",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Calm5 - Summer Memories",
+     "artist": "SubspaceAudio",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/jrpg-pack-4-calm",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-elevator",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Elevator",
+     "artist": "Pro Sensory",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/elevator-music",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-jazz-take-2",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Jazz Take 2",
+     "artist": "Pro Sensory",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/jazz-slower",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-little-cafe-0",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "little cafe 0",
+     "artist": "OatCog",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/coffee-house-bump",
+     "retired": false
+    },
+    {
+     "id": "whenabouts-22-oga-vaporware-1",
+     "game": "whenabouts",
+     "durationSeconds": 22,
+     "revealSeconds": 12,
+     "title": "Vaporware 1",
+     "artist": "cynicmusic",
+     "license": "CC0-1.0",
+     "sourceUrl": "https://opengameart.org/content/calm-piano-1-vaporware",
+     "retired": false
+    }
+   ]
+  },
+  {
+   "id": "story",
+   "name": "Story",
+   "summary": "Python story pipeline: recaps from stock footage and narration, and AI-animated series.",
+   "kitVersion": "story-1",
+   "routes": [
+    {
+     "id": "recap",
+     "name": "Recap",
+     "description": "A narrated vertical recap of a film or story idea over licensed stock footage, with karaoke captions and a poster ending.",
+     "inputs": [
+      {
+       "name": "title",
+       "type": "string",
+       "required": true,
+       "description": "Movie title or story idea"
+      }
+     ],
+     "paidServices": [
+      "gemini-llm",
+      "gemini-tts",
+      "groq-llm-fallback"
+     ],
+     "freeServices": [
+      "wikipedia",
+      "tmdb",
+      "pexels"
+     ],
+     "localTools": [
+      "ffmpeg",
+      "openai-whisper"
+     ],
+     "formats": [
+      "movie-recap",
+      "story-recap"
+     ]
+    },
+    {
+     "id": "series",
+     "name": "Series",
+     "description": "A multi-episode AI-animated short series: story, characters, worlds, shot prompts and generated video clips per episode.",
+     "inputs": [
+      {
+       "name": "title",
+       "type": "string",
+       "required": true,
+       "description": "Project title"
+      },
+      {
+       "name": "brief",
+       "type": "string",
+       "required": true,
+       "description": "One to three sentence story brief"
+      },
+      {
+       "name": "episodes",
+       "type": "integer",
+       "required": false,
+       "description": "Number of episodes (1-10, default 1)"
+      }
+     ],
+     "paidServices": [
+      "gemini-llm",
+      "gemini-image",
+      "gemini-veo",
+      "fal-ai"
+     ],
+     "freeServices": [],
+     "localTools": [
+      "ffmpeg"
+     ],
+     "formats": [
+      "animated-short"
+     ]
+    }
+   ],
+   "defaultModels": {
+    "llm": "gemini-2.5-flash",
+    "llmFallback": "llama-3.3-70b-versatile",
+    "image": "gemini-2.5-flash-image",
+    "tts": "gemini-2.5-flash-preview-tts",
+    "asr": "openai-whisper-base"
+   },
+   "tierDefaults": {
+    "cheapest": "veo-3.1-lite",
+    "recommended": "veo-3.1-fast",
+    "high_fidelity": "veo-3.1"
+   },
+   "fallbackOrder": {
+    "cheapest": [
+     "veo-3.1-lite",
+     "wan-2.5",
+     "kling-2.5-turbo-pro",
+     "wan-2.2"
+    ],
+    "recommended": [
+     "veo-3.1-fast",
+     "seedance-2.0-fast",
+     "seedance-1.5-pro-fast"
+    ],
+    "high_fidelity": [
+     "veo-3.1",
+     "kling-3.0-pro",
+     "seedance-2.0",
+     "sora-2-pro"
+    ]
+   },
+   "videoModels": [
+    {
+     "id": "wan-2.5",
+     "name": "Wan 2.5",
+     "provider": "fal.ai",
+     "tier": "cheapest",
+     "costPerSecondUsd": 0.05,
+     "maxResolution": "480p",
+     "maxDurationSeconds": 5,
+     "audio": false,
+     "referenceImages": false,
+     "description": "Cheapest option. 480p only — good for drafts and prompt testing."
+    },
+    {
+     "id": "kling-2.5-turbo-pro",
+     "name": "Kling 2.5 Turbo Pro",
+     "provider": "fal.ai",
+     "tier": "cheapest",
+     "costPerSecondUsd": 0.07,
+     "maxResolution": "1080p",
+     "maxDurationSeconds": 10,
+     "audio": false,
+     "referenceImages": false,
+     "description": "Best price-performance ratio. Excellent motion fluidity. No native audio."
+    },
+    {
+     "id": "wan-2.2",
+     "name": "Wan 2.2",
+     "provider": "fal.ai",
+     "tier": "cheapest",
+     "costPerSecondUsd": 0.1,
+     "maxResolution": "720p",
+     "maxDurationSeconds": 5,
+     "audio": false,
+     "referenceImages": false,
+     "description": "Open source (Alibaba). Budget option at 720p. No native audio."
+    },
+    {
+     "id": "seedance-1.5-pro-fast",
+     "name": "Seedance 1.5 Pro Fast",
+     "provider": "fal.ai",
+     "tier": "recommended",
+     "costPerSecondUsd": 0.052,
+     "maxResolution": "1080p",
+     "maxDurationSeconds": 12,
+     "audio": true,
+     "referenceImages": true,
+     "description": "ByteDance. Native audio + start/end frame control. Token-based pricing, estimated at $0.052/s."
+    },
+    {
+     "id": "seedance-2.0-fast",
+     "name": "Seedance 2.0 Fast",
+     "provider": "fal.ai",
+     "tier": "recommended",
+     "costPerSecondUsd": null,
+     "maxResolution": "720p",
+     "maxDurationSeconds": 15,
+     "audio": true,
+     "referenceImages": true,
+     "description": "Newest model (Apr 2026). Multi-shot editing, native audio, reference-to-video with up to 9 images. Token-based pricing, estimated at $0.052/s."
+    },
+    {
+     "id": "veo-3.1-fast",
+     "name": "Veo 3.1 Fast",
+     "provider": "gemini_api",
+     "tier": "recommended",
+     "costPerSecondUsd": 0.1,
+     "maxResolution": "1080p",
+     "maxDurationSeconds": 8,
+     "audio": true,
+     "referenceImages": true,
+     "description": "Google Gemini API. Fast generation with reference images (up to 3). Audio included. $0.10/s at 1080p."
+    },
+    {
+     "id": "kling-3.0-pro",
+     "name": "Kling 3.0 Pro",
+     "provider": "fal.ai",
+     "tier": "high_fidelity",
+     "costPerSecondUsd": 0.224,
+     "maxResolution": "1080p",
+     "maxDurationSeconds": 15,
+     "audio": true,
+     "referenceImages": true,
+     "description": "Multi-shot sequences with subject consistency. Native audio. Art-house aesthetic."
+    },
+    {
+     "id": "seedance-2.0",
+     "name": "Seedance 2.0",
+     "provider": "fal.ai",
+     "tier": "high_fidelity",
+     "costPerSecondUsd": null,
+     "maxResolution": "720p",
+     "maxDurationSeconds": 15,
+     "audio": true,
+     "referenceImages": true,
+     "description": "Standard quality tier of Seedance 2.0. Higher quality than fast variant. Token-based pricing, estimated at $0.052/s."
+    },
+    {
+     "id": "veo-3.1",
+     "name": "Veo 3.1",
+     "provider": "gemini_api",
+     "tier": "high_fidelity",
+     "costPerSecondUsd": 0.4,
+     "maxResolution": "4K",
+     "maxDurationSeconds": 8,
+     "audio": true,
+     "referenceImages": true,
+     "description": "Google Gemini API. Best quality — cinematic video with lip-sync, audio, reference images. $0.40/s."
+    },
+    {
+     "id": "sora-2-pro",
+     "name": "Sora 2 Pro",
+     "provider": "fal.ai",
+     "tier": "high_fidelity",
+     "costPerSecondUsd": 0.3,
+     "maxResolution": "1080p",
+     "maxDurationSeconds": 25,
+     "audio": true,
+     "referenceImages": false,
+     "description": "OpenAI. Best physics simulation. Longest clips (up to 25s). Most expensive."
+    },
+    {
+     "id": "veo-3.1-lite",
+     "name": "Veo 3.1 Lite",
+     "provider": "gemini_api",
+     "tier": "cheapest",
+     "costPerSecondUsd": 0.05,
+     "maxResolution": "1080p",
+     "maxDurationSeconds": 8,
+     "audio": true,
+     "referenceImages": false,
+     "description": "Google Gemini API. Cheapest Veo — 50% less than Fast. Audio included. $0.05/s at 1080p."
+    }
+   ]
+  }
+ ],
+ "channels": [
+  {
+   "id": "instagram",
+   "name": "Instagram",
+   "profileUrl": "https://www.instagram.com/studiozeroflow/",
+   "captionLimit": 2200,
+   "firstComment": true,
+   "linkInText": false
+  },
+  {
+   "id": "facebook",
+   "name": "Facebook",
+   "profileUrl": null,
+   "captionLimit": 2200,
+   "firstComment": false,
+   "linkInText": true
+  },
+  {
+   "id": "threads",
+   "name": "Threads",
+   "profileUrl": "https://www.threads.com/@studiozeroflow",
+   "captionLimit": 500,
+   "firstComment": true,
+   "linkInText": true
+  },
+  {
+   "id": "x",
+   "name": "X",
+   "profileUrl": "https://x.com/StudioZeroFlow",
+   "captionLimit": 280,
+   "firstComment": false,
+   "linkInText": true
+  },
+  {
+   "id": "bluesky",
+   "name": "Bluesky",
+   "profileUrl": null,
+   "captionLimit": 300,
+   "firstComment": false,
+   "linkInText": true
+  },
+  {
+   "id": "youtube",
+   "name": "YouTube Shorts",
+   "profileUrl": "https://www.youtube.com/@StudioZeroflow",
+   "captionLimit": 5000,
+   "titleLimit": 100,
+   "firstComment": false,
+   "linkInText": true
+  },
+  {
+   "id": "tiktok",
+   "name": "TikTok",
+   "profileUrl": "https://www.tiktok.com/@studiozeroflow",
+   "captionLimit": 2200,
+   "firstComment": false,
+   "linkInText": false
+  }
+ ]
+}

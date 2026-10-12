@@ -15,7 +15,7 @@ const SET = await loadSet(args.set ?? 'questions-2026-10');
 const {SNAPSHOT, config: CONFIG} = SET;
 const doc = JSON.parse(readFileSync(SET.checkedPath, 'utf8'));
 const snap = loadSnapshot(SNAPSHOT);
-const timingSrc = readFileSync(resolve(STUDIO, 'src/episodes/timing.ts'), 'utf8');
+const timingSrc = readFileSync(resolve(STUDIO, 'src/projects/scalargame/timing.ts'), 'utf8');
 const beds = JSON.parse(readFileSync(resolve(STUDIO, 'public/episodes/music/beds.json'), 'utf8'));
 
 // Permanent IDs: <game>-<format>-<nnn>. Never reuse an ID for different content (check.mjs enforces this library-wide).

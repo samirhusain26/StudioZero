@@ -1,6 +1,6 @@
 // Library quiz episodes (kit-1). Props are produced by engines/motion/pipeline/episodes.mjs from the
 // checked question set and are immutable per render job: templates must render from props alone.
-import type {SfxName} from '../kit/sfx';
+import type {SfxName} from '../../kit/sfx';
 
 export type Game = 'scalar' | 'continuum' | 'whenabouts' | 'tectonic';
 export type Format =

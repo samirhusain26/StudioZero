@@ -22,7 +22,7 @@ You are an independent fact-checker. You did not write these questions and you m
 
 ## Output: `library/<batchId>/review/source-verification.json`
 
-Same shape as `library/2026-10-pilots/review/source-verification.json` (read it first as the reference). `batch.mjs` reads `status` and `resolution` per `key`.
+Same shape as `library/2026-10-pilots/review/source-verification.json` (read it first as the reference). The packager (`batch.mjs` → `tools/package.mjs`, rules in `projects/scalargame/package.mjs`) reads `status` and `resolution` per `key`.
 
 ```json
 {

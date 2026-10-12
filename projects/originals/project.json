@@ -1,0 +1,43 @@
+{
+  "projectVersion": 1,
+  "id": "originals",
+  "name": "Originals",
+  "priority": "P0",
+  "order": 0,
+  "summary": "StudioZero's own shorts: movie and story recaps (stock footage, narration) and AI-animated series.",
+  "contract": {"schemaVersion": 2, "contentNamespaces": ["originals"], "note": "Needs contract v2 (Phase 4); no Originals batch is packaged before that."},
+  "sources": [
+    {"kind": "api", "name": "TMDB", "use": "movie details and posters", "license": "TMDB", "attribution": "This product uses the TMDB API but is not endorsed or certified by TMDB"},
+    {"kind": "api", "name": "Wikipedia", "use": "plot text", "license": "Wikipedia-CC-BY-SA"},
+    {"kind": "api", "name": "Pexels", "use": "stock footage", "license": "Pexels", "attribution": "credit the creator where possible"},
+    {"kind": "generated", "name": "Gemini, Veo, fal.ai models", "use": "script, voice, images, video", "license": "generated"}
+  ],
+  "formats": [
+    {"id": "movie-recap", "name": "Movie recap", "engine": "story", "route": "recap"},
+    {"id": "story-recap", "name": "Story recap", "engine": "story", "route": "recap"},
+    {"id": "animated-short", "name": "Animated short", "engine": "story", "route": "series"}
+  ],
+  "link": {"required": false, "site": null, "note": "No link by default; a format may add one later."},
+  "callToAction": {"engage": "Follow for the next one", "rule": "No spoilers in the hook; recaps credit their sources."},
+  "captions": {
+    "language": "en",
+    "hashtags": {
+      "movie-recap": ["#movierecap", "#moviesummary", "#film", "#shorts"],
+      "story-recap": ["#storytime", "#recap", "#shorts"],
+      "animated-short": ["#animation", "#shortfilm", "#aianimation", "#shorts"]
+    },
+    "firstComment": [],
+    "poll": false,
+    "youtubeTitleSuffix": " #shorts"
+  },
+  "budget": {"monthlyUsd": 0, "perRunApproval": true, "note": "No paid generation without the owner's explicit OK for that run, with a cost estimate. The owner sets a monthly budget before Phase 5."},
+  "mix": {"share": 0.0, "target": null, "note": "Nothing scheduled until Originals has approved batches; the owner sets target shares before the Phase 4 mix policy."},
+  "checks": [
+    {"id": "rights", "name": "Rights", "how": "every asset in render.json credits with a known licence (no 'unknown'); TMDB notice where TMDB data or images appear"},
+    {"id": "garbage", "name": "Script sanity", "how": "the reviewer reads the script: no hallucinated plot points, no spoiler-only hook, no unsafe content"},
+    {"id": "visual-qa", "name": "Visual QA", "how": "contact sheet and spot checks of every clip; no broken frames, no unreadable subtitles"},
+    {"id": "disclosure", "name": "AI disclosure", "how": "render.json disclosure matches the models used; realisticSynthetic set where real-looking"},
+    {"id": "contract", "name": "Batch contract", "how": "python3 contract/library_contract.py validate library/<batchId> (v2, Phase 4)"}
+  ],
+  "packager": null
+}
