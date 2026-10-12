@@ -1,6 +1,6 @@
 # StudioZero studio plan (running record)
 
-Status: **Phase 5 done** (2026-10-12), the last planned phase: story renders are contract-ready (licensed assets only, every call priced, contract media rules) and stage into v2 batches; the bugs that blocked paid runs are fixed (B3, B7–B10, ledger gaps); the `/originals` playbook, its fact-checker and the Studio hand-off exist; the first Originals brief (`library/_briefs/2026-10-o01.md`) waits for the owner. What is left and what to watch: **After Phase 5** (end of this file). See §9, §17.
+Status: **Phase 5 done** (2026-10-12), the last planned phase: story renders are contract-ready (licensed assets only, every call priced, contract media rules) and stage into v2 batches; the bugs that blocked paid runs are fixed (B3, B7–B10, ledger gaps); the `/originals` playbook, its fact-checker and the Studio hand-off exist; the first Originals brief (`library/_briefs/2026-10-o01.md`) waits for the owner. What is left and what to watch: **After Phase 5** (end of this file). Originals are on hold (owner, 2026-10-12). Next: **Phase 6** (Scalargame marketing at a steady cadence; the content runs out on 2026-10-30), prompt `docs/prompts/PHASE6_SESSION.md`. See §9, §17.
 
 Resume rule: read this file, then the section for the current phase. Locked owner decisions (§1) are not re-argued. The original brief is `docs/prompts/STUDIOZERO_CONSOLIDATION.md` in the marketing repo (untracked there; it moves here in Phase 1).
 
