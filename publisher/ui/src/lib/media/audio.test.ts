@@ -112,6 +112,13 @@ describe('mastering (master_audio.py port)', () => {
     expect(integratedLoudness(result.audio.channels, RATE)).toBeCloseTo(-14, 1)
   })
 
+  it('can master to a stricter true peak', () => {
+    const l = concat(noise(4, 0.05, 7), sine(2, -3, 440), noise(4, 0.02, 9))
+    const strict = master({ sampleRate: RATE, channels: [Float32Array.from(l), Float32Array.from(l)] }, -1.5)
+    expect(strict.truePeakDbtp).toBeLessThanOrEqual(-1.5)
+    expect(strict.lufs).toBeCloseTo(-14, 1)
+  })
+
   it('refuses a silent mix', () => {
     const silent = new Float32Array(RATE)
     expect(() => master({ sampleRate: RATE, channels: [silent, silent] })).toThrow(/silent/)

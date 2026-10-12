@@ -78,8 +78,11 @@ export interface MasterResult {
   ceilingDb: number
 }
 
-/** master_audio.py main(): four gain + limit passes; lower the ceiling by 0.5 dB until true peak ≤ −1 dBTP (or −6). */
-export function master(input: PcmAudio): MasterResult {
+/**
+ * master_audio.py main(): four gain + limit passes; lower the ceiling by 0.5 dB until true peak ≤ `truePeakMax`
+ * (default −1 dBTP, as master_audio.py) or the ceiling reaches −6 dB.
+ */
+export function master(input: PcmAudio, truePeakMax = TRUE_PEAK_MAX): MasterResult {
   const rate = input.sampleRate
   const y = input.channels.map((ch) => Float64Array.from(ch))
   let ceilDb = -1.5
@@ -93,7 +96,7 @@ export function master(input: PcmAudio): MasterResult {
     }
     const lufs = integratedLoudness(out, rate)
     const tp = truePeakDb(out)
-    if (tp <= TRUE_PEAK_MAX || ceilDb <= -6) {
+    if (tp <= truePeakMax || ceilDb <= -6) {
       return { audio: { sampleRate: rate, channels: out.map((ch) => Float32Array.from(ch)) }, lufs, truePeakDbtp: tp, ceilingDb: ceilDb }
     }
     ceilDb -= 0.5

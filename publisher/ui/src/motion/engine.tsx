@@ -32,6 +32,9 @@ const VIDEO_BITRATE = 3_000_000
 const AUDIO_BITRATE = 192_000
 const DELAY_RENDER_TIMEOUT = 120_000
 const MAX_COVER_BYTES = 2_000_000
+// Browser AAC encoders overshoot more than fdk-AAC (render.sh): master with 0.5 dB more true-peak headroom so the
+// delivered file stays ≤ −1 dBTP (the QA bar is unchanged).
+const MASTER_TRUE_PEAK = -1.5
 
 type Props = JobInput['props']
 type Kit = typeof import('./kit')
@@ -180,7 +183,7 @@ export async function exportEpisode(
 
   // 2. Mastering.
   progress('master', 0)
-  const mastered = master(mix)
+  const mastered = master(mix, MASTER_TRUE_PEAK)
   const masteredSrc = URL.createObjectURL(new Blob([writeWavFloat(mastered.audio)], { type: 'audio/wav' }))
   try {
     // 3. Video with the mastered mix.
