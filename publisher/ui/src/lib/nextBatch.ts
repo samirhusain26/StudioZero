@@ -125,7 +125,7 @@ export interface FeedbackExport {
     note: string
     updatedAt: string
   }[]
-  performance: { platform: string; status: string; at: string | null; permalink: string | null; metrics: PostMetrics | null }[]
+  performance: { platform: string; status: string; questionId: string | null; at: string | null; permalink: string | null; metrics: PostMetrics | null }[]
   accounts: AccountStats[]
 }
 
@@ -152,7 +152,7 @@ export function buildFeedbackExport(args: { info: NextBatchInfo; brief: string; 
       note: f.note,
       updatedAt: f.updatedAt,
     })),
-    performance: info.performance.map((p) => ({ platform: p.platform, status: p.status, at: p.at, permalink: p.permalink, metrics: p.metrics ?? null })),
+    performance: info.performance.map((p) => ({ platform: p.platform, status: p.status, questionId: p.questionId ?? null, at: p.at, permalink: p.permalink, metrics: p.metrics ?? null })),
     accounts: info.accounts.map((a) => ({ ...a, totals: { ...a.totals } })),
   }
 }

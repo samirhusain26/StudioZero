@@ -149,7 +149,7 @@ Since Phase 3 the brief is prefilled from the Studio prompt builder's choices (f
   "brief": "<markdown>",
   "lastRetro": { "batchId": "2026-10-b01", "text": "<markdown>" },
   "feedback": [ { "episodeId": "…", "revision": 1, "batchId": "…", "questionId": "…", "game": "…", "format": "…", "styleId": "…", "tags": ["hook-weak"], "note": "…", "updatedAt": "…" } ],
-  "performance": [ { "platform": "…", "status": "…", "at": "…", "permalink": "…", "metrics": { "checkpoint": "24h", "fetchedAt": "…", "status": "ok", "values": { "views": 1500, "likes": 30, "answers.B": 4 } } } ],
+  "performance": [ { "platform": "…", "status": "…", "questionId": "scalar:CAN:clues", "at": "…", "permalink": "…", "metrics": { "checkpoint": "24h", "fetchedAt": "…", "status": "ok", "values": { "views": 1500, "likes": 30, "answers.B": 4 } } } ],
   "accounts": [ { "platform": "instagram", "followers": 120, "followersChange": 20, "days": 7, "totals": { "impressions": 6300, "engagements": 315, "engagement_rate": 0.05 }, "status": "ok" } ]
 }
 ```

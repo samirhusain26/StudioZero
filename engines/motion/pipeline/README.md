@@ -45,6 +45,7 @@ Each question set module (`questions-<set>.mjs`) exports `SNAPSHOT`, `TODAY`, `W
 | `scope` | check, pack | Main (non-spare) questions per `'game/format'`; any game/format not listed must have none. |
 | `mix` | check | `[approachable, moderate, challenging]` per `'game'` or per `'game/format'`. |
 | `pilotsPerGame` | check | Pilots per game in scope (0 = no pilots). |
+| `rules` | check | Opt-in curation rules. `everyClueRulesOutADecoy: true` (2026-10-b02 on): each candidate-elimination clue, tested alone, rules out at least one decoy, so no clue is pure confirmation (two decoys over three clues means one clue always removes nobody in order). |
 | `styles`, `beds` | episodes, batch `--dry` | Style recipe per game. `beds`: `'calm'` (default for new sets: the game's calm beds of matching length, rotated least-recently-used by track across the library; a frozen episode keeps its bed), or per format a bed name, a list, or `'calm'`. Beds must exist in `public/episodes/music/beds.json` and match `timing.ts`. |
 | `episodes` | check, episodes | Permanent `key → [batchId, '<game>-<short>-<nnn>']` for every main question. `check.mjs` refuses a missing ID (and prints the next free one, numbered after every `library/<batch>/batch.json` and frozen job input), an ID or `questionId` used by a different episode anywhere in `library/<batch>/`, a spare with an ID, and a wrong prefix. Short formats: `clues`, `elimination`, `headtohead`, `slot`, `year`, `beforeafter`, `missing`, `neighbors`. |
 | `experimentId`, `variantId` | batch | Written to every episode. |

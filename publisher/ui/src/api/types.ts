@@ -1359,7 +1359,8 @@ export interface BatchNote { batchId: string; kind: 'brief' | 'retro'; text: str
 export interface BatchNotes { batchId: string; brief: BatchNote | null; retro: BatchNote | null }
 /** Newest platform read of one post (metrics.py): status 'ok', or why it could not be read (authorization, not_configured, unsupported, gone, …). */
 export interface PostMetrics { checkpoint: string; fetchedAt: string; status: string; values: Record<string, number> }
-export interface EpisodePost { platform: string; status: string; at: string | null; permalink: string | null; metrics: PostMetrics | null }
+/** questionId: the ledger's question key (game:subject:format…), so a retro can group posts by game and format. */
+export interface EpisodePost { platform: string; status: string; questionId?: string | null; at: string | null; permalink: string | null; metrics: PostMetrics | null }
 /** One account over the last 7 complete local days (metrics.account_summary); status is 'ok' or why it could not be read. */
 export interface AccountStats {
   platform: string

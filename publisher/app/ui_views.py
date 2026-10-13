@@ -660,7 +660,7 @@ def batch_notes(raw):
 
 def episode_post(row, metrics=None):
     """EpisodePost from a ledger jobs row plus its newest platform read (metrics.latest), if any."""
-    return {'platform': row['platform'], 'status': row['status'],
+    return {'platform': row['platform'], 'status': row['status'], 'questionId': row['episode'] or None,
             'at': iso_utc(row['published_at']) or iso_utc(row['dispatched_at']) or iso_utc(row['slot']),
             'permalink': row['permalink'] or None, 'metrics': metrics}
 

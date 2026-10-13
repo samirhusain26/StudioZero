@@ -11,6 +11,7 @@ export const CONFIG = {
   scope: {'scalar/progressive-clues': 3, /* … one entry per brief Scope row */},
   mix: {scalar: [3, 2, 1] /* or per format: 'scalar/progressive-clues': [1, 1, 1] */},
   pilotsPerGame: 0,                                     // 1 when the brief asks for pilots
+  rules: {everyClueRulesOutADecoy: true},               // since 2026-10-b02: each elimination clue alone rules out a decoy
   styles: {scalar: 'scalar-notebook-1', continuum: 'continuum-poster-1', whenabouts: 'whenabouts-almanac-1', tectonic: 'tectonic-ocean-1'},
   beds: 'calm',                                         // rotating calm pool per game (docs/AUDIO_CORPUS_PLAN.md); or per format: name | [names] | 'calm'
   episodes: {},                                         // filled from check.mjs's "next free" lines (below)

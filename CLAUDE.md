@@ -24,7 +24,7 @@ docs/                            STUDIO_PLAN (running plan), PUBLIC_SAFETY, plan
                                  PI_UI_REDESIGN_PLAN, AUTOPILOT_PLAN, AUDIO_CORPUS_PLAN, MARKETING_VIDEO_PLAN, UPLOAD_PLAN (historical)
 studio.json                      projects, engines, channels (public facts only)
 projects/                        <p>/{project.json, package.mjs + package-core.mjs (contract v2 episodes; scalargame: captions, links)}
-tools/                           public_safety_check.py (run before every push, stdlib); stage-story.mjs (story render → batch); package.mjs (shared packager) +
+tools/                           public_safety_check.py (run before every push, stdlib); retro_stats.py (feedback export → matched-checkpoint post stats); stage-story.mjs (story render → batch); package.mjs (shared packager) +
                                  package-regression.mjs; render-json.mjs + RENDER_JSON.md (engine → packager format);
                                  export-catalog.mjs (→ publisher/catalog.json)
 engines/motion/                  motion engine, Mac only. Its own Node project (package.json, tsconfig, remotion.config.ts)

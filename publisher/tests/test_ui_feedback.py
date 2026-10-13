@@ -248,8 +248,8 @@ class ViewTests(unittest.TestCase):
                   row('x', 'scalar:Q1:clues', {'id': 'scalar:Q1:clues', 'episodeId': 'scalar-clues-001', 'revision': 2}),
                   row('bluesky', 'scalar:Q1:clues', {'id': 'scalar:Q1:clues'}, status='ready')]
         self.assertEqual(v.ledger_posts(ledger, 'scalar-clues-001', 1), [
-            {'platform': 'instagram', 'status': 'confirmed', 'at': '2026-10-05T16:01:00Z', 'permalink': 'https://www.instagram.com/reel/A/', 'metrics': None},
-            {'platform': 'bluesky', 'status': 'ready', 'at': '2026-10-05T16:00:00Z', 'permalink': None, 'metrics': None}])
+            {'platform': 'instagram', 'status': 'confirmed', 'questionId': 'scalar:Q1:clues', 'at': '2026-10-05T16:01:00Z', 'permalink': 'https://www.instagram.com/reel/A/', 'metrics': None},
+            {'platform': 'bluesky', 'status': 'ready', 'questionId': 'scalar:Q1:clues', 'at': '2026-10-05T16:00:00Z', 'permalink': None, 'metrics': None}])
         self.assertEqual(len(v.ledger_posts(ledger)), 3)
         ledger[0]['id'] = 'job-ig'
         read = {'checkpoint': '24h', 'fetchedAt': '2026-10-06T16:20:00+00:00', 'status': 'ok', 'values': {'views': 120}}
@@ -338,8 +338,8 @@ class EndpointTests(ServerTestCase):
         for post in body['posts']:
             assert_shape(self, post, 'EpisodePost')
         self.assertEqual(body['posts'], [
-            {'platform': 'instagram', 'status': 'confirmed', 'at': '2026-10-05T16:01:00Z', 'permalink': 'https://www.instagram.com/reel/A/', 'metrics': None},
-            {'platform': 'threads', 'status': 'uncertain', 'at': '2026-10-06T17:00:02Z', 'permalink': None, 'metrics': None}])
+            {'platform': 'instagram', 'status': 'confirmed', 'questionId': 'scalar:Q1:clues', 'at': '2026-10-05T16:01:00Z', 'permalink': 'https://www.instagram.com/reel/A/', 'metrics': None},
+            {'platform': 'threads', 'status': 'uncertain', 'questionId': 'scalar:Q1:clues', 'at': '2026-10-06T17:00:02Z', 'permalink': None, 'metrics': None}])
 
     def test_feedback_put_delete_and_validation(self):
         path = '/api/library/episodes/scalar-clues-001/1/feedback'
@@ -441,7 +441,7 @@ class EndpointTests(ServerTestCase):
                           'game': 'continuum', 'format': 'progressive-clues', 'styleId': 'continuum-paper-1',
                           'tags': ['hook-weak'], 'note': 'slow start'})
         self.assertEqual((body['lastBrief']['text'], body['lastRetro']['text']), ('brief b03', 'retro b03'))
-        self.assertEqual(body['performance'], [{'platform': 'instagram', 'status': 'confirmed', 'at': '2026-10-05T16:01:00Z',
+        self.assertEqual(body['performance'], [{'platform': 'instagram', 'status': 'confirmed', 'questionId': 'scalar:Q1:clues', 'at': '2026-10-05T16:01:00Z',
                                                 'permalink': 'https://www.instagram.com/reel/A/', 'metrics': None}])
 
     def test_dashboard_standing(self):
