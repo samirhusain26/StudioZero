@@ -1,4 +1,5 @@
-"""Master a rendered episode mix: gain to -14 LUFS integrated, lookahead limiter so true peak <= -1 dBTP.
+"""Master a rendered episode mix: gain to -14 LUFS integrated, lookahead limiter so true peak <= -1.5 dBTP
+(0.5 dB below the -1 dBTP QA bar: the AAC encode can overshoot, e.g. 2026-10-b02 tectonic-missing-005 decoded at -0.8).
 
     .venv/bin/python render/master_audio.py in.wav out.wav   (from engines/motion/)
 
@@ -9,7 +10,7 @@ import json, sys
 import numpy as np, soundfile as sf, pyloudnorm as pyln, librosa
 from scipy.ndimage import minimum_filter1d, uniform_filter1d
 
-TARGET, TP_MAX = -14.0, -1.0
+TARGET, TP_MAX = -14.0, -1.5
 
 
 def limit(x, ceil, sr):

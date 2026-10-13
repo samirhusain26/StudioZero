@@ -46,7 +46,7 @@ engines/motion/.venv/bin/python .claude/skills/video-batch/covers_sheet.py libra
 - Maps (full-res stills): enclaves visible (Lesotho, San Marino, Vatican City), no touching or stacked labels (2026-10-b01: Malawi/Mozambique, Gabon), north up, real shapes.
 - Charts start at zero on one labelled scale; numbers match the explanation.
 - Explanation says how the clues lead to the answer (2026-10-b01: the Uzbekistan explanation did not).
-- Candidate elimination: each clue removes at least one choice (`evidence.checks.eliminatedPerClue` has no empty entry).
+- Candidate elimination: each clue, on its own, rules out at least one decoy (`check.mjs` with `CONFIG.rules.everyClueRulesOutADecoy`). Applied in order, one clue always removes nobody (two decoys, three clues): `eliminatedPerClue` keeps one empty entry by design.
 - End card "Play a new puzzle · scalargame.com" inside the safe area; branding subtle; no personal credit.
 - Watch every MP4 muted at phone size (`review/index.html`); you cannot listen, so ask Samir to watch each once with sound at Checkpoint 3 (render.mjs has already checked loudness, true peak, silence gaps and sync).
 
