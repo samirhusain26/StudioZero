@@ -35,10 +35,12 @@ for (const id of ids) {
     const r = run(R, ['still', 'src/index.ts', 'LibraryEpisode', resolve(REVIEW, fr.file), `--props=${resolve(dir, 'props.json')}`, `--frame=${Math.round(fr.sec * 30)}`, '--scale=0.5', '--log=error'], STUDIO);
     if (r.status) throw new Error(`${id}: still ${fr.label} failed\n${r.stderr}`);
   }
-  const ep = data?.episodes.find(e => e.episodeId === id);
+  const raw = data?.episodes.find(e => e.episodeId === id);
+  // Contract v2 keeps the Scalargame fields under projectData and the credits on the episode itself.
+  const ep = raw?.projectData ? {...raw, ...raw.projectData, publication: {credits: raw.credits.map(c => `${c.title} (${c.license})`), ...raw.publication}} : raw;
   const att = status.attempts?.at(-1) ?? {};
   const m = status.video ?? att.measures ?? {};
-  const errs = (validator.errors ?? []).filter(e => data && e.path.startsWith(`episodes[${data.episodes.indexOf(ep)}]`));
+  const errs = (validator.errors ?? []).filter(e => data && e.path.startsWith(`episodes[${data.episodes.indexOf(raw)}]`));
   cards.push(`<section id="${id}">
 <h2>${esc(id)} <small>${esc(input.questionKey)} · ${esc(ep?.difficulty ?? '')} · ${esc(input.styleId)} · state <b class="${status.state}">${esc(status.state)}</b></small></h2>
 <div class="row">

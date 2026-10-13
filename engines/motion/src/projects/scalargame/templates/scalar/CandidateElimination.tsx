@@ -52,6 +52,7 @@ const Component: React.FC<TemplateProps> = ({ep, s, t}) => {
 
   const inhale = enter(frame, t.reveal - 0.45, 0.4, easeInOut) * (1 - enter(frame, t.reveal, 0.15));
   const ghost = 1 - 0.86 * enter(frame, stampAt - 0.1, 0.3);         // clue text steps back for the stamp
+  const under = 1 - enter(frame, stampAt - 0.1, 0.3);                // the stamped clue (1) clears fully: a two-line clue would show around the stamp
   const note = deal(frame, t.explain, -0.7, -1, 0.5);
 
   const rowY = (i: number) => ROW_TOP + i * (ROW_H + ROW_GAP);
@@ -121,7 +122,7 @@ const Component: React.FC<TemplateProps> = ({ep, s, t}) => {
           const anyOn = frame >= f(t.reveal) && frame < f(t.reveal + n - 0.1);
           const dim = anyOn ? mix(0.45, 1, on) : 1;
           return <ClueCard key={i} s={s} n={i + 1} text={text} x={X0} y={clueY(i)} w={W} h={CLUE_H} transform={d.transform} lift={d.lift}
-            focus={on} dim={dim} textFade={ghost} />;
+            focus={on} dim={dim} textFade={i === 0 ? under : ghost} />;
         })}
         <Stamp frame={frame} at={stampAt} cx={X0 + W / 2} cy={clueY(0) + CLUE_H / 2 + 6} rotate={-5} small={`FITS ALL ${n}`} big={q.answer}
           bigSize={q.answer.length > 12 ? 64 : 76} fontDisplay={s.fontDisplay} fontBody={s.fontBody} />
