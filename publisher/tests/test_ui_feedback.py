@@ -450,7 +450,8 @@ class EndpointTests(ServerTestCase):
         self.assertEqual(standing, {'lastBatch': {'batchId': '2026-10-b03', 'importedAt': '2026-10-07T12:00:00Z', 'episodeCount': 2,
                                                   'awaitingFiles': 0},
                                     'awaitingReview': 2, 'nextPosts': [], 'openFeedback': 0, 'nextBatchId': '2026-10-b04',
-                                    'postedLast7Days': 0, 'lastBriefAt': None, 'lastRetroAt': None})
+                                    'postedLast7Days': 0, 'lastBriefAt': None, 'lastRetroAt': None, 'contentThrough': None,
+                                    'nextBatchBy': None})
         self.json('POST', '/api/library/approve', {'items': [{'episodeId': 'scalar-clues-001', 'revision': 1}], 'reviewer': 'owner'})
         self.json('PUT', '/api/library/episodes/scalar-clues-001/1/feedback', {'tags': ['keep']})
 
@@ -473,6 +474,8 @@ class EndpointTests(ServerTestCase):
             {'at': '2026-10-09T16:00:00Z', 'platform': 'x', 'episodeId': 'scalar-clues-001'},
             {'at': '2026-10-10T16:00:00Z', 'platform': 'youtube', 'episodeId': 'scalar-clues-001'}])
         self.assertEqual((standing['awaitingReview'], standing['openFeedback']), (1, 1))
+        # Runs to 11 October (local), so the autopilot refills from the 5th and the next batch is needed by the 4th.
+        self.assertEqual((standing['contentThrough'], standing['nextBatchBy']), ('2026-10-11', '2026-10-04'))
 
     def test_dashboard_standing_journey_facts(self):
         account = self.config['channels']['instagram']['accountId']

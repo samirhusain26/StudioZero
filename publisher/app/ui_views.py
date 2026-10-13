@@ -809,17 +809,18 @@ def next_posts(manifest_jobs, rows, keys, now):
 
 
 EMPTY_STANDING = {'lastBatch': None, 'awaitingReview': 0, 'nextPosts': [], 'openFeedback': 0, 'nextBatchId': None,
-                  'postedLast7Days': 0, 'lastBriefAt': None, 'lastRetroAt': None}
+                  'postedLast7Days': 0, 'lastBriefAt': None, 'lastRetroAt': None, 'contentThrough': None, 'nextBatchBy': None}
 
 
 def standing(raw, posts):
-    """Standing from ui_library.standing() (+ nextBatchId, postedLast7Days, last brief/retro times) and next_posts()."""
+    """Standing from ui_library.standing() (+ nextBatchId, postedLast7Days, last brief/retro times, content runway) and next_posts()."""
     last = raw.get('lastBatch')
     return {'lastBatch': {'batchId': last['batchId'], 'importedAt': iso_utc(last['importedAt']),
                           'episodeCount': last['episodeCount'], 'awaitingFiles': last.get('awaitingFiles') or 0} if last else None,
             'awaitingReview': raw.get('awaitingReview') or 0, 'nextPosts': posts, 'openFeedback': raw.get('openFeedback') or 0,
             'nextBatchId': raw.get('nextBatchId'), 'postedLast7Days': raw.get('postedLast7Days') or 0,
-            'lastBriefAt': iso_utc(raw.get('lastBriefAt')), 'lastRetroAt': iso_utc(raw.get('lastRetroAt'))}
+            'lastBriefAt': iso_utc(raw.get('lastBriefAt')), 'lastRetroAt': iso_utc(raw.get('lastRetroAt')),
+            'contentThrough': raw.get('contentThrough'), 'nextBatchBy': raw.get('nextBatchBy')}
 
 
 # ---------- schedule ----------

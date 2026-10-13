@@ -121,6 +121,15 @@ class MetricsTests(unittest.TestCase):
                          {'blue_reels_play_count': 40, 'post_video_social_actions.comment': 1, 'post_video_social_actions.like': 3,
                           'impressions': 40, 'engagements': 4, 'engagement_rate': 0.1})
 
+    def test_facebook_reel_reactions_count_as_engagements(self):
+        facebook = self.post('facebook', '777', episode='ep02')
+        self.collect(Remote({'/video_insights': {'data': [
+            {'name': 'blue_reels_play_count', 'values': [{'value': 188}]},
+            {'name': 'post_video_likes_by_reaction_type', 'values': [{'value': {'REACTION_LIKE': 1, 'REACTION_LOVE': 1}}]}]},
+            '/comments': {'data': []}}), 2)
+        values = metrics.latest(self.tmp.name, [facebook])[facebook]['values']
+        self.assertEqual((values['engagements'], values['engagement_rate']), (2, 0.0106))
+
     def test_threads_skips_own_reply(self):
         key = self.post('threads', '555')
         self.collect(Remote({'/insights': {'data': [{'name': 'views', 'values': [{'value': 9}]}]},

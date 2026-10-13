@@ -1466,6 +1466,8 @@ export interface Standing {
   postedLast7Days: number             // confirmed posts (not companions) published in the last 7 days
   lastBriefAt: string | null          // uploadedAt of the latest non-empty brief / retro (last_note)
   lastRetroAt: string | null
+  contentThrough: string | null       // last local day of the approved schedule (YYYY-MM-DD), null = none
+  nextBatchBy: string | null          // contentThrough − 7 days: approve the next batch by then so the autopilot's refill finds it
 }
 
 /** PUT /api/library/episodes/<episodeId>/<revision>/feedback body. */

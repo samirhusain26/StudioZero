@@ -18,6 +18,7 @@ describe('projectSummaries', () => {
       budget: '$0 a month · every paid run needs your OK with a cost estimate',
       mix: '0% of scheduled posts now · target share not set (your decision)',
       scheduledThrough: null,
+      nextBatchBy: null,
       contract: 'contract v2',
     })
     expect(scalargame).toMatchObject({
@@ -26,6 +27,7 @@ describe('projectSummaries', () => {
       budget: '$0 a month · no paid services',
       mix: '100% of scheduled posts now · target share not set (your decision)',
       scheduledThrough: '2026-10-25',
+      nextBatchBy: '2026-10-18',
     })
     expect(scalargame?.formats.every((f) => f.renderable)).toBe(true)
   })

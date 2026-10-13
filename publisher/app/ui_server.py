@@ -681,6 +681,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         return ids, rows
 
     def standing(self, config, manifest):
+        import autopilot
         import ui_library
         today = self.now().astimezone(self.zone(config)).date()
         with self.app.index() as db:
@@ -692,6 +693,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
         since = ui_views.iso_utc(self.now() - dt.timedelta(days=7))
         raw['postedLast7Days'] = sum((ui_views.iso_utc(r['published_at']) or '') >= since for r in self.ledger(
             "SELECT published_at FROM jobs WHERE status='confirmed' AND episode NOT LIKE '%#%'"))
+        # Content runway: the approved schedule's last day; the autopilot refills once fewer than RUNWAY_DAYS remain,
+        # so the next batch must be approved the day before its first refill run.
+        last, _ = autopilot.runway(manifest, self.zone(config), today)
+        raw['contentThrough'] = last and last.isoformat()
+        raw['nextBatchBy'] = last and (last - dt.timedelta(days=autopilot.RUNWAY_DAYS)).isoformat()
         mjobs = (manifest or {}).get('jobs') or []
         ids, rows = self.manifest_rows(config, mjobs)
         return ui_views.standing(raw, ui_views.next_posts(mjobs, rows, ids, self.now()))

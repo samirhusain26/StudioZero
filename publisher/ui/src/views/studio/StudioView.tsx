@@ -40,7 +40,7 @@ export function StudioView() {
               {p.scheduledThrough === undefined
                 ? 'Loading…'
                 : p.scheduledThrough
-                  ? `Scheduled through ${formatDayHeading(p.scheduledThrough)}`
+                  ? `Scheduled through ${formatDayHeading(p.scheduledThrough)} · approve the next batch by ${formatDayHeading(p.nextBatchBy ?? p.scheduledThrough)}`
                   : 'Nothing scheduled'}
             </dd>
           </dl>

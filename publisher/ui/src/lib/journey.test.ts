@@ -134,6 +134,15 @@ describe('journey: one progress model for the loop', () => {
     expect(run(steady({ lastBriefAt: '2026-10-07T10:00:00Z', lastRetroAt: '2026-10-01T10:00:00Z' })).focus.step).toBe('post')
   })
 
+  it('Make is current once the approved schedule ends within the runway, with the date the next batch is needed by', () => {
+    const j = run(steady({ contentThrough: '2026-10-20', nextBatchBy: '2026-10-13' }))
+    expect(j.focus).toMatchObject({ step: 'make', title: 'Make the next batch (2026-10-b02)', action: { to: 'studio/make' } })
+    expect(j.focus.detail).toBe(
+      "Approved posts run out after Tuesday, 20 October 2026. Upload and approve the next batch by Tuesday, 13 October 2026 so the autopilot's refill finds it.",
+    )
+    expect(run(steady({ contentThrough: '2026-10-30', nextBatchBy: '2026-10-23' })).focus.step).toBe('post')
+  })
+
   it('otherwise Post is current with nothing to do', () => {
     const j = run(steady())
     expect(j.focus).toMatchObject({ step: 'post', title: 'Nothing needs you right now', action: null })

@@ -4,7 +4,7 @@
  */
 import type { Catalog, CatalogProject } from '../api/types'
 import { engineOf, formatRenderable, projectsInOrder } from './catalog'
-import type { Runway } from './runway'
+import { addDays, REFILL_DAYS, type Runway } from './runway'
 
 export interface ProjectSummary {
   id: string
@@ -17,6 +17,8 @@ export interface ProjectSummary {
   mix: string
   /** Last local day with a live post of this project, null = nothing scheduled, undefined = unknown. */
   scheduledThrough: string | null | undefined
+  /** scheduledThrough − REFILL_DAYS: approve the next batch by then so the autopilot's refill finds it. */
+  nextBatchBy: string | null | undefined
   contract: string
 }
 
@@ -43,6 +45,7 @@ function projectRunway(project: CatalogProject, runway: Runway | null): string |
 /** One summary per project in catalog order, each with its own runway from the approved queue. */
 export function projectSummaries(catalog: Catalog, runway: Runway | null | undefined): ProjectSummary[] {
   return projectsInOrder(catalog).map((p) => {
+    const through = runway === undefined ? undefined : projectRunway(p, runway)
     const engines = [...new Set(p.formats.map((f) => engineOf(catalog, f.engine)?.name ?? f.engine))]
     return {
       id: p.id,
@@ -53,7 +56,8 @@ export function projectSummaries(catalog: Catalog, runway: Runway | null | undef
       engines,
       budget: budgetText(p),
       mix: mixText(p),
-      scheduledThrough: runway === undefined ? undefined : projectRunway(p, runway),
+      scheduledThrough: through,
+      nextBatchBy: through && addDays(through, -REFILL_DAYS),
       contract: `contract v${p.contractSchemaVersion}`,
     }
   })

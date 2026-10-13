@@ -19,6 +19,7 @@
  */
 import type { DashboardResponse, Standing, UpdateInfo } from '../api/types'
 import { makeComplete, type MakeProgress } from './makeChecklist'
+import { formatDayHeading } from './time'
 import { updateAvailable } from './update'
 
 export const STALE_BATCH_DAYS = 42
@@ -85,6 +86,12 @@ function runway(standing: Standing, t: number): boolean {
   })
 }
 
+/** The approved schedule ends within RUNWAY_DAYS: time to make the next batch (it must be approved by nextBatchBy). */
+function runningOut(standing: Standing, t: number): boolean {
+  const end = standing.contentThrough ? Date.parse(`${standing.contentThrough}T23:59:59Z`) : NaN
+  return !Number.isNaN(end) && end - t <= RUNWAY_DAYS * DAY_MS
+}
+
 function stale(standing: Standing, t: number): boolean {
   const imported = standing.lastBatch ? Date.parse(standing.lastBatch.importedAt) : NaN
   return !Number.isNaN(imported) && t - imported >= STALE_BATCH_DAYS * DAY_MS
@@ -147,7 +154,8 @@ export function currentFocus({ standing, hasApprovedSchedule, paused, update, ma
   if (standing) {
     const old = stale(standing, t)
     const started = Boolean(make?.started && make.batchId === standing.nextBatchId)
-    if (old || !runway(standing, t) || started) {
+    const ending = runningOut(standing, t)
+    if (old || !runway(standing, t) || ending || started) {
       const next = standing.nextBatchId ? ` (${standing.nextBatchId})` : ''
       return makeFocus(
         standing,
@@ -157,7 +165,9 @@ export function currentFocus({ standing, hasApprovedSchedule, paused, update, ma
           ? `The last batch is over ${STALE_BATCH_DAYS / 7} weeks old. Start the next one from your feedback.`
           : !runway(standing, t)
             ? `Nothing is scheduled in the next ${RUNWAY_DAYS} days. Make more content from your feedback.`
-            : 'You started it in this browser. Follow the checklist; the batch counts once it is uploaded.',
+            : ending && standing.contentThrough && standing.nextBatchBy
+              ? `Approved posts run out after ${formatDayHeading(standing.contentThrough)}. Upload and approve the next batch by ${formatDayHeading(standing.nextBatchBy)} so the autopilot's refill finds it.`
+              : 'You started it in this browser. Follow the checklist; the batch counts once it is uploaded.',
       )
     }
   }

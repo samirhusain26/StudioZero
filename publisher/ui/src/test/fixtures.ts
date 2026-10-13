@@ -107,6 +107,8 @@ export function dashboardFixture(): DashboardResponse {
       postedLast7Days: 0,
       lastBriefAt: null,
       lastRetroAt: null,
+      contentThrough: null,
+      nextBatchBy: null,
     },
     uncertainJobs: [
       {

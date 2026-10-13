@@ -231,7 +231,10 @@ def derived(values):
     engagements = next((number(values[k]) for k in TOTAL_ENGAGEMENT if number(values.get(k)) is not None), None)
     if engagements is None:
         parts = [number(values[k]) for k in INTERACTIONS if number(values.get(k)) is not None]
-        parts += [number(v) for k, v in values.items() if k.startswith('post_video_social_actions.') and number(v) is not None]
+        social = [number(v) for k, v in values.items() if k.startswith('post_video_social_actions.') and number(v) is not None]
+        # Facebook Reels give reactions only as a breakdown; social actions, where returned, already include them.
+        reactions = [number(v) for k, v in values.items() if k.startswith('post_video_likes_by_reaction_type.') and number(v) is not None]
+        parts += social or reactions
         engagements = sum(parts) if parts else None
     if impressions is not None:
         out['impressions'] = impressions

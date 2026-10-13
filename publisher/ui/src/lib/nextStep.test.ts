@@ -12,6 +12,8 @@ const standing = (over: Partial<Standing> = {}): Standing => ({
   postedLast7Days: 0,
   lastBriefAt: null,
   lastRetroAt: null,
+  contentThrough: null,
+  nextBatchBy: null,
   ...over,
 })
 const update = (behind: number): UpdateInfo => ({
