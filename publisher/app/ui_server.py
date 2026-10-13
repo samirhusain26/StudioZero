@@ -695,7 +695,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
             "SELECT published_at FROM jobs WHERE status='confirmed' AND episode NOT LIKE '%#%'"))
         # Content runway: the approved schedule's last day; the autopilot refills once fewer than RUNWAY_DAYS remain,
         # so the next batch must be approved the day before its first refill run.
-        last, _ = autopilot.runway(manifest, self.zone(config), today)
+        try:
+            last, _ = autopilot.runway(manifest, self.zone(config), today)
+        except (AttributeError, KeyError, TypeError, ValueError):   # a damaged manifest hides the dates, not the dashboard
+            last = None
         raw['contentThrough'] = last and last.isoformat()
         raw['nextBatchBy'] = last and (last - dt.timedelta(days=autopilot.RUNWAY_DAYS)).isoformat()
         mjobs = (manifest or {}).get('jobs') or []

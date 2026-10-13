@@ -476,6 +476,11 @@ class EndpointTests(ServerTestCase):
         self.assertEqual((standing['awaitingReview'], standing['openFeedback']), (1, 1))
         # Runs to 11 October (local), so the autopilot refills from the 5th and the next batch is needed by the 4th.
         self.assertEqual((standing['contentThrough'], standing['nextBatchBy']), ('2026-10-11', '2026-10-04'))
+        # A damaged manifest (a slot that does not parse) hides the dates; the dashboard still answers.
+        manifest['jobs'].append(job('x', 'not-a-date'))
+        (self.state/'manifests/approved.json').write_text(json.dumps(manifest))
+        standing = self.json('GET', '/api/dashboard')[1]['standing']
+        self.assertEqual((standing['contentThrough'], standing['nextBatchBy']), (None, None))
 
     def test_dashboard_standing_journey_facts(self):
         account = self.config['channels']['instagram']['accountId']

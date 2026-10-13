@@ -2,10 +2,10 @@ import type { LibraryEpisode, Platform, QueueJob, ScheduleResponse } from '../ap
 import { PLATFORMS } from '../api/types'
 import { localDateKey } from './time'
 
-/** Ledger states that mean the post will not go out (it does not cover its day). */
 /** The autopilot refills the schedule once fewer than this many days remain (publisher/app/autopilot.py RUNWAY_DAYS). */
 export const REFILL_DAYS = 7
 
+/** Ledger states that mean the post will not go out (it does not cover its day). */
 const NOT_GOING_OUT = new Set<string>(['failed', 'expired', 'cancelled'])
 
 /** How long one platform is covered: by the approved queue, then by approved videos not yet scheduled there. */

@@ -57,7 +57,7 @@ export function projectSummaries(catalog: Catalog, runway: Runway | null | undef
       budget: budgetText(p),
       mix: mixText(p),
       scheduledThrough: through,
-      nextBatchBy: through && addDays(through, -REFILL_DAYS),
+      nextBatchBy: through && /^\d{4}-\d{2}-\d{2}$/.test(through) ? addDays(through, -REFILL_DAYS) : through && null,
       contract: `contract v${p.contractSchemaVersion}`,
     }
   })
