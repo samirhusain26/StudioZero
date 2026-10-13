@@ -77,5 +77,6 @@ Rules that never change: no paid generation without your OK for that run, every 
 |---|---|---|---|
 | 2026-10-pilots | 4 (one per game) | 8 Oct 2026, 01:27 UTC | Retro: `library/_retros/2026-10-pilots.md` |
 | 2026-10-b01 | 20 (rest of the first 24) | 8 Oct 2026, 02:11 UTC | Retro: `library/_retros/2026-10-b01.md` |
+| 2026-10-b02 | 32 (4 per format; contract v2) | 13 Oct 2026, 02:12 UTC | Brief: `library/_briefs/2026-10-b02.md` · Retro: `library/_retros/2026-10-b02.md` |
 
 The next Scalargame batch ID follows the pattern `YYYY-MM-bNN` (Originals: `YYYY-MM-oNN`); Make a batch suggests it.
