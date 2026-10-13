@@ -969,40 +969,40 @@
       }
     },
     {
-      "key": "continuum-h2h-kor-sau",
+      "key": "continuum-h2h-per-aus",
       "game": "continuum",
       "format": "head-to-head",
       "difficulty": "approachable",
       "pilot": false,
       "spare": false,
-      "rationale": "Saudi Arabia’s size suggests more people; South Korea is far more crowded.",
+      "rationale": "Australia’s size and profile suggest more people; Peru has more.",
       "destination": {
         "game": "continuum",
         "deepLink": "/continuum"
       },
       "reviewBy": "2027-01-09",
-      "subjectId": "KOR-SAU",
-      "questionId": "continuum:population:KOR-SAU:head-to-head",
+      "subjectId": "PER-AUS",
+      "questionId": "continuum:population:AUS-PER:head-to-head",
       "hook": "Which has more people?",
-      "question": "More people: South Korea or Saudi Arabia?",
+      "question": "More people: Peru or Australia?",
       "choices": [
         {
           "key": "A",
-          "label": "South Korea",
-          "id": "KOR"
+          "label": "Peru",
+          "id": "PER"
         },
         {
           "key": "B",
-          "label": "Saudi Arabia",
-          "id": "SAU"
+          "label": "Australia",
+          "id": "AUS"
         }
       ],
-      "answer": "South Korea",
+      "answer": "Peru",
       "answerKey": "A",
       "answerAliases": [
-        "KOR"
+        "PER"
       ],
-      "explanation": "South Korea: 51.7 million. Saudi Arabia: 37 million, on 21.4× the area.",
+      "explanation": "Peru: 34.6 million. Australia: 27.6 million, on 6× the area.",
       "metric": {
         "id": "population",
         "label": "people",
@@ -1012,44 +1012,44 @@
       },
       "values": [
         {
-          "id": "KOR",
-          "label": "South Korea",
-          "value": 51684564,
-          "text": "51.7 million"
+          "id": "PER",
+          "label": "Peru",
+          "value": 34576665,
+          "text": "34.6 million"
         },
         {
-          "id": "SAU",
-          "label": "Saudi Arabia",
-          "value": 36973555,
-          "text": "37 million"
+          "id": "AUS",
+          "label": "Australia",
+          "value": 27614411,
+          "text": "27.6 million"
         }
       ],
       "evidence": {
         "sources": [
           {
-            "title": "World Bank WDI SP.POP.TOTL — South Korea (2025)",
-            "url": "https://api.worldbank.org/v2/country/KOR/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "title": "World Bank WDI SP.POP.TOTL — Peru (2025)",
+            "url": "https://api.worldbank.org/v2/country/PER/indicator/SP.POP.TOTL?format=json&mrnev=1",
             "retrieved": "2026-09-25"
           },
           {
-            "title": "World Bank WDI SP.POP.TOTL — Saudi Arabia (2025)",
-            "url": "https://api.worldbank.org/v2/country/SAU/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "title": "World Bank WDI SP.POP.TOTL — Australia (2025)",
+            "url": "https://api.worldbank.org/v2/country/AUS/indicator/SP.POP.TOTL?format=json&mrnev=1",
             "retrieved": "2026-09-25"
           },
           {
-            "title": "World Bank WDI AG.SRF.TOTL.K2 — South Korea (2023)",
-            "url": "https://api.worldbank.org/v2/country/KOR/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Peru (2023)",
+            "url": "https://api.worldbank.org/v2/country/PER/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
             "retrieved": "2026-09-25"
           },
           {
-            "title": "World Bank WDI AG.SRF.TOTL.K2 — Saudi Arabia (2023)",
-            "url": "https://api.worldbank.org/v2/country/SAU/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Australia (2023)",
+            "url": "https://api.worldbank.org/v2/country/AUS/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
             "retrieved": "2026-09-25"
           }
         ],
         "checks": {
           "uniqueAnswer": true,
-          "ratio": 1.398,
+          "ratio": 1.252,
           "gameDataAgrees": true,
           "minRatio": 1.15,
           "referenceYear": 2025
@@ -1229,40 +1229,40 @@
       }
     },
     {
-      "key": "continuum-h2h-bgr-sle",
+      "key": "continuum-h2h-swe-ben",
       "game": "continuum",
       "format": "head-to-head",
       "difficulty": "challenging",
       "pilot": false,
       "spare": false,
-      "rationale": "A European country against a smaller West African one; most viewers guess Europe.",
+      "rationale": "A wealthy European country against a smaller West African one; most viewers guess Europe.",
       "destination": {
         "game": "continuum",
         "deepLink": "/continuum"
       },
       "reviewBy": "2027-01-09",
-      "subjectId": "BGR-SLE",
-      "questionId": "continuum:population:BGR-SLE:head-to-head",
+      "subjectId": "SWE-BEN",
+      "questionId": "continuum:population:BEN-SWE:head-to-head",
       "hook": "Which has more people?",
-      "question": "More people: Bulgaria or Sierra Leone?",
+      "question": "More people: Sweden or Benin?",
       "choices": [
         {
           "key": "A",
-          "label": "Bulgaria",
-          "id": "BGR"
+          "label": "Sweden",
+          "id": "SWE"
         },
         {
           "key": "B",
-          "label": "Sierra Leone",
-          "id": "SLE"
+          "label": "Benin",
+          "id": "BEN"
         }
       ],
-      "answer": "Sierra Leone",
+      "answer": "Benin",
       "answerKey": "B",
       "answerAliases": [
-        "SLE"
+        "BEN"
       ],
-      "explanation": "Sierra Leone: 8.8 million. Bulgaria: 6.4 million.",
+      "explanation": "Benin: 14.8 million. Sweden: 10.6 million.",
       "metric": {
         "id": "population",
         "label": "people",
@@ -1272,34 +1272,34 @@
       },
       "values": [
         {
-          "id": "BGR",
-          "label": "Bulgaria",
-          "value": 6433302,
-          "text": "6.4 million"
+          "id": "SWE",
+          "label": "Sweden",
+          "value": 10596620,
+          "text": "10.6 million"
         },
         {
-          "id": "SLE",
-          "label": "Sierra Leone",
-          "value": 8819794,
-          "text": "8.8 million"
+          "id": "BEN",
+          "label": "Benin",
+          "value": 14814460,
+          "text": "14.8 million"
         }
       ],
       "evidence": {
         "sources": [
           {
-            "title": "World Bank WDI SP.POP.TOTL — Bulgaria (2025)",
-            "url": "https://api.worldbank.org/v2/country/BGR/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "title": "World Bank WDI SP.POP.TOTL — Sweden (2025)",
+            "url": "https://api.worldbank.org/v2/country/SWE/indicator/SP.POP.TOTL?format=json&mrnev=1",
             "retrieved": "2026-09-25"
           },
           {
-            "title": "World Bank WDI SP.POP.TOTL — Sierra Leone (2025)",
-            "url": "https://api.worldbank.org/v2/country/SLE/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "title": "World Bank WDI SP.POP.TOTL — Benin (2025)",
+            "url": "https://api.worldbank.org/v2/country/BEN/indicator/SP.POP.TOTL?format=json&mrnev=1",
             "retrieved": "2026-09-25"
           }
         ],
         "checks": {
           "uniqueAnswer": true,
-          "ratio": 1.371,
+          "ratio": 1.398,
           "gameDataAgrees": true,
           "minRatio": 1.15,
           "referenceYear": 2025
@@ -2924,126 +2924,6 @@
       }
     },
     {
-      "key": "tectonic-missing-col",
-      "game": "tectonic",
-      "format": "missing-country",
-      "difficulty": "moderate",
-      "pilot": false,
-      "spare": false,
-      "rationale": "Northern South America; the decoys are on the same continent.",
-      "destination": {
-        "game": "tectonic",
-        "deepLink": "/tectonic"
-      },
-      "reviewBy": "2027-01-09",
-      "subjectId": "COL",
-      "questionId": "tectonic:COL:missing-country",
-      "hook": "One country is missing.",
-      "question": "Which country fills the gap?",
-      "choices": [
-        {
-          "key": "A",
-          "label": "Uruguay",
-          "id": "URY"
-        },
-        {
-          "key": "B",
-          "label": "Paraguay",
-          "id": "PRY"
-        },
-        {
-          "key": "C",
-          "label": "Colombia",
-          "id": "COL"
-        }
-      ],
-      "answer": "Colombia",
-      "answerKey": "C",
-      "answerAliases": [
-        "COL"
-      ],
-      "explanation": "Colombia fits between Brazil, Ecuador, Panama, Peru and Venezuela.",
-      "geometry": {
-        "target": "COL",
-        "neighbors": [
-          "PAN",
-          "PER",
-          "VEN",
-          "BRA",
-          "ECU"
-        ],
-        "frame": [
-          "ATG",
-          "BHS",
-          "BLZ",
-          "BOL",
-          "BRA",
-          "BRB",
-          "CHL",
-          "COL",
-          "CRI",
-          "CUB",
-          "DMA",
-          "DOM",
-          "ECU",
-          "FRA",
-          "GRD",
-          "GTM",
-          "GUY",
-          "HND",
-          "HTI",
-          "JAM",
-          "KNA",
-          "LCA",
-          "MEX",
-          "NIC",
-          "NLD",
-          "PAN",
-          "PER",
-          "SLV",
-          "SUR",
-          "TTO",
-          "USA",
-          "VCT",
-          "VEN"
-        ],
-        "frameBbox": [
-          -97.352,
-          -19.162,
-          -50.92,
-          27.158
-        ]
-      },
-      "evidence": {
-        "sources": [
-          {
-            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
-            "url": "https://www.naturalearthdata.com/downloads/",
-            "retrieved": "2026-10-12"
-          },
-          {
-            "title": "CIA World Factbook, final edition (pinned mirror) — Colombia",
-            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/co.json",
-            "retrieved": "2026-09-25"
-          }
-        ],
-        "checks": {
-          "uniqueAnswer": true,
-          "landNeighbors": [
-            "PAN",
-            "PER",
-            "VEN",
-            "BRA",
-            "ECU"
-          ],
-          "gapEnclosedBy": 5,
-          "adjacencyAgreesWithGlobe": true
-        },
-        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
-        "reviewer": null
-      }
-    },
-    {
       "key": "tectonic-missing-gnq",
       "game": "tectonic",
       "format": "missing-country",
@@ -3129,6 +3009,98 @@
             "CMR"
           ],
           "gapEnclosedBy": 2,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-missing-gtm",
+      "game": "tectonic",
+      "format": "missing-country",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Central America; the decoys are far south.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "GTM",
+      "questionId": "tectonic:GTM:missing-country",
+      "hook": "One country is missing.",
+      "question": "Which country fills the gap?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Guatemala",
+          "id": "GTM"
+        },
+        {
+          "key": "B",
+          "label": "Peru",
+          "id": "PER"
+        },
+        {
+          "key": "C",
+          "label": "Bolivia",
+          "id": "BOL"
+        }
+      ],
+      "answer": "Guatemala",
+      "answerKey": "A",
+      "answerAliases": [
+        "GTM"
+      ],
+      "explanation": "Guatemala fits between Belize, El Salvador, Honduras and Mexico.",
+      "geometry": {
+        "target": "GTM",
+        "neighbors": [
+          "SLV",
+          "HND",
+          "MEX",
+          "BLZ"
+        ],
+        "frame": [
+          "BLZ",
+          "CRI",
+          "GTM",
+          "HND",
+          "MEX",
+          "NIC",
+          "SLV"
+        ],
+        "frameBbox": [
+          -95.308,
+          9.956,
+          -84.298,
+          20.578
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Guatemala",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/gt.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "SLV",
+            "HND",
+            "MEX",
+            "BLZ"
+          ],
+          "gapEnclosedBy": 4,
           "adjacencyAgreesWithGlobe": true
         },
         "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
@@ -3645,98 +3617,6 @@
       }
     },
     {
-      "key": "tectonic-missing-gtm",
-      "game": "tectonic",
-      "format": "missing-country",
-      "difficulty": "moderate",
-      "pilot": false,
-      "spare": true,
-      "rationale": "Central America.",
-      "destination": {
-        "game": "tectonic",
-        "deepLink": "/tectonic"
-      },
-      "reviewBy": "2027-01-09",
-      "subjectId": "GTM",
-      "questionId": "tectonic:GTM:missing-country",
-      "hook": "One country is missing.",
-      "question": "Which country fills the gap?",
-      "choices": [
-        {
-          "key": "A",
-          "label": "Guatemala",
-          "id": "GTM"
-        },
-        {
-          "key": "B",
-          "label": "Peru",
-          "id": "PER"
-        },
-        {
-          "key": "C",
-          "label": "Bolivia",
-          "id": "BOL"
-        }
-      ],
-      "answer": "Guatemala",
-      "answerKey": "A",
-      "answerAliases": [
-        "GTM"
-      ],
-      "explanation": "Guatemala fits between Belize, El Salvador, Honduras and Mexico.",
-      "geometry": {
-        "target": "GTM",
-        "neighbors": [
-          "SLV",
-          "HND",
-          "MEX",
-          "BLZ"
-        ],
-        "frame": [
-          "BLZ",
-          "CRI",
-          "GTM",
-          "HND",
-          "MEX",
-          "NIC",
-          "SLV"
-        ],
-        "frameBbox": [
-          -95.308,
-          9.956,
-          -84.298,
-          20.578
-        ]
-      },
-      "evidence": {
-        "sources": [
-          {
-            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
-            "url": "https://www.naturalearthdata.com/downloads/",
-            "retrieved": "2026-10-12"
-          },
-          {
-            "title": "CIA World Factbook, final edition (pinned mirror) — Guatemala",
-            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/gt.json",
-            "retrieved": "2026-09-25"
-          }
-        ],
-        "checks": {
-          "uniqueAnswer": true,
-          "landNeighbors": [
-            "SLV",
-            "HND",
-            "MEX",
-            "BLZ"
-          ],
-          "gapEnclosedBy": 4,
-          "adjacencyAgreesWithGlobe": true
-        },
-        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
-        "reviewer": null
-      }
-    },
-    {
       "key": "tectonic-neighbors-nam",
       "game": "tectonic",
       "format": "neighbor-clues",
@@ -3864,5 +3744,5 @@
       }
     }
   ],
-  "questionsHash": "b95ce24bac8ddc623f2cb98ccce1534cc7563c8a13cec9ffc276381ddbe6e06a"
+  "questionsHash": "76f7396a6e35cab3654829f1e0829be266cf1ad3e368a8d0105ae0ee5a6020b6"
 }

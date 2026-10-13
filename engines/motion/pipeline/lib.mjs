@@ -91,7 +91,9 @@ export function libraryEpisodes() {
     const seen = new Set();
     const bj = resolve(lib, b, 'batch.json');
     if (existsSync(bj)) for (const e of JSON.parse(readFileSync(bj, 'utf8')).episodes) {
-      seen.add(e.episodeId); out.push({batchId: b, episodeId: e.episodeId, questionId: e.questionId, bed: e.music?.trackId.split(':').pop() ?? null});
+      // Contract v2: the question key is contentId and the music sits under projectData.
+      const music = e.projectData?.music ?? e.music;
+      seen.add(e.episodeId); out.push({batchId: b, episodeId: e.episodeId, questionId: e.questionId ?? e.contentId, bed: music?.trackId.split(':').pop() ?? null});
     }
     const jobs = resolve(lib, b, 'review/jobs');
     if (existsSync(jobs)) for (const id of readdirSync(jobs).sort()) {

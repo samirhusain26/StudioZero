@@ -27,10 +27,10 @@ export const CONFIG = {
     'scalar-elim-khm': ['2026-10-b02', 'scalar-elimination-005'],
     'scalar-elim-tun': ['2026-10-b02', 'scalar-elimination-006'],
     'scalar-elim-blr': ['2026-10-b02', 'scalar-elimination-007'],
-    'continuum-h2h-kor-sau': ['2026-10-b02', 'continuum-headtohead-004'],
+    // continuum-headtohead-004 was continuum-h2h-kor-sau (rendered, replaced at Checkpoint 3): retired.
     // continuum-headtohead-005 was allocated to continuum-h2h-deu-swe (dropped at fact-check, never rendered): retired.
     'continuum-h2h-col-tur': ['2026-10-b02', 'continuum-headtohead-006'],
-    'continuum-h2h-bgr-sle': ['2026-10-b02', 'continuum-headtohead-007'],
+    // continuum-headtohead-007 was continuum-h2h-bgr-sle (rendered, replaced at Checkpoint 3): retired.
     'continuum-slot-nld': ['2026-10-b02', 'continuum-slot-004'],
     'continuum-slot-pol': ['2026-10-b02', 'continuum-slot-005'],
     'continuum-slot-vnm': ['2026-10-b02', 'continuum-slot-006'],
@@ -45,9 +45,12 @@ export const CONFIG = {
     'whenabouts-ba-mobydick-origin': ['2026-10-b02', 'whenabouts-beforeafter-007'],
     'continuum-h2h-deu-pry': ['2026-10-b02', 'continuum-headtohead-008'],
     'whenabouts-ba-empire-gatsby': ['2026-10-b02', 'whenabouts-beforeafter-008'],
+    'continuum-h2h-per-aus': ['2026-10-b02', 'continuum-headtohead-009'],
+    'continuum-h2h-swe-ben': ['2026-10-b02', 'continuum-headtohead-010'],
+    'tectonic-missing-gtm': ['2026-10-b02', 'tectonic-missing-008'],
     'tectonic-missing-cri': ['2026-10-b02', 'tectonic-missing-004'],
     'tectonic-missing-bel': ['2026-10-b02', 'tectonic-missing-005'],
-    'tectonic-missing-col': ['2026-10-b02', 'tectonic-missing-006'],
+    // tectonic-missing-006 was tectonic-missing-col (rendered, replaced at Checkpoint 3): retired.
     'tectonic-missing-gnq': ['2026-10-b02', 'tectonic-missing-007'],
     'tectonic-neighbors-lux': ['2026-10-b02', 'tectonic-neighbors-004'],
     'tectonic-neighbors-zaf': ['2026-10-b02', 'tectonic-neighbors-005'],
@@ -106,10 +109,11 @@ export const QUESTIONS = [
     rationale: 'Three large African countries.'},
 
   // ---------------- Continuum ----------------
-  {key: 'continuum-h2h-kor-sau', game: 'continuum', format: 'head-to-head', difficulty: 'approachable',
-    metric: 'population', choices: ['KOR', 'SAU'],
+  // Checkpoint 3 (2026-10-12): replaces South Korea vs Saudi Arabia, whose two-line question pushed the hook over the brand label.
+  {key: 'continuum-h2h-per-aus', game: 'continuum', format: 'head-to-head', difficulty: 'approachable',
+    metric: 'population', choices: ['PER', 'AUS'],
     explanation: '{winner}: {winnerValue}. {loser}: {loserValue}, on {otherRatio}× the area.',
-    rationale: 'Saudi Arabia’s size suggests more people; South Korea is far more crowded.'},
+    rationale: 'Australia’s size and profile suggest more people; Peru has more.'},
   // Fact-check 2026-10-12: Sweden's World Bank area includes sea; replaced with a landlocked comparison.
   {key: 'continuum-h2h-deu-pry', game: 'continuum', format: 'head-to-head', difficulty: 'approachable',
     metric: 'area', choices: ['DEU', 'PRY'],
@@ -119,10 +123,11 @@ export const QUESTIONS = [
     metric: 'area', choices: ['COL', 'TUR'],
     explanation: '{winner} {winnerValue} · {loser} {loserValue}.',
     rationale: 'Two mid-sized countries on different continents; hard to compare from memory.'},
-  {key: 'continuum-h2h-bgr-sle', game: 'continuum', format: 'head-to-head', difficulty: 'challenging',
-    metric: 'population', choices: ['BGR', 'SLE'],
+  // Checkpoint 3 (2026-10-12): replaces Bulgaria vs Sierra Leone (two-line question over the brand label).
+  {key: 'continuum-h2h-swe-ben', game: 'continuum', format: 'head-to-head', difficulty: 'challenging',
+    metric: 'population', choices: ['SWE', 'BEN'],
     explanation: '{winner}: {winnerValue}. {loser}: {loserValue}.',
-    rationale: 'A European country against a smaller West African one; most viewers guess Europe.'},
+    rationale: 'A wealthy European country against a smaller West African one; most viewers guess Europe.'},
   {key: 'continuum-slot-nld', game: 'continuum', format: 'missing-slot', difficulty: 'approachable',
     metric: 'population', target: 'NLD', anchors: ['BEL', 'POL'],
     explanation: '{ordered}.',
@@ -189,12 +194,12 @@ export const QUESTIONS = [
   {key: 'tectonic-missing-bel', game: 'tectonic', format: 'missing-country', difficulty: 'approachable',
     answer: 'BEL', choices: ['GRC', 'BEL', 'PRT'],
     explanation: '{name} fits between {neighbors}.', rationale: 'Western Europe is familiar; the gap is enclosed on most sides.'},
-  {key: 'tectonic-missing-col', game: 'tectonic', format: 'missing-country', difficulty: 'moderate',
-    answer: 'COL', choices: ['URY', 'PRY', 'COL'],
-    explanation: '{name} fits between {neighbors}.', rationale: 'Northern South America; the decoys are on the same continent.'},
   {key: 'tectonic-missing-gnq', game: 'tectonic', format: 'missing-country', difficulty: 'challenging',
     answer: 'GNQ', choices: ['KEN', 'GNQ', 'MDG'],
     explanation: '{name} fits between {neighbors}.', rationale: 'A small Central African country few viewers can place.'},
+  // Checkpoint 3 (2026-10-12): promoted from spare; replaces Colombia (Ecuador and Peru labels stacked tightly).
+  {key: 'tectonic-missing-gtm', game: 'tectonic', format: 'missing-country', difficulty: 'moderate',
+    answer: 'GTM', choices: ['GTM', 'PER', 'BOL'], explanation: '{name} fits between {neighbors}.', rationale: 'Central America; the decoys are far south.'},
   // Pilot: a tiny country between three neighbors whose labels sit close together (the label-spacing check).
   {key: 'tectonic-neighbors-lux', game: 'tectonic', format: 'neighbor-clues', difficulty: 'moderate',
     answer: 'LUX', shown: ['FRA', 'BEL', 'DEU'], choices: ['LIE', 'AND', 'LUX'],
@@ -209,8 +214,7 @@ export const QUESTIONS = [
     answer: 'ZWE', shown: ['ZMB', 'BWA', 'MOZ'], choices: ['AGO', 'ZWE', 'MWI'],
     explanation: '{name} borders all three. Its land neighbors: {neighbors}.', rationale: 'Southern Africa; geography must be pictured.'},
   // Tectonic spares
-  {key: 'tectonic-missing-gtm', game: 'tectonic', format: 'missing-country', difficulty: 'moderate', spare: true,
-    answer: 'GTM', choices: ['GTM', 'PER', 'BOL'], explanation: '{name} fits between {neighbors}.', rationale: 'Central America.'},
+
   {key: 'tectonic-neighbors-nam', game: 'tectonic', format: 'neighbor-clues', difficulty: 'moderate', spare: true,
     answer: 'NAM', shown: ['ZAF', 'AGO', 'ZMB'], choices: ['NAM', 'KEN', 'GHA'], explanation: '{name} borders all three. Its land neighbors: {neighbors}.', rationale: 'Southern Africa.'},
 ];
