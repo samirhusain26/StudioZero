@@ -115,6 +115,10 @@ for (const q of QUESTIONS) {
       }
       if (alive.length !== 1 || alive[0] !== a.id) fail(q, `elimination leaves ${alive}`);
       if (elimination.filter(r => r.length).length < 2) fail(q, 'fewer than two clues eliminate anyone');
+      // Opt-in (2026-10-b02 on): no clue is pure confirmation; each, tested alone, rules out at least one decoy.
+      if (CONFIG.rules?.everyClueRulesOutADecoy) preds.forEach((p, i) => {
+        if (!choiceIds.some(c => c !== a.id && p.test(S.byId[c]) === false)) fail(q, `clue ${i + 1} "${p.text}" rules out no decoy on its own`);
+      });
       const named = elimination.flat();
       Object.assign(vars, {elim1: display(named[0]), elim2: display(named[1])});
     }

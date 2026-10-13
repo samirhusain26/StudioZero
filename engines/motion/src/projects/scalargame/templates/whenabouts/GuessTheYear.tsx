@@ -13,7 +13,8 @@ const HOOK_TOP = 328;
 const CARD_TOP = 456, CARD_H = 600, HEADLINE_BOX = 236;
 const RULER_Y = 1172, FLAG_Y = RULER_Y - 54, LABEL_Y = RULER_Y + 28;
 const CHIPS_TOP = 1262, THINK_TOP = 1396, EXPLAIN_TOP = 1374;
-const ZOOM = 1.35;
+const ZOOM = 1.2;
+const EDGE = 64; // about half a year label: after the reveal every choice stays inside the safe rectangle
 
 const Ruler: React.FC<TemplateProps> = ({ep, s, t}) => {
   const frame = useCurrentFrame();
@@ -28,11 +29,12 @@ const Ruler: React.FC<TemplateProps> = ({ep, s, t}) => {
   const ansYear = years[ansIdx];
 
   // Camera: an unlabelled pan in from earlier years during the hook, still from t.choicesIn, then at reveal+1.0 a single
-  // pan/zoom onto the correct year.
+  // pan/zoom toward the correct year, only as far as keeps all three choices on screen.
   const pan = enter(frame, 0.15, Math.max(0.5, t.choicesIn - 0.15), easeInOut);
   const z = enter(frame, t.reveal + 1.0, 0.8, easeInOut);
-  const centre = mix(mid - 2.2 * spacing, mid, pan) + (ansYear - mid) * z;
   const k = k0 * mix(1, ZOOM, z);
+  const target = Math.min(lo + (CX - SAFE_RECT.x0 - EDGE) / k, Math.max(hi - (SAFE_RECT.x1 - EDGE - CX) / k, ansYear));
+  const centre = mix(mid - 2.2 * spacing, mid, pan) + (target - mid) * z;
   const x = (y: number) => CX + (y - centre) * k;
 
   const shown = enter(frame, 0.0, 0.6) * exit(frame, t.cta - 0.3, 0.3);

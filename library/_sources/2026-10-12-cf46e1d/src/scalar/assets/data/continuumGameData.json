@@ -1,0 +1,3377 @@
+{
+  "schemaConfig": {
+    "countries": [
+      {
+        "attributeKey": "id",
+        "displayLabel": "ID",
+        "dataType": "STRING",
+        "logicType": "EXACT_MATCH",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "name",
+        "displayLabel": "Country Name",
+        "dataType": "STRING",
+        "logicType": "TARGET",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "area",
+        "displayLabel": "Area (sq km)",
+        "dataType": "INT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "PERCENTAGE_DIFF",
+        "isFolded": false,
+        "isVirtual": false,
+        "linkedCategoryCol": "area_cat"
+      },
+      {
+        "attributeKey": "population",
+        "displayLabel": "Population",
+        "dataType": "INT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "PERCENTAGE_DIFF",
+        "isFolded": false,
+        "isVirtual": false,
+        "linkedCategoryCol": "population_cat"
+      },
+      {
+        "attributeKey": "gdp_per_capita",
+        "displayLabel": "GDP / Capita",
+        "dataType": "INT",
+        "logicType": "NONE",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false
+      }
+    ],
+    "elements": [
+      {
+        "attributeKey": "AtomicNumber",
+        "displayLabel": "Atomic #",
+        "dataType": "INT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "NUMBER",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "Density",
+        "displayLabel": "Density (g/cm3)",
+        "dataType": "FLOAT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false,
+        "linkedCategoryCol": "density_range"
+      },
+      {
+        "attributeKey": "AtomicRadius",
+        "displayLabel": "Atomic Radius (pm)",
+        "dataType": "FLOAT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false
+      }
+    ],
+    "states": [
+      {
+        "attributeKey": "id",
+        "displayLabel": "ID",
+        "dataType": "STRING",
+        "logicType": "EXACT_MATCH",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "name",
+        "displayLabel": "State Name",
+        "dataType": "STRING",
+        "logicType": "TARGET",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "population",
+        "displayLabel": "Population",
+        "dataType": "INT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "PERCENTAGE_DIFF",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "area",
+        "displayLabel": "Area (sq km)",
+        "dataType": "INT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "PERCENTAGE_DIFF",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "gdp_billion",
+        "displayLabel": "GDP (Billions USD)",
+        "dataType": "FLOAT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "CURRENCY",
+        "isFolded": false,
+        "isVirtual": false
+      }
+    ],
+    "cities": [
+      {
+        "attributeKey": "id",
+        "displayLabel": "ID",
+        "dataType": "STRING",
+        "logicType": "EXACT_MATCH",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "name",
+        "displayLabel": "Capital City",
+        "dataType": "STRING",
+        "logicType": "TARGET",
+        "displayFormat": "HIDDEN",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "population",
+        "displayLabel": "City Population",
+        "dataType": "INT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "PERCENTAGE_DIFF",
+        "isFolded": false,
+        "isVirtual": false
+      },
+      {
+        "attributeKey": "elevation_m",
+        "displayLabel": "Elevation (m)",
+        "dataType": "INT",
+        "logicType": "HIGHER_LOWER",
+        "displayFormat": "NUMBER",
+        "isFolded": false,
+        "isVirtual": false
+      }
+    ]
+  },
+  "categories": {
+    "countries": {
+      "0": {
+        "id": "IND",
+        "name": "India",
+        "population": 1428627663,
+        "area": 3287260,
+        "gdp_per_capita": 2485
+      },
+      "1": {
+        "id": "CHN",
+        "name": "China",
+        "population": 1410710000,
+        "area": 9562910,
+        "gdp_per_capita": 12614
+      },
+      "2": {
+        "id": "USA",
+        "name": "United States",
+        "population": 334914895,
+        "area": 9831510,
+        "gdp_per_capita": 81695
+      },
+      "3": {
+        "id": "IDN",
+        "name": "Indonesia",
+        "population": 277534122,
+        "area": 1916907,
+        "gdp_per_capita": 4941
+      },
+      "4": {
+        "id": "PAK",
+        "name": "Pakistan",
+        "population": 240485658,
+        "area": 796100,
+        "gdp_per_capita": 1407
+      },
+      "5": {
+        "id": "NGA",
+        "name": "Nigeria",
+        "population": 223804632,
+        "area": 923770,
+        "gdp_per_capita": 1224
+      },
+      "6": {
+        "id": "BRA",
+        "name": "Brazil",
+        "population": 216422446,
+        "area": 8515770,
+        "gdp_per_capita": 10044
+      },
+      "7": {
+        "id": "BGD",
+        "name": "Bangladesh",
+        "population": 172954319,
+        "area": 147570,
+        "gdp_per_capita": 2529
+      },
+      "8": {
+        "id": "RUS",
+        "name": "Russia",
+        "population": 143826130,
+        "area": 17098250,
+        "gdp_per_capita": 13817
+      },
+      "9": {
+        "id": "MEX",
+        "name": "Mexico",
+        "population": 128455567,
+        "area": 1964375,
+        "gdp_per_capita": 13926
+      },
+      "10": {
+        "id": "ETH",
+        "name": "Ethiopia",
+        "population": 126527060,
+        "area": 1136240,
+        "gdp_per_capita": 933
+      },
+      "11": {
+        "id": "JPN",
+        "name": "Japan",
+        "population": 124516650,
+        "area": 377974,
+        "gdp_per_capita": 33834
+      },
+      "12": {
+        "id": "PHL",
+        "name": "Philippines",
+        "population": 117337368,
+        "area": 300000,
+        "gdp_per_capita": 3726
+      },
+      "13": {
+        "id": "COD",
+        "name": "DR Congo",
+        "population": 112832000,
+        "area": 2344858
+      },
+      "14": {
+        "id": "EGY",
+        "name": "Egypt",
+        "population": 112716598,
+        "area": 1001450,
+        "gdp_per_capita": 3513
+      },
+      "15": {
+        "id": "VNM",
+        "name": "Vietnam",
+        "population": 98858950,
+        "area": 331340,
+        "gdp_per_capita": 4347
+      },
+      "16": {
+        "id": "IRN",
+        "name": "Iran",
+        "population": 89172767,
+        "area": 1745150,
+        "gdp_per_capita": 4503
+      },
+      "17": {
+        "id": "TUR",
+        "name": "Turkey",
+        "population": 85326000,
+        "area": 785350,
+        "gdp_per_capita": 18599
+      },
+      "18": {
+        "id": "DEU",
+        "name": "Germany",
+        "population": 84482267,
+        "area": 357590,
+        "gdp_per_capita": 52746
+      },
+      "19": {
+        "id": "THA",
+        "name": "Thailand",
+        "population": 71801279,
+        "area": 513120,
+        "gdp_per_capita": 7172
+      },
+      "20": {
+        "id": "GBR",
+        "name": "United Kingdom",
+        "population": 68350000,
+        "area": 243610,
+        "gdp_per_capita": 48867
+      },
+      "21": {
+        "id": "FRA",
+        "name": "France",
+        "population": 68170228,
+        "area": 606410,
+        "gdp_per_capita": 44461
+      },
+      "22": {
+        "id": "TZA",
+        "name": "Tanzania",
+        "population": 67438106,
+        "area": 947300,
+        "gdp_per_capita": 1211
+      },
+      "23": {
+        "id": "ZAF",
+        "name": "South Africa",
+        "population": 60414495,
+        "area": 1219090,
+        "gdp_per_capita": 6253
+      },
+      "24": {
+        "id": "ITA",
+        "name": "Italy",
+        "population": 58761146,
+        "area": 302068,
+        "gdp_per_capita": 38373
+      },
+      "25": {
+        "id": "KEN",
+        "name": "Kenya",
+        "population": 55100586,
+        "area": 580370,
+        "gdp_per_capita": 1950
+      },
+      "26": {
+        "id": "MMR",
+        "name": "Myanmar",
+        "population": 54577997,
+        "area": 676590,
+        "gdp_per_capita": 1188
+      },
+      "27": {
+        "id": "COL",
+        "name": "Colombia",
+        "population": 52085168,
+        "area": 1140619,
+        "gdp_per_capita": 6980
+      },
+      "28": {
+        "id": "KOR",
+        "name": "South Korea",
+        "population": 51712619,
+        "area": 100430,
+        "gdp_per_capita": 33121
+      },
+      "29": {
+        "id": "UGA",
+        "name": "Uganda",
+        "population": 48582334,
+        "area": 241550,
+        "gdp_per_capita": 1014
+      },
+      "30": {
+        "id": "ESP",
+        "name": "Spain",
+        "population": 48373336,
+        "area": 505965,
+        "gdp_per_capita": 32677
+      },
+      "31": {
+        "id": "SDN",
+        "name": "Sudan",
+        "population": 48109006,
+        "area": 1878000,
+        "gdp_per_capita": 1165
+      },
+      "32": {
+        "id": "ARG",
+        "name": "Argentina",
+        "population": 46654581,
+        "area": 2780400,
+        "gdp_per_capita": 13731
+      },
+      "33": {
+        "id": "DZA",
+        "name": "Algeria",
+        "population": 45606480,
+        "area": 2381741,
+        "gdp_per_capita": 5260
+      },
+      "34": {
+        "id": "IRQ",
+        "name": "Iraq",
+        "population": 45504560,
+        "area": 435050,
+        "gdp_per_capita": 5512
+      },
+      "35": {
+        "id": "AFG",
+        "name": "Afghanistan",
+        "population": 43844000,
+        "area": 652230
+      },
+      "36": {
+        "id": "CAN",
+        "name": "Canada",
+        "population": 40097761,
+        "area": 9984670,
+        "gdp_per_capita": 53372
+      },
+      "37": {
+        "id": "MAR",
+        "name": "Morocco",
+        "population": 37840044,
+        "area": 446550,
+        "gdp_per_capita": 3672
+      },
+      "38": {
+        "id": "UKR",
+        "name": "Ukraine",
+        "population": 37000000,
+        "area": 603550,
+        "gdp_per_capita": 5181
+      },
+      "39": {
+        "id": "SAU",
+        "name": "Saudi Arabia",
+        "population": 36947025,
+        "area": 2149690,
+        "gdp_per_capita": 28895
+      },
+      "40": {
+        "id": "POL",
+        "name": "Poland",
+        "population": 36685849,
+        "area": 312710,
+        "gdp_per_capita": 22113
+      },
+      "41": {
+        "id": "AGO",
+        "name": "Angola",
+        "population": 36684202,
+        "area": 1246700,
+        "gdp_per_capita": 3129
+      },
+      "42": {
+        "id": "UZB",
+        "name": "Uzbekistan",
+        "population": 36412350,
+        "area": 448924,
+        "gdp_per_capita": 3968
+      },
+      "43": {
+        "id": "YEM",
+        "name": "Yemen",
+        "population": 41773878,
+        "area": 527970,
+        "gdp_per_capita": 533
+      },
+      "44": {
+        "id": "PER",
+        "name": "Peru",
+        "population": 34352719,
+        "area": 1285220,
+        "gdp_per_capita": 7790
+      },
+      "45": {
+        "id": "MYS",
+        "name": "Malaysia",
+        "population": 34308525,
+        "area": 330411,
+        "gdp_per_capita": 11649
+      },
+      "46": {
+        "id": "GHA",
+        "name": "Ghana",
+        "population": 34121985,
+        "area": 238530,
+        "gdp_per_capita": 3257
+      },
+      "47": {
+        "id": "MOZ",
+        "name": "Mozambique",
+        "population": 33897354,
+        "area": 799380,
+        "gdp_per_capita": 608
+      },
+      "48": {
+        "id": "CIV",
+        "name": "Ivory Coast",
+        "population": 31719275,
+        "area": 322463
+      },
+      "49": {
+        "id": "NPL",
+        "name": "Nepal",
+        "population": 30896590,
+        "area": 147180,
+        "gdp_per_capita": 1324
+      },
+      "50": {
+        "id": "MDG",
+        "name": "Madagascar",
+        "population": 30325732,
+        "area": 587295,
+        "gdp_per_capita": 529
+      },
+      "51": {
+        "id": "CMR",
+        "name": "Cameroon",
+        "population": 28647293,
+        "area": 475440,
+        "gdp_per_capita": 1674
+      },
+      "52": {
+        "id": "VEN",
+        "name": "Venezuela",
+        "population": 28517000,
+        "area": 916445
+      },
+      "53": {
+        "id": "NER",
+        "name": "Niger",
+        "population": 27202843,
+        "area": 1267000,
+        "gdp_per_capita": 618
+      },
+      "54": {
+        "id": "AUS",
+        "name": "Australia",
+        "population": 26638544,
+        "area": 7741220,
+        "gdp_per_capita": 64712
+      },
+      "55": {
+        "id": "PRK",
+        "name": "North Korea",
+        "population": 25950000,
+        "area": 120538
+      },
+      "56": {
+        "id": "SYR",
+        "name": "Syria",
+        "population": 25620000,
+        "area": 185180
+      },
+      "57": {
+        "id": "MLI",
+        "name": "Mali",
+        "population": 23293698,
+        "area": 1240190,
+        "gdp_per_capita": 897
+      },
+      "58": {
+        "id": "BFA",
+        "name": "Burkina Faso",
+        "population": 23251485,
+        "area": 274220,
+        "gdp_per_capita": 874
+      },
+      "59": {
+        "id": "LKA",
+        "name": "Sri Lanka",
+        "population": 22037000,
+        "area": 65610,
+        "gdp_per_capita": 3828
+      },
+      "60": {
+        "id": "MWI",
+        "name": "Malawi",
+        "population": 20931751,
+        "area": 118480,
+        "gdp_per_capita": 673
+      },
+      "61": {
+        "id": "ZMB",
+        "name": "Zambia",
+        "population": 20569737,
+        "area": 752610,
+        "gdp_per_capita": 1369
+      },
+      "62": {
+        "id": "KAZ",
+        "name": "Kazakhstan",
+        "population": 19900177,
+        "area": 2724900,
+        "gdp_per_capita": 13137
+      },
+      "63": {
+        "id": "CHL",
+        "name": "Chile",
+        "population": 19629590,
+        "area": 756700,
+        "gdp_per_capita": 17093
+      },
+      "64": {
+        "id": "ROU",
+        "name": "Romania",
+        "population": 19056116,
+        "area": 238400,
+        "gdp_per_capita": 18419
+      },
+      "65": {
+        "id": "TCD",
+        "name": "Chad",
+        "population": 21003705,
+        "area": 1284000,
+        "gdp_per_capita": 1022
+      },
+      "66": {
+        "id": "ECU",
+        "name": "Ecuador",
+        "population": 18190484,
+        "area": 256370,
+        "gdp_per_capita": 6533
+      },
+      "67": {
+        "id": "SOM",
+        "name": "Somalia",
+        "population": 18143378,
+        "area": 637660,
+        "gdp_per_capita": 644
+      },
+      "68": {
+        "id": "NLD",
+        "name": "Netherlands",
+        "population": 17879488,
+        "area": 41540,
+        "gdp_per_capita": 62537
+      },
+      "69": {
+        "id": "SEN",
+        "name": "Senegal",
+        "population": 17763163,
+        "area": 196710,
+        "gdp_per_capita": 1746
+      },
+      "70": {
+        "id": "GTM",
+        "name": "Guatemala",
+        "population": 17602431,
+        "area": 108890,
+        "gdp_per_capita": 5798
+      },
+      "71": {
+        "id": "KHM",
+        "name": "Cambodia",
+        "population": 16944826,
+        "area": 181040,
+        "gdp_per_capita": 2872
+      },
+      "72": {
+        "id": "ZWE",
+        "name": "Zimbabwe",
+        "population": 16665409,
+        "area": 390760,
+        "gdp_per_capita": 3021
+      },
+      "73": {
+        "id": "SSD",
+        "name": "South Sudan",
+        "population": 12188788,
+        "area": 646883
+      },
+      "74": {
+        "id": "GIN",
+        "name": "Guinea",
+        "population": 14190612,
+        "area": 245860,
+        "gdp_per_capita": 1664
+      },
+      "75": {
+        "id": "RWA",
+        "name": "Rwanda",
+        "population": 14094683,
+        "area": 26340,
+        "gdp_per_capita": 1000
+      },
+      "76": {
+        "id": "BEN",
+        "name": "Benin",
+        "population": 13712828,
+        "area": 114760,
+        "gdp_per_capita": 1435
+      },
+      "77": {
+        "id": "BDI",
+        "name": "Burundi",
+        "population": 14390003,
+        "area": 27830,
+        "gdp_per_capita": 200
+      },
+      "78": {
+        "id": "TUN",
+        "name": "Tunisia",
+        "population": 12458223,
+        "area": 163610,
+        "gdp_per_capita": 3895
+      },
+      "79": {
+        "id": "BOL",
+        "name": "Bolivia",
+        "population": 12388571,
+        "area": 1098580,
+        "gdp_per_capita": 5148
+      },
+      "80": {
+        "id": "BEL",
+        "name": "Belgium",
+        "population": 11822592,
+        "area": 30530,
+        "gdp_per_capita": 53475
+      },
+      "81": {
+        "id": "HTI",
+        "name": "Haiti",
+        "population": 11724763,
+        "area": 27750,
+        "gdp_per_capita": 2694
+      },
+      "82": {
+        "id": "JOR",
+        "name": "Jordan",
+        "population": 11337052,
+        "area": 89318,
+        "gdp_per_capita": 4482
+      },
+      "83": {
+        "id": "DOM",
+        "name": "Dominican Republic",
+        "population": 11332972,
+        "area": 146839,
+        "gdp_per_capita": 10716
+      },
+      "84": {
+        "id": "ARE",
+        "name": "United Arab Emirates",
+        "population": 11294243,
+        "area": 98648
+      },
+      "85": {
+        "id": "CZE",
+        "name": "Czech Republic",
+        "population": 10873689,
+        "area": 78871,
+        "gdp_per_capita": 30427
+      },
+      "86": {
+        "id": "HND",
+        "name": "Honduras",
+        "population": 10593798,
+        "area": 112490,
+        "gdp_per_capita": 3247
+      },
+      "87": {
+        "id": "SWE",
+        "name": "Sweden",
+        "population": 10536632,
+        "area": 528861,
+        "gdp_per_capita": 56305
+      },
+      "88": {
+        "id": "PRT",
+        "name": "Portugal",
+        "population": 10525347,
+        "area": 92230,
+        "gdp_per_capita": 27275
+      },
+      "89": {
+        "id": "GRC",
+        "name": "Greece",
+        "population": 10361295,
+        "area": 131960,
+        "gdp_per_capita": 22990
+      },
+      "90": {
+        "id": "PNG",
+        "name": "Papua New Guinea",
+        "population": 10329931,
+        "area": 462840,
+        "gdp_per_capita": 2994
+      },
+      "91": {
+        "id": "TJK",
+        "name": "Tajikistan",
+        "population": 10143543,
+        "area": 141379,
+        "gdp_per_capita": 1637
+      },
+      "92": {
+        "id": "AZE",
+        "name": "Azerbaijan",
+        "population": 10112555,
+        "area": 86600,
+        "gdp_per_capita": 7155
+      },
+      "93": {
+        "id": "ISR",
+        "name": "Israel",
+        "population": 9756700,
+        "area": 22070,
+        "gdp_per_capita": 52262
+      },
+      "94": {
+        "id": "CUB",
+        "name": "Cuba",
+        "population": 10937203,
+        "area": 109884
+      },
+      "95": {
+        "id": "HUN",
+        "name": "Hungary",
+        "population": 9589872,
+        "area": 93030,
+        "gdp_per_capita": 22147
+      },
+      "96": {
+        "id": "BLR",
+        "name": "Belarus",
+        "population": 9178298,
+        "area": 207630,
+        "gdp_per_capita": 7829
+      },
+      "97": {
+        "id": "AUT",
+        "name": "Austria",
+        "population": 9132383,
+        "area": 83879,
+        "gdp_per_capita": 56506
+      },
+      "98": {
+        "id": "TGO",
+        "name": "Togo",
+        "population": 9053799,
+        "area": 56790,
+        "gdp_per_capita": 1384
+      },
+      "99": {
+        "id": "CHE",
+        "name": "Switzerland",
+        "population": 8849852,
+        "area": 41291,
+        "gdp_per_capita": 99995
+      },
+      "100": {
+        "id": "SLE",
+        "name": "Sierra Leone",
+        "population": 8791092,
+        "area": 72300,
+        "gdp_per_capita": 846
+      },
+      "101": {
+        "id": "LAO",
+        "name": "Laos",
+        "population": 7647000,
+        "area": 236800
+      },
+      "102": {
+        "id": "KGZ",
+        "name": "Kyrgyzstan",
+        "population": 7281800,
+        "area": 199951
+      },
+      "103": {
+        "id": "NIC",
+        "name": "Nicaragua",
+        "population": 7046310,
+        "area": 130370,
+        "gdp_per_capita": 2530
+      },
+      "104": {
+        "id": "LBY",
+        "name": "Libya",
+        "population": 6888388,
+        "area": 1759540,
+        "gdp_per_capita": 7330
+      },
+      "105": {
+        "id": "PRY",
+        "name": "Paraguay",
+        "population": 6861524,
+        "area": 406752,
+        "gdp_per_capita": 6260
+      },
+      "106": {
+        "id": "SRB",
+        "name": "Serbia",
+        "population": 6618026,
+        "area": 84990,
+        "gdp_per_capita": 15262
+      },
+      "107": {
+        "id": "TKM",
+        "name": "Turkmenistan",
+        "population": 7618847,
+        "area": 488100,
+        "gdp_per_capita": 6540
+      },
+      "108": {
+        "id": "BGR",
+        "name": "Bulgaria",
+        "population": 6430370,
+        "area": 111000,
+        "gdp_per_capita": 15798
+      },
+      "109": {
+        "id": "SLV",
+        "name": "El Salvador",
+        "population": 6364943,
+        "area": 21040,
+        "gdp_per_capita": 5344
+      },
+      "110": {
+        "id": "COG",
+        "name": "Republic of the Congo",
+        "population": 6142180,
+        "area": 342000
+      },
+      "111": {
+        "id": "DNK",
+        "name": "Denmark",
+        "population": 5946952,
+        "area": 42920,
+        "gdp_per_capita": 67967
+      },
+      "112": {
+        "id": "SGP",
+        "name": "Singapore",
+        "population": 5917648,
+        "area": 728,
+        "gdp_per_capita": 84734
+      },
+      "113": {
+        "id": "CAF",
+        "name": "Central African Republic",
+        "population": 5742315,
+        "area": 622980,
+        "gdp_per_capita": 445
+      },
+      "114": {
+        "id": "FIN",
+        "name": "Finland",
+        "population": 5584264,
+        "area": 338470,
+        "gdp_per_capita": 53756
+      },
+      "115": {
+        "id": "NOR",
+        "name": "Norway",
+        "population": 5519594,
+        "area": 385207,
+        "gdp_per_capita": 87962
+      },
+      "116": {
+        "id": "LBN",
+        "name": "Lebanon",
+        "population": 5490000,
+        "area": 10452
+      },
+      "117": {
+        "id": "PSE",
+        "name": "Palestine",
+        "population": 5483450,
+        "area": 6025
+      },
+      "118": {
+        "id": "IRL",
+        "name": "Ireland",
+        "population": 5458600,
+        "area": 70273
+      },
+      "119": {
+        "id": "LBR",
+        "name": "Liberia",
+        "population": 5418377,
+        "area": 111370,
+        "gdp_per_capita": 800
+      },
+      "120": {
+        "id": "SVK",
+        "name": "Slovakia",
+        "population": 5413813,
+        "area": 49037
+      },
+      "121": {
+        "id": "NZL",
+        "name": "New Zealand",
+        "population": 5223100,
+        "area": 267710,
+        "gdp_per_capita": 48528
+      },
+      "122": {
+        "id": "CRI",
+        "name": "Costa Rica",
+        "population": 5212173,
+        "area": 51100,
+        "gdp_per_capita": 16595
+      },
+      "123": {
+        "id": "MRT",
+        "name": "Mauritania",
+        "population": 5315065,
+        "area": 1030700,
+        "gdp_per_capita": 2149
+      },
+      "124": {
+        "id": "OMN",
+        "name": "Oman",
+        "population": 5494691,
+        "area": 309500,
+        "gdp_per_capita": 23295
+      },
+      "125": {
+        "id": "PAN",
+        "name": "Panama",
+        "population": 4468087,
+        "area": 75320,
+        "gdp_per_capita": 18662
+      },
+      "126": {
+        "id": "KWT",
+        "name": "Kuwait",
+        "population": 4865298,
+        "area": 17820,
+        "gdp_per_capita": 37533
+      },
+      "127": {
+        "id": "HRV",
+        "name": "Croatia",
+        "population": 3853200,
+        "area": 88070,
+        "gdp_per_capita": 21460
+      },
+      "128": {
+        "id": "GEO",
+        "name": "Georgia",
+        "population": 3760365,
+        "area": 69700,
+        "gdp_per_capita": 8120
+      },
+      "129": {
+        "id": "ERI",
+        "name": "Eritrea",
+        "population": 3607000,
+        "area": 121766
+      },
+      "130": {
+        "id": "MNG",
+        "name": "Mongolia",
+        "population": 3447157,
+        "area": 1564116,
+        "gdp_per_capita": 5765
+      },
+      "131": {
+        "id": "URY",
+        "name": "Uruguay",
+        "population": 3423108,
+        "area": 176220,
+        "gdp_per_capita": 22565
+      },
+      "132": {
+        "id": "BIH",
+        "name": "Bosnia and Herzegovina",
+        "population": 3140095,
+        "area": 51209
+      },
+      "133": {
+        "id": "QAT",
+        "name": "Qatar",
+        "population": 3173024,
+        "area": 11586
+      },
+      "134": {
+        "id": "LTU",
+        "name": "Lithuania",
+        "population": 2871897,
+        "area": 65290,
+        "gdp_per_capita": 27103
+      },
+      "135": {
+        "id": "JAM",
+        "name": "Jamaica",
+        "population": 2825544,
+        "area": 10990,
+        "gdp_per_capita": 6874
+      },
+      "136": {
+        "id": "ARM",
+        "name": "Armenia",
+        "population": 3086700,
+        "area": 29740,
+        "gdp_per_capita": 8716
+      },
+      "137": {
+        "id": "ALB",
+        "name": "Albania",
+        "population": 2349580,
+        "area": 28750,
+        "gdp_per_capita": 12998
+      },
+      "138": {
+        "id": "BWA",
+        "name": "Botswana",
+        "population": 2675352,
+        "area": 581730,
+        "gdp_per_capita": 7250
+      },
+      "139": {
+        "id": "NAM",
+        "name": "Namibia",
+        "population": 3092816,
+        "area": 824290,
+        "gdp_per_capita": 4743
+      },
+      "140": {
+        "id": "MDA",
+        "name": "Moldova",
+        "population": 2486891,
+        "area": 33850,
+        "gdp_per_capita": 6651
+      },
+      "141": {
+        "id": "GAB",
+        "name": "Gabon",
+        "population": 2436566,
+        "area": 267670,
+        "gdp_per_capita": 8420
+      },
+      "142": {
+        "id": "GMB",
+        "name": "Gambia",
+        "population": 2822093,
+        "area": 11300
+      },
+      "143": {
+        "id": "LSO",
+        "name": "Lesotho",
+        "population": 2330318,
+        "area": 30360,
+        "gdp_per_capita": 878
+      },
+      "144": {
+        "id": "SVN",
+        "name": "Slovenia",
+        "population": 2120937,
+        "area": 20480,
+        "gdp_per_capita": 32164
+      },
+      "145": {
+        "id": "LVA",
+        "name": "Latvia",
+        "population": 1881750,
+        "area": 64590,
+        "gdp_per_capita": 23184
+      },
+      "146": {
+        "id": "MKD",
+        "name": "North Macedonia",
+        "population": 1822612,
+        "area": 25713
+      },
+      "147": {
+        "id": "GNB",
+        "name": "Guinea-Bissau",
+        "population": 2249515,
+        "area": 36125
+      },
+      "148": {
+        "id": "GNQ",
+        "name": "Equatorial Guinea",
+        "population": 1938431,
+        "area": 28050,
+        "gdp_per_capita": 7067
+      },
+      "149": {
+        "id": "TTO",
+        "name": "Trinidad and Tobago",
+        "population": 1367764,
+        "area": 5130,
+        "gdp_per_capita": 18333
+      },
+      "150": {
+        "id": "BHR",
+        "name": "Bahrain",
+        "population": 1485509,
+        "area": 790,
+        "gdp_per_capita": 29084
+      },
+      "151": {
+        "id": "TLS",
+        "name": "Timor-Leste",
+        "population": 1391221,
+        "area": 14874
+      },
+      "152": {
+        "id": "EST",
+        "name": "Estonia",
+        "population": 1366188,
+        "area": 45340,
+        "gdp_per_capita": 29824
+      },
+      "153": {
+        "id": "MUS",
+        "name": "Mauritius",
+        "population": 1261041,
+        "area": 2007,
+        "gdp_per_capita": 11417
+      },
+      "154": {
+        "id": "CYP",
+        "name": "Cyprus",
+        "population": 1370754,
+        "area": 9250,
+        "gdp_per_capita": 34701
+      },
+      "155": {
+        "id": "SWZ",
+        "name": "Eswatini",
+        "population": 1210822,
+        "area": 17360,
+        "gdp_per_capita": 3797
+      },
+      "156": {
+        "id": "DJI",
+        "name": "Djibouti",
+        "population": 1136455,
+        "area": 23200,
+        "gdp_per_capita": 3606
+      },
+      "157": {
+        "id": "FJI",
+        "name": "Fiji",
+        "population": 936375,
+        "area": 18270,
+        "gdp_per_capita": 5868
+      },
+      "158": {
+        "id": "COM",
+        "name": "Comoros",
+        "population": 852075,
+        "area": 1861,
+        "gdp_per_capita": 1587
+      },
+      "159": {
+        "id": "GUY",
+        "name": "Guyana",
+        "population": 813834,
+        "area": 214970,
+        "gdp_per_capita": 32414
+      },
+      "160": {
+        "id": "BTN",
+        "name": "Bhutan",
+        "population": 784043,
+        "area": 38394
+      },
+      "161": {
+        "id": "SLB",
+        "name": "Solomon Islands",
+        "population": 838645,
+        "area": 28900,
+        "gdp_per_capita": 2203
+      },
+      "162": {
+        "id": "LUX",
+        "name": "Luxembourg",
+        "population": 668606,
+        "area": 2590,
+        "gdp_per_capita": 128259
+      },
+      "163": {
+        "id": "SUR",
+        "name": "Suriname",
+        "population": 623236,
+        "area": 163820,
+        "gdp_per_capita": 6069
+      },
+      "164": {
+        "id": "MNE",
+        "name": "Montenegro",
+        "population": 616177,
+        "area": 13810,
+        "gdp_per_capita": 12017
+      },
+      "165": {
+        "id": "MLT",
+        "name": "Malta",
+        "population": 553214,
+        "area": 320,
+        "gdp_per_capita": 37882
+      },
+      "166": {
+        "id": "MDV",
+        "name": "Maldives",
+        "population": 521021,
+        "area": 300,
+        "gdp_per_capita": 12667
+      },
+      "167": {
+        "id": "CPV",
+        "name": "Cape Verde",
+        "population": 491233,
+        "area": 4033
+      },
+      "168": {
+        "id": "BRN",
+        "name": "Brunei",
+        "population": 455500,
+        "area": 5765
+      },
+      "169": {
+        "id": "BLZ",
+        "name": "Belize",
+        "population": 410825,
+        "area": 22970,
+        "gdp_per_capita": 7988
+      },
+      "170": {
+        "id": "BHS",
+        "name": "Bahamas",
+        "population": 398165,
+        "area": 13943
+      },
+      "171": {
+        "id": "ISL",
+        "name": "Iceland",
+        "population": 393600,
+        "area": 103000,
+        "gdp_per_capita": 78811
+      },
+      "172": {
+        "id": "VUT",
+        "name": "Vanuatu",
+        "population": 334506,
+        "area": 12190,
+        "gdp_per_capita": 3367
+      },
+      "173": {
+        "id": "BRB",
+        "name": "Barbados",
+        "population": 281995,
+        "area": 430,
+        "gdp_per_capita": 22673
+      },
+      "174": {
+        "id": "WSM",
+        "name": "Samoa",
+        "population": 225681,
+        "area": 2840,
+        "gdp_per_capita": 5873
+      },
+      "175": {
+        "id": "STP",
+        "name": "São Tomé and Príncipe",
+        "population": 240254,
+        "area": 964
+      },
+      "176": {
+        "id": "LCA",
+        "name": "Saint Lucia",
+        "population": 184100,
+        "area": 616
+      },
+      "177": {
+        "id": "KIR",
+        "name": "Kiribati",
+        "population": 133515,
+        "area": 810,
+        "gdp_per_capita": 2090
+      },
+      "178": {
+        "id": "GRD",
+        "name": "Grenada",
+        "population": 126183,
+        "area": 340,
+        "gdp_per_capita": 10464
+      },
+      "179": {
+        "id": "SYC",
+        "name": "Seychelles",
+        "population": 119773,
+        "area": 460,
+        "gdp_per_capita": 17879
+      },
+      "180": {
+        "id": "VCT",
+        "name": "Saint Vincent and the Grenadines",
+        "population": 99924,
+        "area": 389
+      },
+      "181": {
+        "id": "FSM",
+        "name": "Micronesia",
+        "population": 105564,
+        "area": 702
+      },
+      "182": {
+        "id": "TON",
+        "name": "Tonga",
+        "population": 100179,
+        "area": 747
+      },
+      "183": {
+        "id": "ATG",
+        "name": "Antigua and Barbuda",
+        "population": 94298,
+        "area": 440,
+        "gdp_per_capita": 21560
+      },
+      "184": {
+        "id": "AND",
+        "name": "Andorra",
+        "population": 80088,
+        "area": 470,
+        "gdp_per_capita": 46545
+      },
+      "185": {
+        "id": "DMA",
+        "name": "Dominica",
+        "population": 65871,
+        "area": 750,
+        "gdp_per_capita": 8954
+      },
+      "186": {
+        "id": "KNA",
+        "name": "Saint Kitts and Nevis",
+        "population": 46922,
+        "area": 261
+      },
+      "187": {
+        "id": "MHL",
+        "name": "Marshall Islands",
+        "population": 36282,
+        "area": 180,
+        "gdp_per_capita": 6763
+      },
+      "188": {
+        "id": "LIE",
+        "name": "Liechtenstein",
+        "population": 40900,
+        "area": 160
+      },
+      "189": {
+        "id": "MCO",
+        "name": "Monaco",
+        "population": 38423,
+        "area": 2
+      },
+      "190": {
+        "id": "SMR",
+        "name": "San Marino",
+        "population": 34132,
+        "area": 61
+      },
+      "191": {
+        "id": "PLW",
+        "name": "Palau",
+        "population": 18058,
+        "area": 460,
+        "gdp_per_capita": 19532
+      },
+      "192": {
+        "id": "NRU",
+        "name": "Nauru",
+        "population": 12780,
+        "area": 20,
+        "gdp_per_capita": 12060
+      },
+      "193": {
+        "id": "TUV",
+        "name": "Tuvalu",
+        "population": 9492,
+        "area": 30,
+        "gdp_per_capita": 5465
+      },
+      "194": {
+        "id": "VAT",
+        "name": "Vatican City",
+        "population": 882,
+        "area": 0
+      }
+    },
+    "elements": {
+      "0": {
+        "id": "H",
+        "name": "Hydrogen",
+        "AtomicNumber": 1,
+        "Density": 0,
+        "AtomicRadius": 120
+      },
+      "1": {
+        "id": "He",
+        "name": "Helium",
+        "AtomicNumber": 2,
+        "Density": 0,
+        "AtomicRadius": 140
+      },
+      "2": {
+        "id": "Li",
+        "name": "Lithium",
+        "AtomicNumber": 3,
+        "Density": 0.534,
+        "AtomicRadius": 182
+      },
+      "3": {
+        "id": "Be",
+        "name": "Beryllium",
+        "AtomicNumber": 4,
+        "Density": 1.85,
+        "AtomicRadius": 153
+      },
+      "4": {
+        "id": "B",
+        "name": "Boron",
+        "AtomicNumber": 5,
+        "Density": 2.37,
+        "AtomicRadius": 192
+      },
+      "5": {
+        "id": "C",
+        "name": "Carbon",
+        "AtomicNumber": 6,
+        "Density": 2.267,
+        "AtomicRadius": 170
+      },
+      "6": {
+        "id": "N",
+        "name": "Nitrogen",
+        "AtomicNumber": 7,
+        "Density": 0.001,
+        "AtomicRadius": 155
+      },
+      "7": {
+        "id": "O",
+        "name": "Oxygen",
+        "AtomicNumber": 8,
+        "Density": 0.001,
+        "AtomicRadius": 152
+      },
+      "8": {
+        "id": "F",
+        "name": "Fluorine",
+        "AtomicNumber": 9,
+        "Density": 0.002,
+        "AtomicRadius": 135
+      },
+      "9": {
+        "id": "Ne",
+        "name": "Neon",
+        "AtomicNumber": 10,
+        "Density": 0.001,
+        "AtomicRadius": 154
+      },
+      "10": {
+        "id": "Na",
+        "name": "Sodium",
+        "AtomicNumber": 11,
+        "Density": 0.97,
+        "AtomicRadius": 227
+      },
+      "11": {
+        "id": "Mg",
+        "name": "Magnesium",
+        "AtomicNumber": 12,
+        "Density": 1.74,
+        "AtomicRadius": 173
+      },
+      "12": {
+        "id": "Al",
+        "name": "Aluminum",
+        "AtomicNumber": 13,
+        "Density": 2.7,
+        "AtomicRadius": 184
+      },
+      "13": {
+        "id": "Si",
+        "name": "Silicon",
+        "AtomicNumber": 14,
+        "Density": 2.33,
+        "AtomicRadius": 210
+      },
+      "14": {
+        "id": "P",
+        "name": "Phosphorus",
+        "AtomicNumber": 15,
+        "Density": 1.82,
+        "AtomicRadius": 180
+      },
+      "15": {
+        "id": "S",
+        "name": "Sulfur",
+        "AtomicNumber": 16,
+        "Density": 2.067,
+        "AtomicRadius": 180
+      },
+      "16": {
+        "id": "Cl",
+        "name": "Chlorine",
+        "AtomicNumber": 17,
+        "Density": 0.003,
+        "AtomicRadius": 175
+      },
+      "17": {
+        "id": "Ar",
+        "name": "Argon",
+        "AtomicNumber": 18,
+        "Density": 0.002,
+        "AtomicRadius": 188
+      },
+      "18": {
+        "id": "K",
+        "name": "Potassium",
+        "AtomicNumber": 19,
+        "Density": 0.89,
+        "AtomicRadius": 275
+      },
+      "19": {
+        "id": "Ca",
+        "name": "Calcium",
+        "AtomicNumber": 20,
+        "Density": 1.54,
+        "AtomicRadius": 231
+      },
+      "20": {
+        "id": "Sc",
+        "name": "Scandium",
+        "AtomicNumber": 21,
+        "Density": 2.99,
+        "AtomicRadius": 211
+      },
+      "21": {
+        "id": "Ti",
+        "name": "Titanium",
+        "AtomicNumber": 22,
+        "Density": 4.5,
+        "AtomicRadius": 187
+      },
+      "22": {
+        "id": "V",
+        "name": "Vanadium",
+        "AtomicNumber": 23,
+        "Density": 6,
+        "AtomicRadius": 179
+      },
+      "23": {
+        "id": "Cr",
+        "name": "Chromium",
+        "AtomicNumber": 24,
+        "Density": 7.15,
+        "AtomicRadius": 189
+      },
+      "24": {
+        "id": "Mn",
+        "name": "Manganese",
+        "AtomicNumber": 25,
+        "Density": 7.3,
+        "AtomicRadius": 197
+      },
+      "25": {
+        "id": "Fe",
+        "name": "Iron",
+        "AtomicNumber": 26,
+        "Density": 7.874,
+        "AtomicRadius": 194
+      },
+      "26": {
+        "id": "Co",
+        "name": "Cobalt",
+        "AtomicNumber": 27,
+        "Density": 8.86,
+        "AtomicRadius": 192
+      },
+      "27": {
+        "id": "Ni",
+        "name": "Nickel",
+        "AtomicNumber": 28,
+        "Density": 8.912,
+        "AtomicRadius": 163
+      },
+      "28": {
+        "id": "Cu",
+        "name": "Copper",
+        "AtomicNumber": 29,
+        "Density": 8.933,
+        "AtomicRadius": 140
+      },
+      "29": {
+        "id": "Zn",
+        "name": "Zinc",
+        "AtomicNumber": 30,
+        "Density": 7.134,
+        "AtomicRadius": 139
+      },
+      "30": {
+        "id": "Ga",
+        "name": "Gallium",
+        "AtomicNumber": 31,
+        "Density": 5.91,
+        "AtomicRadius": 187
+      },
+      "31": {
+        "id": "Ge",
+        "name": "Germanium",
+        "AtomicNumber": 32,
+        "Density": 5.323,
+        "AtomicRadius": 211
+      },
+      "32": {
+        "id": "As",
+        "name": "Arsenic",
+        "AtomicNumber": 33,
+        "Density": 5.776,
+        "AtomicRadius": 185
+      },
+      "33": {
+        "id": "Se",
+        "name": "Selenium",
+        "AtomicNumber": 34,
+        "Density": 4.809,
+        "AtomicRadius": 190
+      },
+      "34": {
+        "id": "Br",
+        "name": "Bromine",
+        "AtomicNumber": 35,
+        "Density": 3.11,
+        "AtomicRadius": 183
+      },
+      "35": {
+        "id": "Kr",
+        "name": "Krypton",
+        "AtomicNumber": 36,
+        "Density": 0.004,
+        "AtomicRadius": 202
+      },
+      "36": {
+        "id": "Rb",
+        "name": "Rubidium",
+        "AtomicNumber": 37,
+        "Density": 1.53,
+        "AtomicRadius": 303
+      },
+      "37": {
+        "id": "Sr",
+        "name": "Strontium",
+        "AtomicNumber": 38,
+        "Density": 2.64,
+        "AtomicRadius": 249
+      },
+      "38": {
+        "id": "Y",
+        "name": "Yttrium",
+        "AtomicNumber": 39,
+        "Density": 4.47,
+        "AtomicRadius": 219
+      },
+      "39": {
+        "id": "Zr",
+        "name": "Zirconium",
+        "AtomicNumber": 40,
+        "Density": 6.52,
+        "AtomicRadius": 186
+      },
+      "40": {
+        "id": "Nb",
+        "name": "Niobium",
+        "AtomicNumber": 41,
+        "Density": 8.57,
+        "AtomicRadius": 207
+      },
+      "41": {
+        "id": "Mo",
+        "name": "Molybdenum",
+        "AtomicNumber": 42,
+        "Density": 10.2,
+        "AtomicRadius": 209
+      },
+      "42": {
+        "id": "Tc",
+        "name": "Technetium",
+        "AtomicNumber": 43,
+        "Density": 11,
+        "AtomicRadius": 209
+      },
+      "43": {
+        "id": "Ru",
+        "name": "Ruthenium",
+        "AtomicNumber": 44,
+        "Density": 12.1,
+        "AtomicRadius": 207
+      },
+      "44": {
+        "id": "Rh",
+        "name": "Rhodium",
+        "AtomicNumber": 45,
+        "Density": 12.4,
+        "AtomicRadius": 195
+      },
+      "45": {
+        "id": "Pd",
+        "name": "Palladium",
+        "AtomicNumber": 46,
+        "Density": 12,
+        "AtomicRadius": 202
+      },
+      "46": {
+        "id": "Ag",
+        "name": "Silver",
+        "AtomicNumber": 47,
+        "Density": 10.501,
+        "AtomicRadius": 172
+      },
+      "47": {
+        "id": "Cd",
+        "name": "Cadmium",
+        "AtomicNumber": 48,
+        "Density": 8.69,
+        "AtomicRadius": 158
+      },
+      "48": {
+        "id": "In",
+        "name": "Indium",
+        "AtomicNumber": 49,
+        "Density": 7.31,
+        "AtomicRadius": 193
+      },
+      "49": {
+        "id": "Sn",
+        "name": "Tin",
+        "AtomicNumber": 50,
+        "Density": 7.287,
+        "AtomicRadius": 217
+      },
+      "50": {
+        "id": "Sb",
+        "name": "Antimony",
+        "AtomicNumber": 51,
+        "Density": 6.685,
+        "AtomicRadius": 206
+      },
+      "51": {
+        "id": "Te",
+        "name": "Tellurium",
+        "AtomicNumber": 52,
+        "Density": 6.232,
+        "AtomicRadius": 206
+      },
+      "52": {
+        "id": "I",
+        "name": "Iodine",
+        "AtomicNumber": 53,
+        "Density": 4.93,
+        "AtomicRadius": 198
+      },
+      "53": {
+        "id": "Xe",
+        "name": "Xenon",
+        "AtomicNumber": 54,
+        "Density": 0.006,
+        "AtomicRadius": 216
+      },
+      "54": {
+        "id": "Cs",
+        "name": "Cesium",
+        "AtomicNumber": 55,
+        "Density": 1.93,
+        "AtomicRadius": 343
+      },
+      "55": {
+        "id": "Ba",
+        "name": "Barium",
+        "AtomicNumber": 56,
+        "Density": 3.62,
+        "AtomicRadius": 268
+      },
+      "56": {
+        "id": "La",
+        "name": "Lanthanum",
+        "AtomicNumber": 57,
+        "Density": 6.15,
+        "AtomicRadius": 240
+      },
+      "57": {
+        "id": "Ce",
+        "name": "Cerium",
+        "AtomicNumber": 58,
+        "Density": 6.77,
+        "AtomicRadius": 235
+      },
+      "58": {
+        "id": "Pr",
+        "name": "Praseodymium",
+        "AtomicNumber": 59,
+        "Density": 6.77,
+        "AtomicRadius": 239
+      },
+      "59": {
+        "id": "Nd",
+        "name": "Neodymium",
+        "AtomicNumber": 60,
+        "Density": 7.01,
+        "AtomicRadius": 229
+      },
+      "60": {
+        "id": "Pm",
+        "name": "Promethium",
+        "AtomicNumber": 61,
+        "Density": 7.26,
+        "AtomicRadius": 236
+      },
+      "61": {
+        "id": "Sm",
+        "name": "Samarium",
+        "AtomicNumber": 62,
+        "Density": 7.52,
+        "AtomicRadius": 229
+      },
+      "62": {
+        "id": "Eu",
+        "name": "Europium",
+        "AtomicNumber": 63,
+        "Density": 5.24,
+        "AtomicRadius": 233
+      },
+      "63": {
+        "id": "Gd",
+        "name": "Gadolinium",
+        "AtomicNumber": 64,
+        "Density": 7.9,
+        "AtomicRadius": 237
+      },
+      "64": {
+        "id": "Tb",
+        "name": "Terbium",
+        "AtomicNumber": 65,
+        "Density": 8.23,
+        "AtomicRadius": 221
+      },
+      "65": {
+        "id": "Dy",
+        "name": "Dysprosium",
+        "AtomicNumber": 66,
+        "Density": 8.55,
+        "AtomicRadius": 229
+      },
+      "66": {
+        "id": "Ho",
+        "name": "Holmium",
+        "AtomicNumber": 67,
+        "Density": 8.8,
+        "AtomicRadius": 216
+      },
+      "67": {
+        "id": "Er",
+        "name": "Erbium",
+        "AtomicNumber": 68,
+        "Density": 9.07,
+        "AtomicRadius": 235
+      },
+      "68": {
+        "id": "Tm",
+        "name": "Thulium",
+        "AtomicNumber": 69,
+        "Density": 9.32,
+        "AtomicRadius": 227
+      },
+      "69": {
+        "id": "Yb",
+        "name": "Ytterbium",
+        "AtomicNumber": 70,
+        "Density": 6.9,
+        "AtomicRadius": 242
+      },
+      "70": {
+        "id": "Lu",
+        "name": "Lutetium",
+        "AtomicNumber": 71,
+        "Density": 9.84,
+        "AtomicRadius": 221
+      },
+      "71": {
+        "id": "Hf",
+        "name": "Hafnium",
+        "AtomicNumber": 72,
+        "Density": 13.3,
+        "AtomicRadius": 212
+      },
+      "72": {
+        "id": "Ta",
+        "name": "Tantalum",
+        "AtomicNumber": 73,
+        "Density": 16.4,
+        "AtomicRadius": 217
+      },
+      "73": {
+        "id": "W",
+        "name": "Tungsten",
+        "AtomicNumber": 74,
+        "Density": 19.3,
+        "AtomicRadius": 210
+      },
+      "74": {
+        "id": "Re",
+        "name": "Rhenium",
+        "AtomicNumber": 75,
+        "Density": 20.8,
+        "AtomicRadius": 217
+      },
+      "75": {
+        "id": "Os",
+        "name": "Osmium",
+        "AtomicNumber": 76,
+        "Density": 22.57,
+        "AtomicRadius": 216
+      },
+      "76": {
+        "id": "Ir",
+        "name": "Iridium",
+        "AtomicNumber": 77,
+        "Density": 22.42,
+        "AtomicRadius": 202
+      },
+      "77": {
+        "id": "Pt",
+        "name": "Platinum",
+        "AtomicNumber": 78,
+        "Density": 21.46,
+        "AtomicRadius": 209
+      },
+      "78": {
+        "id": "Au",
+        "name": "Gold",
+        "AtomicNumber": 79,
+        "Density": 19.282,
+        "AtomicRadius": 166
+      },
+      "79": {
+        "id": "Hg",
+        "name": "Mercury",
+        "AtomicNumber": 80,
+        "Density": 13.534,
+        "AtomicRadius": 209
+      },
+      "80": {
+        "id": "Tl",
+        "name": "Thallium",
+        "AtomicNumber": 81,
+        "Density": 11.8,
+        "AtomicRadius": 196
+      },
+      "81": {
+        "id": "Pb",
+        "name": "Lead",
+        "AtomicNumber": 82,
+        "Density": 11.342,
+        "AtomicRadius": 202
+      },
+      "82": {
+        "id": "Bi",
+        "name": "Bismuth",
+        "AtomicNumber": 83,
+        "Density": 9.807,
+        "AtomicRadius": 207
+      },
+      "83": {
+        "id": "Po",
+        "name": "Polonium",
+        "AtomicNumber": 84,
+        "Density": 9.32,
+        "AtomicRadius": 197
+      },
+      "84": {
+        "id": "At",
+        "name": "Astatine",
+        "AtomicNumber": 85,
+        "Density": 7,
+        "AtomicRadius": 202
+      },
+      "85": {
+        "id": "Rn",
+        "name": "Radon",
+        "AtomicNumber": 86,
+        "Density": 0.01,
+        "AtomicRadius": 220
+      },
+      "86": {
+        "id": "Fr",
+        "name": "Francium",
+        "AtomicNumber": 87,
+        "Density": -1,
+        "AtomicRadius": 348
+      },
+      "87": {
+        "id": "Ra",
+        "name": "Radium",
+        "AtomicNumber": 88,
+        "Density": 5,
+        "AtomicRadius": 283
+      },
+      "88": {
+        "id": "Ac",
+        "name": "Actinium",
+        "AtomicNumber": 89,
+        "Density": 10.07,
+        "AtomicRadius": 260
+      },
+      "89": {
+        "id": "Th",
+        "name": "Thorium",
+        "AtomicNumber": 90,
+        "Density": 11.72,
+        "AtomicRadius": 237
+      },
+      "90": {
+        "id": "Pa",
+        "name": "Protactinium",
+        "AtomicNumber": 91,
+        "Density": 15.37,
+        "AtomicRadius": 243
+      },
+      "91": {
+        "id": "U",
+        "name": "Uranium",
+        "AtomicNumber": 92,
+        "Density": 18.95,
+        "AtomicRadius": 240
+      },
+      "92": {
+        "id": "Np",
+        "name": "Neptunium",
+        "AtomicNumber": 93,
+        "Density": 20.25,
+        "AtomicRadius": 221
+      },
+      "93": {
+        "id": "Pu",
+        "name": "Plutonium",
+        "AtomicNumber": 94,
+        "Density": 19.84,
+        "AtomicRadius": 243
+      },
+      "94": {
+        "id": "Am",
+        "name": "Americium",
+        "AtomicNumber": 95,
+        "Density": 13.69,
+        "AtomicRadius": 244
+      },
+      "95": {
+        "id": "Cm",
+        "name": "Curium",
+        "AtomicNumber": 96,
+        "Density": 13.51,
+        "AtomicRadius": 245
+      },
+      "96": {
+        "id": "Bk",
+        "name": "Berkelium",
+        "AtomicNumber": 97,
+        "Density": 14,
+        "AtomicRadius": 244
+      },
+      "97": {
+        "id": "Cf",
+        "name": "Californium",
+        "AtomicNumber": 98,
+        "Density": -1,
+        "AtomicRadius": 245
+      },
+      "98": {
+        "id": "Es",
+        "name": "Einsteinium",
+        "AtomicNumber": 99,
+        "Density": -1,
+        "AtomicRadius": 245
+      },
+      "99": {
+        "id": "Fm",
+        "name": "Fermium",
+        "AtomicNumber": 100,
+        "Density": -1
+      },
+      "100": {
+        "id": "Md",
+        "name": "Mendelevium",
+        "AtomicNumber": 101,
+        "Density": -1
+      },
+      "101": {
+        "id": "No",
+        "name": "Nobelium",
+        "AtomicNumber": 102,
+        "Density": -1
+      },
+      "102": {
+        "id": "Lr",
+        "name": "Lawrencium",
+        "AtomicNumber": 103,
+        "Density": -1
+      },
+      "103": {
+        "id": "Rf",
+        "name": "Rutherfordium",
+        "AtomicNumber": 104,
+        "Density": -1
+      },
+      "104": {
+        "id": "Db",
+        "name": "Dubnium",
+        "AtomicNumber": 105,
+        "Density": -1
+      },
+      "105": {
+        "id": "Sg",
+        "name": "Seaborgium",
+        "AtomicNumber": 106,
+        "Density": -1
+      },
+      "106": {
+        "id": "Bh",
+        "name": "Bohrium",
+        "AtomicNumber": 107,
+        "Density": -1
+      },
+      "107": {
+        "id": "Hs",
+        "name": "Hassium",
+        "AtomicNumber": 108,
+        "Density": -1
+      },
+      "108": {
+        "id": "Mt",
+        "name": "Meitnerium",
+        "AtomicNumber": 109,
+        "Density": -1
+      },
+      "109": {
+        "id": "Ds",
+        "name": "Darmstadtium",
+        "AtomicNumber": 110,
+        "Density": -1
+      },
+      "110": {
+        "id": "Rg",
+        "name": "Roentgenium",
+        "AtomicNumber": 111,
+        "Density": -1
+      },
+      "111": {
+        "id": "Cn",
+        "name": "Copernicium",
+        "AtomicNumber": 112,
+        "Density": -1
+      },
+      "112": {
+        "id": "Nh",
+        "name": "Nihonium",
+        "AtomicNumber": 113,
+        "Density": -1
+      },
+      "113": {
+        "id": "Fl",
+        "name": "Flerovium",
+        "AtomicNumber": 114,
+        "Density": -1
+      },
+      "114": {
+        "id": "Mc",
+        "name": "Moscovium",
+        "AtomicNumber": 115,
+        "Density": -1
+      },
+      "115": {
+        "id": "Lv",
+        "name": "Livermorium",
+        "AtomicNumber": 116,
+        "Density": -1
+      },
+      "116": {
+        "id": "Ts",
+        "name": "Tennessine",
+        "AtomicNumber": 117,
+        "Density": -1
+      },
+      "117": {
+        "id": "Og",
+        "name": "Oganesson",
+        "AtomicNumber": 118,
+        "Density": -1
+      }
+    },
+    "states": {
+      "AL": {
+        "id": "AL",
+        "name": "Alabama",
+        "population": 5074296,
+        "area": 131426,
+        "gdp_billion": 265.4
+      },
+      "AK": {
+        "id": "AK",
+        "name": "Alaska",
+        "population": 733583,
+        "area": 1481347,
+        "gdp_billion": 66.5
+      },
+      "AZ": {
+        "id": "AZ",
+        "name": "Arizona",
+        "population": 7359197,
+        "area": 295234,
+        "gdp_billion": 456.5
+      },
+      "AR": {
+        "id": "AR",
+        "name": "Arkansas",
+        "population": 3045637,
+        "area": 137732,
+        "gdp_billion": 161.4
+      },
+      "CA": {
+        "id": "CA",
+        "name": "California",
+        "population": 39029342,
+        "area": 403466,
+        "gdp_billion": 3598.1
+      },
+      "CO": {
+        "id": "CO",
+        "name": "Colorado",
+        "population": 5839926,
+        "area": 269601,
+        "gdp_billion": 435.9
+      },
+      "CT": {
+        "id": "CT",
+        "name": "Connecticut",
+        "population": 3626205,
+        "area": 12542,
+        "gdp_billion": 290.0
+      },
+      "DE": {
+        "id": "DE",
+        "name": "Delaware",
+        "population": 1018396,
+        "area": 5061,
+        "gdp_billion": 82.1
+      },
+      "FL": {
+        "id": "FL",
+        "name": "Florida",
+        "population": 22610726,
+        "area": 139670,
+        "gdp_billion": 1231.9
+      },
+      "GA": {
+        "id": "GA",
+        "name": "Georgia",
+        "population": 10912876,
+        "area": 149976,
+        "gdp_billion": 754.0
+      },
+      "HI": {
+        "id": "HI",
+        "name": "Hawaii",
+        "population": 1440196,
+        "area": 16635,
+        "gdp_billion": 96.0
+      },
+      "ID": {
+        "id": "ID",
+        "name": "Idaho",
+        "population": 1939033,
+        "area": 214045,
+        "gdp_billion": 102.5
+      },
+      "IL": {
+        "id": "IL",
+        "name": "Illinois",
+        "population": 12582032,
+        "area": 143793,
+        "gdp_billion": 1033.3
+      },
+      "IN": {
+        "id": "IN",
+        "name": "Indiana",
+        "population": 6833037,
+        "area": 93720,
+        "gdp_billion": 425.5
+      },
+      "IA": {
+        "id": "IA",
+        "name": "Iowa",
+        "population": 3200517,
+        "area": 144701,
+        "gdp_billion": 238.9
+      },
+      "KS": {
+        "id": "KS",
+        "name": "Kansas",
+        "population": 2937150,
+        "area": 211754,
+        "gdp_billion": 217.1
+      },
+      "KY": {
+        "id": "KY",
+        "name": "Kentucky",
+        "population": 4512310,
+        "area": 102896,
+        "gdp_billion": 273.4
+      },
+      "LA": {
+        "id": "LA",
+        "name": "Louisiana",
+        "population": 4590241,
+        "area": 112825,
+        "gdp_billion": 290.1
+      },
+      "ME": {
+        "id": "ME",
+        "name": "Maine",
+        "population": 1385340,
+        "area": 79931,
+        "gdp_billion": 79.2
+      },
+      "MD": {
+        "id": "MD",
+        "name": "Maryland",
+        "population": 6164660,
+        "area": 25314,
+        "gdp_billion": 489.2
+      },
+      "MA": {
+        "id": "MA",
+        "name": "Massachusetts",
+        "population": 6981974,
+        "area": 20202,
+        "gdp_billion": 691.1
+      },
+      "MI": {
+        "id": "MI",
+        "name": "Michigan",
+        "population": 10034113,
+        "area": 147122,
+        "gdp_billion": 601.5
+      },
+      "MN": {
+        "id": "MN",
+        "name": "Minnesota",
+        "population": 5717184,
+        "area": 206232,
+        "gdp_billion": 456.2
+      },
+      "MS": {
+        "id": "MS",
+        "name": "Mississippi",
+        "population": 2940057,
+        "area": 121531,
+        "gdp_billion": 136.9
+      },
+      "MO": {
+        "id": "MO",
+        "name": "Missouri",
+        "population": 6177957,
+        "area": 178040,
+        "gdp_billion": 380.6
+      },
+      "MT": {
+        "id": "MT",
+        "name": "Montana",
+        "population": 1122867,
+        "area": 376962,
+        "gdp_billion": 67.9
+      },
+      "NE": {
+        "id": "NE",
+        "name": "Nebraska",
+        "population": 1967923,
+        "area": 199099,
+        "gdp_billion": 160.5
+      },
+      "NV": {
+        "id": "NV",
+        "name": "Nevada",
+        "population": 3177772,
+        "area": 284332,
+        "gdp_billion": 228.3
+      },
+      "NH": {
+        "id": "NH",
+        "name": "New Hampshire",
+        "population": 1395231,
+        "area": 23187,
+        "gdp_billion": 103.1
+      },
+      "NJ": {
+        "id": "NJ",
+        "name": "New Jersey",
+        "population": 9261699,
+        "area": 19047,
+        "gdp_billion": 740.9
+      },
+      "NM": {
+        "id": "NM",
+        "name": "New Mexico",
+        "population": 2113344,
+        "area": 314161,
+        "gdp_billion": 114.3
+      },
+      "NY": {
+        "id": "NY",
+        "name": "New York",
+        "population": 19677151,
+        "area": 122057,
+        "gdp_billion": 2053.2
+      },
+      "NC": {
+        "id": "NC",
+        "name": "North Carolina",
+        "population": 10698973,
+        "area": 125920,
+        "gdp_billion": 701.2
+      },
+      "ND": {
+        "id": "ND",
+        "name": "North Dakota",
+        "population": 779261,
+        "area": 178711,
+        "gdp_billion": 73.5
+      },
+      "OH": {
+        "id": "OH",
+        "name": "Ohio",
+        "population": 11756058,
+        "area": 105829,
+        "gdp_billion": 829.6
+      },
+      "OK": {
+        "id": "OK",
+        "name": "Oklahoma",
+        "population": 4019800,
+        "area": 177847,
+        "gdp_billion": 248.3
+      },
+      "OR": {
+        "id": "OR",
+        "name": "Oregon",
+        "population": 4240137,
+        "area": 248608,
+        "gdp_billion": 295.6
+      },
+      "PA": {
+        "id": "PA",
+        "name": "Pennsylvania",
+        "population": 12972008,
+        "area": 116074,
+        "gdp_billion": 933.6
+      },
+      "RI": {
+        "id": "RI",
+        "name": "Rhode Island",
+        "population": 1093734,
+        "area": 2678,
+        "gdp_billion": 68.4
+      },
+      "SC": {
+        "id": "SC",
+        "name": "South Carolina",
+        "population": 5282634,
+        "area": 77983,
+        "gdp_billion": 280.2
+      },
+      "SD": {
+        "id": "SD",
+        "name": "South Dakota",
+        "population": 909824,
+        "area": 196540,
+        "gdp_billion": 70.2
+      },
+      "TN": {
+        "id": "TN",
+        "name": "Tennessee",
+        "population": 7051339,
+        "area": 106798,
+        "gdp_billion": 471.7
+      },
+      "TX": {
+        "id": "TX",
+        "name": "Texas",
+        "population": 30029572,
+        "area": 678052,
+        "gdp_billion": 2005.5
+      },
+      "UT": {
+        "id": "UT",
+        "name": "Utah",
+        "population": 3380800,
+        "area": 212818,
+        "gdp_billion": 263.5
+      },
+      "VT": {
+        "id": "VT",
+        "name": "Vermont",
+        "population": 647464,
+        "area": 23871,
+        "gdp_billion": 42.9
+      },
+      "VA": {
+        "id": "VA",
+        "name": "Virginia",
+        "population": 8683619,
+        "area": 102279,
+        "gdp_billion": 671.5
+      },
+      "WA": {
+        "id": "WA",
+        "name": "Washington",
+        "population": 7785786,
+        "area": 172349,
+        "gdp_billion": 769.2
+      },
+      "WV": {
+        "id": "WV",
+        "name": "West Virginia",
+        "population": 1775156,
+        "area": 62455,
+        "gdp_billion": 82.0
+      },
+      "WI": {
+        "id": "WI",
+        "name": "Wisconsin",
+        "population": 5892539,
+        "area": 140268,
+        "gdp_billion": 403.5
+      },
+      "WY": {
+        "id": "WY",
+        "name": "Wyoming",
+        "population": 581381,
+        "area": 251470,
+        "gdp_billion": 50.8
+      }
+    },
+    "cities": {
+      "AFG": {
+        "id": "AFG",
+        "name": "Kabul",
+        "population": 4601789,
+        "elevation_m": 1791
+      },
+      "DZA": {
+        "id": "DZA",
+        "name": "Algiers",
+        "population": 3415811,
+        "elevation_m": 424
+      },
+      "AGO": {
+        "id": "AGO",
+        "name": "Luanda",
+        "population": 8952496,
+        "elevation_m": 43
+      },
+      "ARG": {
+        "id": "ARG",
+        "name": "Buenos Aires",
+        "population": 3054300,
+        "elevation_m": 25
+      },
+      "ARM": {
+        "id": "ARM",
+        "name": "Yerevan",
+        "population": 1093485,
+        "elevation_m": 865
+      },
+      "AUS": {
+        "id": "AUS",
+        "name": "Canberra",
+        "population": 467194,
+        "elevation_m": 577
+      },
+      "AUT": {
+        "id": "AUT",
+        "name": "Vienna",
+        "population": 1897491,
+        "elevation_m": 171
+      },
+      "AZE": {
+        "id": "AZE",
+        "name": "Baku",
+        "population": 2293100,
+        "elevation_m": 28
+      },
+      "BGD": {
+        "id": "BGD",
+        "name": "Dhaka",
+        "population": 8906039,
+        "elevation_m": 8
+      },
+      "BLR": {
+        "id": "BLR",
+        "name": "Minsk",
+        "population": 1996553,
+        "elevation_m": 220
+      },
+      "BEL": {
+        "id": "BEL",
+        "name": "Brussels",
+        "population": 1208542,
+        "elevation_m": 56
+      },
+      "BEN": {
+        "id": "BEN",
+        "name": "Cotonou",
+        "population": 762000,
+        "elevation_m": 9
+      },
+      "BOL": {
+        "id": "BOL",
+        "name": "La Paz",
+        "population": 812799,
+        "elevation_m": 3640
+      },
+      "BIH": {
+        "id": "BIH",
+        "name": "Sarajevo",
+        "population": 275524,
+        "elevation_m": 511
+      },
+      "BWA": {
+        "id": "BWA",
+        "name": "Gaborone",
+        "population": 269613,
+        "elevation_m": 1014
+      },
+      "BRA": {
+        "id": "BRA",
+        "name": "Brasilia",
+        "population": 3015268,
+        "elevation_m": 1172
+      },
+      "BGR": {
+        "id": "BGR",
+        "name": "Sofia",
+        "population": 1241675,
+        "elevation_m": 550
+      },
+      "BFA": {
+        "id": "BFA",
+        "name": "Ouagadougou",
+        "population": 2780000,
+        "elevation_m": 305
+      },
+      "CMR": {
+        "id": "CMR",
+        "name": "Yaounde",
+        "population": 3412000,
+        "elevation_m": 760
+      },
+      "CAN": {
+        "id": "CAN",
+        "name": "Ottawa",
+        "population": 1017449,
+        "elevation_m": 70
+      },
+      "CHL": {
+        "id": "CHL",
+        "name": "Santiago",
+        "population": 6310000,
+        "elevation_m": 520
+      },
+      "CHN": {
+        "id": "CHN",
+        "name": "Beijing",
+        "population": 21893095,
+        "elevation_m": 43
+      },
+      "COL": {
+        "id": "COL",
+        "name": "Bogota",
+        "population": 7878783,
+        "elevation_m": 2600
+      },
+      "COD": {
+        "id": "COD",
+        "name": "Kinshasa",
+        "population": 17071000,
+        "elevation_m": 322
+      },
+      "CRI": {
+        "id": "CRI",
+        "name": "San Jose",
+        "population": 345000,
+        "elevation_m": 1172
+      },
+      "HRV": {
+        "id": "HRV",
+        "name": "Zagreb",
+        "population": 806341,
+        "elevation_m": 122
+      },
+      "CUB": {
+        "id": "CUB",
+        "name": "Havana",
+        "population": 2132183,
+        "elevation_m": 59
+      },
+      "CZE": {
+        "id": "CZE",
+        "name": "Prague",
+        "population": 1357326,
+        "elevation_m": 200
+      },
+      "DNK": {
+        "id": "DNK",
+        "name": "Copenhagen",
+        "population": 794128,
+        "elevation_m": 5
+      },
+      "ECU": {
+        "id": "ECU",
+        "name": "Quito",
+        "population": 1978376,
+        "elevation_m": 2850
+      },
+      "EGY": {
+        "id": "EGY",
+        "name": "Cairo",
+        "population": 21322750,
+        "elevation_m": 23
+      },
+      "SLV": {
+        "id": "SLV",
+        "name": "San Salvador",
+        "population": 316090,
+        "elevation_m": 658
+      },
+      "ETH": {
+        "id": "ETH",
+        "name": "Addis Ababa",
+        "population": 3352000,
+        "elevation_m": 2355
+      },
+      "FIN": {
+        "id": "FIN",
+        "name": "Helsinki",
+        "population": 658864,
+        "elevation_m": 26
+      },
+      "FRA": {
+        "id": "FRA",
+        "name": "Paris",
+        "population": 2165423,
+        "elevation_m": 35
+      },
+      "DEU": {
+        "id": "DEU",
+        "name": "Berlin",
+        "population": 3850809,
+        "elevation_m": 34
+      },
+      "GHA": {
+        "id": "GHA",
+        "name": "Accra",
+        "population": 2514000,
+        "elevation_m": 61
+      },
+      "GRC": {
+        "id": "GRC",
+        "name": "Athens",
+        "population": 3156000,
+        "elevation_m": 70
+      },
+      "GTM": {
+        "id": "GTM",
+        "name": "Guatemala City",
+        "population": 3000000,
+        "elevation_m": 1502
+      },
+      "GIN": {
+        "id": "GIN",
+        "name": "Conakry",
+        "population": 1667864,
+        "elevation_m": 27
+      },
+      "HTI": {
+        "id": "HTI",
+        "name": "Port-au-Prince",
+        "population": 1234750,
+        "elevation_m": 34
+      },
+      "HND": {
+        "id": "HND",
+        "name": "Tegucigalpa",
+        "population": 1400000,
+        "elevation_m": 1004
+      },
+      "HUN": {
+        "id": "HUN",
+        "name": "Budapest",
+        "population": 1752286,
+        "elevation_m": 102
+      },
+      "IND": {
+        "id": "IND",
+        "name": "New Delhi",
+        "population": 32941000,
+        "elevation_m": 216
+      },
+      "IDN": {
+        "id": "IDN",
+        "name": "Jakarta",
+        "population": 10562088,
+        "elevation_m": 8
+      },
+      "IRN": {
+        "id": "IRN",
+        "name": "Tehran",
+        "population": 9259009,
+        "elevation_m": 1191
+      },
+      "IRQ": {
+        "id": "IRQ",
+        "name": "Baghdad",
+        "population": 7216000,
+        "elevation_m": 34
+      },
+      "IRL": {
+        "id": "IRL",
+        "name": "Dublin",
+        "population": 1173179,
+        "elevation_m": 20
+      },
+      "ISR": {
+        "id": "ISR",
+        "name": "Jerusalem",
+        "population": 980000,
+        "elevation_m": 786
+      },
+      "ITA": {
+        "id": "ITA",
+        "name": "Rome",
+        "population": 2860009,
+        "elevation_m": 20
+      },
+      "JAM": {
+        "id": "JAM",
+        "name": "Kingston",
+        "population": 937700,
+        "elevation_m": 4
+      },
+      "JPN": {
+        "id": "JPN",
+        "name": "Tokyo",
+        "population": 13960000,
+        "elevation_m": 40
+      },
+      "JOR": {
+        "id": "JOR",
+        "name": "Amman",
+        "population": 4007526,
+        "elevation_m": 777
+      },
+      "KAZ": {
+        "id": "KAZ",
+        "name": "Astana",
+        "population": 1200000,
+        "elevation_m": 347
+      },
+      "KEN": {
+        "id": "KEN",
+        "name": "Nairobi",
+        "population": 4922695,
+        "elevation_m": 1661
+      },
+      "PRK": {
+        "id": "PRK",
+        "name": "Pyongyang",
+        "population": 3222000,
+        "elevation_m": 38
+      },
+      "KOR": {
+        "id": "KOR",
+        "name": "Seoul",
+        "population": 9736027,
+        "elevation_m": 38
+      },
+      "KWT": {
+        "id": "KWT",
+        "name": "Kuwait City",
+        "population": 3114000,
+        "elevation_m": 55
+      },
+      "LAO": {
+        "id": "LAO",
+        "name": "Vientiane",
+        "population": 948477,
+        "elevation_m": 171
+      },
+      "LBN": {
+        "id": "LBN",
+        "name": "Beirut",
+        "population": 2424000,
+        "elevation_m": 34
+      },
+      "LBY": {
+        "id": "LBY",
+        "name": "Tripoli",
+        "population": 1165900,
+        "elevation_m": 81
+      },
+      "MDG": {
+        "id": "MDG",
+        "name": "Antananarivo",
+        "population": 3058695,
+        "elevation_m": 1276
+      },
+      "MWI": {
+        "id": "MWI",
+        "name": "Lilongwe",
+        "population": 1077116,
+        "elevation_m": 1050
+      },
+      "MYS": {
+        "id": "MYS",
+        "name": "Kuala Lumpur",
+        "population": 1982112,
+        "elevation_m": 66
+      },
+      "MLI": {
+        "id": "MLI",
+        "name": "Bamako",
+        "population": 2693660,
+        "elevation_m": 330
+      },
+      "MEX": {
+        "id": "MEX",
+        "name": "Mexico City",
+        "population": 9209944,
+        "elevation_m": 2240
+      },
+      "MDA": {
+        "id": "MDA",
+        "name": "Chisinau",
+        "population": 665013,
+        "elevation_m": 79
+      },
+      "MNG": {
+        "id": "MNG",
+        "name": "Ulaanbaatar",
+        "population": 1630000,
+        "elevation_m": 1350
+      },
+      "MAR": {
+        "id": "MAR",
+        "name": "Rabat",
+        "population": 577827,
+        "elevation_m": 75
+      },
+      "MOZ": {
+        "id": "MOZ",
+        "name": "Maputo",
+        "population": 1191613,
+        "elevation_m": 47
+      },
+      "MMR": {
+        "id": "MMR",
+        "name": "Naypyidaw",
+        "population": 1160000,
+        "elevation_m": 114
+      },
+      "NAM": {
+        "id": "NAM",
+        "name": "Windhoek",
+        "population": 431000,
+        "elevation_m": 1728
+      },
+      "NPL": {
+        "id": "NPL",
+        "name": "Kathmandu",
+        "population": 1442271,
+        "elevation_m": 1400
+      },
+      "NLD": {
+        "id": "NLD",
+        "name": "Amsterdam",
+        "population": 921402,
+        "elevation_m": 2
+      },
+      "NZL": {
+        "id": "NZL",
+        "name": "Wellington",
+        "population": 212700,
+        "elevation_m": 126
+      },
+      "NIC": {
+        "id": "NIC",
+        "name": "Managua",
+        "population": 1051000,
+        "elevation_m": 83
+      },
+      "NER": {
+        "id": "NER",
+        "name": "Niamey",
+        "population": 1323000,
+        "elevation_m": 218
+      },
+      "NGA": {
+        "id": "NGA",
+        "name": "Abuja",
+        "population": 3840317,
+        "elevation_m": 342
+      },
+      "NOR": {
+        "id": "NOR",
+        "name": "Oslo",
+        "population": 1007459,
+        "elevation_m": 23
+      },
+      "OMN": {
+        "id": "OMN",
+        "name": "Muscat",
+        "population": 1590000,
+        "elevation_m": 8
+      },
+      "PAK": {
+        "id": "PAK",
+        "name": "Islamabad",
+        "population": 1095209,
+        "elevation_m": 507
+      },
+      "PAN": {
+        "id": "PAN",
+        "name": "Panama City",
+        "population": 880691,
+        "elevation_m": 27
+      },
+      "PRY": {
+        "id": "PRY",
+        "name": "Asuncion",
+        "population": 525294,
+        "elevation_m": 53
+      },
+      "PER": {
+        "id": "PER",
+        "name": "Lima",
+        "population": 10555974,
+        "elevation_m": 154
+      },
+      "PHL": {
+        "id": "PHL",
+        "name": "Manila",
+        "population": 1846513,
+        "elevation_m": 16
+      },
+      "POL": {
+        "id": "POL",
+        "name": "Warsaw",
+        "population": 1794166,
+        "elevation_m": 113
+      },
+      "PRT": {
+        "id": "PRT",
+        "name": "Lisbon",
+        "population": 567047,
+        "elevation_m": 77
+      },
+      "ROU": {
+        "id": "ROU",
+        "name": "Bucharest",
+        "population": 1716983,
+        "elevation_m": 85
+      },
+      "RUS": {
+        "id": "RUS",
+        "name": "Moscow",
+        "population": 12640818,
+        "elevation_m": 156
+      },
+      "RWA": {
+        "id": "RWA",
+        "name": "Kigali",
+        "population": 1132686,
+        "elevation_m": 1567
+      },
+      "SAU": {
+        "id": "SAU",
+        "name": "Riyadh",
+        "population": 7676654,
+        "elevation_m": 620
+      },
+      "SEN": {
+        "id": "SEN",
+        "name": "Dakar",
+        "population": 3137196,
+        "elevation_m": 22
+      },
+      "SLE": {
+        "id": "SLE",
+        "name": "Freetown",
+        "population": 1050301,
+        "elevation_m": 27
+      },
+      "SOM": {
+        "id": "SOM",
+        "name": "Mogadishu",
+        "population": 2587183,
+        "elevation_m": 9
+      },
+      "ZAF": {
+        "id": "ZAF",
+        "name": "Pretoria",
+        "population": 741651,
+        "elevation_m": 1339
+      },
+      "SSD": {
+        "id": "SSD",
+        "name": "Juba",
+        "population": 525953,
+        "elevation_m": 457
+      },
+      "ESP": {
+        "id": "ESP",
+        "name": "Madrid",
+        "population": 3305408,
+        "elevation_m": 667
+      },
+      "LKA": {
+        "id": "LKA",
+        "name": "Sri Jayawardenepura Kotte",
+        "population": 115826,
+        "elevation_m": 7
+      },
+      "SDN": {
+        "id": "SDN",
+        "name": "Khartoum",
+        "population": 5534000,
+        "elevation_m": 382
+      },
+      "SWE": {
+        "id": "SWE",
+        "name": "Stockholm",
+        "population": 980000,
+        "elevation_m": 28
+      },
+      "CHE": {
+        "id": "CHE",
+        "name": "Bern",
+        "population": 134794,
+        "elevation_m": 540
+      },
+      "SYR": {
+        "id": "SYR",
+        "name": "Damascus",
+        "population": 2079000,
+        "elevation_m": 691
+      },
+      "TWN": {
+        "id": "TWN",
+        "name": "Taipei",
+        "population": 2646204,
+        "elevation_m": 9
+      },
+      "TZA": {
+        "id": "TZA",
+        "name": "Dodoma",
+        "population": 410956,
+        "elevation_m": 1120
+      },
+      "THA": {
+        "id": "THA",
+        "name": "Bangkok",
+        "population": 10722506,
+        "elevation_m": 2
+      },
+      "TUN": {
+        "id": "TUN",
+        "name": "Tunis",
+        "population": 1056247,
+        "elevation_m": 4
+      },
+      "TUR": {
+        "id": "TUR",
+        "name": "Ankara",
+        "population": 5663322,
+        "elevation_m": 938
+      },
+      "UGA": {
+        "id": "UGA",
+        "name": "Kampala",
+        "population": 1680000,
+        "elevation_m": 1189
+      },
+      "UKR": {
+        "id": "UKR",
+        "name": "Kyiv",
+        "population": 2962180,
+        "elevation_m": 179
+      },
+      "ARE": {
+        "id": "ARE",
+        "name": "Abu Dhabi",
+        "population": 1483000,
+        "elevation_m": 5
+      },
+      "GBR": {
+        "id": "GBR",
+        "name": "London",
+        "population": 8799800,
+        "elevation_m": 11
+      },
+      "USA": {
+        "id": "USA",
+        "name": "Washington D.C.",
+        "population": 689545,
+        "elevation_m": 0
+      },
+      "URY": {
+        "id": "URY",
+        "name": "Montevideo",
+        "population": 1381000,
+        "elevation_m": 43
+      },
+      "UZB": {
+        "id": "UZB",
+        "name": "Tashkent",
+        "population": 2571700,
+        "elevation_m": 455
+      },
+      "VEN": {
+        "id": "VEN",
+        "name": "Caracas",
+        "population": 2900000,
+        "elevation_m": 900
+      },
+      "VNM": {
+        "id": "VNM",
+        "name": "Hanoi",
+        "population": 8435700,
+        "elevation_m": 12
+      },
+      "YEM": {
+        "id": "YEM",
+        "name": "Sanaa",
+        "population": 3937500,
+        "elevation_m": 2250
+      },
+      "ZMB": {
+        "id": "ZMB",
+        "name": "Lusaka",
+        "population": 3360000,
+        "elevation_m": 1277
+      },
+      "ZWE": {
+        "id": "ZWE",
+        "name": "Harare",
+        "population": 1542813,
+        "elevation_m": 1483
+      }
+    }
+  }
+}

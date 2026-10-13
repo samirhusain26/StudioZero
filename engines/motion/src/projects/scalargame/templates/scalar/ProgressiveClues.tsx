@@ -72,6 +72,7 @@ const Component: React.FC<TemplateProps> = (props) => {
   }
 
   const ghost = 1 - 0.86 * enter(frame, t.reveal, 0.3);   // clue text steps back so the stamp reads
+  const under = 1 - enter(frame, t.reveal, 0.3);           // the stamped clue (slot 3) clears fully: a two-line clue would show around the stamp
   const slotY = (i: number) => PILE_TOP + i * (SLOT_H + SLOT_GAP);
   const stampY = slotY(2) + SLOT_H / 2;
 
@@ -94,7 +95,7 @@ const Component: React.FC<TemplateProps> = (props) => {
         {clues.map((text, i) => {
           const d = deal(frame, t.items[i], TILTS[i % TILTS.length], 1);
           if (!d) return null;
-          return <ClueCard key={i} s={s} n={i + 1} text={text} x={X0} y={slotY(i)} w={W} h={SLOT_H} transform={d.transform} lift={d.lift} textFade={ghost} />;
+          return <ClueCard key={i} s={s} n={i + 1} text={text} x={X0} y={slotY(i)} w={W} h={SLOT_H} transform={d.transform} lift={d.lift} textFade={i === 2 ? under : ghost} />;
         })}
         <Stamp frame={frame} at={t.reveal} cx={X0 + W / 2 + 10} cy={stampY} rotate={-5} small="FOUND" big={q.answer}
           bigSize={q.answer.length > 12 ? 66 : 78} fontDisplay={s.fontDisplay} fontBody={s.fontBody} />

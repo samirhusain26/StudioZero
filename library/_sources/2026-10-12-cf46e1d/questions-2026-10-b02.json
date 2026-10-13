@@ -1,0 +1,3868 @@
+{
+  "set": "questions-2026-10-b02",
+  "snapshotId": "2026-10-12-cf46e1d",
+  "snapshotHash": "731089febead8b97eebb312778f1cecdc8a2d721766200c2dadf943b75824524",
+  "gameCommit": "cf46e1daeccad4008dde2a1af1bc625275059458",
+  "checkedFor": "2026-10-12",
+  "latestEndedDate": "2026-10-08",
+  "reviewBy": "2027-01-09",
+  "questions": [
+    {
+      "key": "scalar-clues-rou",
+      "game": "scalar",
+      "format": "progressive-clues",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Larger European countries; counting neighbors is the step.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "ROU",
+      "questionId": "scalar:ROU:clues",
+      "hook": "Three clues. One country.",
+      "question": "Which country?",
+      "clues": [
+        "In Europe",
+        "More than 10 million people",
+        "Shares land borders with 5 countries"
+      ],
+      "clueIds": [
+        "continent=Europe",
+        "pop>10000000",
+        "borders=5"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Hungary",
+          "id": "HUN"
+        },
+        {
+          "key": "B",
+          "label": "Romania",
+          "id": "ROU"
+        },
+        {
+          "key": "C",
+          "label": "Poland",
+          "id": "POL"
+        }
+      ],
+      "answer": "Romania",
+      "answerKey": "B",
+      "answerAliases": [
+        "ROU"
+      ],
+      "explanation": "15 European countries have more than 10 million people. Only Romania borders exactly 5 countries: Bulgaria, Hungary, Moldova, Serbia and Ukraine.",
+      "evidence": {
+        "sources": [
+          {
+            "title": "UN M49 standard country and area codes (continent grouping used by Scalar)",
+            "url": "https://unstats.un.org/unsd/methodology/m49/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Romania",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/ro.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Romania (2025)",
+            "url": "https://api.worldbank.org/v2/country/ROU/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            44,
+            15,
+            1
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 19020271,
+            "year": 2025
+          },
+          "area": {
+            "value": 238400,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-clues-isl",
+      "game": "scalar",
+      "format": "progressive-clues",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Tiny population, big island: the last clue rules out the microstates.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "ISL",
+      "questionId": "scalar:ISL:clues",
+      "hook": "Three clues. One country.",
+      "question": "Which country?",
+      "clues": [
+        "In Europe",
+        "Fewer than 1 million people",
+        "Larger than 100,000 km²"
+      ],
+      "clueIds": [
+        "continent=Europe",
+        "pop<1000000",
+        "area>100000"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Iceland",
+          "id": "ISL"
+        },
+        {
+          "key": "B",
+          "label": "Malta",
+          "id": "MLT"
+        },
+        {
+          "key": "C",
+          "label": "Montenegro",
+          "id": "MNE"
+        }
+      ],
+      "answer": "Iceland",
+      "answerKey": "A",
+      "answerAliases": [
+        "ISL"
+      ],
+      "explanation": "9 European countries have fewer than 1 million people. Only Iceland is larger than 100,000 km²: 103,000 km².",
+      "evidence": {
+        "sources": [
+          {
+            "title": "UN M49 standard country and area codes (continent grouping used by Scalar)",
+            "url": "https://unstats.un.org/unsd/methodology/m49/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Iceland (2025)",
+            "url": "https://api.worldbank.org/v2/country/ISL/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Iceland (2023)",
+            "url": "https://api.worldbank.org/v2/country/ISL/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            44,
+            9,
+            1
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 392404,
+            "year": 2025
+          },
+          "area": {
+            "value": 103000,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-clues-aus",
+      "game": "scalar",
+      "format": "progressive-clues",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Oceania has few large countries; the size clue makes it easy.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "AUS",
+      "questionId": "scalar:AUS:clues",
+      "hook": "Three clues. One country.",
+      "question": "Which country?",
+      "clues": [
+        "In Oceania",
+        "More than 1 million people",
+        "Larger than 500,000 km²"
+      ],
+      "clueIds": [
+        "continent=Oceania",
+        "pop>1000000",
+        "area>500000"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Papua New Guinea",
+          "id": "PNG"
+        },
+        {
+          "key": "B",
+          "label": "New Zealand",
+          "id": "NZL"
+        },
+        {
+          "key": "C",
+          "label": "Australia",
+          "id": "AUS"
+        }
+      ],
+      "answer": "Australia",
+      "answerKey": "C",
+      "answerAliases": [
+        "AUS"
+      ],
+      "explanation": "Only 3 countries in Oceania have more than 1 million people, and only Australia is larger than 500,000 km²: 7.74 million km².",
+      "evidence": {
+        "sources": [
+          {
+            "title": "UN M49 standard country and area codes (continent grouping used by Scalar)",
+            "url": "https://unstats.un.org/unsd/methodology/m49/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Australia (2025)",
+            "url": "https://api.worldbank.org/v2/country/AUS/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Australia (2023)",
+            "url": "https://api.worldbank.org/v2/country/AUS/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            14,
+            3,
+            1
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 27614411,
+            "year": 2025
+          },
+          "area": {
+            "value": 7741220,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-clues-swz",
+      "game": "scalar",
+      "format": "progressive-clues",
+      "difficulty": "challenging",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Two southern African kingdoms; the neighbor count separates them.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "SWZ",
+      "questionId": "scalar:SWZ:clues",
+      "hook": "Three clues. One country.",
+      "question": "Which country?",
+      "clues": [
+        "In Africa",
+        "Shares land borders with 2 countries",
+        "Has a monarch as head of state"
+      ],
+      "clueIds": [
+        "continent=Africa",
+        "borders=2",
+        "monarchy"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Lesotho",
+          "id": "LSO"
+        },
+        {
+          "key": "B",
+          "label": "Eswatini",
+          "id": "SWZ"
+        },
+        {
+          "key": "C",
+          "label": "Equatorial Guinea",
+          "id": "GNQ"
+        }
+      ],
+      "answer": "Eswatini",
+      "answerKey": "B",
+      "answerAliases": [
+        "SWZ"
+      ],
+      "explanation": "Lesotho borders 1 country and Equatorial Guinea has no monarch. Eswatini borders 2 (Mozambique and South Africa) and has a monarch.",
+      "evidence": {
+        "sources": [
+          {
+            "title": "UN M49 standard country and area codes (continent grouping used by Scalar)",
+            "url": "https://unstats.un.org/unsd/methodology/m49/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Eswatini",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/wz.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            54,
+            5,
+            1
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 1256174,
+            "year": 2025
+          },
+          "area": {
+            "value": 17360,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-elim-cze",
+      "game": "scalar",
+      "format": "candidate-elimination",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Central and Eastern European neighbors; coast, neighbor count and size each separate them.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "CZE",
+      "questionId": "scalar:CZE:elimination",
+      "hook": "Only one of these fits every clue.",
+      "question": "Which country fits all three clues?",
+      "clues": [
+        "Landlocked",
+        "Shares land borders with 4 countries",
+        "More than 5 million people"
+      ],
+      "clueIds": [
+        "landlocked",
+        "borders=4",
+        "pop>5000000"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Poland",
+          "id": "POL"
+        },
+        {
+          "key": "B",
+          "label": "Czechia",
+          "id": "CZE"
+        },
+        {
+          "key": "C",
+          "label": "Moldova",
+          "id": "MDA"
+        }
+      ],
+      "answer": "Czechia",
+      "answerKey": "B",
+      "answerAliases": [
+        "CZE",
+        "Czech Republic"
+      ],
+      "explanation": "Czechia is landlocked, borders 4 countries (Austria, Germany, Poland and Slovakia) and has 10.9 million people.",
+      "evidence": {
+        "sources": [
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Czechia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/ez.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Czechia (2025)",
+            "url": "https://api.worldbank.org/v2/country/CZE/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            44,
+            8,
+            6
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "eliminatedPerClue": [
+            [
+              "POL"
+            ],
+            [
+              "MDA"
+            ],
+            []
+          ],
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 10886878,
+            "year": 2025
+          },
+          "area": {
+            "value": 78871.43,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-elim-khm",
+      "game": "scalar",
+      "format": "candidate-elimination",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Southeast Asia; Indonesia’s size and the Philippines’ islands give the clues away.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "KHM",
+      "questionId": "scalar:KHM:elimination",
+      "hook": "Only one of these fits every clue.",
+      "question": "Which country fits all three clues?",
+      "clues": [
+        "Shares land borders with 3 countries",
+        "Fewer than 50 million people",
+        "Smaller than 500,000 km²"
+      ],
+      "clueIds": [
+        "borders=3",
+        "pop<50000000",
+        "area<500000"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Indonesia",
+          "id": "IDN"
+        },
+        {
+          "key": "B",
+          "label": "Philippines",
+          "id": "PHL"
+        },
+        {
+          "key": "C",
+          "label": "Cambodia",
+          "id": "KHM"
+        }
+      ],
+      "answer": "Cambodia",
+      "answerKey": "C",
+      "answerAliases": [
+        "KHM"
+      ],
+      "explanation": "Cambodia borders 3 countries (Laos, Thailand and Vietnam), has 17.8 million people and covers 181,000 km².",
+      "evidence": {
+        "sources": [
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Cambodia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/east-n-southeast-asia/cb.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Cambodia (2025)",
+            "url": "https://api.worldbank.org/v2/country/KHM/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Cambodia (2023)",
+            "url": "https://api.worldbank.org/v2/country/KHM/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            28,
+            25,
+            22
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "eliminatedPerClue": [
+            [
+              "PHL"
+            ],
+            [
+              "IDN"
+            ],
+            []
+          ],
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 17847982,
+            "year": 2025
+          },
+          "area": {
+            "value": 181040,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-elim-tun",
+      "game": "scalar",
+      "format": "candidate-elimination",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Three North African neighbors; counting neighbors is the step. (Morocco left out: its count depends on Western Sahara.)",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "TUN",
+      "questionId": "scalar:TUN:elimination",
+      "hook": "Only one of these fits every clue.",
+      "question": "Which country fits all three clues?",
+      "clues": [
+        "Fewer than 50 million people",
+        "Shares land borders with 2 countries",
+        "Smaller than 500,000 km²"
+      ],
+      "clueIds": [
+        "pop<50000000",
+        "borders=2",
+        "area<500000"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Tunisia",
+          "id": "TUN"
+        },
+        {
+          "key": "B",
+          "label": "Egypt",
+          "id": "EGY"
+        },
+        {
+          "key": "C",
+          "label": "Algeria",
+          "id": "DZA"
+        }
+      ],
+      "answer": "Tunisia",
+      "answerKey": "A",
+      "answerAliases": [
+        "TUN"
+      ],
+      "explanation": "Tunisia has 12.3 million people, borders 2 countries (Algeria and Libya) and covers 164,000 km².",
+      "evidence": {
+        "sources": [
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Tunisia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ts.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Tunisia (2025)",
+            "url": "https://api.worldbank.org/v2/country/TUN/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Tunisia (2023)",
+            "url": "https://api.worldbank.org/v2/country/TUN/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            167,
+            27,
+            24
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "eliminatedPerClue": [
+            [
+              "EGY"
+            ],
+            [
+              "DZA"
+            ],
+            []
+          ],
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 12348573,
+            "year": 2025
+          },
+          "area": {
+            "value": 163610,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-elim-blr",
+      "game": "scalar",
+      "format": "candidate-elimination",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Eastern European neighbors; needs coastlines and population pictured.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "BLR",
+      "questionId": "scalar:BLR:elimination",
+      "hook": "Only one of these fits every clue.",
+      "question": "Which country fits all three clues?",
+      "clues": [
+        "Shares land borders with 5 countries",
+        "Landlocked",
+        "Fewer than 10 million people"
+      ],
+      "clueIds": [
+        "borders=5",
+        "landlocked",
+        "pop<10000000"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Poland",
+          "id": "POL"
+        },
+        {
+          "key": "B",
+          "label": "Belarus",
+          "id": "BLR"
+        },
+        {
+          "key": "C",
+          "label": "Romania",
+          "id": "ROU"
+        }
+      ],
+      "answer": "Belarus",
+      "answerKey": "B",
+      "answerAliases": [
+        "BLR"
+      ],
+      "explanation": "Belarus borders 5 countries (Latvia, Lithuania, Poland, Russia and Ukraine), has no coastline and has 9.1 million people.",
+      "evidence": {
+        "sources": [
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Belarus",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/bo.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Belarus (2025)",
+            "url": "https://api.worldbank.org/v2/country/BLR/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            25,
+            10,
+            6
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "eliminatedPerClue": [
+            [
+              "POL"
+            ],
+            [
+              "ROU"
+            ],
+            []
+          ],
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 9085991,
+            "year": 2025
+          },
+          "area": {
+            "value": 207629,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-clues-kor",
+      "game": "scalar",
+      "format": "progressive-clues",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": true,
+      "rationale": "One-neighbor Asian states; population settles it.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "KOR",
+      "questionId": "scalar:KOR:clues",
+      "hook": "Three clues. One country.",
+      "question": "Which country?",
+      "clues": [
+        "In Asia",
+        "Shares land borders with 1 country",
+        "More than 10 million people"
+      ],
+      "clueIds": [
+        "continent=Asia",
+        "borders=1",
+        "pop>10000000"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "South Korea",
+          "id": "KOR"
+        },
+        {
+          "key": "B",
+          "label": "Qatar",
+          "id": "QAT"
+        },
+        {
+          "key": "C",
+          "label": "Brunei",
+          "id": "BRN"
+        }
+      ],
+      "answer": "South Korea",
+      "answerKey": "A",
+      "answerAliases": [
+        "KOR"
+      ],
+      "explanation": "South Korea borders only North Korea and has more than 10 million people: 51.7 million.",
+      "evidence": {
+        "sources": [
+          {
+            "title": "UN M49 standard country and area codes (continent grouping used by Scalar)",
+            "url": "https://unstats.un.org/unsd/methodology/m49/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — South Korea",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/east-n-southeast-asia/ks.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — South Korea (2025)",
+            "url": "https://api.worldbank.org/v2/country/KOR/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            49,
+            5,
+            1
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 51684564,
+            "year": 2025
+          },
+          "area": {
+            "value": 100450,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "scalar-elim-zaf",
+      "game": "scalar",
+      "format": "candidate-elimination",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": true,
+      "rationale": "Three large African countries.",
+      "destination": {
+        "game": "scalar",
+        "deepLink": "/scalar"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "ZAF",
+      "questionId": "scalar:ZAF:elimination",
+      "hook": "Only one of these fits every clue.",
+      "question": "Which country fits all three clues?",
+      "clues": [
+        "More than 50 million people",
+        "Shares land borders with 6 countries",
+        "Larger than 1 million km²"
+      ],
+      "clueIds": [
+        "pop>50000000",
+        "borders=6",
+        "area>1000000"
+      ],
+      "choices": [
+        {
+          "key": "A",
+          "label": "Nigeria",
+          "id": "NGA"
+        },
+        {
+          "key": "B",
+          "label": "Angola",
+          "id": "AGO"
+        },
+        {
+          "key": "C",
+          "label": "South Africa",
+          "id": "ZAF"
+        }
+      ],
+      "answer": "South Africa",
+      "answerKey": "C",
+      "answerAliases": [
+        "ZAF"
+      ],
+      "explanation": "South Africa has 64.7 million people, borders 6 countries (Botswana, Eswatini, Lesotho, Mozambique, Namibia and Zimbabwe) and covers 1.22 million km².",
+      "evidence": {
+        "sources": [
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — South Africa",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/sf.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — South Africa (2025)",
+            "url": "https://api.worldbank.org/v2/country/ZAF/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — South Africa (2023)",
+            "url": "https://api.worldbank.org/v2/country/ZAF/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            31,
+            4,
+            3
+          ],
+          "universe": 196,
+          "numericMargin": 0.03,
+          "eliminatedPerClue": [
+            [
+              "AGO"
+            ],
+            [
+              "NGA"
+            ],
+            []
+          ],
+          "scalarDailyPickWindow": "2026-10-12+90d clear"
+        },
+        "values": {
+          "population": {
+            "value": 64747319,
+            "year": 2025
+          },
+          "area": {
+            "value": 1219090,
+            "year": 2023
+          }
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/gameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-h2h-kor-sau",
+      "game": "continuum",
+      "format": "head-to-head",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Saudi Arabia’s size suggests more people; South Korea is far more crowded.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "KOR-SAU",
+      "questionId": "continuum:population:KOR-SAU:head-to-head",
+      "hook": "Which has more people?",
+      "question": "More people: South Korea or Saudi Arabia?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "South Korea",
+          "id": "KOR"
+        },
+        {
+          "key": "B",
+          "label": "Saudi Arabia",
+          "id": "SAU"
+        }
+      ],
+      "answer": "South Korea",
+      "answerKey": "A",
+      "answerAliases": [
+        "KOR"
+      ],
+      "explanation": "South Korea: 51.7 million. Saudi Arabia: 37 million, on 21.4× the area.",
+      "metric": {
+        "id": "population",
+        "label": "people",
+        "definition": "Total population (World Bank estimate)",
+        "year": 2025,
+        "unit": "people"
+      },
+      "values": [
+        {
+          "id": "KOR",
+          "label": "South Korea",
+          "value": 51684564,
+          "text": "51.7 million"
+        },
+        {
+          "id": "SAU",
+          "label": "Saudi Arabia",
+          "value": 36973555,
+          "text": "37 million"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI SP.POP.TOTL — South Korea (2025)",
+            "url": "https://api.worldbank.org/v2/country/KOR/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Saudi Arabia (2025)",
+            "url": "https://api.worldbank.org/v2/country/SAU/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — South Korea (2023)",
+            "url": "https://api.worldbank.org/v2/country/KOR/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Saudi Arabia (2023)",
+            "url": "https://api.worldbank.org/v2/country/SAU/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "ratio": 1.398,
+          "gameDataAgrees": true,
+          "minRatio": 1.15,
+          "referenceYear": 2025
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-h2h-deu-pry",
+      "game": "continuum",
+      "format": "head-to-head",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Germany’s population and economy make it feel bigger than it is.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "DEU-PRY",
+      "questionId": "continuum:area:DEU-PRY:head-to-head",
+      "hook": "Which is bigger?",
+      "question": "Larger area: Germany or Paraguay?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Germany",
+          "id": "DEU"
+        },
+        {
+          "key": "B",
+          "label": "Paraguay",
+          "id": "PRY"
+        }
+      ],
+      "answer": "Paraguay",
+      "answerKey": "B",
+      "answerAliases": [
+        "PRY"
+      ],
+      "explanation": "Paraguay 407,000 km² · Germany 358,000 km². Germany has 11.9× as many people.",
+      "metric": {
+        "id": "area",
+        "label": "area",
+        "definition": "Total area: land plus inland water (World Bank)",
+        "year": 2023,
+        "unit": "km²"
+      },
+      "values": [
+        {
+          "id": "DEU",
+          "label": "Germany",
+          "value": 357680,
+          "text": "358,000 km²"
+        },
+        {
+          "id": "PRY",
+          "label": "Paraguay",
+          "value": 406752,
+          "text": "407,000 km²"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Germany (2023)",
+            "url": "https://api.worldbank.org/v2/country/DEU/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Paraguay (2023)",
+            "url": "https://api.worldbank.org/v2/country/PRY/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Paraguay (2025)",
+            "url": "https://api.worldbank.org/v2/country/PRY/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Germany (2025)",
+            "url": "https://api.worldbank.org/v2/country/DEU/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "ratio": 1.137,
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-h2h-col-tur",
+      "game": "continuum",
+      "format": "head-to-head",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Two mid-sized countries on different continents; hard to compare from memory.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "COL-TUR",
+      "questionId": "continuum:area:COL-TUR:head-to-head",
+      "hook": "Which is bigger?",
+      "question": "Larger area: Colombia or Turkey?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Colombia",
+          "id": "COL"
+        },
+        {
+          "key": "B",
+          "label": "Turkey",
+          "id": "TUR"
+        }
+      ],
+      "answer": "Colombia",
+      "answerKey": "A",
+      "answerAliases": [
+        "COL"
+      ],
+      "explanation": "Colombia 1.14 million km² · Turkey 785,000 km².",
+      "metric": {
+        "id": "area",
+        "label": "area",
+        "definition": "Total area: land plus inland water (World Bank)",
+        "year": 2023,
+        "unit": "km²"
+      },
+      "values": [
+        {
+          "id": "COL",
+          "label": "Colombia",
+          "value": 1140619.1,
+          "text": "1.14 million km²"
+        },
+        {
+          "id": "TUR",
+          "label": "Turkey",
+          "value": 785350,
+          "text": "785,000 km²"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Colombia (2023)",
+            "url": "https://api.worldbank.org/v2/country/COL/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Turkey (2023)",
+            "url": "https://api.worldbank.org/v2/country/TUR/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "ratio": 1.452,
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-h2h-bgr-sle",
+      "game": "continuum",
+      "format": "head-to-head",
+      "difficulty": "challenging",
+      "pilot": false,
+      "spare": false,
+      "rationale": "A European country against a smaller West African one; most viewers guess Europe.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "BGR-SLE",
+      "questionId": "continuum:population:BGR-SLE:head-to-head",
+      "hook": "Which has more people?",
+      "question": "More people: Bulgaria or Sierra Leone?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Bulgaria",
+          "id": "BGR"
+        },
+        {
+          "key": "B",
+          "label": "Sierra Leone",
+          "id": "SLE"
+        }
+      ],
+      "answer": "Sierra Leone",
+      "answerKey": "B",
+      "answerAliases": [
+        "SLE"
+      ],
+      "explanation": "Sierra Leone: 8.8 million. Bulgaria: 6.4 million.",
+      "metric": {
+        "id": "population",
+        "label": "people",
+        "definition": "Total population (World Bank estimate)",
+        "year": 2025,
+        "unit": "people"
+      },
+      "values": [
+        {
+          "id": "BGR",
+          "label": "Bulgaria",
+          "value": 6433302,
+          "text": "6.4 million"
+        },
+        {
+          "id": "SLE",
+          "label": "Sierra Leone",
+          "value": 8819794,
+          "text": "8.8 million"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Bulgaria (2025)",
+            "url": "https://api.worldbank.org/v2/country/BGR/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Sierra Leone (2025)",
+            "url": "https://api.worldbank.org/v2/country/SLE/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "ratio": 1.371,
+          "gameDataAgrees": true,
+          "minRatio": 1.15,
+          "referenceYear": 2025
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-slot-nld",
+      "game": "continuum",
+      "format": "missing-slot",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Familiar neighbors with wide gaps.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "NLD",
+      "questionId": "continuum:population:NLD:missing-slot:BEL-POL",
+      "hook": "Where does it fit?",
+      "question": "Ranked by population, where does the Netherlands go?",
+      "anchors": [
+        {
+          "id": "BEL",
+          "label": "Belgium",
+          "value": 11941781,
+          "text": "11.9 million"
+        },
+        {
+          "id": "POL",
+          "label": "Poland",
+          "value": 36435861,
+          "text": "36.4 million"
+        }
+      ],
+      "target": {
+        "id": "NLD",
+        "label": "Netherlands",
+        "value": 18087633,
+        "text": "18.1 million"
+      },
+      "choices": [
+        {
+          "key": "A",
+          "label": "Fewer people than Belgium",
+          "poll": "Below Belgium"
+        },
+        {
+          "key": "B",
+          "label": "Between Belgium and Poland",
+          "poll": "Between"
+        },
+        {
+          "key": "C",
+          "label": "More people than Poland",
+          "poll": "Above Poland"
+        }
+      ],
+      "answer": "Between",
+      "answerKey": "B",
+      "answerAliases": [],
+      "explanation": "Belgium 11.9 million < Netherlands 18.1 million < Poland 36.4 million.",
+      "metric": {
+        "id": "population",
+        "label": "people",
+        "definition": "Total population (World Bank estimate)",
+        "year": 2025,
+        "unit": "people"
+      },
+      "values": [
+        {
+          "id": "BEL",
+          "label": "Belgium",
+          "value": 11941781,
+          "text": "11.9 million"
+        },
+        {
+          "id": "NLD",
+          "label": "Netherlands",
+          "value": 18087633,
+          "text": "18.1 million"
+        },
+        {
+          "id": "POL",
+          "label": "Poland",
+          "value": 36435861,
+          "text": "36.4 million"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Belgium (2025)",
+            "url": "https://api.worldbank.org/v2/country/BEL/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Netherlands (2025)",
+            "url": "https://api.worldbank.org/v2/country/NLD/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Poland (2025)",
+            "url": "https://api.worldbank.org/v2/country/POL/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "slot": "between",
+          "adjacentRatios": [
+            1.515,
+            2.014
+          ],
+          "gameDataAgrees": true,
+          "minRatio": 1.15,
+          "referenceYear": 2025
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-slot-pol",
+      "game": "continuum",
+      "format": "missing-slot",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Three familiar European countries with wide gaps.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "POL",
+      "questionId": "continuum:area:POL:missing-slot:GBR-ESP",
+      "hook": "Where does it fit?",
+      "question": "Ranked by area, where does Poland go?",
+      "anchors": [
+        {
+          "id": "GBR",
+          "label": "United Kingdom",
+          "value": 243610,
+          "text": "244,000 km²"
+        },
+        {
+          "id": "ESP",
+          "label": "Spain",
+          "value": 505975.98,
+          "text": "506,000 km²"
+        }
+      ],
+      "target": {
+        "id": "POL",
+        "label": "Poland",
+        "value": 313930,
+        "text": "314,000 km²"
+      },
+      "choices": [
+        {
+          "key": "A",
+          "label": "Smaller than the United Kingdom",
+          "poll": "Below United Kingdom"
+        },
+        {
+          "key": "B",
+          "label": "Between the United Kingdom and Spain",
+          "poll": "Between"
+        },
+        {
+          "key": "C",
+          "label": "Larger than Spain",
+          "poll": "Above Spain"
+        }
+      ],
+      "answer": "Between",
+      "answerKey": "B",
+      "answerAliases": [],
+      "explanation": "United Kingdom 244,000 km² < Poland 314,000 km² < Spain 506,000 km².",
+      "metric": {
+        "id": "area",
+        "label": "area",
+        "definition": "Total area: land plus inland water (World Bank)",
+        "year": 2023,
+        "unit": "km²"
+      },
+      "values": [
+        {
+          "id": "GBR",
+          "label": "United Kingdom",
+          "value": 243610,
+          "text": "244,000 km²"
+        },
+        {
+          "id": "POL",
+          "label": "Poland",
+          "value": 313930,
+          "text": "314,000 km²"
+        },
+        {
+          "id": "ESP",
+          "label": "Spain",
+          "value": 505975.98,
+          "text": "506,000 km²"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — United Kingdom (2023)",
+            "url": "https://api.worldbank.org/v2/country/GBR/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Poland (2023)",
+            "url": "https://api.worldbank.org/v2/country/POL/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Spain (2023)",
+            "url": "https://api.worldbank.org/v2/country/ESP/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "slot": "between",
+          "adjacentRatios": [
+            1.289,
+            1.612
+          ],
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-slot-vnm",
+      "game": "continuum",
+      "format": "missing-slot",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Vietnam’s population is larger than many viewers think, but still below Japan.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "VNM",
+      "questionId": "continuum:population:VNM:missing-slot:JPN-BRA",
+      "hook": "Where does it fit?",
+      "question": "Ranked by population, where does Vietnam go?",
+      "anchors": [
+        {
+          "id": "JPN",
+          "label": "Japan",
+          "value": 123366734,
+          "text": "123 million"
+        },
+        {
+          "id": "BRA",
+          "label": "Brazil",
+          "value": 212812405,
+          "text": "213 million"
+        }
+      ],
+      "target": {
+        "id": "VNM",
+        "label": "Vietnam",
+        "value": 101598527,
+        "text": "102 million"
+      },
+      "choices": [
+        {
+          "key": "A",
+          "label": "Fewer people than Japan",
+          "poll": "Below Japan"
+        },
+        {
+          "key": "B",
+          "label": "Between Japan and Brazil",
+          "poll": "Between"
+        },
+        {
+          "key": "C",
+          "label": "More people than Brazil",
+          "poll": "Above Brazil"
+        }
+      ],
+      "answer": "Below Japan",
+      "answerKey": "A",
+      "answerAliases": [],
+      "explanation": "Vietnam 102 million < Japan 123 million < Brazil 213 million.",
+      "metric": {
+        "id": "population",
+        "label": "people",
+        "definition": "Total population (World Bank estimate)",
+        "year": 2025,
+        "unit": "people"
+      },
+      "values": [
+        {
+          "id": "VNM",
+          "label": "Vietnam",
+          "value": 101598527,
+          "text": "102 million"
+        },
+        {
+          "id": "JPN",
+          "label": "Japan",
+          "value": 123366734,
+          "text": "123 million"
+        },
+        {
+          "id": "BRA",
+          "label": "Brazil",
+          "value": 212812405,
+          "text": "213 million"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Japan (2025)",
+            "url": "https://api.worldbank.org/v2/country/JPN/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Vietnam (2025)",
+            "url": "https://api.worldbank.org/v2/country/VNM/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI SP.POP.TOTL — Brazil (2025)",
+            "url": "https://api.worldbank.org/v2/country/BRA/indicator/SP.POP.TOTL?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "slot": "below",
+          "adjacentRatios": [
+            1.214,
+            1.725
+          ],
+          "gameDataAgrees": true,
+          "minRatio": 1.15,
+          "referenceYear": 2025
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-slot-nzl",
+      "game": "continuum",
+      "format": "missing-slot",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Three countries of similar size; needs a real sense of scale.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "NZL",
+      "questionId": "continuum:area:NZL:missing-slot:ROU-ITA",
+      "hook": "Where does it fit?",
+      "question": "Ranked by area, where does New Zealand go?",
+      "anchors": [
+        {
+          "id": "ROU",
+          "label": "Romania",
+          "value": 238400,
+          "text": "238,000 km²"
+        },
+        {
+          "id": "ITA",
+          "label": "Italy",
+          "value": 302070,
+          "text": "302,000 km²"
+        }
+      ],
+      "target": {
+        "id": "NZL",
+        "label": "New Zealand",
+        "value": 267710,
+        "text": "268,000 km²"
+      },
+      "choices": [
+        {
+          "key": "A",
+          "label": "Smaller than Romania",
+          "poll": "Below Romania"
+        },
+        {
+          "key": "B",
+          "label": "Between Romania and Italy",
+          "poll": "Between"
+        },
+        {
+          "key": "C",
+          "label": "Larger than Italy",
+          "poll": "Above Italy"
+        }
+      ],
+      "answer": "Between",
+      "answerKey": "B",
+      "answerAliases": [],
+      "explanation": "Romania 238,000 km² < New Zealand 268,000 km² < Italy 302,000 km².",
+      "metric": {
+        "id": "area",
+        "label": "area",
+        "definition": "Total area: land plus inland water (World Bank)",
+        "year": 2023,
+        "unit": "km²"
+      },
+      "values": [
+        {
+          "id": "ROU",
+          "label": "Romania",
+          "value": 238400,
+          "text": "238,000 km²"
+        },
+        {
+          "id": "NZL",
+          "label": "New Zealand",
+          "value": 267710,
+          "text": "268,000 km²"
+        },
+        {
+          "id": "ITA",
+          "label": "Italy",
+          "value": 302070,
+          "text": "302,000 km²"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Romania (2023)",
+            "url": "https://api.worldbank.org/v2/country/ROU/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — New Zealand (2023)",
+            "url": "https://api.worldbank.org/v2/country/NZL/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Italy (2023)",
+            "url": "https://api.worldbank.org/v2/country/ITA/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "slot": "between",
+          "adjacentRatios": [
+            1.123,
+            1.128
+          ],
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-h2h-mdg-tha",
+      "game": "continuum",
+      "format": "head-to-head",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": true,
+      "rationale": "Madagascar is bigger than it looks on most maps.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "THA-MDG",
+      "questionId": "continuum:area:MDG-THA:head-to-head",
+      "hook": "Which is bigger?",
+      "question": "Larger area: Thailand or Madagascar?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Thailand",
+          "id": "THA"
+        },
+        {
+          "key": "B",
+          "label": "Madagascar",
+          "id": "MDG"
+        }
+      ],
+      "answer": "Madagascar",
+      "answerKey": "B",
+      "answerAliases": [
+        "MDG"
+      ],
+      "explanation": "Madagascar 587,000 km² · Thailand 513,000 km².",
+      "metric": {
+        "id": "area",
+        "label": "area",
+        "definition": "Total area: land plus inland water (World Bank)",
+        "year": 2023,
+        "unit": "km²"
+      },
+      "values": [
+        {
+          "id": "THA",
+          "label": "Thailand",
+          "value": 513115.021,
+          "text": "513,000 km²"
+        },
+        {
+          "id": "MDG",
+          "label": "Madagascar",
+          "value": 587295,
+          "text": "587,000 km²"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Thailand (2023)",
+            "url": "https://api.worldbank.org/v2/country/THA/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Madagascar (2023)",
+            "url": "https://api.worldbank.org/v2/country/MDG/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "ratio": 1.145,
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "continuum-slot-per",
+      "game": "continuum",
+      "format": "missing-slot",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": true,
+      "rationale": "Three large Latin American countries.",
+      "destination": {
+        "game": "continuum",
+        "deepLink": "/continuum"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "PER",
+      "questionId": "continuum:area:PER:missing-slot:COL-MEX",
+      "hook": "Where does it fit?",
+      "question": "Ranked by area, where does Peru go?",
+      "anchors": [
+        {
+          "id": "COL",
+          "label": "Colombia",
+          "value": 1140619.1,
+          "text": "1.14 million km²"
+        },
+        {
+          "id": "MEX",
+          "label": "Mexico",
+          "value": 1957193.9,
+          "text": "1.96 million km²"
+        }
+      ],
+      "target": {
+        "id": "PER",
+        "label": "Peru",
+        "value": 1285215.6,
+        "text": "1.29 million km²"
+      },
+      "choices": [
+        {
+          "key": "A",
+          "label": "Smaller than Colombia",
+          "poll": "Below Colombia"
+        },
+        {
+          "key": "B",
+          "label": "Between Colombia and Mexico",
+          "poll": "Between"
+        },
+        {
+          "key": "C",
+          "label": "Larger than Mexico",
+          "poll": "Above Mexico"
+        }
+      ],
+      "answer": "Between",
+      "answerKey": "B",
+      "answerAliases": [],
+      "explanation": "Colombia 1.14 million km² < Peru 1.29 million km² < Mexico 1.96 million km².",
+      "metric": {
+        "id": "area",
+        "label": "area",
+        "definition": "Total area: land plus inland water (World Bank)",
+        "year": 2023,
+        "unit": "km²"
+      },
+      "values": [
+        {
+          "id": "COL",
+          "label": "Colombia",
+          "value": 1140619.1,
+          "text": "1.14 million km²"
+        },
+        {
+          "id": "PER",
+          "label": "Peru",
+          "value": 1285215.6,
+          "text": "1.29 million km²"
+        },
+        {
+          "id": "MEX",
+          "label": "Mexico",
+          "value": 1957193.9,
+          "text": "1.96 million km²"
+        }
+      ],
+      "evidence": {
+        "sources": [
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Colombia (2023)",
+            "url": "https://api.worldbank.org/v2/country/COL/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Peru (2023)",
+            "url": "https://api.worldbank.org/v2/country/PER/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "World Bank WDI AG.SRF.TOTL.K2 — Mexico (2023)",
+            "url": "https://api.worldbank.org/v2/country/MEX/indicator/AG.SRF.TOTL.K2?format=json&mrnev=1",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "slot": "between",
+          "adjacentRatios": [
+            1.127,
+            1.523
+          ],
+          "gameDataAgrees": true,
+          "minRatio": 1.1,
+          "referenceYear": 2023
+        },
+        "gameData": "scalargame@cf46e1d:src/scalar/assets/data/continuumGameData.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "whenabouts-year-cocacola",
+      "game": "whenabouts",
+      "format": "guess-the-year",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "A household name; twenty-year spacing rewards a rough sense of the era.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "931",
+      "questionId": "whenabouts:931:guess-the-year",
+      "hook": "Guess the year.",
+      "question": "Coca-Cola is first served. What year?",
+      "prompt": "Coca-Cola is first served",
+      "choices": [
+        {
+          "key": "A",
+          "label": "1846",
+          "year": 1846
+        },
+        {
+          "key": "B",
+          "label": "1866",
+          "year": 1866
+        },
+        {
+          "key": "C",
+          "label": "1886",
+          "year": 1886
+        }
+      ],
+      "answer": "1886",
+      "answerKey": "C",
+      "answerAliases": [
+        "1886"
+      ],
+      "explanation": "May 8, 1886. Coca-Cola first sold at Jacobs’ Pharmacy in Atlanta for five cents a glass.",
+      "event": {
+        "id": "931",
+        "title": "Coca-Cola Invented",
+        "year": 1886,
+        "month": 5,
+        "day": 8
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "The Coca-Cola Company: The Birth of a Refreshing Idea",
+            "url": "https://www.coca-colacompany.com/about-us/history/the-birth-of-a-refreshing-idea",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "choiceSpacingYears": 20,
+          "dailyAppearances": [
+            "2026-05-08",
+            "2026-12-12",
+            "2027-02-02",
+            "2027-05-01",
+            "2027-05-31",
+            "2027-08-05",
+            "2028-01-07",
+            "2028-05-01",
+            "2028-06-03",
+            "2028-07-23",
+            "2028-09-15",
+            "2028-11-16",
+            "2029-05-01"
+          ],
+          "futureDailyAppearances": 12,
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "whenabouts-year-goldengate",
+      "game": "whenabouts",
+      "format": "guess-the-year",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "A world-famous landmark that many place later than it is.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "996",
+      "questionId": "whenabouts:996:guess-the-year",
+      "hook": "Guess the year.",
+      "question": "The Golden Gate Bridge opens. What year?",
+      "prompt": "The Golden Gate Bridge opens",
+      "choices": [
+        {
+          "key": "A",
+          "label": "1937",
+          "year": 1937
+        },
+        {
+          "key": "B",
+          "label": "1957",
+          "year": 1957
+        },
+        {
+          "key": "C",
+          "label": "1977",
+          "year": 1977
+        }
+      ],
+      "answer": "1937",
+      "answerKey": "A",
+      "answerAliases": [
+        "1937"
+      ],
+      "explanation": "May 27, 1937. The Golden Gate Bridge’s opening celebrations began with a day reserved for pedestrians.",
+      "event": {
+        "id": "996",
+        "title": "Golden Gate Bridge Opens",
+        "year": 1937,
+        "month": 5,
+        "day": 27
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Golden Gate Bridge District: Opening Fiesta Week",
+            "url": "https://www.goldengate.org/bridge/history-research/bridge-construction/opening-fiesta-week/",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "choiceSpacingYears": 20,
+          "dailyAppearances": [
+            "2026-05-27",
+            "2027-05-27",
+            "2028-05-27",
+            "2028-08-09"
+          ],
+          "futureDailyAppearances": 3,
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "whenabouts-year-galileo",
+      "game": "whenabouts",
+      "format": "guess-the-year",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Widely known name, less widely known decade.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "184",
+      "questionId": "whenabouts:184:guess-the-year",
+      "hook": "Guess the year.",
+      "question": "Galileo turns a telescope on the Moon. What year?",
+      "prompt": "Galileo turns a telescope on the Moon",
+      "choices": [
+        {
+          "key": "A",
+          "label": "1559",
+          "year": 1559
+        },
+        {
+          "key": "B",
+          "label": "1609",
+          "year": 1609
+        },
+        {
+          "key": "C",
+          "label": "1659",
+          "year": 1659
+        }
+      ],
+      "answer": "1609",
+      "answerKey": "B",
+      "answerAliases": [
+        "1609"
+      ],
+      "explanation": "November 30, 1609. Galileo’s telescope had such a narrow field of view that it showed only part of the Moon at once.",
+      "event": {
+        "id": "184",
+        "title": "Galileo Observes the Moon Through a Telescope",
+        "year": 1609,
+        "month": 11,
+        "day": 30
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Museo Galileo: Telescope",
+            "url": "https://catalogue.museogalileo.it/multimedia/TelescopeBis.html",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "choiceSpacingYears": 50,
+          "dailyAppearances": [
+            "2026-07-07",
+            "2026-11-30",
+            "2028-08-18",
+            "2028-11-27"
+          ],
+          "futureDailyAppearances": 3,
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "whenabouts-year-messiah",
+      "game": "whenabouts",
+      "format": "guess-the-year",
+      "difficulty": "challenging",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Requires placing Handel in the Baroque, not the Classical era.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "711",
+      "questionId": "whenabouts:711:guess-the-year",
+      "hook": "Guess the year.",
+      "question": "Handel’s Messiah premieres. What year?",
+      "prompt": "Handel’s Messiah premieres",
+      "choices": [
+        {
+          "key": "A",
+          "label": "1702",
+          "year": 1702
+        },
+        {
+          "key": "B",
+          "label": "1742",
+          "year": 1742
+        },
+        {
+          "key": "C",
+          "label": "1782",
+          "year": 1782
+        }
+      ],
+      "answer": "1742",
+      "answerKey": "B",
+      "answerAliases": [
+        "1742"
+      ],
+      "explanation": "April 13, 1742. Handel conducted Messiah’s first performance on Dublin’s Fishamble Street.",
+      "event": {
+        "id": "711",
+        "title": "Handel's Messiah Premieres",
+        "year": 1742,
+        "month": 4,
+        "day": 13
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Dublin City Council — Dublin reclaims its place in music history",
+            "url": "https://www.dublincity.ie/news/dublin-reclaims-its-place-music-history-street-where-it-all-began",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "choiceSpacingYears": 40,
+          "dailyAppearances": [
+            "2027-02-25",
+            "2027-04-13",
+            "2028-04-20",
+            "2029-04-13"
+          ],
+          "futureDailyAppearances": 4,
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "whenabouts-ba-jurassic-friends",
+      "game": "whenabouts",
+      "format": "before-after",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Two 1990s touchstones that feel like the same moment.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "768-1113",
+      "questionId": "whenabouts:768:before-after:1113",
+      "hook": "Before or after?",
+      "question": "Before or after Friends premiered?",
+      "prompt": "Jurassic Park was released",
+      "anchorPrompt": "Friends premiered",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Before"
+        },
+        {
+          "key": "B",
+          "label": "After"
+        }
+      ],
+      "answer": "Before",
+      "answerKey": "A",
+      "answerAliases": [],
+      "explanation": "Jurassic Park: June 11, 1993. Friends premiered on September 22, 1994, a year later.",
+      "event": {
+        "id": "768",
+        "title": "Jurassic Park Released",
+        "year": 1993,
+        "month": 6,
+        "day": 11
+      },
+      "anchor": {
+        "id": "1113",
+        "title": "Friends Premieres",
+        "year": 1994,
+        "month": 9,
+        "day": 22
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Amblin — Jurassic Park",
+            "url": "https://amblin.com/movie/jurassic-park/",
+            "retrieved": "2026-09-26"
+          },
+          {
+            "title": "Television Academy: Friends",
+            "url": "https://interviews.televisionacademy.com/shows/friends",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "gapYears": 1,
+          "minGapYears": 1,
+          "precisePair": true,
+          "futureDailyAppearances": {
+            "768": 6,
+            "1113": 2
+          },
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      },
+      "sensitiveReview": null
+    },
+    {
+      "key": "whenabouts-ba-google-titanic",
+      "game": "whenabouts",
+      "format": "before-after",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Google feels older than a late-1990s blockbuster.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "29-40",
+      "questionId": "whenabouts:29:before-after:40",
+      "hook": "Before or after?",
+      "question": "Before or after Titanic opened in US theaters?",
+      "prompt": "Google was founded",
+      "anchorPrompt": "Titanic opened in US theaters",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Before"
+        },
+        {
+          "key": "B",
+          "label": "After"
+        }
+      ],
+      "answer": "After",
+      "answerKey": "B",
+      "answerAliases": [],
+      "explanation": "Titanic opened in US theaters on December 19, 1997. Google was founded the next year, 1998.",
+      "event": {
+        "id": "29",
+        "title": "Google Founded",
+        "year": 1998,
+        "month": 9,
+        "day": 4
+      },
+      "anchor": {
+        "id": "40",
+        "title": "Titanic Premieres in the US",
+        "year": 1997,
+        "month": 12,
+        "day": 19
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Google: Our Story (Polish)",
+            "url": "https://about.google/intl/pl_ALL/company-info/our-story/",
+            "retrieved": "2026-09-26"
+          },
+          {
+            "title": "Titanic",
+            "url": "https://www.oscars.org/collection-highlights/titanic",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "gapYears": 1,
+          "minGapYears": 1,
+          "precisePair": true,
+          "futureDailyAppearances": {
+            "29": 15,
+            "40": 10
+          },
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      },
+      "sensitiveReview": null
+    },
+    {
+      "key": "whenabouts-ba-mobydick-origin",
+      "game": "whenabouts",
+      "format": "before-after",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Two 19th-century classics; the order is not common knowledge.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "829-179",
+      "questionId": "whenabouts:829:before-after:179",
+      "hook": "Before or after?",
+      "question": "Before or after On the Origin of Species was published?",
+      "prompt": "Moby-Dick was published",
+      "anchorPrompt": "On the Origin of Species was published",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Before"
+        },
+        {
+          "key": "B",
+          "label": "After"
+        }
+      ],
+      "answer": "Before",
+      "answerKey": "A",
+      "answerAliases": [],
+      "explanation": "Moby-Dick: October 18, 1851. On the Origin of Species: November 24, 1859, 8 years later.",
+      "event": {
+        "id": "829",
+        "title": "Moby-Dick Published",
+        "year": 1851,
+        "month": 10,
+        "day": 18
+      },
+      "anchor": {
+        "id": "179",
+        "title": "On the Origin of Species Published",
+        "year": 1859,
+        "month": 11,
+        "day": 24
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Library of Congress: Books That Shaped America, 1850 to 1900",
+            "url": "https://www.loc.gov/exhibits/books-that-shaped-america/1850-to-1900.html",
+            "retrieved": "2026-09-26"
+          },
+          {
+            "title": "Darwin Correspondence Project: Writing of Origin",
+            "url": "https://www.darwinproject.ac.uk/people/about-darwin/origin-species/writing-origin",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "gapYears": 8,
+          "minGapYears": 1,
+          "precisePair": true,
+          "futureDailyAppearances": {
+            "179": 6,
+            "829": 3
+          },
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      },
+      "sensitiveReview": null
+    },
+    {
+      "key": "whenabouts-ba-empire-gatsby",
+      "game": "whenabouts",
+      "format": "before-after",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Two Jazz Age icons.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "994-840",
+      "questionId": "whenabouts:994:before-after:840",
+      "hook": "Before or after?",
+      "question": "Before or after The Great Gatsby was published?",
+      "prompt": "The Empire State Building opened",
+      "anchorPrompt": "The Great Gatsby was published",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Before"
+        },
+        {
+          "key": "B",
+          "label": "After"
+        }
+      ],
+      "answer": "After",
+      "answerKey": "B",
+      "answerAliases": [],
+      "explanation": "The Great Gatsby: April 10, 1925. The Empire State Building: May 1, 1931, 6 years later.",
+      "event": {
+        "id": "994",
+        "title": "Empire State Building Opens",
+        "year": 1931,
+        "month": 5,
+        "day": 1
+      },
+      "anchor": {
+        "id": "840",
+        "title": "The Great Gatsby Published",
+        "year": 1925,
+        "month": 4,
+        "day": 10
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Empire State Building: History",
+            "url": "https://www.esbnyc.com/about/history",
+            "retrieved": "2026-09-26"
+          },
+          {
+            "title": "Library of Congress: Books That Shaped America, 1900 to 1950",
+            "url": "https://www.loc.gov/exhibits/books-that-shaped-america/1900-to-1950.html",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "gapYears": 6,
+          "minGapYears": 1,
+          "precisePair": true,
+          "futureDailyAppearances": {
+            "840": 4,
+            "994": 2
+          },
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      },
+      "sensitiveReview": null
+    },
+    {
+      "key": "whenabouts-year-olympics",
+      "game": "whenabouts",
+      "format": "guess-the-year",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": true,
+      "rationale": "A famous start date.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "1026",
+      "questionId": "whenabouts:1026:guess-the-year",
+      "hook": "Guess the year.",
+      "question": "The first modern Olympic Games open. What year?",
+      "prompt": "The first modern Olympic Games open",
+      "choices": [
+        {
+          "key": "A",
+          "label": "1876",
+          "year": 1876
+        },
+        {
+          "key": "B",
+          "label": "1896",
+          "year": 1896
+        },
+        {
+          "key": "C",
+          "label": "1916",
+          "year": 1916
+        }
+      ],
+      "answer": "1896",
+      "answerKey": "B",
+      "answerAliases": [
+        "1896"
+      ],
+      "explanation": "April 6, 1896. Pierre de Coubertin helped revive the Olympic Games in 1896.",
+      "event": {
+        "id": "1026",
+        "title": "First Modern Olympics",
+        "year": 1896,
+        "month": 4,
+        "day": 6
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "UNESCO: Archaeological Site of Olympia",
+            "url": "https://whc.unesco.org/en/list/517",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "choiceSpacingYears": 20,
+          "dailyAppearances": [
+            "2026-11-01",
+            "2027-04-06",
+            "2028-04-06",
+            "2029-03-30"
+          ],
+          "futureDailyAppearances": 4,
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "whenabouts-ba-liberty-telephone",
+      "game": "whenabouts",
+      "format": "before-after",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": true,
+      "rationale": "Two 1870s–80s American landmarks.",
+      "destination": {
+        "game": "whenabouts",
+        "deepLink": "/whenabouts"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "991-926",
+      "questionId": "whenabouts:991:before-after:926",
+      "hook": "Before or after?",
+      "question": "Before or after Bell patented the telephone?",
+      "prompt": "The Statue of Liberty was dedicated",
+      "anchorPrompt": "Bell patented the telephone",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Before"
+        },
+        {
+          "key": "B",
+          "label": "After"
+        }
+      ],
+      "answer": "After",
+      "answerKey": "B",
+      "answerAliases": [],
+      "explanation": "Bell’s telephone patent: March 7, 1876. The Statue of Liberty: October 28, 1886, 10 years later.",
+      "event": {
+        "id": "991",
+        "title": "Statue of Liberty Dedicated",
+        "year": 1886,
+        "month": 10,
+        "day": 28
+      },
+      "anchor": {
+        "id": "926",
+        "title": "Bell Patents Telephone",
+        "year": 1876,
+        "month": 3,
+        "day": 7
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "UNESCO World Heritage Centre: Statue of Liberty",
+            "url": "https://whc.unesco.org/en/list/307/",
+            "retrieved": "2026-09-26"
+          },
+          {
+            "title": "Library of Congress: Watson, Come Here…",
+            "url": "https://www.loc.gov/loc/lcib/0404/digitize.html",
+            "retrieved": "2026-09-26"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "gapYears": 10,
+          "minGapYears": 1,
+          "precisePair": true,
+          "futureDailyAppearances": {
+            "926": 7,
+            "991": 7
+          },
+          "freshnessRule": "waived",
+          "factFingerprintMatches": true
+        },
+        "gameData": "scalargame@cf46e1d:public/puzzles",
+        "reviewer": null
+      },
+      "sensitiveReview": null
+    },
+    {
+      "key": "tectonic-missing-cri",
+      "game": "tectonic",
+      "format": "missing-country",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "A well-known country in a narrow, enclosed gap.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "CRI",
+      "questionId": "tectonic:CRI:missing-country",
+      "hook": "One country is missing.",
+      "question": "Which country fills the gap?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Costa Rica",
+          "id": "CRI"
+        },
+        {
+          "key": "B",
+          "label": "Uruguay",
+          "id": "URY"
+        },
+        {
+          "key": "C",
+          "label": "Ecuador",
+          "id": "ECU"
+        }
+      ],
+      "answer": "Costa Rica",
+      "answerKey": "A",
+      "answerAliases": [
+        "CRI"
+      ],
+      "explanation": "Costa Rica fits between Nicaragua and Panama.",
+      "geometry": {
+        "target": "CRI",
+        "neighbors": [
+          "NIC",
+          "PAN"
+        ],
+        "frame": [
+          "BLZ",
+          "COL",
+          "CRI",
+          "GTM",
+          "HND",
+          "MEX",
+          "NIC",
+          "PAN",
+          "SLV"
+        ],
+        "frameBbox": [
+          -91.238,
+          2.647,
+          -76.2,
+          17.455
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Costa Rica",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/cs.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "NIC",
+            "PAN"
+          ],
+          "gapEnclosedBy": 2,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-missing-bel",
+      "game": "tectonic",
+      "format": "missing-country",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Western Europe is familiar; the gap is enclosed on most sides.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "BEL",
+      "questionId": "tectonic:BEL:missing-country",
+      "hook": "One country is missing.",
+      "question": "Which country fills the gap?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Greece",
+          "id": "GRC"
+        },
+        {
+          "key": "B",
+          "label": "Belgium",
+          "id": "BEL"
+        },
+        {
+          "key": "C",
+          "label": "Portugal",
+          "id": "PRT"
+        }
+      ],
+      "answer": "Belgium",
+      "answerKey": "B",
+      "answerAliases": [
+        "BEL"
+      ],
+      "explanation": "Belgium fits between France, Germany, Luxembourg and the Netherlands.",
+      "geometry": {
+        "target": "BEL",
+        "neighbors": [
+          "FRA",
+          "DEU",
+          "NLD",
+          "LUX"
+        ],
+        "frame": [
+          "AUT",
+          "BEL",
+          "CHE",
+          "DEU",
+          "DNK",
+          "FRA",
+          "GBR",
+          "ITA",
+          "LIE",
+          "LUX",
+          "NLD"
+        ],
+        "frameBbox": [
+          -1.633,
+          46.79,
+          11.021,
+          54.79
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Belgium",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/be.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "FRA",
+            "DEU",
+            "NLD",
+            "LUX"
+          ],
+          "gapEnclosedBy": 4,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-missing-col",
+      "game": "tectonic",
+      "format": "missing-country",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Northern South America; the decoys are on the same continent.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "COL",
+      "questionId": "tectonic:COL:missing-country",
+      "hook": "One country is missing.",
+      "question": "Which country fills the gap?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Uruguay",
+          "id": "URY"
+        },
+        {
+          "key": "B",
+          "label": "Paraguay",
+          "id": "PRY"
+        },
+        {
+          "key": "C",
+          "label": "Colombia",
+          "id": "COL"
+        }
+      ],
+      "answer": "Colombia",
+      "answerKey": "C",
+      "answerAliases": [
+        "COL"
+      ],
+      "explanation": "Colombia fits between Brazil, Ecuador, Panama, Peru and Venezuela.",
+      "geometry": {
+        "target": "COL",
+        "neighbors": [
+          "PAN",
+          "PER",
+          "VEN",
+          "BRA",
+          "ECU"
+        ],
+        "frame": [
+          "ATG",
+          "BHS",
+          "BLZ",
+          "BOL",
+          "BRA",
+          "BRB",
+          "CHL",
+          "COL",
+          "CRI",
+          "CUB",
+          "DMA",
+          "DOM",
+          "ECU",
+          "FRA",
+          "GRD",
+          "GTM",
+          "GUY",
+          "HND",
+          "HTI",
+          "JAM",
+          "KNA",
+          "LCA",
+          "MEX",
+          "NIC",
+          "NLD",
+          "PAN",
+          "PER",
+          "SLV",
+          "SUR",
+          "TTO",
+          "USA",
+          "VCT",
+          "VEN"
+        ],
+        "frameBbox": [
+          -97.352,
+          -19.162,
+          -50.92,
+          27.158
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Colombia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/co.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "PAN",
+            "PER",
+            "VEN",
+            "BRA",
+            "ECU"
+          ],
+          "gapEnclosedBy": 5,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-missing-gnq",
+      "game": "tectonic",
+      "format": "missing-country",
+      "difficulty": "challenging",
+      "pilot": false,
+      "spare": false,
+      "rationale": "A small Central African country few viewers can place.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "GNQ",
+      "questionId": "tectonic:GNQ:missing-country",
+      "hook": "One country is missing.",
+      "question": "Which country fills the gap?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Kenya",
+          "id": "KEN"
+        },
+        {
+          "key": "B",
+          "label": "Equatorial Guinea",
+          "id": "GNQ"
+        },
+        {
+          "key": "C",
+          "label": "Madagascar",
+          "id": "MDG"
+        }
+      ],
+      "answer": "Equatorial Guinea",
+      "answerKey": "B",
+      "answerAliases": [
+        "GNQ"
+      ],
+      "explanation": "Equatorial Guinea fits between Cameroon and Gabon.",
+      "geometry": {
+        "target": "GNQ",
+        "neighbors": [
+          "GAB",
+          "CMR"
+        ],
+        "frame": [
+          "AGO",
+          "BEN",
+          "CAF",
+          "CMR",
+          "COD",
+          "COG",
+          "GAB",
+          "GNQ",
+          "NGA",
+          "STP",
+          "TCD"
+        ],
+        "frameBbox": [
+          2.532,
+          -5.613,
+          17.414,
+          9.261
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Equatorial Guinea",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ek.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "GAB",
+            "CMR"
+          ],
+          "gapEnclosedBy": 2,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-neighbors-lux",
+      "game": "tectonic",
+      "format": "neighbor-clues",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Three famous neighbors; the answer is the tiny country between them.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "LUX",
+      "questionId": "tectonic:LUX:neighbor-clues",
+      "hook": "These are all its land neighbors.",
+      "question": "Which country is it?",
+      "shown": [
+        {
+          "id": "FRA",
+          "label": "France"
+        },
+        {
+          "id": "BEL",
+          "label": "Belgium"
+        },
+        {
+          "id": "DEU",
+          "label": "Germany"
+        }
+      ],
+      "allNeighbors": true,
+      "choices": [
+        {
+          "key": "A",
+          "label": "Liechtenstein",
+          "id": "LIE"
+        },
+        {
+          "key": "B",
+          "label": "Andorra",
+          "id": "AND"
+        },
+        {
+          "key": "C",
+          "label": "Luxembourg",
+          "id": "LUX"
+        }
+      ],
+      "answer": "Luxembourg",
+      "answerKey": "C",
+      "answerAliases": [
+        "LUX"
+      ],
+      "explanation": "These are all of Luxembourg’s land neighbors.",
+      "geometry": {
+        "target": "LUX",
+        "neighbors": [
+          "FRA",
+          "DEU",
+          "BEL"
+        ],
+        "frame": [
+          "LUX",
+          "FRA",
+          "DEU",
+          "BEL",
+          "CHE",
+          "AND",
+          "ESP",
+          "MCO",
+          "ITA",
+          "DNK",
+          "POL",
+          "NLD",
+          "AUT",
+          "CZE"
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Luxembourg",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/lu.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — France",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/fr.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Belgium",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/be.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Germany",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/europe/gm.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            10,
+            2,
+            1
+          ],
+          "landNeighbors": [
+            "FRA",
+            "DEU",
+            "BEL"
+          ],
+          "allNeighborsShown": true,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-neighbors-zaf",
+      "game": "tectonic",
+      "format": "neighbor-clues",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Southern Africa; the largest country there is the natural guess.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "ZAF",
+      "questionId": "tectonic:ZAF:neighbor-clues",
+      "hook": "It borders all three of these.",
+      "question": "Which country is it?",
+      "shown": [
+        {
+          "id": "NAM",
+          "label": "Namibia"
+        },
+        {
+          "id": "BWA",
+          "label": "Botswana"
+        },
+        {
+          "id": "SWZ",
+          "label": "Eswatini"
+        }
+      ],
+      "allNeighbors": false,
+      "choices": [
+        {
+          "key": "A",
+          "label": "South Africa",
+          "id": "ZAF"
+        },
+        {
+          "key": "B",
+          "label": "Kenya",
+          "id": "KEN"
+        },
+        {
+          "key": "C",
+          "label": "Nigeria",
+          "id": "NGA"
+        }
+      ],
+      "answer": "South Africa",
+      "answerKey": "A",
+      "answerAliases": [
+        "ZAF"
+      ],
+      "explanation": "South Africa borders all three. Its land neighbors: Botswana, Eswatini, Lesotho, Mozambique, Namibia and Zimbabwe.",
+      "geometry": {
+        "target": "ZAF",
+        "neighbors": [
+          "NAM",
+          "SWZ",
+          "LSO",
+          "BWA",
+          "MOZ",
+          "ZWE"
+        ],
+        "frame": [
+          "ZAF",
+          "NAM",
+          "SWZ",
+          "LSO",
+          "BWA",
+          "MOZ",
+          "ZWE",
+          "AGO",
+          "ZMB",
+          "TZA",
+          "MWI"
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — South Africa",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/sf.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Namibia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/wa.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Botswana",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/bc.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Eswatini",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/wz.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            4,
+            2,
+            1
+          ],
+          "landNeighbors": [
+            "NAM",
+            "SWZ",
+            "LSO",
+            "BWA",
+            "MOZ",
+            "ZWE"
+          ],
+          "allNeighborsShown": false,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-neighbors-arg",
+      "game": "tectonic",
+      "format": "neighbor-clues",
+      "difficulty": "approachable",
+      "pilot": false,
+      "spare": false,
+      "rationale": "South America; Chile’s long border points to one country.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "ARG",
+      "questionId": "tectonic:ARG:neighbor-clues",
+      "hook": "It borders all three of these.",
+      "question": "Which country is it?",
+      "shown": [
+        {
+          "id": "CHL",
+          "label": "Chile"
+        },
+        {
+          "id": "BRA",
+          "label": "Brazil"
+        },
+        {
+          "id": "URY",
+          "label": "Uruguay"
+        }
+      ],
+      "allNeighbors": false,
+      "choices": [
+        {
+          "key": "A",
+          "label": "Peru",
+          "id": "PER"
+        },
+        {
+          "key": "B",
+          "label": "Argentina",
+          "id": "ARG"
+        },
+        {
+          "key": "C",
+          "label": "Ecuador",
+          "id": "ECU"
+        }
+      ],
+      "answer": "Argentina",
+      "answerKey": "B",
+      "answerAliases": [
+        "ARG"
+      ],
+      "explanation": "Argentina borders all three. Its land neighbors: Bolivia, Brazil, Chile, Paraguay and Uruguay.",
+      "geometry": {
+        "target": "ARG",
+        "neighbors": [
+          "CHL",
+          "BOL",
+          "BRA",
+          "URY",
+          "PRY"
+        ],
+        "frame": [
+          "ARG",
+          "CHL",
+          "BOL",
+          "BRA",
+          "URY",
+          "PRY",
+          "PER",
+          "SUR",
+          "COL",
+          "VEN",
+          "FRA",
+          "GUY"
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Argentina",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/ar.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Chile",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/ci.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Brazil",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/br.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Uruguay",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/uy.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            3,
+            3,
+            1
+          ],
+          "landNeighbors": [
+            "CHL",
+            "BOL",
+            "BRA",
+            "URY",
+            "PRY"
+          ],
+          "allNeighborsShown": false,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-neighbors-zwe",
+      "game": "tectonic",
+      "format": "neighbor-clues",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": false,
+      "rationale": "Southern Africa; geography must be pictured.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "ZWE",
+      "questionId": "tectonic:ZWE:neighbor-clues",
+      "hook": "It borders all three of these.",
+      "question": "Which country is it?",
+      "shown": [
+        {
+          "id": "ZMB",
+          "label": "Zambia"
+        },
+        {
+          "id": "BWA",
+          "label": "Botswana"
+        },
+        {
+          "id": "MOZ",
+          "label": "Mozambique"
+        }
+      ],
+      "allNeighbors": false,
+      "choices": [
+        {
+          "key": "A",
+          "label": "Angola",
+          "id": "AGO"
+        },
+        {
+          "key": "B",
+          "label": "Zimbabwe",
+          "id": "ZWE"
+        },
+        {
+          "key": "C",
+          "label": "Malawi",
+          "id": "MWI"
+        }
+      ],
+      "answer": "Zimbabwe",
+      "answerKey": "B",
+      "answerAliases": [
+        "ZWE"
+      ],
+      "explanation": "Zimbabwe borders all three. Its land neighbors: Botswana, Mozambique, South Africa and Zambia.",
+      "geometry": {
+        "target": "ZWE",
+        "neighbors": [
+          "MOZ",
+          "BWA",
+          "ZAF",
+          "ZMB"
+        ],
+        "frame": [
+          "ZWE",
+          "MOZ",
+          "BWA",
+          "ZAF",
+          "ZMB",
+          "TZA",
+          "SWZ",
+          "MWI",
+          "NAM",
+          "LSO",
+          "AGO",
+          "COD"
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Zimbabwe",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/zi.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Zambia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/za.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Botswana",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/bc.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Mozambique",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/mz.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            8,
+            2,
+            1
+          ],
+          "landNeighbors": [
+            "MOZ",
+            "BWA",
+            "ZAF",
+            "ZMB"
+          ],
+          "allNeighborsShown": false,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-missing-gtm",
+      "game": "tectonic",
+      "format": "missing-country",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": true,
+      "rationale": "Central America.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "GTM",
+      "questionId": "tectonic:GTM:missing-country",
+      "hook": "One country is missing.",
+      "question": "Which country fills the gap?",
+      "choices": [
+        {
+          "key": "A",
+          "label": "Guatemala",
+          "id": "GTM"
+        },
+        {
+          "key": "B",
+          "label": "Peru",
+          "id": "PER"
+        },
+        {
+          "key": "C",
+          "label": "Bolivia",
+          "id": "BOL"
+        }
+      ],
+      "answer": "Guatemala",
+      "answerKey": "A",
+      "answerAliases": [
+        "GTM"
+      ],
+      "explanation": "Guatemala fits between Belize, El Salvador, Honduras and Mexico.",
+      "geometry": {
+        "target": "GTM",
+        "neighbors": [
+          "SLV",
+          "HND",
+          "MEX",
+          "BLZ"
+        ],
+        "frame": [
+          "BLZ",
+          "CRI",
+          "GTM",
+          "HND",
+          "MEX",
+          "NIC",
+          "SLV"
+        ],
+        "frameBbox": [
+          -95.308,
+          9.956,
+          -84.298,
+          20.578
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Guatemala",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/gt.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "landNeighbors": [
+            "SLV",
+            "HND",
+            "MEX",
+            "BLZ"
+          ],
+          "gapEnclosedBy": 4,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    },
+    {
+      "key": "tectonic-neighbors-nam",
+      "game": "tectonic",
+      "format": "neighbor-clues",
+      "difficulty": "moderate",
+      "pilot": false,
+      "spare": true,
+      "rationale": "Southern Africa.",
+      "destination": {
+        "game": "tectonic",
+        "deepLink": "/tectonic"
+      },
+      "reviewBy": "2027-01-09",
+      "subjectId": "NAM",
+      "questionId": "tectonic:NAM:neighbor-clues",
+      "hook": "It borders all three of these.",
+      "question": "Which country is it?",
+      "shown": [
+        {
+          "id": "ZAF",
+          "label": "South Africa"
+        },
+        {
+          "id": "AGO",
+          "label": "Angola"
+        },
+        {
+          "id": "ZMB",
+          "label": "Zambia"
+        }
+      ],
+      "allNeighbors": false,
+      "choices": [
+        {
+          "key": "A",
+          "label": "Namibia",
+          "id": "NAM"
+        },
+        {
+          "key": "B",
+          "label": "Kenya",
+          "id": "KEN"
+        },
+        {
+          "key": "C",
+          "label": "Ghana",
+          "id": "GHA"
+        }
+      ],
+      "answer": "Namibia",
+      "answerKey": "A",
+      "answerAliases": [
+        "NAM"
+      ],
+      "explanation": "Namibia borders all three. Its land neighbors: Angola, Botswana, South Africa and Zambia.",
+      "geometry": {
+        "target": "NAM",
+        "neighbors": [
+          "ZAF",
+          "BWA",
+          "AGO",
+          "ZMB"
+        ],
+        "frame": [
+          "NAM",
+          "ZAF",
+          "BWA",
+          "AGO",
+          "ZMB",
+          "SWZ",
+          "LSO",
+          "MOZ",
+          "ZWE",
+          "COD",
+          "COG",
+          "MWI",
+          "TZA"
+        ]
+      },
+      "evidence": {
+        "sources": [
+          {
+            "title": "Natural Earth admin-0 country boundaries (geometry used by Tectonic)",
+            "url": "https://www.naturalearthdata.com/downloads/",
+            "retrieved": "2026-10-12"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Namibia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/wa.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — South Africa",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/sf.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Angola",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ao.json",
+            "retrieved": "2026-09-25"
+          },
+          {
+            "title": "CIA World Factbook, final edition (pinned mirror) — Zambia",
+            "url": "https://github.com/factbook/factbook.json/blob/144d6977b2b01ac1cbd220de754c0a005616760b/africa/za.json",
+            "retrieved": "2026-09-25"
+          }
+        ],
+        "checks": {
+          "uniqueAnswer": true,
+          "candidateCounts": [
+            6,
+            1,
+            1
+          ],
+          "landNeighbors": [
+            "ZAF",
+            "BWA",
+            "AGO",
+            "ZMB"
+          ],
+          "allNeighborsShown": false,
+          "adjacencyAgreesWithGlobe": true
+        },
+        "gameData": "scalargame@cf46e1d:public/tectonic/globe/countries.json",
+        "reviewer": null
+      }
+    }
+  ],
+  "questionsHash": "b95ce24bac8ddc623f2cb98ccce1534cc7563c8a13cec9ffc276381ddbe6e06a"
+}

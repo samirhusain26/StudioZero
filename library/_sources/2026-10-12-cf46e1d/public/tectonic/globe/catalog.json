@@ -1,0 +1,1828 @@
+{
+ "Africa": {
+  "Eastern Africa": [
+   {
+    "id": "BDI",
+    "name": "Burundi",
+    "areaSr": 0.000675187,
+    "centroid": [
+     29.783,
+     -3.159
+    ]
+   },
+   {
+    "id": "COM",
+    "name": "Comoros",
+    "areaSr": 0.000040439,
+    "centroid": [
+     43.692,
+     -11.901
+    ]
+   },
+   {
+    "id": "DJI",
+    "name": "Djibouti",
+    "areaSr": 0.000543976,
+    "centroid": [
+     42.634,
+     11.863
+    ]
+   },
+   {
+    "id": "ERI",
+    "name": "Eritrea",
+    "areaSr": 0.003018892,
+    "centroid": [
+     40.015,
+     14.557
+    ]
+   },
+   {
+    "id": "ETH",
+    "name": "Ethiopia",
+    "areaSr": 0.02788177,
+    "centroid": [
+     39.645,
+     8.991
+    ]
+   },
+   {
+    "id": "KEN",
+    "name": "Kenya",
+    "areaSr": 0.014497366,
+    "centroid": [
+     37.709,
+     1.016
+    ]
+   },
+   {
+    "id": "MDG",
+    "name": "Madagascar",
+    "areaSr": 0.014694896,
+    "centroid": [
+     46.323,
+     -18.841
+    ]
+   },
+   {
+    "id": "MWI",
+    "name": "Malawi",
+    "areaSr": 0.002911264,
+    "centroid": [
+     34.085,
+     -12.287
+    ]
+   },
+   {
+    "id": "MOZ",
+    "name": "Mozambique",
+    "areaSr": 0.019417179,
+    "centroid": [
+     33.608,
+     -19.346
+    ]
+   },
+   {
+    "id": "RWA",
+    "name": "Rwanda",
+    "areaSr": 0.000626559,
+    "centroid": [
+     29.878,
+     -1.929
+    ]
+   },
+   {
+    "id": "SOM",
+    "name": "Somalia",
+    "areaSr": 0.011723944,
+    "centroid": [
+     44.451,
+     4.38
+    ]
+   },
+   {
+    "id": "SDS",
+    "name": "South Sudan",
+    "areaSr": 0.015533587,
+    "centroid": [
+     31.163,
+     6.127
+    ]
+   },
+   {
+    "id": "TZA",
+    "name": "Tanzania",
+    "areaSr": 0.023317957,
+    "centroid": [
+     33.453,
+     -5.966
+    ]
+   },
+   {
+    "id": "UGA",
+    "name": "Uganda",
+    "areaSr": 0.006007571,
+    "centroid": [
+     31.502,
+     0.807
+    ]
+   },
+   {
+    "id": "ZMB",
+    "name": "Zambia",
+    "areaSr": 0.018606608,
+    "centroid": [
+     28.569,
+     -13.693
+    ]
+   },
+   {
+    "id": "ZWE",
+    "name": "Zimbabwe",
+    "areaSr": 0.00960621,
+    "centroid": [
+     29.358,
+     -19.455
+    ]
+   }
+  ],
+  "Middle Africa": [
+   {
+    "id": "AGO",
+    "name": "Angola",
+    "areaSr": 0.030763191,
+    "centroid": [
+     18.364,
+     -12.709
+    ]
+   },
+   {
+    "id": "CMR",
+    "name": "Cameroon",
+    "areaSr": 0.011612477,
+    "centroid": [
+     12.612,
+     4.814
+    ]
+   },
+   {
+    "id": "CAF",
+    "name": "Central African Republic",
+    "areaSr": 0.015286089,
+    "centroid": [
+     20.659,
+     6.485
+    ]
+   },
+   {
+    "id": "TCD",
+    "name": "Chad",
+    "areaSr": 0.031336553,
+    "centroid": [
+     18.069,
+     14.637
+    ]
+   },
+   {
+    "id": "COD",
+    "name": "Democratic Republic of the Congo",
+    "areaSr": 0.057625921,
+    "centroid": [
+     23.642,
+     -3.088
+    ]
+   },
+   {
+    "id": "GNQ",
+    "name": "Equatorial Guinea",
+    "areaSr": 0.000660182,
+    "centroid": [
+     9.973,
+     1.824
+    ]
+   },
+   {
+    "id": "GAB",
+    "name": "Gabon",
+    "areaSr": 0.006481708,
+    "centroid": [
+     11.483,
+     0.329
+    ]
+   },
+   {
+    "id": "COG",
+    "name": "Republic of the Congo",
+    "areaSr": 0.008445816,
+    "centroid": [
+     14.411,
+     -1.149
+    ]
+   },
+   {
+    "id": "STP",
+    "name": "São Tomé and Principe",
+    "areaSr": 0.000025585,
+    "centroid": [
+     6.745,
+     0.45
+    ]
+   }
+  ],
+  "Northern Africa": [
+   {
+    "id": "DZA",
+    "name": "Algeria",
+    "areaSr": 0.056920126,
+    "centroid": [
+     2.343,
+     28.186
+    ]
+   },
+   {
+    "id": "EGY",
+    "name": "Egypt",
+    "areaSr": 0.024699132,
+    "centroid": [
+     31.918,
+     27.037
+    ]
+   },
+   {
+    "id": "LBY",
+    "name": "Libya",
+    "areaSr": 0.040248177,
+    "centroid": [
+     19.056,
+     25.434
+    ]
+   },
+   {
+    "id": "MAR",
+    "name": "Morocco",
+    "areaSr": 0.014473352,
+    "centroid": [
+     -5.24,
+     33.388
+    ]
+   },
+   {
+    "id": "SDN",
+    "name": "Sudan",
+    "areaSr": 0.045795207,
+    "centroid": [
+     29.876,
+     17.17
+    ]
+   },
+   {
+    "id": "TUN",
+    "name": "Tunisia",
+    "areaSr": 0.003892989,
+    "centroid": [
+     9.843,
+     33.808
+    ]
+   }
+  ],
+  "Southern Africa": [
+   {
+    "id": "BWA",
+    "name": "Botswana",
+    "areaSr": 0.014264107,
+    "centroid": [
+     24.713,
+     -21.529
+    ]
+   },
+   {
+    "id": "SWZ",
+    "name": "Kingdom of eSwatini",
+    "areaSr": 0.000421842,
+    "centroid": [
+     31.745,
+     -26.445
+    ]
+   },
+   {
+    "id": "LSO",
+    "name": "Lesotho",
+    "areaSr": 0.000737505,
+    "centroid": [
+     28.362,
+     -29.568
+    ]
+   },
+   {
+    "id": "NAM",
+    "name": "Namibia",
+    "areaSr": 0.020271049,
+    "centroid": [
+     19.327,
+     -21.311
+    ]
+   },
+   {
+    "id": "ZAF",
+    "name": "South Africa",
+    "areaSr": 0.031015674,
+    "centroid": [
+     27.251,
+     -26.581
+    ]
+   }
+  ],
+  "Western Africa": [
+   {
+    "id": "BEN",
+    "name": "Benin",
+    "areaSr": 0.002883193,
+    "centroid": [
+     2.25,
+     9.945
+    ]
+   },
+   {
+    "id": "BFA",
+    "name": "Burkina Faso",
+    "areaSr": 0.006702996,
+    "centroid": [
+     -1.092,
+     11.583
+    ]
+   },
+   {
+    "id": "CIV",
+    "name": "Côte d'Ivoire",
+    "areaSr": 0.007942549,
+    "centroid": [
+     -5.851,
+     7.979
+    ]
+   },
+   {
+    "id": "GHA",
+    "name": "Ghana",
+    "areaSr": 0.005886424,
+    "centroid": [
+     -1.548,
+     7.463
+    ]
+   },
+   {
+    "id": "GIN",
+    "name": "Guinea",
+    "areaSr": 0.006029847,
+    "centroid": [
+     -11.282,
+     10.263
+    ]
+   },
+   {
+    "id": "GNB",
+    "name": "Guinea-Bissau",
+    "areaSr": 0.000821123,
+    "centroid": [
+     -15.284,
+     12.002
+    ]
+   },
+   {
+    "id": "LBR",
+    "name": "Liberia",
+    "areaSr": 0.002353078,
+    "centroid": [
+     -9.526,
+     6.769
+    ]
+   },
+   {
+    "id": "MLI",
+    "name": "Mali",
+    "areaSr": 0.031004792,
+    "centroid": [
+     -5.265,
+     14.607
+    ]
+   },
+   {
+    "id": "MRT",
+    "name": "Mauritania",
+    "areaSr": 0.025625764,
+    "centroid": [
+     -10.978,
+     20.252
+    ]
+   },
+   {
+    "id": "NER",
+    "name": "Niger",
+    "areaSr": 0.029270582,
+    "centroid": [
+     6.957,
+     16.599
+    ]
+   },
+   {
+    "id": "NGA",
+    "name": "Nigeria",
+    "areaSr": 0.022301511,
+    "centroid": [
+     7.478,
+     9.363
+    ]
+   },
+   {
+    "id": "CPV",
+    "name": "Republic of Cabo Verde",
+    "areaSr": 0.000095797,
+    "centroid": [
+     -23.958,
+     15.942
+    ]
+   },
+   {
+    "id": "SEN",
+    "name": "Senegal",
+    "areaSr": 0.004864752,
+    "centroid": [
+     -14.761,
+     13.621
+    ]
+   },
+   {
+    "id": "SLE",
+    "name": "Sierra Leone",
+    "areaSr": 0.001791639,
+    "centroid": [
+     -11.77,
+     8.303
+    ]
+   },
+   {
+    "id": "GMB",
+    "name": "The Gambia",
+    "areaSr": 0.000255339,
+    "centroid": [
+     -15.734,
+     13.413
+    ]
+   },
+   {
+    "id": "TGO",
+    "name": "Togo",
+    "areaSr": 0.001422972,
+    "centroid": [
+     0.81,
+     8.972
+    ]
+   }
+  ]
+ },
+ "Asia": {
+  "Central Asia": [
+   {
+    "id": "KAZ",
+    "name": "Kazakhstan",
+    "areaSr": 0.067365208,
+    "centroid": [
+     65.689,
+     45.929
+    ]
+   },
+   {
+    "id": "KGZ",
+    "name": "Kyrgyzstan",
+    "areaSr": 0.0049299,
+    "centroid": [
+     73.676,
+     41.111
+    ]
+   },
+   {
+    "id": "TJK",
+    "name": "Tajikistan",
+    "areaSr": 0.003517622,
+    "centroid": [
+     71.292,
+     38.778
+    ]
+   },
+   {
+    "id": "TKM",
+    "name": "Turkmenistan",
+    "areaSr": 0.011458524,
+    "centroid": [
+     58.27,
+     39.425
+    ]
+   },
+   {
+    "id": "UZB",
+    "name": "Uzbekistan",
+    "areaSr": 0.011004515,
+    "centroid": [
+     66.74,
+     40.339
+    ]
+   }
+  ],
+  "Eastern Asia": [
+   {
+    "id": "CHN",
+    "name": "China",
+    "areaSr": 0.230793053,
+    "centroid": [
+     93.072,
+     36.114
+    ]
+   },
+   {
+    "id": "PRK",
+    "name": "Dem. Rep. Korea",
+    "areaSr": 0.003022247,
+    "centroid": [
+     128.022,
+     40.292
+    ]
+   },
+   {
+    "id": "JPN",
+    "name": "Japan",
+    "areaSr": 0.009146729,
+    "centroid": [
+     137.062,
+     37.348
+    ]
+   },
+   {
+    "id": "MNG",
+    "name": "Mongolia",
+    "areaSr": 0.038631766,
+    "centroid": [
+     105.773,
+     47.997
+    ]
+   },
+   {
+    "id": "KOR",
+    "name": "Republic of Korea",
+    "areaSr": 0.002396367,
+    "centroid": [
+     127.635,
+     36.994
+    ]
+   },
+   {
+    "id": "TWN",
+    "name": "Taiwan",
+    "areaSr": 0.000897414,
+    "centroid": [
+     121.054,
+     23.614
+    ]
+   }
+  ],
+  "South-Eastern Asia": [
+   {
+    "id": "BRN",
+    "name": "Brunei Darussalam",
+    "areaSr": 0.000141817,
+    "centroid": [
+     114.784,
+     4.645
+    ]
+   },
+   {
+    "id": "KHM",
+    "name": "Cambodia",
+    "areaSr": 0.004474313,
+    "centroid": [
+     105.012,
+     12.755
+    ]
+   },
+   {
+    "id": "IDN",
+    "name": "Indonesia",
+    "areaSr": 0.045831821,
+    "centroid": [
+     117.166,
+     -1.978
+    ]
+   },
+   {
+    "id": "LAO",
+    "name": "Lao PDR",
+    "areaSr": 0.005635179,
+    "centroid": [
+     103.283,
+     18.848
+    ]
+   },
+   {
+    "id": "MYS",
+    "name": "Malaysia",
+    "areaSr": 0.008133177,
+    "centroid": [
+     109.49,
+     4.419
+    ]
+   },
+   {
+    "id": "MMR",
+    "name": "Myanmar",
+    "areaSr": 0.016313333,
+    "centroid": [
+     96.689,
+     20.859
+    ]
+   },
+   {
+    "id": "PHL",
+    "name": "Philippines",
+    "areaSr": 0.006818437,
+    "centroid": [
+     123.029,
+     11.428
+    ]
+   },
+   {
+    "id": "SGP",
+    "name": "Singapore",
+    "areaSr": 0.00001247,
+    "centroid": [
+     103.825,
+     1.358
+    ]
+   },
+   {
+    "id": "THA",
+    "name": "Thailand",
+    "areaSr": 0.012850669,
+    "centroid": [
+     100.903,
+     11.944
+    ]
+   },
+   {
+    "id": "TLS",
+    "name": "Timor-Leste",
+    "areaSr": 0.000377349,
+    "centroid": [
+     125.555,
+     -8.957
+    ]
+   },
+   {
+    "id": "VNM",
+    "name": "Vietnam",
+    "areaSr": 0.008125079,
+    "centroid": [
+     105.849,
+     17.087
+    ]
+   }
+  ],
+  "Southern Asia": [
+   {
+    "id": "AFG",
+    "name": "Afghanistan",
+    "areaSr": 0.015801266,
+    "centroid": [
+     67.791,
+     35.798
+    ]
+   },
+   {
+    "id": "BGD",
+    "name": "Bangladesh",
+    "areaSr": 0.003267545,
+    "centroid": [
+     91.183,
+     22.706
+    ]
+   },
+   {
+    "id": "BTN",
+    "name": "Bhutan",
+    "areaSr": 0.001006908,
+    "centroid": [
+     90.405,
+     27.517
+    ]
+   },
+   {
+    "id": "IND",
+    "name": "India",
+    "areaSr": 0.077496834,
+    "centroid": [
+     85.424,
+     27.163
+    ]
+   },
+   {
+    "id": "IRN",
+    "name": "Iran",
+    "areaSr": 0.039979184,
+    "centroid": [
+     51.955,
+     35.349
+    ]
+   },
+   {
+    "id": "NPL",
+    "name": "Nepal",
+    "areaSr": 0.00367865,
+    "centroid": [
+     84.307,
+     28.373
+    ]
+   },
+   {
+    "id": "PAK",
+    "name": "Pakistan",
+    "areaSr": 0.021485688,
+    "centroid": [
+     69.003,
+     30.575
+    ]
+   },
+   {
+    "id": "LKA",
+    "name": "Sri Lanka",
+    "areaSr": 0.001647122,
+    "centroid": [
+     80.734,
+     7.71
+    ]
+   }
+  ],
+  "Western Asia": [
+   {
+    "id": "ARM",
+    "name": "Armenia",
+    "areaSr": 0.000733133,
+    "centroid": [
+     45.143,
+     40.077
+    ]
+   },
+   {
+    "id": "AZE",
+    "name": "Azerbaijan",
+    "areaSr": 0.002119515,
+    "centroid": [
+     47.207,
+     40.408
+    ]
+   },
+   {
+    "id": "BHR",
+    "name": "Bahrain",
+    "areaSr": 0.000016644,
+    "centroid": [
+     50.568,
+     26.057
+    ]
+   },
+   {
+    "id": "CYP",
+    "name": "Cyprus",
+    "areaSr": 0.00013341,
+    "centroid": [
+     33.051,
+     34.985
+    ]
+   },
+   {
+    "id": "GEO",
+    "name": "Georgia",
+    "areaSr": 0.001721327,
+    "centroid": [
+     43.519,
+     41.939
+    ]
+   },
+   {
+    "id": "IRQ",
+    "name": "Iraq",
+    "areaSr": 0.010768136,
+    "centroid": [
+     44.106,
+     32.82
+    ]
+   },
+   {
+    "id": "ISR",
+    "name": "Israel",
+    "areaSr": 0.000543565,
+    "centroid": [
+     35.126,
+     31.73
+    ]
+   },
+   {
+    "id": "JOR",
+    "name": "Jordan",
+    "areaSr": 0.002190488,
+    "centroid": [
+     36.303,
+     31.493
+    ]
+   },
+   {
+    "id": "KWT",
+    "name": "Kuwait",
+    "areaSr": 0.000433241,
+    "centroid": [
+     47.599,
+     29.327
+    ]
+   },
+   {
+    "id": "LBN",
+    "name": "Lebanon",
+    "areaSr": 0.000245549,
+    "centroid": [
+     35.764,
+     33.728
+    ]
+   },
+   {
+    "id": "OMN",
+    "name": "Oman",
+    "areaSr": 0.007721362,
+    "centroid": [
+     55.049,
+     20.786
+    ]
+   },
+   {
+    "id": "PSE",
+    "name": "Palestine",
+    "areaSr": 0.000152209,
+    "centroid": [
+     35.296,
+     31.878
+    ]
+   },
+   {
+    "id": "QAT",
+    "name": "Qatar",
+    "areaSr": 0.000280633,
+    "centroid": [
+     51.152,
+     25.112
+    ]
+   },
+   {
+    "id": "SAU",
+    "name": "Saudi Arabia",
+    "areaSr": 0.047480167,
+    "centroid": [
+     47.142,
+     25.083
+    ]
+   },
+   {
+    "id": "SYR",
+    "name": "Syria",
+    "areaSr": 0.004573881,
+    "centroid": [
+     37.331,
+     34.563
+    ]
+   },
+   {
+    "id": "TUR",
+    "name": "Turkey",
+    "areaSr": 0.019130453,
+    "centroid": [
+     40.631,
+     39.147
+    ]
+   },
+   {
+    "id": "ARE",
+    "name": "United Arab Emirates",
+    "areaSr": 0.001761363,
+    "centroid": [
+     54.991,
+     24.634
+    ]
+   },
+   {
+    "id": "YEM",
+    "name": "Yemen",
+    "areaSr": 0.011186064,
+    "centroid": [
+     48.804,
+     16.587
+    ]
+   }
+  ]
+ },
+ "Europe": {
+  "Eastern Europe": [
+   {
+    "id": "BLR",
+    "name": "Belarus",
+    "areaSr": 0.00510735,
+    "centroid": [
+     27.099,
+     53.832
+    ]
+   },
+   {
+    "id": "BGR",
+    "name": "Bulgaria",
+    "areaSr": 0.00277843,
+    "centroid": [
+     25.135,
+     42.543
+    ]
+   },
+   {
+    "id": "CZE",
+    "name": "Czech Republic",
+    "areaSr": 0.00191559,
+    "centroid": [
+     15.751,
+     49.639
+    ]
+   },
+   {
+    "id": "HUN",
+    "name": "Hungary",
+    "areaSr": 0.002286575,
+    "centroid": [
+     19.157,
+     47.099
+    ]
+   },
+   {
+    "id": "MDA",
+    "name": "Moldova",
+    "areaSr": 0.000803062,
+    "centroid": [
+     28.201,
+     47.149
+    ]
+   },
+   {
+    "id": "POL",
+    "name": "Poland",
+    "areaSr": 0.007709656,
+    "centroid": [
+     19.195,
+     52.492
+    ]
+   },
+   {
+    "id": "ROU",
+    "name": "Romania",
+    "areaSr": 0.005805333,
+    "centroid": [
+     25.551,
+     45.877
+    ]
+   },
+   {
+    "id": "RUS",
+    "name": "Russian Federation",
+    "areaSr": 0.415339837,
+    "centroid": [
+     68.313,
+     64.65
+    ]
+   },
+   {
+    "id": "SVK",
+    "name": "Slovakia",
+    "areaSr": 0.001194009,
+    "centroid": [
+     19.541,
+     48.747
+    ]
+   },
+   {
+    "id": "UKR",
+    "name": "Ukraine",
+    "areaSr": 0.014060033,
+    "centroid": [
+     28.902,
+     48.187
+    ]
+   }
+  ],
+  "Northern Europe": [
+   {
+    "id": "DNK",
+    "name": "Denmark",
+    "areaSr": 0.001002453,
+    "centroid": [
+     9.858,
+     55.516
+    ]
+   },
+   {
+    "id": "EST",
+    "name": "Estonia",
+    "areaSr": 0.001123905,
+    "centroid": [
+     25.935,
+     58.457
+    ]
+   },
+   {
+    "id": "FIN",
+    "name": "Finland",
+    "areaSr": 0.008102874,
+    "centroid": [
+     25.434,
+     66.152
+    ]
+   },
+   {
+    "id": "ISL",
+    "name": "Iceland",
+    "areaSr": 0.002394451,
+    "centroid": [
+     -18.784,
+     65.432
+    ]
+   },
+   {
+    "id": "IRL",
+    "name": "Ireland",
+    "areaSr": 0.0016808,
+    "centroid": [
+     -7.909,
+     53.864
+    ]
+   },
+   {
+    "id": "LVA",
+    "name": "Latvia",
+    "areaSr": 0.001584241,
+    "centroid": [
+     25.585,
+     56.826
+    ]
+   },
+   {
+    "id": "LTU",
+    "name": "Lithuania",
+    "areaSr": 0.00158816,
+    "centroid": [
+     23.362,
+     55.137
+    ]
+   },
+   {
+    "id": "NOR",
+    "name": "Norway",
+    "areaSr": 0.009497878,
+    "centroid": [
+     19.344,
+     68.987
+    ]
+   },
+   {
+    "id": "SWE",
+    "name": "Sweden",
+    "areaSr": 0.011141361,
+    "centroid": [
+     17.2,
+     63.769
+    ]
+   },
+   {
+    "id": "GBR",
+    "name": "United Kingdom",
+    "areaSr": 0.005437427,
+    "centroid": [
+     -3.046,
+     54.287
+    ]
+   }
+  ],
+  "Southern Europe": [
+   {
+    "id": "ALB",
+    "name": "Albania",
+    "areaSr": 0.000691307,
+    "centroid": [
+     20.162,
+     41.389
+    ]
+   },
+   {
+    "id": "AND",
+    "name": "Andorra",
+    "areaSr": 0.000011123,
+    "centroid": [
+     1.576,
+     42.544
+    ]
+   },
+   {
+    "id": "BIH",
+    "name": "Bosnia and Herzegovina",
+    "areaSr": 0.001297944,
+    "centroid": [
+     18.176,
+     43.642
+    ]
+   },
+   {
+    "id": "HRV",
+    "name": "Croatia",
+    "areaSr": 0.001327793,
+    "centroid": [
+     16.742,
+     45.16
+    ]
+   },
+   {
+    "id": "GRC",
+    "name": "Greece",
+    "areaSr": 0.003425416,
+    "centroid": [
+     23.617,
+     39.939
+    ]
+   },
+   {
+    "id": "ITA",
+    "name": "Italy",
+    "areaSr": 0.007465367,
+    "centroid": [
+     11.176,
+     44.224
+    ]
+   },
+   {
+    "id": "MLT",
+    "name": "Malta",
+    "areaSr": 0.000007976,
+    "centroid": [
+     14.417,
+     35.924
+    ]
+   },
+   {
+    "id": "MNE",
+    "name": "Montenegro",
+    "areaSr": 0.000337009,
+    "centroid": [
+     19.272,
+     42.706
+    ]
+   },
+   {
+    "id": "MKD",
+    "name": "North Macedonia",
+    "areaSr": 0.000625658,
+    "centroid": [
+     21.709,
+     41.715
+    ]
+   },
+   {
+    "id": "PRT",
+    "name": "Portugal",
+    "areaSr": 0.002271873,
+    "centroid": [
+     -8.645,
+     39.281
+    ]
+   },
+   {
+    "id": "SMR",
+    "name": "San Marino",
+    "areaSr": 0.000001484,
+    "centroid": [
+     12.449,
+     43.935
+    ]
+   },
+   {
+    "id": "SRB",
+    "name": "Serbia",
+    "areaSr": 0.001906747,
+    "centroid": [
+     20.618,
+     44.069
+    ]
+   },
+   {
+    "id": "SVN",
+    "name": "Slovenia",
+    "areaSr": 0.000501651,
+    "centroid": [
+     14.7,
+     46.123
+    ]
+   },
+   {
+    "id": "ESP",
+    "name": "Spain",
+    "areaSr": 0.012495357,
+    "centroid": [
+     -2.196,
+     41.516
+    ]
+   },
+   {
+    "id": "VAT",
+    "name": "Vatican",
+    "areaSr": 1e-8,
+    "centroid": [
+     12.454,
+     41.903
+    ]
+   }
+  ],
+  "Western Europe": [
+   {
+    "id": "AUT",
+    "name": "Austria",
+    "areaSr": 0.002075894,
+    "centroid": [
+     13.04,
+     47.536
+    ]
+   },
+   {
+    "id": "BEL",
+    "name": "Belgium",
+    "areaSr": 0.000758904,
+    "centroid": [
+     4.694,
+     50.79
+    ]
+   },
+   {
+    "id": "FRA",
+    "name": "France",
+    "areaSr": 0.015717329,
+    "centroid": [
+     -5.037,
+     42.36
+    ]
+   },
+   {
+    "id": "DEU",
+    "name": "Germany",
+    "areaSr": 0.008757942,
+    "centroid": [
+     9.562,
+     51.117
+    ]
+   },
+   {
+    "id": "LIE",
+    "name": "Liechtenstein",
+    "areaSr": 0.000003393,
+    "centroid": [
+     9.534,
+     47.155
+    ]
+   },
+   {
+    "id": "LUX",
+    "name": "Luxembourg",
+    "areaSr": 0.000064539,
+    "centroid": [
+     6.09,
+     49.715
+    ]
+   },
+   {
+    "id": "MCO",
+    "name": "Monaco",
+    "areaSr": 4.59e-7,
+    "centroid": [
+     7.403,
+     43.739
+    ]
+   },
+   {
+    "id": "NLD",
+    "name": "Netherlands",
+    "areaSr": 0.000927104,
+    "centroid": [
+     4.864,
+     51.924
+    ]
+   },
+   {
+    "id": "CHE",
+    "name": "Switzerland",
+    "areaSr": 0.001010192,
+    "centroid": [
+     8.901,
+     47.017
+    ]
+   }
+  ]
+ },
+ "North America": {
+  "Caribbean": [
+   {
+    "id": "ATG",
+    "name": "Antigua and Barbuda",
+    "areaSr": 0.000010766,
+    "centroid": [
+     -61.797,
+     17.296
+    ]
+   },
+   {
+    "id": "BHS",
+    "name": "Bahamas",
+    "areaSr": 0.000305759,
+    "centroid": [
+     -76.522,
+     24.193
+    ]
+   },
+   {
+    "id": "BRB",
+    "name": "Barbados",
+    "areaSr": 0.000010834,
+    "centroid": [
+     -59.551,
+     13.188
+    ]
+   },
+   {
+    "id": "CUB",
+    "name": "Cuba",
+    "areaSr": 0.002718324,
+    "centroid": [
+     -79.176,
+     21.447
+    ]
+   },
+   {
+    "id": "DMA",
+    "name": "Dominica",
+    "areaSr": 0.000018078,
+    "centroid": [
+     -61.366,
+     15.428
+    ]
+   },
+   {
+    "id": "DOM",
+    "name": "Dominican Republic",
+    "areaSr": 0.001168295,
+    "centroid": [
+     -70.914,
+     18.861
+    ]
+   },
+   {
+    "id": "GRD",
+    "name": "Grenada",
+    "areaSr": 0.000008616,
+    "centroid": [
+     -61.648,
+     12.154
+    ]
+   },
+   {
+    "id": "HTI",
+    "name": "Haiti",
+    "areaSr": 0.000672642,
+    "centroid": [
+     -72.404,
+     18.832
+    ]
+   },
+   {
+    "id": "JAM",
+    "name": "Jamaica",
+    "areaSr": 0.000265697,
+    "centroid": [
+     -77.206,
+     18.116
+    ]
+   },
+   {
+    "id": "KNA",
+    "name": "Saint Kitts and Nevis",
+    "areaSr": 0.000006378,
+    "centroid": [
+     -62.673,
+     17.254
+    ]
+   },
+   {
+    "id": "LCA",
+    "name": "Saint Lucia",
+    "areaSr": 0.000014901,
+    "centroid": [
+     -60.949,
+     13.908
+    ]
+   },
+   {
+    "id": "VCT",
+    "name": "Saint Vincent and the Grenadines",
+    "areaSr": 0.000009083,
+    "centroid": [
+     -61.204,
+     13.206
+    ]
+   },
+   {
+    "id": "TTO",
+    "name": "Trinidad and Tobago",
+    "areaSr": 0.000127461,
+    "centroid": [
+     -61.235,
+     10.503
+    ]
+   }
+  ],
+  "Central America": [
+   {
+    "id": "BLZ",
+    "name": "Belize",
+    "areaSr": 0.00054987,
+    "centroid": [
+     -88.762,
+     17.281
+    ]
+   },
+   {
+    "id": "CRI",
+    "name": "Costa Rica",
+    "areaSr": 0.001296829,
+    "centroid": [
+     -83.719,
+     10.051
+    ]
+   },
+   {
+    "id": "SLV",
+    "name": "El Salvador",
+    "areaSr": 0.000509395,
+    "centroid": [
+     -89.001,
+     13.851
+    ]
+   },
+   {
+    "id": "GTM",
+    "name": "Guatemala",
+    "areaSr": 0.002684084,
+    "centroid": [
+     -89.803,
+     15.267
+    ]
+   },
+   {
+    "id": "HND",
+    "name": "Honduras",
+    "areaSr": 0.002815968,
+    "centroid": [
+     -87.092,
+     14.449
+    ]
+   },
+   {
+    "id": "MEX",
+    "name": "Mexico",
+    "areaSr": 0.048502069,
+    "centroid": [
+     -96.86,
+     22.216
+    ]
+   },
+   {
+    "id": "NIC",
+    "name": "Nicaragua",
+    "areaSr": 0.003163932,
+    "centroid": [
+     -85.134,
+     12.584
+    ]
+   },
+   {
+    "id": "PAN",
+    "name": "Panama",
+    "areaSr": 0.001881846,
+    "centroid": [
+     -80.238,
+     8.546
+    ]
+   }
+  ],
+  "Northern America": [
+   {
+    "id": "CAN",
+    "name": "Canada",
+    "areaSr": 0.246098733,
+    "centroid": [
+     -101.044,
+     60.596
+    ]
+   },
+   {
+    "id": "USA",
+    "name": "United States",
+    "areaSr": 0.233571422,
+    "centroid": [
+     -98.96,
+     45.433
+    ]
+   }
+  ]
+ },
+ "Oceania": {
+  "Australia and New Zealand": [
+   {
+    "id": "AUS",
+    "name": "Australia",
+    "areaSr": 0.191088623,
+    "centroid": [
+     134.764,
+     -25.978
+    ]
+   },
+   {
+    "id": "NZL",
+    "name": "New Zealand",
+    "areaSr": 0.006414705,
+    "centroid": [
+     173.209,
+     -41.344
+    ]
+   }
+  ],
+  "Melanesia": [
+   {
+    "id": "FJI",
+    "name": "Fiji",
+    "areaSr": 0.000456897,
+    "centroid": [
+     178.628,
+     -17.479
+    ]
+   },
+   {
+    "id": "PNG",
+    "name": "Papua New Guinea",
+    "areaSr": 0.01132462,
+    "centroid": [
+     144.496,
+     -6.511
+    ]
+   },
+   {
+    "id": "SLB",
+    "name": "Solomon Islands",
+    "areaSr": 0.000662324,
+    "centroid": [
+     159.669,
+     -8.935
+    ]
+   },
+   {
+    "id": "VUT",
+    "name": "Vanuatu",
+    "areaSr": 0.00030131,
+    "centroid": [
+     167.695,
+     -16.177
+    ]
+   }
+  ],
+  "Micronesia": [
+   {
+    "id": "FSM",
+    "name": "Federated States of Micronesia",
+    "areaSr": 0.00001506,
+    "centroid": [
+     155.412,
+     7.014
+    ]
+   },
+   {
+    "id": "KIR",
+    "name": "Kiribati",
+    "areaSr": 0.000023206,
+    "centroid": [
+     -166.893,
+     0.585
+    ]
+   },
+   {
+    "id": "MHL",
+    "name": "Marshall Islands",
+    "areaSr": 0.000004146,
+    "centroid": [
+     170.133,
+     7.147
+    ]
+   },
+   {
+    "id": "NRU",
+    "name": "Nauru",
+    "areaSr": 6.91e-7,
+    "centroid": [
+     166.935,
+     -0.518
+    ]
+   },
+   {
+    "id": "PLW",
+    "name": "Palau",
+    "areaSr": 0.000012535,
+    "centroid": [
+     134.348,
+     7.222
+    ]
+   }
+  ],
+  "Polynesia": [
+   {
+    "id": "WSM",
+    "name": "Samoa",
+    "areaSr": 0.000068387,
+    "centroid": [
+     -172.152,
+     -13.757
+    ]
+   },
+   {
+    "id": "TON",
+    "name": "Tonga",
+    "areaSr": 0.000014506,
+    "centroid": [
+     -174.846,
+     -20.01
+    ]
+   },
+   {
+    "id": "TUV",
+    "name": "Tuvalu",
+    "areaSr": 5.88e-7,
+    "centroid": [
+     178.541,
+     -7.775
+    ]
+   }
+  ]
+ },
+ "Seven seas (open ocean)": {
+  "Eastern Africa": [
+   {
+    "id": "MUS",
+    "name": "Mauritius",
+    "areaSr": 0.000050108,
+    "centroid": [
+     57.83,
+     -20.177
+    ]
+   },
+   {
+    "id": "SYC",
+    "name": "Seychelles",
+    "areaSr": 0.000010819,
+    "centroid": [
+     52.058,
+     -6.522
+    ]
+   }
+  ],
+  "Southern Asia": [
+   {
+    "id": "MDV",
+    "name": "Maldives",
+    "areaSr": 0.000002788,
+    "centroid": [
+     73.31,
+     3.786
+    ]
+   }
+  ]
+ },
+ "South America": {
+  "South America": [
+   {
+    "id": "ARG",
+    "name": "Argentina",
+    "areaSr": 0.068613187,
+    "centroid": [
+     -63.221,
+     -34.839
+    ]
+   },
+   {
+    "id": "BOL",
+    "name": "Bolivia",
+    "areaSr": 0.026830986,
+    "centroid": [
+     -65.449,
+     -18.32
+    ]
+   },
+   {
+    "id": "BRA",
+    "name": "Brazil",
+    "areaSr": 0.20848709,
+    "centroid": [
+     -58.156,
+     -9.828
+    ]
+   },
+   {
+    "id": "CHL",
+    "name": "Chile",
+    "areaSr": 0.018737732,
+    "centroid": [
+     -70.852,
+     -37.047
+    ]
+   },
+   {
+    "id": "COL",
+    "name": "Colombia",
+    "areaSr": 0.028134499,
+    "centroid": [
+     -74.136,
+     3.998
+    ]
+   },
+   {
+    "id": "ECU",
+    "name": "Ecuador",
+    "areaSr": 0.006239803,
+    "centroid": [
+     -78.759,
+     -1.1
+    ]
+   },
+   {
+    "id": "GUY",
+    "name": "Guyana",
+    "areaSr": 0.005243963,
+    "centroid": [
+     -58.869,
+     5.211
+    ]
+   },
+   {
+    "id": "PRY",
+    "name": "Paraguay",
+    "areaSr": 0.009943374,
+    "centroid": [
+     -58.521,
+     -22.878
+    ]
+   },
+   {
+    "id": "PER",
+    "name": "Peru",
+    "areaSr": 0.032045285,
+    "centroid": [
+     -73.134,
+     -9.525
+    ]
+   },
+   {
+    "id": "SUR",
+    "name": "Suriname",
+    "areaSr": 0.003586376,
+    "centroid": [
+     -55.717,
+     3.99
+    ]
+   },
+   {
+    "id": "URY",
+    "name": "Uruguay",
+    "areaSr": 0.00440004,
+    "centroid": [
+     -56.549,
+     -32.24
+    ]
+   },
+   {
+    "id": "VEN",
+    "name": "Venezuela",
+    "areaSr": 0.02251042,
+    "centroid": [
+     -65.071,
+     6.69
+    ]
+   }
+  ]
+ }
+}

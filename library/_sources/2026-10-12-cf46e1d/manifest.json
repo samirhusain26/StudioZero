@@ -1,0 +1,297 @@
+{
+  "snapshotId": "2026-10-12-cf46e1d",
+  "snapshotHash": "731089febead8b97eebb312778f1cecdc8a2d721766200c2dadf943b75824524",
+  "repo": "scalargame",
+  "ref": "HEAD",
+  "commit": "cf46e1daeccad4008dde2a1af1bc625275059458",
+  "frozenAt": "2026-10-12T23:48:24Z",
+  "uncommittedGameEditsExcluded": [],
+  "note": "Committed game sources only. Uncommitted working-tree edits in the game repo are excluded by construction.",
+  "files": [
+    {
+      "path": "data/reference/README.md",
+      "sha256": "6733fb9f63b0ecdb3259275fc5488d3fdd75e6cdddbcd8f633ef218db90b08d1",
+      "bytes": 3359
+    },
+    {
+      "path": "data/reference/allowlist.json",
+      "sha256": "cefa33089bf993ace344b90702cc5045307df156c99657c034b0c323eef6743c",
+      "bytes": 5569
+    },
+    {
+      "path": "data/reference/cia_factbook.csv",
+      "sha256": "5a5b014aa73324f49a1d6852f777c74ed9c18d43f3151883898f1119afb47e24",
+      "bytes": 16295
+    },
+    {
+      "path": "data/reference/world_bank.csv",
+      "sha256": "048795c542dbb3569d92e92cb2487887e3cd04d23bab70a3b0790b3768d0d119",
+      "bytes": 28145
+    },
+    {
+      "path": "public/puzzles/2026-04.json",
+      "sha256": "d958c873aea0cd5472c6e196351fae8ae577455388c0a1744a925179b816e542",
+      "bytes": 43578
+    },
+    {
+      "path": "public/puzzles/2026-05.json",
+      "sha256": "ab1e7af311700f09ef0d0bb91337363d693cacef9ee282f98c669de140093411",
+      "bytes": 150143
+    },
+    {
+      "path": "public/puzzles/2026-06.json",
+      "sha256": "cb6a5824cf735871c619892e9d05a51165d5980aeff28dc1b41101ab55756852",
+      "bytes": 145922
+    },
+    {
+      "path": "public/puzzles/2026-07.json",
+      "sha256": "504895d59f89119d9e1ee7463809f95b04fab0a8edb9995f72a25cbcceba5c0d",
+      "bytes": 150205
+    },
+    {
+      "path": "public/puzzles/2026-08.json",
+      "sha256": "a190de5a28eca5359992b568e163f0b5bf01e59a9caa4d18e15e2bbf26e5470e",
+      "bytes": 152420
+    },
+    {
+      "path": "public/puzzles/2026-09.json",
+      "sha256": "6653dd2349bfa92f242b5847732832b0210b325720d498622390e6abc56829ce",
+      "bytes": 146002
+    },
+    {
+      "path": "public/puzzles/2026-10.json",
+      "sha256": "0478edf49ef06e65411575873d353fe81970495e3dcd4627f4bf86da9066f97f",
+      "bytes": 151705
+    },
+    {
+      "path": "public/puzzles/2026-11.json",
+      "sha256": "15149954b5ad8fbb1773f7bd878d8e8b8f4b6f09b3904bafba5c37a9ba58e7d1",
+      "bytes": 146215
+    },
+    {
+      "path": "public/puzzles/2026-12.json",
+      "sha256": "7ebf74ebc9756bfa6dac57c0c656540b06c5e27d8b589fafb91cec857236d946",
+      "bytes": 149674
+    },
+    {
+      "path": "public/puzzles/2027-01.json",
+      "sha256": "b64b6d7cee9d865e5a8a234e5fba4f4014c25b9a96bffcad840d2b9844c295bb",
+      "bytes": 153548
+    },
+    {
+      "path": "public/puzzles/2027-02.json",
+      "sha256": "dd3c0f37638f3c5b6a759fad0dc7bc3f00d26debcdae568e00b29c4ed804a85b",
+      "bytes": 137032
+    },
+    {
+      "path": "public/puzzles/2027-03.json",
+      "sha256": "5895e28207e7323cf62a4bcd309ac3320d1f87c25845117cd5628feb37109c94",
+      "bytes": 152776
+    },
+    {
+      "path": "public/puzzles/2027-04.json",
+      "sha256": "b3bdac4a43fa725bbc436e2306ecccedb97f4a11822a0ee414240baa2fc8c372",
+      "bytes": 149199
+    },
+    {
+      "path": "public/puzzles/2027-05.json",
+      "sha256": "0e0b1dc25136460a68c13d795e85f9cb18648ca3b21a714f93a51b004d011666",
+      "bytes": 150365
+    },
+    {
+      "path": "public/puzzles/2027-06.json",
+      "sha256": "0039712527438abfd6874c841c8ab1e9a7dd21ca3a5e9044d49f2deed461f303",
+      "bytes": 146972
+    },
+    {
+      "path": "public/puzzles/2027-07.json",
+      "sha256": "1b0ada4f65d5d34e08afeae3c63b13e11339c4991e96ea72e6bb951afa7ac917",
+      "bytes": 149102
+    },
+    {
+      "path": "public/puzzles/2027-08.json",
+      "sha256": "95d88b6e29cc3066b759543c680fa34a385cd4ac14e042b3dd199b5df9e3a280",
+      "bytes": 152874
+    },
+    {
+      "path": "public/puzzles/2027-09.json",
+      "sha256": "18bfa1743d4851fdd0d6a99eddc654041af111cbe96608b96d08595cbe96e30e",
+      "bytes": 147921
+    },
+    {
+      "path": "public/puzzles/2027-10.json",
+      "sha256": "b07283ca64d23350faeea33ffe4139fbee142ab595b2b5ad8fea06c833549591",
+      "bytes": 151235
+    },
+    {
+      "path": "public/puzzles/2027-11.json",
+      "sha256": "70ba0a23599b8659606572916f0c2ac9acbc72ca1379d1c5b28cf5f5f766391e",
+      "bytes": 144160
+    },
+    {
+      "path": "public/puzzles/2027-12.json",
+      "sha256": "0589e10fe49cf1231e8bd252389952d17495b3f6ac1f9143b49cfb46aafdc74e",
+      "bytes": 152041
+    },
+    {
+      "path": "public/puzzles/2028-01.json",
+      "sha256": "b441287c17e1b236b637d8d47988870da349cb182f5a3dd59ce14ed6021c3713",
+      "bytes": 151279
+    },
+    {
+      "path": "public/puzzles/2028-02.json",
+      "sha256": "a441217a237f632929596098826296ed4578ae1a7ca06d5c29fea60e84b9f555",
+      "bytes": 143929
+    },
+    {
+      "path": "public/puzzles/2028-03.json",
+      "sha256": "b6303abef409a8617a4b43cc224ea6e604bfbf3cac175c36f8d6d1e94f40ca01",
+      "bytes": 149680
+    },
+    {
+      "path": "public/puzzles/2028-04.json",
+      "sha256": "1b78c84d1f1ab6d36fef0baa7c12cbc4bebf1ff3db1b7f54ad121178fe08ac82",
+      "bytes": 148708
+    },
+    {
+      "path": "public/puzzles/2028-05.json",
+      "sha256": "edf8766d351e1fbd91276fc5bb77e78fb39ff0fff5bd9ddd807e8fd9874da7f9",
+      "bytes": 153133
+    },
+    {
+      "path": "public/puzzles/2028-06.json",
+      "sha256": "92c183cf8dee8516d9788c3313cc5caac52675461473901eeaca2ae710676ee7",
+      "bytes": 148184
+    },
+    {
+      "path": "public/puzzles/2028-07.json",
+      "sha256": "a9219786352782ca93583801ed8d5b05767efb1778ff4986cd31dde590b7b346",
+      "bytes": 150691
+    },
+    {
+      "path": "public/puzzles/2028-08.json",
+      "sha256": "5f66adb65e26b37648e34e7b9d7c4b612228328de9d1fb1493713f8919bd885d",
+      "bytes": 151252
+    },
+    {
+      "path": "public/puzzles/2028-09.json",
+      "sha256": "a9a1608fcf656b3bc125fe95ef3a95595f34897395abfadd45eeffed868670fd",
+      "bytes": 148580
+    },
+    {
+      "path": "public/puzzles/2028-10.json",
+      "sha256": "cd133fe4572fdc37b1dec7b644597fdd6beb74be7e6ce950f6d3e4b858cba1e3",
+      "bytes": 152205
+    },
+    {
+      "path": "public/puzzles/2028-11.json",
+      "sha256": "b7b3c075fbbeba62a74c7514afa55c1085f3a0d0fe34cdb1553e12219b134ff5",
+      "bytes": 146560
+    },
+    {
+      "path": "public/puzzles/2028-12.json",
+      "sha256": "25f149d8ffa0c83330be8e68f666de0a1a124d4a012c410353242c42a6b4dc73",
+      "bytes": 151183
+    },
+    {
+      "path": "public/puzzles/2029-01.json",
+      "sha256": "f77bc41519eb8f46c3dbe113a41e3a1b5345da2397ace12e41f47a4ce1dad02d",
+      "bytes": 151280
+    },
+    {
+      "path": "public/puzzles/2029-02.json",
+      "sha256": "282fd156a51ef13cb5af9db3868823a76c037013c520bc90c5d01c280a9178c6",
+      "bytes": 138539
+    },
+    {
+      "path": "public/puzzles/2029-03.json",
+      "sha256": "48c3dc4d37638396fdd18a1b0a8519427e4a29819d6487bbdee3b2b2f405a4de",
+      "bytes": 152664
+    },
+    {
+      "path": "public/puzzles/2029-04.json",
+      "sha256": "3f432d9a18293e24f1cff7a2385d18a24028e6762943a1d1dd3fdd11a115a7a1",
+      "bytes": 146811
+    },
+    {
+      "path": "public/puzzles/2029-05.json",
+      "sha256": "5ee9d149918e22588eca5e6cc93def5dfced603e891aa1a1d7b0b5b3a0aab095",
+      "bytes": 19551
+    },
+    {
+      "path": "public/puzzles/dates.json",
+      "sha256": "cee8370768f075d1f3233930b8342b4af73a0e04cdc726bb4c899e016a392a8f",
+      "bytes": 14457
+    },
+    {
+      "path": "public/puzzles/manifest.json",
+      "sha256": "e733d153a74f6890c88d6fff88ca0ee2b1b82084325483ad55d0d266f1af4ec9",
+      "bytes": 411
+    },
+    {
+      "path": "public/tectonic/facts/country_facts.json",
+      "sha256": "2ab4f64b8c6e2f55aa156438e366e99ef692b679fff5af47546e1ab175c89cd0",
+      "bytes": 278809
+    },
+    {
+      "path": "public/tectonic/globe/catalog.json",
+      "sha256": "fa9a1320e6c845b9723aa971771423a38eb4e7c357ad9eb59bef31d629c5e5d1",
+      "bytes": 26026
+    },
+    {
+      "path": "public/tectonic/globe/countries.json",
+      "sha256": "9b5b4b018fb39059d95589f3dbfd11c8bd29ce80d134262dedbcd31f46b0baa1",
+      "bytes": 963509
+    },
+    {
+      "path": "src/continuum/continuumConfig.ts",
+      "sha256": "afc9f25e4735bcb552c8c96be848be6f4fcba72235b6e348f90fc8748cb08cca",
+      "bytes": 1196
+    },
+    {
+      "path": "src/games/registry.ts",
+      "sha256": "76082a8705a23e091bf43a03eaf625b7915bd1dd634e1dd65c7783c716e52caa",
+      "bytes": 2827
+    },
+    {
+      "path": "src/learning/continuumFingerprints.ts",
+      "sha256": "a4f4e8375372036ffac24b914264f3a02a17a26afbe52a62eec1adc92c3549d8",
+      "bytes": 806
+    },
+    {
+      "path": "src/learning/facts/continuum.json",
+      "sha256": "71d1b0849d915e236b8854bd43cd535baa072da04637942e0273b8b751aab1b3",
+      "bytes": 3080
+    },
+    {
+      "path": "src/learning/facts/scalar-fingerprints.json",
+      "sha256": "b4fb9f41b5e29289ccb4e4b0261e6314d9f6e5305453f070e82070f3d113f320",
+      "bytes": 14941
+    },
+    {
+      "path": "src/learning/facts/scalar.json",
+      "sha256": "138a7803bbfca178cb3094dcf9627a03319ff947cf47730fb0a424a30c95b3e9",
+      "bytes": 356763
+    },
+    {
+      "path": "src/learning/facts/whenabouts.json",
+      "sha256": "33ac0f111bcbbd35d0423ae269c85b96e095f1952cf88acd9fa057bc67e38db1",
+      "bytes": 570539
+    },
+    {
+      "path": "src/scalar/assets/data/continuumGameData.json",
+      "sha256": "5ceb4eafcd8675c9eb5435d66f30a1c0a62133e57ebaa2c9dc2e5f2933bc7dd7",
+      "bytes": 74910
+    },
+    {
+      "path": "src/scalar/assets/data/gameData.json",
+      "sha256": "2604f049f986a15773d435b59c99ae8aed1e39ff76d26a76ade6ca5404755146",
+      "bytes": 575109
+    },
+    {
+      "path": "src/utils/dailySelection.mjs",
+      "sha256": "992d12f2ebaac0fcbb73ad4e38cdea5d13faf6e09574a78db249e400ba3dd206",
+      "bytes": 2631
+    }
+  ]
+}

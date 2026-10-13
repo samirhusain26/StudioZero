@@ -1,0 +1,33 @@
+{
+  "_doc": "Deliberate definitions that differ from the pinned references. Each entry fixes the accepted game value; the generator blocks if the game value changes away from it. See docs/SCALAR.md#data-sources-and-validation.",
+  "reference": {
+    "countries": [
+      {"id": "NOR", "field": "area", "value": 385207, "reason": "World Bank AG.SRF.TOTL.K2 reports 624,500 km2 for Norway, which no published definition of Norwegian territory supports (defect D4). The game uses 385,207 km2: mainland plus Svalbard and Jan Mayen (Statistics Norway), the figure other references cite."},
+      {"id": "CAN", "field": "area", "value": 9984670, "reason": "World Bank AG.SRF.TOTL.K2 reports 15,634,410 km2 for Canada (2021-2023; 15,640,500 before), about 5.6M km2 more than any published definition of Canadian territory and larger than its land area (8,788,700) plus all fresh water. The game uses 9,984,670 km2, Statistics Canada's total area (land plus fresh water), the figure other references cite."},
+      {"id": "MCO", "field": "area", "value": 2, "reason": "World Bank AG.SRF.TOTL.K2 reports 75 km2 for Monaco; its land territory is about 2.1 km2 (the World Bank's own earlier figure). The larger value cannot be a surface area."},
+      {"id": "FRA", "field": "timezone_count", "value": 12, "reason": "Timezones count distinct standard-time offsets across all territory, including overseas regions and collectivities (excluding the Antarctic Adelie Land claim): France has 12 (defect D4). The Factbook time note covers only the five overseas regions."},
+      {"id": "USA", "field": "timezone_count", "value": 11, "reason": "Territory-inclusive definition: the Factbook's six zones for the 50 states plus the territories (Puerto Rico/USVI, Guam/Northern Marianas, American Samoa, Wake and Baker/Howland)."},
+      {"id": "GBR", "field": "timezone_count", "value": 9, "reason": "Territory-inclusive definition: the United Kingdom plus its overseas territories; the Factbook note says its time statement covers the UK proper only."},
+      {"id": "DNK", "field": "timezone_count", "value": 5, "reason": "Territory-inclusive definition: distinct offsets across the Kingdom of Denmark: Denmark (UTC+1), the Faroe Islands (UTC+0) and Greenland (UTC+0, -1, -2, -4)."},
+      {"id": "NZL", "field": "timezone_count", "value": 5, "reason": "Territory-inclusive definition: the Realm of New Zealand (New Zealand, Chatham Islands, Cook Islands, Niue, Tokelau). The Factbook lists the first two."},
+      {"id": "AUS", "field": "timezone_count", "value": 8, "reason": "Territory-inclusive definition: the Factbook's six zones (including Lord Howe Island) plus the external territories Christmas Island (UTC+7) and Cocos (Keeling) Islands (UTC+6:30)."},
+      {"id": "SGP", "field": "border_countries_count", "value": 1, "reason": "The game counts the Johor-Singapore Causeway as Singapore's land connection to Malaysia; the Factbook lists no land boundary."},
+      {"id": "ARG", "field": "government_type", "value": "Federal Republic", "reason": "Argentina is a federal republic under its constitution; the Factbook's 'presidential republic' omits the federal structure."},
+      {"id": "ARE", "field": "government_type", "value": "Absolute Monarchy", "reason": "The Factbook's 'federation of monarchies' is a federation of seven absolute emirates; the game classifies the head-of-state system."},
+      {"id": "PAK", "field": "government_type", "value": "Islamic Republic", "reason": "The game's Islamic Republic category follows the official state name (Islamic Republic of Pakistan)."},
+      {"id": "MRT", "field": "government_type", "value": "Islamic Republic", "reason": "The game's Islamic Republic category follows the official state name (Islamic Republic of Mauritania)."},
+      {"id": "NER", "field": "government_type", "value": "Military Junta", "reason": "Military rule since the July 2023 coup, extended for five years in March 2025; the final Factbook snapshot predates the extension."},
+      {"id": "SDN", "field": "government_type", "value": "Military Junta", "reason": "Governed by the Burhan-led military council; the Factbook keeps the nominal 'presidential republic'."},
+      {"id": "MLI", "field": "government_type", "value": "Military Junta", "reason": "Military government since 2020-2021, rule extended in July 2025; the Factbook keeps the nominal 'semi-presidential republic'."},
+      {"id": "BFA", "field": "government_type", "value": "Military Junta", "reason": "Military government since 2022, extended for five years in 2024; the Factbook keeps the nominal 'presidential republic'."},
+      {"id": "MMR", "field": "Capital/Major City", "value": "Naypyidaw", "reason": "Nay Pyi Taw is Myanmar's capital; the Factbook names Rangoon only because of US Government recognition policy."},
+      {"id": "KIR", "field": "Capital/Major City", "value": "South Tarawa", "reason": "South Tarawa is the capital within the Tarawa atoll that the Factbook names."},
+      {"id": "NRU", "field": "Capital/Major City", "value": "Yaren District", "reason": "Nauru has no official capital; government offices are in the Yaren District, as the Factbook notes."}
+    ]
+  },
+  "homonyms": {
+    "cities": [
+      {"name": "San Jose", "ids": ["CRI", "USA_san_jose"], "disambiguator": "country", "reason": "San Jose, Costa Rica and San Jose, California are distinct entities with distinct IDs. Names are kept as published (renaming does not move daily picks, which sort by ID, but it would change shared results); the country field distinguishes them."}
+    ]
+  }
+}
