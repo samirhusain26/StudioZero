@@ -1,4 +1,5 @@
 import io
+import copy
 import json
 from pathlib import Path
 import sys
@@ -17,9 +18,33 @@ class BufferContractTests(unittest.TestCase):
         return caught.exception.category
     def test_coercion_rejection_is_safe_and_redacted(self):
         self.assertEqual(self.failure(400,{'errors':[{'message':'Variable input got invalid value PRIVATE'}]}),'rejected')
+    def test_http_200_graphql_coercion_rejection_is_safe_and_redacted(self):
+        body = {'errors':[{'extensions':{'code':'INTERNAL_SERVER_ERROR'},
+            'message':'Variable $input got invalid value {description: "PRIVATE"}; Field is not defined by type'}]}
+        with patch('buffer_adapter.urllib.request.urlopen', return_value=io.BytesIO(json.dumps(body).encode())):
+            with self.assertRaises(PublishError) as caught:
+                request('mutation{}',{},'test-token')
+        self.assertEqual(caught.exception.category, 'rejected')
+        self.assertNotIn('PRIVATE', str(caught.exception))
+    def test_http_200_authorization_and_rate_limit_errors_take_priority(self):
+        coercion={'message':'Variable input got invalid value SECRET'}
+        for priority_error, expected in (({'extensions':{'code':'FORBIDDEN'}}, 'authorization'),
+                ({'extensions':{'code':'RATE_LIMIT_EXCEEDED'}}, 'rate_limit')):
+            body={'errors':[coercion, priority_error]}
+            with self.subTest(expected=expected), patch('buffer_adapter.urllib.request.urlopen',
+                    return_value=io.BytesIO(json.dumps(body).encode())):
+                with self.assertRaises(PublishError) as caught:
+                    request('mutation{}',{},'test-token')
+            self.assertEqual(caught.exception.category, expected)
+    def test_validation_rejection_predicate_requires_proven_pre_execution(self):
+        self.assertEqual(self.failure(400, {'errors':[{'extensions':{'code':'GRAPHQL_VALIDATION_FAILED'}}]}), 'rejected')
+        self.assertEqual(self.failure(400, {'data':{}, 'errors':[{'message':'Variable input got invalid value'}]}), 'uncertain')
+        self.assertEqual(self.failure(400, {'errors':[{'message':'Variable input got invalid value'}, {'message':'unknown'}]}), 'uncertain')
+        self.assertEqual(self.failure(400, {'errors':[{'message':'Variable input got invalid value','path':['createPost']}]}), 'uncertain')
     def test_execution_and_server_errors_remain_uncertain(self):
         self.assertEqual(self.failure(400,{'errors':[{'message':'failure','path':['createPost']}]}),'uncertain')
         self.assertEqual(self.failure(500,{}),'uncertain')
+        self.assertEqual(self.failure(500,{'errors':[{'message':'Variable input got invalid value'}]}),'uncertain')
     def test_publish_uses_live_share_mode(self):
         class Ledger:
             def consume_call(self, now): pass
@@ -34,6 +59,48 @@ class BufferContractTests(unittest.TestCase):
             adapter.publish({'platform':'youtube','account':'account'},{'caption':'test','media':{'url':'https://example.test/video.mp4'}})
         self.assertEqual(calls[-1]['input']['mode'],'shareNow')
         self.assertFalse(calls[-1]['input']['saveToDraft'])
+
+    def youtube_adapter(self):
+        class Ledger:
+            def consume_call(self, now): pass
+        calls=[]
+        def transport(query, variables, token):
+            calls.append(variables)
+            if 'channel' in query and 'mutation' not in query:
+                return {'channel':{'id':'account','service':'youtube','serviceId':'provider','externalLink':'https://example.test/profile','isDisconnected':False,'isLocked':False}}
+            return {'createPost':{'__typename':'PostActionSuccess','post':{'id':'post','schedulingType':'automatic','channelId':'account'}}}
+        adapter=BufferAdapter(Ledger(),{'channels':{'youtube':{'providerAccountId':'provider','profileUrl':'https://example.test/profile'}}},transport,lambda:'test-token')
+        return adapter, calls
+
+    def test_youtube_description_is_removed_without_mutating_approved_payload(self):
+        adapter, calls = self.youtube_adapter()
+        payload={'caption':'Approved text','media':{'url':'https://example.test/video.mp4'},
+            'metadata':{'youtube':{'title':'Approved title','description':'Approved text','categoryId':'24','isAiGenerated':True}}}
+        original=copy.deepcopy(payload)
+        with patch('buffer_adapter.verify_media'):
+            adapter.publish({'platform':'youtube','account':'account'},payload)
+        sent=calls[-1]['input']
+        self.assertEqual(sent['text'], 'Approved text')
+        self.assertEqual(sent['metadata']['youtube'], {'title':'Approved title','categoryId':'24','isAiGenerated':True})
+        self.assertEqual(payload, original)
+
+    def test_youtube_mismatched_description_rejected_before_remote_calls(self):
+        adapter, calls = self.youtube_adapter()
+        payload={'caption':'Approved text','media':{'url':'https://example.test/video.mp4'},
+            'metadata':{'youtube':{'description':'different'}}}
+        with patch('buffer_adapter.verify_media') as verify, self.assertRaises(PublishError) as error:
+            adapter.publish({'platform':'youtube','account':'account'},payload)
+        self.assertEqual(error.exception.category, 'rejected')
+        verify.assert_not_called()
+        self.assertEqual(calls, [])
+
+    def test_youtube_without_description_keeps_existing_metadata(self):
+        adapter, calls = self.youtube_adapter()
+        metadata={'youtube':{'title':'Title','categoryId':'24'}}
+        with patch('buffer_adapter.verify_media'):
+            adapter.publish({'platform':'youtube','account':'account'},
+                {'caption':'Approved text','media':{'url':'https://example.test/video.mp4'},'metadata':metadata})
+        self.assertEqual(calls[-1]['input']['metadata'], metadata)
 
     def tiktok_adapter(self, post=None, channel=None):
         class Ledger:

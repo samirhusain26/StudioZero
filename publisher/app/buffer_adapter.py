@@ -28,6 +28,24 @@ class PublishError(Exception):
         self.retry_after = retry_after
 
 
+def _pre_execution_rejection(body):
+    """Whether GraphQL proves that a request failed before execution."""
+    errors = body.get('errors')
+    if not isinstance(errors, list) or not errors or body.get('data') is not None:
+        return False
+    for error in errors:
+        if not isinstance(error, dict) or error.get('path') is not None:
+            return False
+        code = (error.get('extensions') or {}).get('code')
+        message = error.get('message', '')
+        validation = code == 'GRAPHQL_VALIDATION_FAILED'
+        coercion = (isinstance(message, str) and message.startswith('Variable ')
+                    and 'got invalid value' in message)
+        if not (validation or coercion):
+            return False
+    return True
+
+
 def credential_permissions_ok(path, metadata):
     mode = stat.S_IMODE(metadata.st_mode)
     # systemd may use a root-owned 0440 file whose ACL grants only this service
@@ -70,13 +88,7 @@ def request(query, variables, token):
         if error.code == 400:
             try:
                 invalid = json.load(error)
-                errors = invalid.get('errors', [])
-                # GraphQL rejects validation/variable-coercion failures before
-                # executing a mutation. No response text leaves the adapter.
-                if errors and not invalid.get('data') and all(
-                    not e.get('path') and (e.get('extensions',{}).get('code') == 'GRAPHQL_VALIDATION_FAILED'
-                    or e.get('message','').startswith('Variable ') and 'got invalid value' in e.get('message',''))
-                    for e in errors):
+                if _pre_execution_rejection(invalid):
                     raise PublishError('rejected') from None
             except (ValueError, OSError):
                 pass
@@ -90,6 +102,8 @@ def request(query, variables, token):
             raise PublishError("authorization")
         if "RATE_LIMIT_EXCEEDED" in codes:
             raise PublishError("rate_limit")
+        if _pre_execution_rejection(body):
+            raise PublishError("rejected")
         raise PublishError("uncertain")
     return body["data"]
 
@@ -143,6 +157,16 @@ class BufferAdapter:
         if payload.get("companion") or thread and (not X_THREAD_VERIFIED or job["platform"] != "x"
                 or not isinstance(thread, list) or any(not isinstance(t, str) or not t.strip() for t in thread)):
             raise PublishError("rejected")
+        source_metadata = payload.get("metadata", {})
+        metadata = source_metadata
+        if job["platform"] == "youtube" and isinstance(source_metadata, dict):
+            youtube = source_metadata.get("youtube")
+            if isinstance(youtube, dict) and "description" in youtube:
+                # YouTube text is the approved caption; Buffer's input type has no description field.
+                # https://developers.buffer.com/types/YoutubePostMetadataInput.html
+                if youtube["description"] != payload["caption"]:
+                    raise PublishError("rejected")
+                metadata = {**source_metadata, "youtube": {k: v for k, v in youtube.items() if k != "description"}}
         verify_media(payload, self.config)
         # Query exact connected identity before each mutation; never trust the display name.
         channel = self.call("query($id:ChannelId!){channel(input:{id:$id}){id name service serviceId externalLink isDisconnected isLocked}}", {"id":job["account"]})["channel"]
@@ -157,7 +181,7 @@ class BufferAdapter:
             raise PublishError("authorization")
         post = {"channelId":job["account"],"text":payload["caption"],"assets":[{"video":{"url":payload["media"]["url"]}}],
                 "mode":"shareNow","schedulingType":"automatic","needsApproval":False,"saveToDraft":False,
-                "metadata":payload.get("metadata",{}),"source":"scalar-social"}
+                "metadata":metadata,"source":"scalar-social"}
         if thread:
             metadata = post["metadata"] or {}
             post["metadata"] = {**metadata, "twitter":{**(metadata.get("twitter") or {}), "thread":[{"text":payload["caption"],"assets":post["assets"]}]+[{"text":t} for t in thread]}}
