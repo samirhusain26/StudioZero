@@ -7,7 +7,7 @@
 StudioZero is the studio behind the @studiozeroflow social accounts. Three nouns:
 
 - **Engine**: how a video is made (toolchain, render, media QA; no posting, no project rules). `motion` = the Remotion project in `engines/motion/`; `story` = `engines/story/`, the Python package with the routes `recap` (stock footage) and `series` (AI animation).
-- **Project**: why and for whom (sources, fact and rights rules, voice, call to action, link policy, budget, mix share). `originals` (P0, the story engine's recaps and shorts) and `scalargame` (P1, quiz videos for scalargame.com).
+- **Project**: why and for whom (sources, fact and rights rules, voice, call to action, link policy, budget, mix share). `originals` (P0, the story engine's recaps and shorts) and `scalargame` (P1, quiz videos for scalargame.com). `marathon` (the owner's weekly running-channel video, `projects/marathon/README.md`) is a **manual project** (`studio.json` `manualProjects`): the owner posts it by hand to its own accounts, so it has no batches, contract module, schedule, mix or publisher channels; the catalog carries only its card for Studio › Overview (what to bring, the prompts to paste into Claude Code). `explainers` (one real patent per daily 45–75 s vertical video, made by a team of agents from a trend scout to locked scripts; `projects/explainers/PLAN.md`, `SYSTEM.md`) is **being built**: Phase 1 (pre-production) exists, it is not yet in `studio.json`, the contract or the publisher.
 - **Channel**: where. The @studiozeroflow accounts, owned by the publisher only.
 
 Every project follows one flow: Brief → Make (engine, Mac) → Check → Package (`batch.json`) → Approve (Pi, owner) → Schedule → Post → Learn. Root `studio.json` lists projects, engines and channels; each project has `projects/<p>/project.json` (formats, sources, link and call-to-action policy, caption defaults, budget, mix share, required checks). Engines write one `render.json` per episode (`tools/RENDER_JSON.md`) and never `batch.json`; the shared packager `tools/package.mjs` turns `render.json` + the project's captions into `batch.json`. Placement rule: code that must build with an engine's toolchain lives in that engine under `src/projects/<project>/`; content and rules live in `projects/<project>/`. The **publisher** runs on a Raspberry Pi (stdlib Python, systemd units, a private React management UI) and posts approved videos; the **contract** (`batch.json` per batch, one validator on both sides) is the only interface between Mac and Pi. Batches live in `library/`.
@@ -23,7 +23,9 @@ docs/                            STUDIO_PLAN (running plan), PUBLIC_SAFETY, plan
                                  prompts/ (the consolidation brief), marketing plans: REBUILD_PLAN, REBUILD_CONTRACTS,
                                  PI_UI_REDESIGN_PLAN, AUTOPILOT_PLAN, AUDIO_CORPUS_PLAN, MARKETING_VIDEO_PLAN, UPLOAD_PLAN (historical)
 studio.json                      projects, engines, channels (public facts only)
-projects/                        <p>/{project.json, package.mjs + package-core.mjs (contract v2 episodes; scalargame: captions, links)}
+projects/                        <p>/{project.json, package.mjs + package-core.mjs (contract v2 episodes; scalargame: captions, links)};
+                                 explainers/ (PLAN, SYSTEM, RESEARCH; formats/, brand/voice.md, tracks/patents.md, tools/scout_feeds.py + check_episode.py)
+                                 marathon/ (manual project: project.json → Studio card, README with hard rules, PLAN, brand/, journey/, tools/health_export.py; weeks/ ignored)
 tools/                           public_safety_check.py (run before every push, stdlib); retro_stats.py (feedback export → matched-checkpoint post stats); stage-story.mjs (story render → batch); package.mjs (shared packager) +
                                  package-regression.mjs; render-json.mjs + RENDER_JSON.md (engine → packager format);
                                  export-catalog.mjs (→ publisher/catalog.json)
@@ -56,8 +58,8 @@ publisher/                       Pi. Everything the Pi runs
   profile-assets/  config.example.json (placeholders only)  pi-package.json  pi-package-lock.json
 contract/                        shared: library_contract.py (validate/finalize; v1 and v2), projects/<p>.py (v2 project rules), BATCH_CONTRACT.md, tests/
 library/                         <batchId>/ (only batch.json tracked), _sources/<snapshot>/ (tracked, frozen), _templates/ _briefs/ _retros/ (tracked notes), _inbox/ _dev/ (ignored)
-.claude/                         skills/video-batch/ (Scalargame batch skill), skills/originals/ (Originals playbook), agents/fact-checker.md,
-                                 agents/originals-fact-checker.md, launch.json
+.claude/                         skills/video-batch/ (Scalargame batch skill), skills/originals/ (Originals playbook), skills/marathon-week/ (marathon weekly video), skills/explainer/ (Explainers batch),
+                                 agents/fact-checker.md, agents/originals-fact-checker.md, agents/marathon-*.md, agents/explainer-*.md, launch.json
 ```
 
 ## Mac, Pi, shared
@@ -80,6 +82,8 @@ python3 -m unittest discover -s contract/tests -p 'test_*.py'
 (cd publisher/ui && npm run typecheck && npm run lint && npm test && npm run build)
 (cd engines/motion && ./node_modules/.bin/tsc --noEmit)
 node --test tools/tests/*.test.mjs                  # render.json checker
+python3 -m unittest discover -s projects/marathon/tools/tests   # marathon: Apple Health export → week facts
+python3 -m unittest discover -s projects/explainers/tools/tests  # explainers: feed fetcher + episode checker
 node tools/package-regression.mjs                   # packager regression: both 2026-10 batches re-packaged byte-identical + valid
 
 # UI bundle and studio catalog for the Pi: rebuild after any publisher/ui, manifest or engine-registry change, and check before committing
@@ -130,6 +134,8 @@ Gotchas: run Remotion from `engines/motion/` (it resolves `public/` from the wor
 - **`/video-batch`** (`.claude/skills/video-batch/SKILL.md`): Scalargame's batch playbook: `brief <batchId>` runs brief → write → check → pack (Checkpoint 1) → pilots (Checkpoint 2) → render → review → package (Checkpoint 3) → finalize (owner approval only) → retro; `status <batchId>` is read-only; `retro <batchId>` writes `library/_retros/<batchId>.md`. Counts, games, formats and styles come from the brief via the set's `CONFIG` (`engines/motion/pipeline/README.md`); the safety rules are fixed.
 - **`fact-checker` agent** (`.claude/agents/fact-checker.md`): independent live-source verification; writes only `library/<batchId>/review/source-verification.json` for an unfinalized batch.
 - **`/originals`** (`.claude/skills/originals/SKILL.md`): the Originals playbook: `brief <batchId>` (`YYYY-MM-oNN`) runs brief with per-run cost estimates (Checkpoint 0) → make (story engine; every paid run approved with its estimate) → stage (`tools/stage-story.mjs`) → check (script against its sources, rights, visual QA, disclosure; Checkpoint 1) → package (`tools/package.mjs --project=originals`; Checkpoint 2) → finalize (owner approval only) → retro; `status`, `retro` as above. Brief template `library/_templates/ORIGINALS_BRIEF.md`.
+- **`/explainer`** (`.claude/skills/explainer/SKILL.md`): the Explainers weekly batch (`YYYY-MM-eNN`, 7 episodes): `brief <batchId>` runs scout (`projects/explainers/tools/scout_feeds.py`) → slate (Checkpoint 1) → patent research → story → independent checks (Checkpoint 2); voice, visuals, render and package land in later phases. Read-only subagents: `explainer-trend-scout`, `explainer-patent-researcher`, `explainer-story-writer`, `explainer-fact-checker`, `explainer-standards`, `explainer-cold-reader`. Every ledger and script passes `python3 projects/explainers/tools/check_episode.py <episodeDir>`.
+- **`/marathon-week`** (`.claude/skills/marathon-week/SKILL.md`): the marathon project's Sunday playbook: `<YYYY-Www>` runs dump → data → story → slate (Checkpoint 1) → script (Checkpoint 2) → beats → build → review → package (Checkpoint 3); the owner posts by hand. Its read-only subagents are `marathon-data-analyst`, `marathon-story-editor`, `marathon-fact-checker`, `marathon-critic` and `marathon-standards`. Hard rules in `projects/marathon/README.md` (real or nothing, no face, home stays private, no advice).
 - **`originals-fact-checker` agent** (`.claude/agents/originals-fact-checker.md`): checks each recap script against its plot sources; read-only (no write tool): returns the `review/source-verification.json` content for the playbook to save.
 - **Notes**: `library/_templates/{BRIEF,RETRO}.md`; briefs `library/_briefs/<batchId>.md`; retros `library/_retros/<batchId>.md`; the Pi's `feedback-<batchId>.json` goes in `library/_inbox/` (ignored).
 - **Owner guide**: `publisher/ui/content/guide/*.md` + `meta.json` (anchors fixed by `docs/REBUILD_CONTRACTS.md` §4), bundled into the UI (Pi UI → Guide); rebuild `publisher/app/static` after editing. `OWNER_GUIDE.md` is the short Mac-side pointer.

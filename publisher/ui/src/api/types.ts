@@ -1651,10 +1651,26 @@ export interface CatalogChannel {
   linkInText: boolean
 }
 
+/** A project made in the studio but posted by hand to its own accounts (studio.json manualProjects): prompts only. */
+export interface CatalogManualProject {
+  id: string
+  name: string
+  posting: 'manual'
+  summary: string
+  cadence: string
+  goal: { name: string; date: string; note?: string } | null
+  accounts: { platform: string; handle: string | null }[]
+  bring: string[]
+  /** Placeholders: {week} (ISO week, 2026-W42), {monday}, {sunday} (YYYY-MM-DD). */
+  prompts: { id: string; label: string; template: string }[]
+}
+
 export interface Catalog {
   catalogVersion: 1
   studio: { name: string; summary: string; flow: string[] }
   projects: CatalogProject[]
+  /** Absent in catalogs exported before manual projects existed. */
+  manualProjects?: CatalogManualProject[]
   engines: CatalogEngine[]
   channels: CatalogChannel[]
 }

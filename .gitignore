@@ -83,3 +83,5 @@ engines/story/logs/
 .playwright-mcp/
 .idea/
 .vscode/
+# Marathon project (projects/marathon/README.md): week folders hold the owner's dumps, Health data, routes, clips and memos. Mac only.
+projects/marathon/weeks/

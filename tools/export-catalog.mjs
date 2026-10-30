@@ -1,5 +1,5 @@
 // Studio catalog for the Pi (docs/STUDIO_PLAN.md §6): what each project can make, on which engine, with which
-// templates, styles, beds, routes and models. Generated from studio.json, projects/*/project.json, the motion
+// templates, styles, beds, routes and models, plus the hand-posted projects. Generated from studio.json, projects/*/project.json, the motion
 // engine's template/style/timing/bed registries and the story engine's registry.json; committed as
 // publisher/catalog.json (the Pi's sparse checkout has publisher/, so it serves the file at /api/catalog).
 //   node tools/export-catalog.mjs           write publisher/catalog.json
@@ -54,6 +54,24 @@ function story(engine) {
   };
 }
 
+// Projects made here but posted by hand (studio.json manualProjects): the Studio shows their prompts only; they never
+// enter `projects`, which feeds batches, the contract and the autopilot's mix.
+const PLACEHOLDERS = new Set(['week', 'monday', 'sunday']);
+
+function manualProject(p) {
+  const fail = why => { throw new Error(`manual project ${p.id}: ${why}`); };
+  if (p.posting !== 'manual') fail('posting must be "manual"');
+  if (!/^[a-z][a-z0-9-]*$/.test(p.id ?? '')) fail('bad id');
+  for (const k of ['name', 'summary', 'cadence']) if (typeof p[k] !== 'string' || !p[k]) fail(`${k} required`);
+  if (p.goal && !/^\d{4}-\d{2}-\d{2}$/.test(p.goal.date ?? '')) fail('goal.date must be YYYY-MM-DD');
+  if (!p.prompts?.length) fail('prompts required');
+  for (const q of p.prompts) {
+    for (const [, name] of q.template.matchAll(/\{(\w+)\}/g)) if (!PLACEHOLDERS.has(name)) fail(`prompt ${q.id}: unknown {${name}}`);
+  }
+  return {id: p.id, name: p.name, posting: p.posting, summary: p.summary, cadence: p.cadence, goal: p.goal ?? null,
+    accounts: p.accounts ?? [], bring: p.bring ?? [], prompts: p.prompts.map(q => ({id: q.id, label: q.label, template: q.template}))};
+}
+
 export function buildCatalog() {
   const {studio, projects} = loadStudio();
   const engines = studio.engines.map(e => ({
@@ -71,8 +89,10 @@ export function buildCatalog() {
       formats: p.formats, ...(p.games ? {games: p.games} : {}), link: p.link, callToAction: p.callToAction, captions: p.captions,
       budget: p.budget, mix: p.mix, checks: p.checks.map(c => ({id: c.id, name: c.name}))};
   });
+  const manual = (studio.manualProjects ?? []).map(m => manualProject(json(m.manifest)));
+  for (const m of manual) if (out.some(p => p.id === m.id)) throw new Error(`${m.id} is both a project and a manual project`);
   return {catalogVersion: 1, studio: {name: studio.name, summary: studio.summary, flow: studio.flow},
-    projects: out, engines, channels: studio.channels};
+    projects: out, manualProjects: manual, engines, channels: studio.channels};
 }
 
 const body = JSON.stringify(buildCatalog(), null, 1) + '\n';

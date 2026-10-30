@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export function CopyBlock({ code, label }: { code: string; label: string }) {
+export function CopyBlock({ code, label, button = 'Copy command' }: { code: string; label: string; button?: string }) {
   const [status, setStatus] = useState('')
   const copy = async () => {
     try {
@@ -18,7 +18,7 @@ export function CopyBlock({ code, label }: { code: string; label: string }) {
       </pre>
       <div className="actions">
         <button type="button" className="btn" onClick={copy}>
-          Copy command
+          {button}
         </button>
         <span role="status" aria-live="polite" className="muted">
           {status}

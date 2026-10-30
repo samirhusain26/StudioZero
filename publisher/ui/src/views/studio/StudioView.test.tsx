@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { api } from '../../api/client'
 import { realCatalog } from '../../test/catalog'
 import { MakeBatchView } from '../MakeBatchView'
+import { ManualProjectCard } from './ManualProjectCard'
 import { StudioView } from './StudioView'
 import { PlanMakeContent, suggestedBatchId } from './PlanMakeContent'
 import { SAFETY_LINES } from '../../lib/promptSafety'
@@ -24,6 +25,25 @@ describe('Studio', () => {
     expect(cards[1]).toHaveTextContent('Nothing scheduled')
     expect(within(cards[0] as HTMLElement).getByRole('link', { name: 'Make a Originals batch →' })).toHaveAttribute('href', '#/studio/make?project=originals')
     expect(screen.getByRole('heading', { level: 2, name: 'Engines' })).toBeInTheDocument()
+    expect(screen.getAllByTestId('studio-manual-project')).toHaveLength(1)
+  })
+
+  it('a hand-posted project: no batch link, the weekly prompt for this or last week, copied as shown', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
+    const project = realCatalog().manualProjects?.find((p) => p.id === 'marathon')
+    if (!project) throw new Error('no marathon')
+    render(<ManualProjectCard project={project} now={new Date(2026, 9, 18, 9)} />)
+    const card = screen.getByTestId('studio-manual-project')
+    expect(within(card).getByRole('heading', { level: 2 })).toHaveTextContent('Marathon · posted by hand')
+    expect(card).toHaveTextContent(/5 November 2028 · 749 days to go/)
+    expect(card).toHaveTextContent('Instagram, TikTok, YouTube Shorts: not named yet')
+    expect(within(card).queryByRole('link')).toBeNull()
+    await user.click(within(card).getAllByRole('button', { name: 'Copy prompt' })[0] as HTMLElement)
+    expect(writeText.mock.calls[0]?.[0]).toMatch(/^\/marathon-week 2026-W42\n\nWeek 2026-W42: Monday 2026-10-12 to Sunday 2026-10-18\./)
+    await user.selectOptions(within(card).getByLabelText('Week'), 'last')
+    expect(card).toHaveTextContent('/marathon-week 2026-W41')
+    expect(card).toHaveTextContent('Read projects/marathon/README.md')
   })
 
   it('Make a batch: project chips, Originals by its own flow', async () => {

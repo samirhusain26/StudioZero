@@ -28,6 +28,7 @@ export const SCREEN_HELP = {
       'Studio is the Make step for every project: Originals and Scalargame.',
       'Each project shows its formats, budget, mix and how far its approved schedule reaches.',
       'Make a batch builds the prompt for Claude from what the engines can make.',
+      'Projects you post by hand (Marathon) show only the prompts to paste into Claude on the Mac.',
     ],
   },
   export: {

@@ -2,7 +2,7 @@
 
 The game already captures acquisition UTMs and emits normalized `acquisition_touch_captured`, `game_started` and `game_completed` events through its existing analytics path. This implementation reuses those URL parameters; it does not replace analytics or invent conversion data.
 
-Clickable post links use `utm_source=<platform>`, `utm_medium=organic_social`, `utm_campaign=social_puzzles_v1`, `utm_content=<episode>_<format>`. Stable profile links use platform source and a profile-link content label. Instagram/TikTok and YouTube Shorts captions cannot supply reliable clickable episode links; traffic from a stable profile link cannot be attributed to a specific video or A/B format without additional evidence. Do not rotate bios daily and claim exact attribution.
+Current library post links use `utm_source=<platform>`, `utm_medium=organic_social`, `utm_campaign=social_library_v1`, and the episode's configured `utm_content`. Query the actual posted parameters when analyzing older campaigns, including legacy `social_puzzles_v1` links. Stable profile links use platform source and a profile-link content label. Instagram/TikTok and YouTube Shorts captions cannot supply reliable clickable episode links; traffic from a stable profile link cannot be attributed to a specific video or A/B format without additional evidence. Do not rotate bios daily and claim exact attribution.
 
 Report separately:
 

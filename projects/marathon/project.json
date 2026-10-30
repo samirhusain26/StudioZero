@@ -1,0 +1,32 @@
+{
+  "projectVersion": 1,
+  "id": "marathon",
+  "name": "Marathon",
+  "posting": "manual",
+  "summary": "The owner's running channel: a plus-size runner on the way from a 5K to the NYC Marathon. Real footage and data, no face. One video a week, posted by hand to its own accounts; the publisher never touches it.",
+  "cadence": "One video a week, made on Sunday with Claude Code on the Mac (StudioZero).",
+  "goal": {"name": "TCS New York City Marathon", "date": "2028-11-05", "note": "expected date: the first Sunday of November; confirm when NYRR announces"},
+  "accounts": [
+    {"platform": "Instagram", "handle": null},
+    {"platform": "TikTok", "handle": null},
+    {"platform": "YouTube Shorts", "handle": null}
+  ],
+  "bring": [
+    "Your brain dump: talk for 5–10 minutes about the week (paste it after the prompt or say it when asked)",
+    "Apple Health export: Health app › profile picture › Export All Health Data (or Fitness app screenshots)",
+    "Clips and voice memos from your runs",
+    "Last week's links and 7-day stats, if a video went up"
+  ],
+  "prompts": [
+    {
+      "id": "week",
+      "label": "Make the week's video",
+      "template": "/marathon-week {week}\n\nWeek {week}: Monday {monday} to Sunday {sunday}. My files go in projects/marathon/weeks/{week}/intake/. Here is my dump:\n\n"
+    },
+    {
+      "id": "brainstorm",
+      "label": "Brainstorm: channel name, look, voice",
+      "template": "Read projects/marathon/README.md and projects/marathon/PLAN.md, then run the brainstorm in PLAN.md §7 with me, one topic at a time. Record the decisions in PLAN.md and brand/."
+    }
+  ]
+}

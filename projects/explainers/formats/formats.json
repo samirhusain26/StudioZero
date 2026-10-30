@@ -1,0 +1,15 @@
+{
+  "formatsVersion": 1,
+  "wordsPerSecond": 2.5,
+  "words": [110, 180],
+  "hookMaxWords": 16,
+  "bannerMaxWords": 5,
+  "formats": [
+    {"id": "how-it-works", "name": "How it works", "spine": ["hook", "problem", "old-way", "insight", "mechanism", "product", "loop"], "optional": ["old-way"]},
+    {"id": "behind-the-news", "name": "The patent behind the news", "spine": ["hook", "news", "question", "patent", "mechanism", "impact", "loop"]},
+    {"id": "weird-drawing", "name": "The weird drawing", "spine": ["hook", "figure", "reveal", "mechanism", "where", "loop"]},
+    {"id": "expired-everywhere", "name": "Expired, now everywhere", "spine": ["hook", "everyday", "patent", "mechanism", "expiry", "aftermath", "loop"]},
+    {"id": "kitchen-home", "name": "Kitchen and home", "spine": ["hook", "object", "problem", "patent", "insight", "loop"]},
+    {"id": "software-you-touch", "name": "Software you touch", "spine": ["hook", "moment", "invisible", "method", "impact", "loop"]}
+  ]
+}

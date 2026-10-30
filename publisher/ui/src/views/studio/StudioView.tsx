@@ -7,6 +7,7 @@ import { useApi } from '../../hooks/useApi'
 import { computeRunway } from '../../lib/runway'
 import { projectSummaries } from '../../lib/studio'
 import { formatDayHeading } from '../../lib/time'
+import { ManualProjectCard } from './ManualProjectCard'
 
 /** Studio › Overview: the Make step for every project (docs/STUDIO_PLAN.md §1 decisions 5 and 8). */
 export function StudioView() {
@@ -50,6 +51,9 @@ export function StudioView() {
             </a>
           </div>
         </section>
+      ))}
+      {catalog.data?.manualProjects?.map((p) => (
+        <ManualProjectCard key={p.id} project={p} />
       ))}
       {catalog.data ? (
         <p>
