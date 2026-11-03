@@ -13,6 +13,7 @@ import re
 import sqlite3
 import sys
 import time
+import urllib.parse
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 # In the repo the shared contract lives in <repo>/contract; on the Pi the installer copies it next to this file.
@@ -458,6 +459,45 @@ def _identity(video):
             'questionId': video['questionId'], 'game': video['game']}
 
 
+def _url_tokens(text):
+    return [url.rstrip('.,;:!?)]}') for url in re.findall(r'https?://\S+', text)]
+
+
+def _caption_link(episode, platform, text):
+    """Recover only a complete, known destination without rewriting approved text.
+
+    Legacy imports contain literal URLs with the original epNN attribution, whereas
+    newer batches usually use {link}. Match whole URL tokens so a truncated query,
+    a redirect containing the game URL, or duplicate links cannot become a facet.
+    """
+    if platform not in lc.LINK_PLATFORMS or not lc.episode_view(episode)['link']:
+        return None
+    expected = {lc.link_for(episode, platform)}
+    question = episode.get('questionId', '')
+    if ('contentId' not in episode and re.fullmatch(r'ep\d+', question)
+            and episode['episodeId'] == f"{episode['game']}-legacy-{int(question[2:]):03d}"):
+        query = urllib.parse.urlencode({'utm_source': platform, 'utm_medium': 'organic_social',
+                                        'utm_campaign': episode['publication']['utmCampaign'],
+                                        'utm_content': question + '_self-contained'})
+        expected.add(lc.SITE + episode['publication']['deepLink'] + '?' + query)
+    matches = [url for url in _url_tokens(text) if url in expected]
+    return matches[0] if len(matches) == 1 else None
+
+
+def _bluesky_post_error(job):
+    # Existing approvals and other projects keep their contracts. Check Scalar's
+    # new or explicitly edited posts before they can reach the publishing adapter.
+    if (job['platform'] != 'bluesky' or job['kind'] != 'post' or job.get('game') not in lc.GAMES
+            or (job.get('carried') and not job.get('edited'))):
+        return None
+    text, link = job['text'] or '', job['link']
+    if not text or len(text) > 300 or len(text.encode()) > 3000:
+        return 'Bluesky post must fit 300 characters and 3000 UTF-8 bytes; shorten the copy without cutting the link'
+    if not link or text.count(link) != 1 or link not in _url_tokens(text):
+        return 'Bluesky post needs one complete game link; use {link} or the unchanged approved URL'
+    return None
+
+
 def _post_job(platform, channel, when, zone, video, inputs, thread_ok, warn):
     episode, question = video['episode'], video['questionId']
     publication = episode['publication']
@@ -468,7 +508,7 @@ def _post_job(platform, channel, when, zone, video, inputs, thread_ok, warn):
     else:
         raw = publication['captions'][platform]
         text = lc.expand(episode, platform, raw)
-        link = lc.link_for(episode, platform) if '{link}' in raw else None
+        link = _caption_link(episode, platform, text)
     if platform == 'x' and inputs['companions']['firstComment']:
         item = (publication.get('firstComment') or {}).get('x')
         if item and thread_ok:
@@ -778,8 +818,8 @@ def generate(inputs, videos, history, config, base_manifest=None, base_manifest_
         video = by_id.get((job['episodeId'], job['revision']))
         errors = _edit_errors(job, text, video)
         final = lc.expand(video['episode'], p, text) if video and '{link}' in text and p in lc.LINK_PLATFORMS else text
-        if video and '{link}' in text and p in lc.LINK_PLATFORMS:
-            job['link'] = lc.link_for(video['episode'], p)
+        if video and p in lc.LINK_PLATFORMS:
+            job['link'] = _caption_link(video['episode'], p, final)
         elif not (job['link'] and job['link'] in final):
             job['link'] = None
         job['text'], job['edited'] = final, True
@@ -796,6 +836,13 @@ def generate(inputs, videos, history, config, base_manifest=None, base_manifest_
             unfilled.append({'platform': j['platform'], 'slotLocal': j['slotLocal'], 'slotUtc': j['slotUtc'],
                              'reason': 'Removed by edit'})
     jobs = [j for j in jobs if j['key'] not in removed]
+    for job in jobs:
+        message = _bluesky_post_error(job)
+        if message:
+            job['warnings'].append(message)
+            line = f"{LABELS[job['platform']]} {job['slotLocal']}: {message}"
+            warn(line)
+            blocking.append(line)
     for job, message in _posted_attribution_gaps(jobs, by_id):
         job['warnings'].append(message)
         line = f"{LABELS[job['platform']]} {job['slotLocal']}: {message}"
@@ -838,6 +885,9 @@ def draft_sha256(draft):
 def manifest_payload(job, video, config, draft_sha):
     """Exact runner payload for one draft job (DESIGN.md "Manifest"). Carried jobs keep their
     approved payload byte-for-byte unless the owner edited them."""
+    error = _bluesky_post_error(job)
+    if error:
+        raise ValueError(error)
     if job.get('carried'):
         payload = copy.deepcopy(job['basePayload'])
         if job.get('edited'):
