@@ -1,18 +1,28 @@
 {
   "files": {
-    "assets/ExportView-D8UWzORR.js": "ab1f08e8a907bce82357224334564fae4a4a2830a44da5eb702534fc1e20de0c",
+    "apple-touch-icon.png": "c393cab73aa3f79a752bd791bc55b52a6f38d71fc5afb91dd4f0195d04462d9b",
+    "assets/ExportView-Fx2T1s1p.js": "5de35f4cf41b05a750c3a79c6801f25e1880ef14538662acce70b530479b33ca",
     "assets/__vite-browser-external-BIHI7g3E.js": "82507b0bb9ac4affaeb17c40968d830cbd6d14a2ffa04d8994faf1a78e58e1b5",
     "assets/fraunces-latin-700-normal-CEOla-zY.woff2": "c38570d224b830056e69484bb9e768e1d3fa7ba4755c8891a3c6d366194d2ff3",
     "assets/fraunces-latin-900-normal-DmBL83SS.woff2": "260485eb7d18e5d71b2fce7dd285c3d3737f8c1f5e89079f9e6ee973ad00c66b",
     "assets/geist-mono-latin-500-normal-YINYabwD.woff2": "72971bd4908d3984fa1b1426bb363730e4957e16a0f58bfbca76993095715488",
     "assets/geist-mono-latin-700-normal-DDxuFlf6.woff2": "e26f16d6bda234828e574c948d9a5aca1327f83df2b3529a4ebea406ca026d0c",
-    "assets/index-BWTtHALn.js": "9daf28573c5acfcc17e98da9e4edd1020d00a51595387f12dea34927dca6da45",
-    "assets/index-DFY5ZzbV.css": "a18a9fbeb6321543f4c91903a686db088426ee55e37df40ff8c297577b25336d",
-    "assets/kit-B8qCEbY7.js": "1fb3a1e78cf8dd6cc14b2ce6b0395d2e4a4f8ab4dad47b977055d88fb7fd6d27",
-    "assets/mediabunny-aac-encoder-ncIBRCvw.js": "27cd16182d38f137761ace00c0e63295b5f3d1aea1798c7f2d0af3e4457f6a40",
-    "assets/mediabunny-flac-encoder-CJHHcAhw.js": "76efbaee34cc7fed83ea6674f8ec085d59512274fd8de12eb10e3b208b415e33",
-    "assets/mediabunny-mp3-encoder-CX_-mb-F.js": "5780b62f092ccfc3120318c67daa749cf57800e3d9a00e72ae92869c2a993f24",
-    "index.html": "e5503f03835073fca548556e32622ef50affa538ee17763bb5d532247053b73b"
+    "assets/index-BBfwiZac.js": "103243fd2faab02a776a9dc02d3922d7ea2418d9cb80425c85066cfdabd09cd2",
+    "assets/index-CNwA45Ph.css": "4acdc9b01dabdedac0348f637ab53d0a2ef78a75e8f4164cc187268c0e33e512",
+    "assets/kit-DNLuZeho.js": "526e2c105bbf9a0e63327e8ba0e34382400a40455aa001b88daadf1001047254",
+    "assets/mediabunny-aac-encoder-cEw10vCM.js": "aabad6b72e0f2b64fde9c70b5db561ff0da745d0b0f85366713a22ababece76e",
+    "assets/mediabunny-flac-encoder-_6eizV5f.js": "2926049daa2169e67ef4945ffe37c12611ea7206f14123de97f648566c721637",
+    "assets/mediabunny-mp3-encoder-BegEHlXO.js": "ac9c7a71274d0bce790081e6c071784396029d25d2440f6a86d867528f77ebf9",
+    "favicon.ico": "b9984d72fb70d7da5d58e753b7562c99b8e7479e49be6ee61b6b50372975d1a5",
+    "icons/studiozero-1024.png": "e11fe69561f5196a68f27d0e274cdb1ef223314072195e547e152102b8e2e54f",
+    "icons/studiozero-16.png": "14588cbc1ea24ef2038def6f1426bcac7a16c917549ea312e045d22bc4034556",
+    "icons/studiozero-192.png": "ab205af9cb3207f4daa4e644649cfe93ab1f5e2f841d75f59185eb558e45531f",
+    "icons/studiozero-32.png": "c24d20a0dd2372e9a6e1bc6c37b1ed1e8e6d75e0f7ba787be0f6c39b009c653e",
+    "icons/studiozero-512.png": "252c927b9b0b54d7fc84c1c786e43669497e29b1789b8591791a6b13696eb081",
+    "icons/studiozero-64.png": "cf3694f3b668d18028d5731e19c029d67c252c252d4d34ec2755d95c57ce9494",
+    "icons/studiozero-maskable-512.png": "252c927b9b0b54d7fc84c1c786e43669497e29b1789b8591791a6b13696eb081",
+    "index.html": "4178238d2d1024a2fef346e92042cf23a7dbdf7de0e00861ea93c5e1d74e853c",
+    "manifest.webmanifest": "0de96630325fede545dfe991d61a891b07a74c454e572f26d760b4a98df3ec30"
   },
-  "sourceHash": "4dee9c5736b79f851212d83417c8e817b4675fb2877681ca6587a03ba36e29ac"
+  "sourceHash": "edaa6e68f730d5eef5b80f3aff380ccafead0c245bd1fd83acc7064a54815ed4"
 }

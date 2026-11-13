@@ -185,6 +185,9 @@ video {
   margin: 0;
 }
 
+.brand, .nav-brand, .passcode-brand { display: flex; align-items: center; gap: 8px; }
+.brand img, .nav-brand img, .passcode-brand img { flex: none; object-fit: contain; }
+
 .help-link {
   display: inline-flex;
   align-items: center;
@@ -1149,7 +1152,7 @@ progress {
   }
 
   .nav-brand {
-    display: block;
+    display: flex;
     font-weight: 700;
     font-size: 1.1rem;
     margin: 0 8px 16px;

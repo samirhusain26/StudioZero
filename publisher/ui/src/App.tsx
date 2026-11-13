@@ -163,7 +163,7 @@ export function App() {
           Skip to content
         </a>
         <header className="app-header">
-          <p className="brand">StudioZero</p>
+          <p className="brand"><img src="/icons/studiozero-64.png" width="32" height="32" alt="" />StudioZero</p>
           <a className="help-link" href={guideHash(helpAnchor(route, screen))} aria-label="Help: open the guide for this screen" title="Guide">
             ?
           </a>

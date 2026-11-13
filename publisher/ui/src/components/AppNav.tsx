@@ -7,7 +7,7 @@ import { VIEWS } from '../views'
 export function AppNav({ current, version, onNavigate }: { current: string | null; version: string | null; onNavigate: (path: string) => void }) {
   return (
     <nav aria-label="Sections" className="app-nav">
-      <p className="nav-brand">StudioZero</p>
+      <p className="nav-brand"><img src="/icons/studiozero-64.png" width="32" height="32" alt="" />StudioZero</p>
       <ul className="nav-list">
         {VIEWS.map((v) => (
           <li key={v.id}>

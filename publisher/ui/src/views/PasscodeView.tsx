@@ -63,7 +63,7 @@ export function PasscodeView({ onSignedIn, notice }: { onSignedIn: () => void; n
 
   return (
     <main id="main" className="main passcode">
-        <h1>StudioZero</h1>
+      <h1 className="passcode-brand"><img src="/icons/studiozero-192.png" width="48" height="48" alt="" />StudioZero</h1>
       <p className="muted">Private publishing controls on the Pi. Enter the passcode to continue.</p>
       {notice ? (
         <p className="notice notice-info" role="status">

@@ -43,6 +43,14 @@ MEDIA_ALLOWED = {
     'engines/motion/public/episodes/music/': 'beds.json',
     'publisher/profile-assets/': 'own brand artwork',
 }
+# Approved derivatives of the own-brand artwork documented in publisher/profile-assets/STUDIOZERO_APP_ICON.md.
+APP_ICON_FILES = {
+    f'{folder}/{name}'
+    for folder in ('publisher/ui/public', 'publisher/app/static')
+    for name in ('apple-touch-icon.png', 'icons/studiozero-16.png', 'icons/studiozero-32.png',
+                 'icons/studiozero-64.png', 'icons/studiozero-192.png', 'icons/studiozero-512.png',
+                 'icons/studiozero-maskable-512.png', 'icons/studiozero-1024.png')
+}
 FREE_LICENSES = {'CC0-1.0', 'CC-BY-4.0', 'CC-BY-3.0', 'public-domain'}
 
 FAKE = r'(?:a{24}|a0{20,}[0-9a-f]{1,3}|10{11,}[0-9]{1,3}|270{11,}[0-9]{1,3}|UCA{22}|did:plc:a{24})'
@@ -117,6 +125,8 @@ def check(private_hashes):
             if re.search(pattern, rel):
                 findings.append((rel, 0, rule, '(file)'))
         if MEDIA.search(rel):
+            if rel in APP_ICON_FILES:
+                continue
             prefix = next((p for p in MEDIA_ALLOWED if rel.startswith(p)), None)
             if prefix is None:
                 findings.append((rel, 0, 'media outside the licensed asset folders', '(file)'))
