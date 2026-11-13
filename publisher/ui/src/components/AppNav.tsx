@@ -1,13 +1,13 @@
-import { VIEWS, type ViewId } from '../views'
+import { VIEWS } from '../views'
 
 /**
  * The five sections: a bottom tab bar on phones, a fixed left sidebar from 1024 px (same items, order and icons).
  * Plain links; App handles focus after navigation.
  */
-export function AppNav({ current, version, onNavigate }: { current: ViewId | null; version: string | null; onNavigate: (path: string) => void }) {
+export function AppNav({ current, version, onNavigate }: { current: string | null; version: string | null; onNavigate: (path: string) => void }) {
   return (
     <nav aria-label="Sections" className="app-nav">
-      <p className="nav-brand">Scalar publishing</p>
+      <p className="nav-brand">StudioZero</p>
       <ul className="nav-list">
         {VIEWS.map((v) => (
           <li key={v.id}>
@@ -27,6 +27,11 @@ export function AppNav({ current, version, onNavigate }: { current: ViewId | nul
             </a>
           </li>
         ))}
+      </ul>
+      <ul className="nav-utilities" aria-label="Utilities">
+        <li><a className="nav-link" href="#/settings" aria-current={current === 'settings' ? 'page' : undefined} onClick={(e) => { e.preventDefault(); onNavigate('settings') }}>Settings</a></li>
+        <li><a className="nav-link" href="#/guide" aria-current={current === 'guide' ? 'page' : undefined} onClick={(e) => { e.preventDefault(); onNavigate('guide') }}>Help</a></li>
+        <li><a className="nav-link" href="#/activity" aria-current={current === 'activity' ? 'page' : undefined} onClick={(e) => { e.preventDefault(); onNavigate('activity') }}>Operations</a></li>
       </ul>
       <p className="nav-foot muted">
         Signed in

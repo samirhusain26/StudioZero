@@ -29,6 +29,12 @@ import { JobDrawer } from './activity/JobDrawer'
 const PAGE = 100
 const SEARCH_DELAY_MS = 400
 
+/** Confirmed posts only; uncertain jobs remain in Operations and never appear as published. */
+export function PublishedPosts() {
+  const [jobId, setJobId] = useState<string | null>(null)
+  return <><PostsFeed filters={{ ...NO_FILTERS, status: 'confirmed' }} onOpenJob={setJobId} emptyMessage="No confirmed posts yet." />{jobId ? <JobDrawer jobId={jobId} onClose={() => setJobId(null)} /> : null}</>
+}
+
 export function ActivityView({ tab = 'all', onTab }: { tab?: ActivityTab; onTab: (tab: ActivityTab) => void }) {
   const [filters, setFilters] = useState<ActivityFilters>(NO_FILTERS)
   const [search, setSearch] = useState('')
@@ -326,7 +332,7 @@ function postAt(row: HistoryRow): string {
   return row.publishedAt ?? row.slotUtc
 }
 
-function PostsFeed({ filters, onOpenJob }: { filters: ActivityFilters; onOpenJob: (jobId: string) => void }) {
+function PostsFeed({ filters, onOpenJob, emptyMessage }: { filters: ActivityFilters; onOpenJob: (jobId: string) => void; emptyMessage?: string }) {
   const query = postsQuery(filters)
   const key = JSON.stringify(query)
   const state = useAutoRefresh<HistoryResponse>(() => api.history(query), key)
@@ -368,7 +374,7 @@ function PostsFeed({ filters, onOpenJob }: { filters: ActivityFilters; onOpenJob
           ) : null}
         </div>
         {data && data.rows.length === 0 && !state.loading ? (
-          key === '{}' ? <NothingPosted /> : <p>No posts match. Clear the search or the filters under ⋯ and try again.</p>
+          emptyMessage ? <p>{emptyMessage}</p> : key === '{}' ? <NothingPosted /> : <p>No posts match. Clear the search or the filters under ⋯ and try again.</p>
         ) : null}
         {data && data.rows.length && layout === 'table' ? <PostsTable data={data} onOpenJob={onOpenJob} /> : null}
         {data && (layout === 'timeline' || !data.rows.length)

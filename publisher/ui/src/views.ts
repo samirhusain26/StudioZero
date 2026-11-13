@@ -5,15 +5,12 @@ import { isActivityTab, type ActivityTab } from './lib/activityFilters'
  * sidebar order. Icons are plain text glyphs.
  */
 export const VIEWS = [
-  { id: 'home', label: 'Home', icon: '⌂' },
-  { id: 'studio', label: 'Studio', icon: '✎' },
-  { id: 'library', label: 'Library', icon: '▣' },
-  { id: 'schedule', label: 'Schedule', icon: '▦' },
-  { id: 'activity', label: 'Activity', icon: '≡' },
-  { id: 'settings', label: 'Settings', icon: '⚙︎' },
+  { id: 'home', label: 'Studio', icon: '✦' },
+  { id: 'library', label: 'Review', icon: '▶' },
+  { id: 'schedule', label: 'Publish', icon: '↗' },
 ] as const
 
-export type ViewId = (typeof VIEWS)[number]['id']
+export type ViewId = (typeof VIEWS)[number]['id'] | 'settings' | 'activity' | 'studio'
 
 /**
  * A parsed hash route. Sub-routes: `#/studio/make[?project=<id>]`, `#/studio/export`, `#/studio/new`, `#/studio/jobs[/<id>]`, `#/studio/renders`,
@@ -26,6 +23,11 @@ export interface Route {
   view: ViewId | 'guide'
   /** Studio › Make a batch. */
   make?: true
+  create?: true
+  projectPage?: true
+  dashboard?: true
+  production?: string
+  batch?: string
   /** Studio › Export (in-browser motion export). */
   export?: true
   /** Studio › New format, style or project (prompt builder mode 2). */
@@ -38,6 +40,7 @@ export interface Route {
   /** Studio › Make a batch for one catalog project (default: the page's own choice). */
   project?: string
   queue?: true
+  published?: true
   episode?: { episodeId: string; revision: number }
   tab?: Exclude<ActivityTab, 'all'>
   section?: string
@@ -82,6 +85,17 @@ export function routeFromHash(hash: string): Route {
       const project = new URLSearchParams(query).get('project') ?? ''
       return PROJECT.test(project) && project.length <= 40 ? { view: 'studio', make: true, project } : { view: 'studio', make: true }
     }
+    if (rest.length === 1 && rest[0] === 'create') {
+      const project = new URLSearchParams(query).get('project') ?? ''
+      const production = new URLSearchParams(query).get('production') ?? ''
+      return PROJECT.test(project) && project.length <= 40 && /^[A-Za-z0-9_-]{1,100}$/.test(production)
+        ? { view: 'studio', create: true, project, production }
+        : PROJECT.test(project) && project.length <= 40 ? { view: 'studio', create: true, project } : { view: 'studio', create: true }
+    }
+    if (rest.length === 2 && rest[0] === 'project') {
+      const project = rest[1] ?? ''
+      return PROJECT.test(project) ? { view: 'studio', projectPage: true, project } : { view: 'studio' }
+    }
     if (rest.length === 1 && rest[0] === 'export') return { view: 'studio', export: true }
     if (rest.length === 1 && rest[0] === 'new') return { view: 'studio', newFormat: true }
     if (rest[0] === 'jobs' && rest.length === 1) return { view: 'studio', jobs: true }
@@ -100,14 +114,17 @@ export function routeFromHash(hash: string): Route {
       const revision = rest[2] ?? ''
       if (episodeId && /^\d+$/.test(revision)) return { view: 'library', episode: { episodeId, revision: Number(revision) } }
     }
-    return { view: 'library' }
+    const params = new URLSearchParams(query)
+    const batch = params.get('batch') ?? ''
+    const project = params.get('project') ?? ''
+    return { view: 'library', ...(STORY_ID.test(batch) ? { batch } : {}), ...(PROJECT.test(project) ? { project } : {}) }
   }
-  if (first === 'schedule') return rest.length === 1 && rest[0] === 'queue' ? { view: 'schedule', queue: true } : { view: 'schedule' }
+  if (first === 'schedule') return rest.length === 1 && rest[0] === 'queue' ? { view: 'schedule', queue: true } : new URLSearchParams(query).get('tab') === 'published' ? { view: 'schedule', published: true } : { view: 'schedule' }
   if (first === 'activity') {
     const tab = new URLSearchParams(query).get('tab')
     return isActivityTab(tab) && tab !== 'all' ? { view: 'activity', tab } : { view: 'activity' }
   }
-  if (first === 'settings' || first === 'home') return ANCHOR.test(section) ? { view: first, section } : { view: first }
+  if (first === 'settings' || first === 'home') return ANCHOR.test(section) ? { view: first, section, ...(first === 'home' && section === 'platforms' ? { dashboard: true } : {}) } : { view: first }
   if (first === 'guide') return rest.length === 1 && ANCHOR.test(rest[0] ?? '') ? { view: 'guide', anchor: rest[0] as string } : { view: 'guide' }
   return { view: isView(first) ? first : 'home' }
 }
@@ -125,10 +142,12 @@ export function guideHash(anchor: string): string {
 }
 
 /** The screen a route shows, for titles, the step line and the help icon. */
-export type Screen = 'home' | 'studio' | 'export' | 'newFormat' | 'jobs' | 'job' | 'renders' | 'storySettings' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
+export type Screen = 'home' | 'studio' | 'project' | 'create' | 'export' | 'newFormat' | 'jobs' | 'job' | 'renders' | 'storySettings' | 'library' | 'make' | 'episode' | 'schedule' | 'queue' | 'activity' | 'settings' | 'guide'
 
 export function screenOf(route: Route): Screen {
   if (route.view === 'studio') {
+    if (route.create) return 'create'
+    if (route.projectPage) return 'project'
     if (route.make) return 'make'
     if (route.export) return 'export'
     if (route.newFormat) return 'newFormat'
@@ -144,18 +163,20 @@ export function screenOf(route: Route): Screen {
 }
 
 export const SCREEN_TITLES: Record<Screen, string> = {
-  home: 'Home',
+  home: 'Studio',
   studio: 'Studio',
+  create: 'Create production',
+  project: 'Project',
   export: 'Export',
   newFormat: 'New format, style or project',
   jobs: 'Story jobs',
   job: 'Story job',
   renders: 'Story renders',
   storySettings: 'Story settings',
-  library: 'Library',
+  library: 'Review',
   make: 'Make a batch',
   episode: 'Episode',
-  schedule: 'Schedule',
+  schedule: 'Publish',
   queue: 'Approved queue',
   activity: 'Activity',
   settings: 'Settings',

@@ -27,7 +27,7 @@ import { EpisodeCard } from './EpisodeCard'
 import { RemovePostedVideos } from './RemovePostedVideos'
 
 /** Library list (Upload and Review): drop zone, batch chips, To review / Approved / All, tap a card to review it. */
-export function LibraryView() {
+export function LibraryView({ batch, project }: { batch?: string | undefined; project?: string | undefined } = {}) {
   const { data, error, loading, reload } = useApi(api.library)
   const [dragging, setDragging] = useState(false)
   const [dropped, setDropped] = useState<DroppedFolder | null>(null)
@@ -98,7 +98,7 @@ export function LibraryView() {
       ) : null}
       <AddBatchFlow dropped={dropped} onDone={reload} />
       <ErrorNotice error={error} title="Library unavailable" />
-      {data ? <LibraryBrowser data={data} onChanged={reload} /> : loading ? <Loading /> : null}
+      {data ? <LibraryBrowser data={data} onChanged={reload} batch={batch} project={project} /> : loading ? <Loading /> : null}
       {data ? (
         <details className="disclosure">
           <summary>Free space on the Pi</summary>
@@ -109,9 +109,9 @@ export function LibraryView() {
   )
 }
 
-export function LibraryBrowser({ data, onChanged }: { data: LibraryResponse; onChanged: () => void }) {
+export function LibraryBrowser({ data, onChanged, batch, project: initialProject }: { data: LibraryResponse; onChanged: () => void; batch?: string | undefined; project?: string | undefined }) {
   const [state, setStateRaw] = useState<LibraryListState>(() => {
-    const saved = readListState()
+    const saved = batch || initialProject ? { ...readListState(), batchId: batch ?? '', project: initialProject ?? '', filter: 'all' as const } : readListState()
     const project = data.episodes.some((e) => e.project === saved.project) ? saved.project : ''
     return data.batches.some((b) => b.batchId === saved.batchId) ? { ...saved, project } : { ...saved, project, batchId: '' }
   })
@@ -124,7 +124,7 @@ export function LibraryBrowser({ data, onChanged }: { data: LibraryResponse; onC
   const projects = projectChips(data)
   const approvable = approvableShown(shown)
   const actions = useContentActions(onChanged)
-  const batch = data.batches.find((b) => b.batchId === state.batchId)
+  const selectedBatch = data.batches.find((b) => b.batchId === state.batchId)
 
   return (
     <section className="stack" aria-labelledby="episodes-h">
@@ -166,11 +166,11 @@ export function LibraryBrowser({ data, onChanged }: { data: LibraryResponse; onC
           </Chip>
         ))}
       </div>
-      {batch && (batch.awaitingFiles || batch.warnings.length || batch.generatorDirty) ? (
+      {selectedBatch && (selectedBatch.awaitingFiles || selectedBatch.warnings.length || selectedBatch.generatorDirty) ? (
         <div className="notice notice-warn">
-          {batch.awaitingFiles ? <p>{batch.awaitingFiles} episode(s) of this batch still need files: drop the folder again.</p> : null}
-          {batch.generatorDirty ? <StatusBadge tone="warn" label="Generator had uncommitted changes" /> : null}
-          {batch.warnings.map((w, i) => (
+          {selectedBatch.awaitingFiles ? <p>{selectedBatch.awaitingFiles} episode(s) of this batch still need files: drop the folder again.</p> : null}
+          {selectedBatch.generatorDirty ? <StatusBadge tone="warn" label="Generator had uncommitted changes" /> : null}
+          {selectedBatch.warnings.map((w, i) => (
             <p key={`${w.path}-${i}`}>Warning: {w.message}</p>
           ))}
         </div>

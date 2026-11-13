@@ -43,6 +43,7 @@ import library_contract  # noqa: E402
 import ui_assets  # noqa: E402
 import ui_catalog  # noqa: E402
 import ui_views  # noqa: E402
+import ui_creation  # noqa: E402
 
 VERSION = 'ui-2026.10.06'
 CSRF_HEADER = 'X-Scalar-Request'
@@ -178,6 +179,7 @@ class UiApp:
         self.assets = assets or ui_assets.Assets()
         # /api/studio/* goes to the story worker through the proxy's unix socket (never directly to the network).
         self.studio_socket = studio_socket
+        self.creation = ui_creation.CreationStore(self.state / 'creation', self.probe)
 
     # --- state helpers -------------------------------------------------------------
     def config(self):
@@ -338,6 +340,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self.check_mutation()
             if path.startswith('/api/studio/'):
                 return self.studio(method, path[len('/api'):], url.query)
+            if path == '/api/creation' or path.startswith('/api/creation/'):
+                try:
+                    return self.creation_api(method, path)
+                except ui_creation.CreationError as error:
+                    raise ApiError(error.status, str(error)) from None
             for route_method, pattern, name in ROUTES:
                 if route_method == method or (route_method == 'GET' and method == 'HEAD'):
                     match = re.fullmatch(pattern, path)
@@ -367,6 +374,48 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if sep and key == 'scalar_ui_session':
                 return value
         return None
+
+    def creation_api(self, method, path):
+        parts = path.strip('/').split('/')
+        if path == '/api/creation' and method == 'GET':
+            return self.send_json({'productions': self.app.creation.list()})
+        if path == '/api/creation' and method == 'POST':
+            body = self.read_json()
+            with self.app.write_lock:
+                return self.send_json(self.app.creation.create(body))
+        if len(parts) == 3 and method == 'GET':
+            return self.send_json(self.app.creation.get(parts[2]))
+        if len(parts) == 5 and parts[3] == 'staging' and method == 'PUT':
+            size = self.content_length(ui_creation.FILE_CAP)
+            with self.app.write_lock:
+                result = self.app.creation.stage_stream(parts[2], parts[4], self.rfile, size, self.headers.get('Content-Type', ''))
+            self.body_consumed = True
+            return self.send_json(result)
+        if len(parts) == 4 and parts[3] == 'revisions' and method == 'POST':
+            body = self.read_json()
+            with self.app.write_lock:
+                return self.send_json(self.app.creation.revise(parts[2], body))
+        if len(parts) == 4 and parts[3] == 'decisions' and method == 'POST':
+            body = self.read_json()
+            with self.app.write_lock:
+                return self.send_json(self.app.creation.decide(parts[2], body))
+        if len(parts) == 4 and parts[3] == 'research' and method == 'POST':
+            body = self.read_json()
+            with self.app.write_lock:
+                return self.send_json(self.app.creation.research(parts[2], body))
+        if len(parts) == 4 and parts[3] == 'delivery' and method == 'POST':
+            body = self.read_json()
+            with self.app.write_lock:
+                return self.send_json(self.app.creation.manual_delivery(parts[2], body))
+        if len(parts) == 6 and parts[3] == 'media' and method in ('GET', 'HEAD'):
+            record = self.app.creation.get(parts[2])
+            revision = next((item for item in record['revisions'] if item['id'] == parts[4]), None)
+            artifact = next((item for item in revision['artifacts'] if Path(item['path']).name == parts[5]), None) if revision else None
+            if not artifact:
+                raise ApiError(404, 'Artifact not found.')
+            raw = self.ranged(self.app.creation.root / parts[2] / 'revisions' / parts[4] / artifact['path'], artifact['size'], artifact['mediaType'], {'Cache-Control': 'no-store'})
+            return self.send_raw(raw)
+        raise ApiError(404, 'Creation workspace endpoint not found.')
 
     def session_cookie_secure(self):
         origin = self.headers.get('Origin', '')

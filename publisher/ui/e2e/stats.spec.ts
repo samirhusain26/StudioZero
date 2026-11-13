@@ -14,7 +14,7 @@ test.describe('Post stats controls', () => {
     await page.goto('/')
     await page.getByLabel('Passcode').fill(PASSCODE)
     await page.getByRole('button', { name: 'Sign in' }).click()
-    await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Studio' })).toBeVisible()
 
     await page.goto('/#/studio/make')
     await expect(page.getByRole('heading', { level: 1, name: 'Make a batch' })).toBeVisible()

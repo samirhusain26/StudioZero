@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ActivityEntry, ActivityResponse, HistoryResponse } from '../api/types'
-import { ActivityItem, ActivityView } from './ActivityView'
+import { ActivityItem, ActivityView, PublishedPosts } from './ActivityView'
 
 const activity = vi.fn<(q: unknown) => Promise<ActivityResponse>>()
 const history = vi.fn<(q: unknown) => Promise<HistoryResponse>>()
@@ -32,6 +32,12 @@ beforeEach(() => {
 })
 
 describe('Activity', () => {
+  it('Publish lists confirmed results only, leaving uncertain jobs in Operations', async () => {
+    render(<PublishedPosts />)
+    await waitFor(() => expect(history).toHaveBeenCalledWith({ status: 'confirmed' }))
+    expect(await screen.findByText('No confirmed posts yet.')).toBeVisible()
+    expect(activity).not.toHaveBeenCalled()
+  })
   it('shows chips (single select), a search box and a closed ⋯ menu: no other visible form fields', async () => {
     const onTab = vi.fn()
     render(<ActivityView tab="all" onTab={onTab} />)

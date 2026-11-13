@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { episodeHash, guideHash, routeFromHash, screenOf, VIEWS, viewFromHash } from './views'
 
+it('preserves a project batch link into package review', () => {
+  expect(routeFromHash('#/library?project=scalargame&batch=2026-10-second')).toEqual({ view: 'library', project: 'scalargame', batch: '2026-10-second' })
+  expect(routeFromHash('#/schedule?tab=published')).toEqual({ view: 'schedule', published: true })
+})
+
 describe('hash routes', () => {
-  it('has the six sections in tab order', () => {
-    expect(VIEWS.map((v) => v.label)).toEqual(['Home', 'Studio', 'Library', 'Schedule', 'Activity', 'Settings'])
+  it('has Studio, Review and Publish as the primary destinations', () => {
+    expect(VIEWS.map((v) => v.label)).toEqual(['Studio', 'Review', 'Publish'])
   })
 
   it('parses section hashes, defaulting to Home', () => {
@@ -33,6 +38,9 @@ describe('hash routes', () => {
     expect(routeFromHash('#/studio/make?project=originals')).toEqual({ view: 'studio', make: true, project: 'originals' })
     expect(routeFromHash('#/studio/make?project=Bad<x>')).toEqual({ view: 'studio', make: true })
     expect(routeFromHash('#/studio')).toEqual({ view: 'studio' })
+    expect(routeFromHash('#/studio/create?project=scalargame&production=prod-1')).toEqual({ view: 'studio', create: true, project: 'scalargame', production: 'prod-1' })
+    expect(screenOf(routeFromHash('#/studio/create?project=scalargame&production=prod-1'))).toBe('create')
+    expect(routeFromHash('#/studio/project/scalargame')).toEqual({ view: 'studio', projectPage: true, project: 'scalargame' })
     expect(routeFromHash('#/studio/export')).toEqual({ view: 'studio', export: true })
     expect(screenOf(routeFromHash('#/studio/export'))).toBe('export')
     expect(routeFromHash('#/studio/new')).toEqual({ view: 'studio', newFormat: true })
@@ -53,7 +61,7 @@ describe('hash routes', () => {
     expect(routeFromHash('#/activity?tab=all')).toEqual({ view: 'activity' })
     expect(routeFromHash('#/settings#update')).toEqual({ view: 'settings', section: 'update' })
     expect(routeFromHash('#/settings#Bad<x>')).toEqual({ view: 'settings' })
-    expect(routeFromHash('#/home#platforms')).toEqual({ view: 'home', section: 'platforms' })
+    expect(routeFromHash('#/home#platforms')).toEqual({ view: 'home', section: 'platforms', dashboard: true })
     expect(screenOf(routeFromHash('#/studio/make'))).toBe('make')
     expect(screenOf(routeFromHash(episodeHash('a', 1)))).toBe('episode')
     expect(screenOf(routeFromHash('#/settings#update'))).toBe('settings')

@@ -302,7 +302,7 @@ export interface UploadHandle<T> {
   abort: () => void
 }
 
-export type UploadContentType = 'video/mp4' | 'image/jpeg'
+export type UploadContentType = 'video/mp4' | 'video/webm' | 'video/quicktime' | 'image/jpeg' | 'image/png' | 'application/json' | 'text/plain'
 
 export function upload<T>(
   method: 'PUT' | 'POST',

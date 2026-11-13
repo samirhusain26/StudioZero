@@ -2,6 +2,8 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { api } from '../../api/client'
+import { creationApi } from '../../api/creation'
+import { libraryFixture } from '../../test/libraryFixture'
 import { realCatalog } from '../../test/catalog'
 import { MakeBatchView } from '../MakeBatchView'
 import { ManualProjectCard } from './ManualProjectCard'
@@ -14,18 +16,21 @@ describe('Studio', () => {
     vi.restoreAllMocks()
   })
 
-  it('overview: one card per project in catalog order, with budget, mix and a Make link', async () => {
-    vi.spyOn(api, 'catalog').mockResolvedValue(realCatalog())
-    vi.spyOn(api, 'schedule').mockRejectedValue(new Error('offline'))
+  it('overview: four unique projects, with batches inside their project and honest delivery boundaries', async () => {
+    vi.spyOn(api, 'library').mockResolvedValue(libraryFixture())
+    vi.spyOn(creationApi, 'list').mockResolvedValue({ productions: [] })
     render(<StudioView />)
-    const cards = await screen.findAllByTestId('studio-project')
-    expect(cards.map((c) => within(c).getByRole('heading', { level: 2 }).textContent)).toEqual(['Originals · P0', 'Scalargame · P1'])
-    expect(cards[0]).toHaveTextContent('every paid run needs your OK with a cost estimate')
-    expect(cards[0]).toHaveTextContent('target share not set (your decision)')
-    expect(cards[1]).toHaveTextContent('Nothing scheduled')
-    expect(within(cards[0] as HTMLElement).getByRole('link', { name: 'Make a Originals batch →' })).toHaveAttribute('href', '#/studio/make?project=originals')
-    expect(screen.getByRole('heading', { level: 2, name: 'Engines' })).toBeInTheDocument()
-    expect(screen.getAllByTestId('studio-manual-project')).toHaveLength(1)
+    const names = ['Scalargame', 'Explainers', 'Marathon', 'Originals']
+    const cards = await screen.findAllByRole('region')
+    expect(cards.map((c) => within(c).getByRole('heading', { level: 2 }).textContent)).toEqual(names)
+    for (const name of names) {
+      const card = screen.getByRole('region', { name })
+      expect(within(card).getByRole('link', { name: `Open ${name}` })).toHaveAttribute('href', `#/studio/project/${name.toLowerCase()}`)
+      expect(card.querySelector('details')).toBeNull()
+    }
+    expect(screen.getByRole('region', { name: 'Originals' })).toHaveTextContent('On hold')
+    expect(screen.getByRole('region', { name: 'Marathon' })).toHaveTextContent('Manual delivery')
+    expect(screen.getByRole('region', { name: 'Explainers' })).toHaveTextContent('local delivery')
   })
 
   it('a hand-posted project: no batch link, the weekly prompt for this or last week, copied as shown', async () => {

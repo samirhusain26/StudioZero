@@ -4,11 +4,14 @@ import { PasscodeView } from './views/PasscodeView'
 import { DashboardView } from './views/DashboardView'
 import { LibraryView } from './views/library/LibraryView'
 import { EpisodeDetailView } from './views/library/EpisodeDetailView'
+import { CreationReviewQueue } from './views/library/CreationReviewQueue'
 import { ScheduleView } from './views/schedule/ScheduleView'
 import { ActivityView } from './views/ActivityView'
 import { SettingsView } from './views/SettingsView'
 import { MakeBatchView } from './views/MakeBatchView'
 import { StudioView } from './views/studio/StudioView'
+import { CreationWorkspace } from './views/studio/CreationWorkspace'
+import { ProjectView } from './views/studio/ProjectView'
 import { NewFormatView } from './views/studio/NewFormatView'
 import { StoryJobsView } from './views/studio/StoryJobsView'
 import { StoryJobView } from './views/studio/StoryJobView'
@@ -59,6 +62,7 @@ export function App() {
   const view = route.view
   const screen = screenOf(route)
   const loop = useJourneyLoader(signedIn, window.location.hash)
+  const step = screen === 'guide' || screen === 'project' || screen === 'create' ? null : screenStep(screen, loop.journey)
 
   useEffect(
     () =>
@@ -86,6 +90,8 @@ export function App() {
     void restore()
     return () => { cancelled = true }
   }, [])
+
+  useEffect(() => { document.title = `${SCREEN_TITLES[screen]} · StudioZero` }, [screen])
 
   const shownScreen = useRef(screen)
   useEffect(() => {
@@ -129,7 +135,7 @@ export function App() {
 
   if (!signedIn) {
     if (checkingSession) return <main id="main" className="main"><p role="status">Checking sign-in…</p></main>
-    if (sessionCheckError) return <main id="main" className="main"><h1>Scalar publishing</h1><p className="notice notice-warn" role="alert">Could not check your sign-in. Check the connection and retry before signing in.</p><button className="btn btn-primary" onClick={() => { setSessionCheckError(false); setCheckingSession(true); void api.session().then((result) => setSignedIn(result.authenticated)).catch(() => setSessionCheckError(true)).finally(() => setCheckingSession(false)) }}>Retry</button></main>
+    if (sessionCheckError) return <main id="main" className="main"><h1>StudioZero</h1><p className="notice notice-warn" role="alert">Could not check your sign-in. Check the connection and retry before signing in.</p><button className="btn btn-primary" onClick={() => { setSessionCheckError(false); setCheckingSession(true); void api.session().then((result) => setSignedIn(result.authenticated)).catch(() => setSessionCheckError(true)).finally(() => setCheckingSession(false)) }}>Retry</button></main>
     return (
       <PasscodeView
         notice={notice}
@@ -157,20 +163,21 @@ export function App() {
           Skip to content
         </a>
         <header className="app-header">
-          <p className="brand">Scalar publishing</p>
+          <p className="brand">StudioZero</p>
           <a className="help-link" href={guideHash(helpAnchor(route, screen))} aria-label="Help: open the guide for this screen" title="Guide">
             ?
           </a>
+          <details className="utility-menu"><summary>More</summary><div><a href="#/settings">Settings</a><a href="#/activity">Operations</a><a href="#/guide">Help guide</a></div></details>
         </header>
-        <AppNav current={view === 'guide' ? null : view} version={running ? shortHash(running, 7) : null} onNavigate={navigate} />
+        <AppNav current={view === 'guide' ? null : view === 'studio' ? 'home' : view} version={running ? shortHash(running, 7) : null} onNavigate={navigate} />
         <main id="main" className="main">
           <div className="view-head">
             <h1 ref={heading} tabIndex={-1} className="view-title">
               {SCREEN_TITLES[screen]}
             </h1>
-            {screen === 'guide' ? null : <StepLine step={screenStep(screen, loop.journey)} />}
+            {['studio', 'project', 'create', 'library', 'schedule', 'home'].includes(screen) ? null : <StepLine step={step} />}
           </div>
-          {view === 'home' ? <DashboardView onNavigate={navigate} /> : null}
+          {view === 'home' ? route.dashboard ? <DashboardView onNavigate={navigate} /> : <StudioView /> : null}
           {view === 'activity' ? (
             <ActivityView tab={route.tab ?? 'all'} onTab={(tab) => navigate(tab === 'all' ? 'activity' : `activity?tab=${tab}`)} />
           ) : null}
@@ -178,6 +185,7 @@ export function App() {
             <EpisodeDetailView key={`${episode.episodeId}@${episode.revision}`} episodeId={episode.episodeId} revision={episode.revision} />
           ) : null}
           {view === 'studio' && route.make ? <MakeBatchView key={route.project ?? ''} project={route.project} /> : null}
+          {view === 'studio' && route.create ? <CreationWorkspace key={`${route.project ?? ''}:${route.production ?? ''}`} project={route.project} productionId={route.production} /> : null}
           {view === 'studio' && route.export ? (
             <Suspense fallback={<Loading />}>
               <ExportView />
@@ -188,9 +196,10 @@ export function App() {
           {view === 'studio' && route.job ? <StoryJobView key={route.job} id={route.job} /> : null}
           {view === 'studio' && route.renders ? <StoryRendersView /> : null}
           {view === 'studio' && route.storySettings ? <StorySettingsView /> : null}
+          {route.view === 'studio' && route.projectPage ? <ProjectView key={route.project} project={route.project} /> : null}
           {screen === 'studio' ? <StudioView /> : null}
-          {view === 'library' && !episode ? <LibraryView /> : null}
-          {view === 'schedule' ? <ScheduleView queue={Boolean(route.queue)} /> : null}
+          {view === 'library' && !episode ? <><CreationReviewQueue /><LibraryView key={`${route.project ?? ""}:${route.batch ?? ""}`} batch={route.batch} project={route.project} /></> : null}
+          {view === 'schedule' ? <ScheduleView queue={Boolean(route.queue)} published={Boolean(route.published)} /> : null}
           {view === 'guide' ? <GuideView anchor={route.anchor} /> : null}
           {view === 'settings' ? <SettingsView onSignOut={signOut} /> : null}
         </main>

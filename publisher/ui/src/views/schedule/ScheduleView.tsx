@@ -29,6 +29,7 @@ import { ContentCalendar } from './ContentCalendar'
 import { DraftPreview } from './DraftPreview'
 import { GeneratorForm } from './GeneratorForm'
 import { QueueList } from './QueueList'
+import { PublishedPosts } from '../ActivityView'
 
 const POLL_MS = 4000
 const POLL_LIMIT = 150
@@ -42,7 +43,7 @@ function today(): string {
 }
 
 /** Schedule: the approved schedule, then a new draft (preset first, Customize behind one disclosure), preview and approval. */
-export function ScheduleView({ queue = false }: { queue?: boolean }) {
+export function ScheduleView({ queue = false, published = false }: { queue?: boolean; published?: boolean }) {
   const schedule = useApi(api.schedule)
   const library = useApi(api.library)
   const loop = useJourney()
@@ -148,8 +149,12 @@ export function ScheduleView({ queue = false }: { queue?: boolean }) {
     )
   }
 
+  const destinations = <nav className="chip-row" aria-label="Publishing views"><a className="btn" href="#/schedule" aria-current={!published ? 'page' : undefined}>Upcoming</a><a className="btn" href="#/schedule?tab=published" aria-current={published ? 'page' : undefined}>Published</a></nav>
+  if (published) return <div className="stack-lg">{destinations}<PublishedPosts /><p><a href="#/activity">Open operations and unresolved results</a></p></div>
+
   return (
     <div className="stack-lg">
+      {destinations}
       <ScreenHelp id="schedule" />
       <ErrorNotice error={schedule.error} title="Schedule unavailable" />
       {data ? <ApprovedSchedule schedule={data} /> : schedule.loading ? <Loading /> : null}

@@ -1,97 +1,37 @@
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
-import { ErrorNotice } from '../../components/ErrorNotice'
-import { Loading } from '../../components/Loading'
-import { ScreenHelp } from '../../components/ScreenHelp'
-import { useApi } from '../../hooks/useApi'
-import { computeRunway } from '../../lib/runway'
-import { projectSummaries } from '../../lib/studio'
-import { formatDayHeading } from '../../lib/time'
-import { ManualProjectCard } from './ManualProjectCard'
+import { creationApi, type Production } from '../../api/creation'
+import type { LibraryResponse } from '../../api/types'
 
-/** Studio › Overview: the Make step for every project (docs/STUDIO_PLAN.md §1 decisions 5 and 8). */
+const PROJECTS = [
+  { id: 'scalargame', name: 'Scalargame', summary: 'Visual quizzes.', state: 'Create here or hand off a research task.' },
+  { id: 'explainers', name: 'Explainers', summary: 'Ideas, explained.', state: 'Research decision before a cut · local delivery.' },
+  { id: 'marathon', name: 'Marathon', summary: 'Your weekly story.', state: 'Manual delivery · private inputs stay local.' },
+  { id: 'originals', name: 'Originals', summary: 'Recaps and series.', state: 'On hold · paid work needs owner approval.' },
+]
+
 export function StudioView() {
-  const catalog = useApi(api.catalog)
-  // The approved queue gives each project's runway; a failure only hides it.
-  const schedule = useApi(api.schedule)
-  const runway = useMemo(() => (schedule.data ? computeRunway(schedule.data, null) : schedule.error ? null : undefined), [schedule.data, schedule.error])
-  const projects = catalog.data ? projectSummaries(catalog.data, runway) : []
-  return (
-    <div className="stack-lg">
-      <ScreenHelp id="studio" />
-      <ErrorNotice error={catalog.error} title="Studio catalog unavailable" />
-      {catalog.loading && !catalog.data ? <Loading /> : null}
-      {projects.map((p) => (
-        <section key={p.id} className="card stack" aria-labelledby={`studio-${p.id}`} data-testid="studio-project">
-          <h2 id={`studio-${p.id}`}>
-            {p.name} <span className="muted">· {p.priority}</span>
-          </h2>
-          <p>{p.summary}</p>
-          <dl className="facts">
-            <dt>Formats</dt>
-            <dd>{p.formats.map((f) => f.name).join(', ')}</dd>
-            <dt>Engine</dt>
-            <dd>{p.engines.join(', ')}</dd>
-            <dt>Budget</dt>
-            <dd>{p.budget}</dd>
-            <dt>Mix</dt>
-            <dd>{p.mix}</dd>
-            <dt>Runway</dt>
-            <dd>
-              {p.scheduledThrough === undefined
-                ? 'Loading…'
-                : p.scheduledThrough
-                  ? `Scheduled through ${formatDayHeading(p.scheduledThrough)} · approve the next batch by ${formatDayHeading(p.nextBatchBy ?? p.scheduledThrough)}`
-                  : 'Nothing scheduled'}
-            </dd>
-          </dl>
-          <div className="actions">
-            <a className="btn" href={`#/studio/make?project=${encodeURIComponent(p.id)}`}>
-              Make a {p.name} batch →
-            </a>
-          </div>
+  const [library, setLibrary] = useState<LibraryResponse | null>(null)
+  const [productions, setProductions] = useState<Production[]>([])
+  const [errors, setErrors] = useState<string[]>([])
+  useEffect(() => {
+    void api.library().then(setLibrary).catch(() => setErrors((x) => [...x, 'Existing publishing batches could not be loaded.']))
+    void creationApi.list().then((x) => setProductions(x.productions)).catch(() => setErrors((x) => [...x, 'Saved local productions could not be loaded.']))
+  }, [])
+  return <div className="studio-home">
+    <p className="muted">Choose a project to start or resume a production.</p>
+    <div className="project-grid">
+      {PROJECTS.map((project) => {
+        const saved = productions.filter((p) => p.project === project.id).length
+        const batches = library?.batches.filter((batch) => library.episodes.some((episode) => episode.batchId === batch.batchId && episode.project === project.id)).length ?? 0
+        return <section className="card project-card" key={project.id} aria-labelledby={`project-${project.id}`}>
+          <span className="project-mark">{project.id === 'originals' ? 'On hold' : project.id === 'marathon' ? 'Manual' : project.id === 'explainers' ? 'Local delivery' : 'Studio project'}</span>
+          <h2 id={`project-${project.id}`}>{project.name}</h2><p>{project.summary}</p><p className="muted">{project.state} {saved ? `· ${saved} saved productions` : ''} {batches ? `· ${batches} batches` : ''}</p>
+          <a className="btn" aria-label={`Open ${project.name}`} href={`#/studio/project/${project.id}`}>Open <span aria-hidden="true">→</span></a>
         </section>
-      ))}
-      {catalog.data?.manualProjects?.map((p) => (
-        <ManualProjectCard key={p.id} project={p} />
-      ))}
-      {catalog.data ? (
-        <p>
-          <a className="btn" href="#/studio/new">
-            New format, style or project →
-          </a>
-        </p>
-      ) : null}
-      {catalog.data ? (
-        <section className="card stack" aria-labelledby="studio-engines">
-          <h2 id="studio-engines">Engines</h2>
-          <ul className="row-list">
-            {catalog.data.engines.map((e) => (
-              <li key={e.id} className="stack">
-                <p className="row-head">
-                  <strong>{e.name}</strong> <span className="muted">{e.kitVersion}</span>
-                </p>
-                <p>{e.summary}</p>
-                <p className="muted">
-                  {e.id === 'motion'
-                    ? 'Runs in this browser: preview and export on the device you are using; nothing is rendered on the Pi.'
-                    : 'Runs on the laptop worker: start and follow its jobs here; paid services and their keys stay on the laptop.'}
-                </p>
-                {e.id === 'motion' ? (
-                  <p>
-                    <a href="#/studio/export">Preview and export a batch →</a>
-                  </p>
-                ) : null}
-                {e.id === 'story' ? (
-                  <p>
-                    <a href="#/studio/jobs">Story jobs →</a>
-                  </p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+      })}
     </div>
-  )
+    <details><summary>More tools</summary><nav aria-label="More Studio tools" className="studio-tools"><a href="#/studio/export">Scalargame browser preview and export</a><a href="#/studio/jobs">Story worker jobs</a><a href="#/studio/new">Legacy format tools</a></nav></details>
+    {errors.map((error) => <p className="notice notice-warn" role="status" key={error}>{error}</p>)}
+  </div>
 }

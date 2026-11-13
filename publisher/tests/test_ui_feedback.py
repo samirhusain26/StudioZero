@@ -259,7 +259,8 @@ class ViewTests(unittest.TestCase):
 class NotPublishedTests(unittest.TestCase):
     def test_nothing_that_schedules_approves_or_publishes_reads_notes_or_feedback(self):
         # updater.py only names the test module test_ui_feedback in QUICK_TESTS (staged checks before a self-update).
-        allowed = {'ui_library.py', 'ui_server.py', 'ui_views.py', 'updater.py'}
+        # Creation feedback stays in private workspace records, with no publishing execution path.
+        allowed = {'ui_library.py', 'ui_creation.py', 'ui_server.py', 'ui_views.py', 'updater.py'}
         for path in sorted((ROOT/'publisher/app').glob('*.py')):
             if path.name in allowed:
                 continue

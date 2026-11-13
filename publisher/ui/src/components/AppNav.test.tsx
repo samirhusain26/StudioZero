@@ -5,18 +5,18 @@ import { AppNav } from './AppNav'
 import { StepLine } from './StepLine'
 
 describe('AppNav', () => {
-  it('renders the six sections in order, marks the current one and navigates by path', async () => {
+  it('renders the three primary destinations plus secondary utilities', async () => {
     const onNavigate = vi.fn()
     render(<AppNav current="schedule" version="abc1234" onNavigate={onNavigate} />)
     const nav = screen.getByRole('navigation', { name: 'Sections' })
     const links = within(nav).getAllByRole('link')
-    expect(links.map((l) => l.textContent)).toEqual(['⌂Home', '✎Studio', '▣Library', '▦Schedule', '≡Activity', '⚙︎Settings'])
-    expect(within(nav).getByRole('link', { name: 'Schedule' })).toHaveAttribute('aria-current', 'page')
-    expect(within(nav).getByRole('link', { name: 'Home' })).not.toHaveAttribute('aria-current')
-    expect(within(nav).getByRole('link', { name: 'Library' })).toHaveAttribute('href', '#/library')
-    expect(within(nav).getByRole('link', { name: 'Studio' })).toHaveAttribute('href', '#/studio')
+    expect(links.map((l) => l.textContent)).toEqual(['✦Studio', '▶Review', '↗Publish', 'Settings', 'Help', 'Operations'])
+    expect(within(nav).getByRole('link', { name: 'Publish' })).toHaveAttribute('aria-current', 'page')
+    expect(within(nav).getByRole('link', { name: 'Studio' })).not.toHaveAttribute('aria-current')
+    expect(within(nav).getByRole('link', { name: 'Review' })).toHaveAttribute('href', '#/library')
+    expect(within(nav).getByRole('link', { name: 'Studio' })).toHaveAttribute('href', '#/home')
     expect(nav).toHaveTextContent('v abc1234')
-    await userEvent.setup().click(within(nav).getByRole('link', { name: 'Activity' }))
+    await userEvent.setup().click(within(nav).getByRole('link', { name: 'Operations' }))
     expect(onNavigate).toHaveBeenCalledWith('activity')
   })
 })

@@ -150,7 +150,8 @@ class RefillTests(Env):
     def test_cli_reports_and_exits(self):
         self.approve_manifest('2026-10-30T22:00:00+00:00')
         out = io.StringIO()
-        with contextlib.redirect_stdout(out):
+        with contextlib.redirect_stdout(out), mock.patch.object(autopilot.dt, 'datetime', wraps=dt.datetime) as clock:
+            clock.now.return_value = NOW
             code = autopilot.main(['refill', '--config', str(self.config_path), '--state', str(self.state)])
         self.assertEqual(code, 0)
         self.assertIn('Runway ok', out.getvalue())

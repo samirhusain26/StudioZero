@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-13",
+  "updated": "2026-11-13",
   "order": [
     "overview",
     "studio",
@@ -16,6 +16,8 @@
   "screens": {
     "home": "how-it-works",
     "studio": "studio",
+    "project": "creation-workspace",
+    "create": "creation-workspace",
     "library": "upload-a-batch",
     "make": "next-batch",
     "episode": "review-episodes",
